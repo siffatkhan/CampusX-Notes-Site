@@ -1,0 +1,313 @@
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-3 py-1 mb-3">Source: 100 Days of Deep Learning</span>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">11. Convolutional Neural Networks — Fundamentals</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">CNN intuition · Why not a plain ANN on images · Filters, kernels & the convolution operation · Feature maps</p>
+        </div>
+
+        <!-- CNN INTUITION -->
+        <section id="cnn-intuition" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">CNN</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">CNN Intuition &amp; Layer Types</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">A Convolutional Neural Network (CNN) is a family of architectures purpose-built for data that has a known <strong class="text-[var(--on-background)]">grid-like topology</strong> — data where the position of a value relative to its neighbors carries meaning. Time series data is a 1D grid: each reading sits next to the readings immediately before and after it in time. An image is a 2D grid: each pixel sits next to the pixels immediately above, below, and beside it in space. In both cases, "closeness" in the grid is informative — two adjacent pixels are far more likely to belong to the same object or edge than two pixels chosen at random from opposite corners of the picture. A plain, fully-connected network throws that structure away by treating every input value as independent and interchangeable; a CNN is built specifically to exploit it.</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">A CNN is composed of three fundamental building blocks, typically stacked and repeated:</p>
+
+          <div class="grid sm:grid-cols-3 gap-3">
+            <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">Convolutional Layer</h4>
+              <p class="text-sm text-[var(--on-surface)]">Slides small learnable filters over the input to detect local patterns, producing "feature maps." This is where the actual pattern-detection happens.</p>
+            </div>
+            <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--tertiary)] mb-1">Pooling Layer</h4>
+              <p class="text-sm text-[var(--on-surface)]">Down-samples feature maps — shrinking them while keeping the strongest signals — to cut memory cost and make detected features more location-independent.</p>
+            </div>
+            <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">Fully Connected (Dense) Layer</h4>
+              <p class="text-sm text-[var(--on-surface)]">Comes at the end, after the grid has been flattened into a vector, and does the final job of combining the extracted features into a prediction — exactly like a normal ANN layer.</p>
+            </div>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">A picture, for the purposes of this discussion, is simply a 2D grid of intensity values — and the whole point of the sections below is to explain exactly how a CNN processes that grid, step by step, from raw pixels to a final prediction.</p>
+        </section>
+
+        <!-- WHY NOT ANN -->
+        <section id="why-not-ann" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">CNN</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Why Not Just Use a Plain ANN on Images?</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Technically, nothing stops you from feeding an image into an ordinary ANN — flatten the 2D grid of pixels into a single long 1D vector and feed it to a dense network, the same way it's done for a dataset like MNIST. It works, but it works badly, for three concrete, compounding reasons.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--secondary)]">1. Explosive parameter count</h3>
+            <p class="text-sm text-[var(--on-surface)]">Take a modest 40×40 grayscale image. Flattened, that's <code class="text-[var(--secondary)]">40 × 40 = 1,600</code> input values. Now connect that flattened input to a single, fairly small hidden layer of just 100 units, fully connected — every one of the 1,600 inputs wired to every one of the 100 hidden neurons. That's:</p>
+            <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ 1{,}600 \times 100 = 160{,}000 \text{ weights} $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)]">…for one hidden layer, on one small, low-resolution, black-and-white image. Real images are typically far larger and have 3 color channels, and real networks need many hidden layers — the parameter count for a fully-connected approach explodes combinatorially, driving up training time, memory footprint, and compute cost far beyond what's practical.</p>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">2. Overfitting</strong> — connecting every single pixel directly to every hidden neuron gives the network the freedom to memorize minute, idiosyncratic details of each training image (a stray pixel value, noise, a specific lighting quirk) rather than learning generalizable patterns. With that many free parameters relative to the structure being learned, the network has more than enough capacity to memorize the training set instead of understanding it — the textbook overfitting failure mode.
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">3. Loss of spatial arrangement</strong> — flattening a 2D grid into a 1D vector destroys the information about which pixels were near which other pixels. A pixel that was directly above another pixel and a pixel that was on the opposite side of the image become equally "close" once everything is squashed into one long list. But an image's meaning lives almost entirely in that spatial arrangement — an edge is a set of adjacent pixels with a sharp intensity change; an eye is a specific local arrangement of pixels. Throwing away adjacency information throws away the very structure the network needs to recognize.
+            </div>
+          </div>
+
+          <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">The fix</h4>
+            <p class="text-sm text-[var(--on-surface)]">A CNN never flattens the image up front. It keeps the 2D grid intact and instead scans small, shared filters across it — a design choice that directly attacks all three problems: far fewer parameters (a filter is reused across the whole image instead of getting a unique weight per pixel), less overfitting, and full preservation of local spatial structure.</p>
+          </div>
+        </section>
+
+        <!-- FEATURE HIERARCHY -->
+        <section id="feature-hierarchy" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">CNN</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">From Edges to Objects: Why CNNs Go Deep</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">The earliest convolutional layer in a CNN — the one closest to the raw input — learns to detect the most primitive visual features that exist: edges, which are really just sharp changes in pixel intensity (a light region butting up against a dark region, for instance). As the data moves deeper into the network, each subsequent convolutional layer operates not on raw pixels but on the <em>feature maps</em> produced by the layer before it — so it isn't looking for edges anymore, it's looking for small, meaningful combinations of edges. A few edges arranged just so might form a curve; a few curves arranged just so might form a circle or a corner; further in, those shapes combine into parts of objects — an eye, a wheel, a leaf — and eventually into whole recognizable objects. This is the core intuition behind depth in a CNN: each layer builds increasingly complex, increasingly composite features out of the simpler features the previous layer already found, culminating in a rich, hierarchical representation of "what's in the image" by the time the signal reaches the final layers.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm text-sm text-[var(--on-surface)]">
+            <strong class="text-[var(--on-background)]">Popular CNN architectures.</strong> This edges-to-objects idea is the backbone of every well-known CNN design — they mainly differ in how deep they go, how they're wired, and what tricks they use to train reliably at that depth. The next page in this track covers each of the following in more depth: <strong class="text-[var(--on-background)]">LeNet</strong>, <strong class="text-[var(--on-background)]">AlexNet</strong>, <strong class="text-[var(--on-background)]">VGGNet</strong>, <strong class="text-[var(--on-background)]">ResNet</strong>, and <strong class="text-[var(--on-background)]">Xception</strong>.
+          </div>
+        </section>
+
+        <!-- CONVOLUTION OPERATION -->
+        <section id="convolution-operation" class="space-y-5 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">CNN</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">The Convolution Operation</h2>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">What is an image, to a CNN?</h3>
+            <p class="text-[var(--on-surface)] leading-relaxed">Strip away everything else, and an image is just a grid of pixels — a collection of numbers arranged in rows and columns, stored as an array. What differs is how many such 2D grids ("channels") stack together to represent color:</p>
+            <div class="grid sm:grid-cols-2 gap-3 mt-2">
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">Grayscale (black &amp; white)</strong> — a single channel: one 2D array, where each entry is a pixel's intensity, typically ranging 0 (black) to 255 (white).
+              </div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">Color</strong> — three channels: Red, Green, and Blue. Each channel is itself a grayscale-like 2D array of values from 0–255, and the three are stacked together — the final pixel color is a mix of how much red, green, and blue are present at that position. A color image of 228×228 pixels is therefore stored as <code class="text-[var(--secondary)]">228 × 228 × 3</code> — width × height × channels.
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">The filter / kernel</h3>
+            <p class="text-[var(--on-surface)] leading-relaxed">To perform convolution, a CNN needs a <strong class="text-[var(--on-background)]">filter</strong> (also called a <strong class="text-[var(--on-background)]">kernel</strong>) — typically a small matrix, commonly 3×3. Where do the numbers inside that filter come from? Exactly the same place weights in a plain ANN come from: the filter's values are <strong class="text-[var(--on-background)]">initialized randomly</strong>, and then <strong class="text-[var(--on-background)]">updated during training via backpropagation</strong>, the loss gradient nudging each value toward whatever minimizes the network's error. A filter is not hand-designed by an engineer to look for "horizontal lines" or "vertical lines" specifically — it behaves precisely like the weight matrix of a normal ANN layer, except it's shared and reused across every spatial position of the image instead of being wired to just one input.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">How convolution actually works</h3>
+            <p class="text-[var(--on-surface)] leading-relaxed">The filter is placed over a small window of the image — the same size as the filter itself — and the operation is:</p>
+            <ol class="text-sm text-[var(--on-surface)] space-y-1.5 list-decimal list-inside bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md">
+              <li><strong class="text-[var(--on-background)]">Element-wise multiply</strong> every value in the filter with the pixel value directly underneath it.</li>
+              <li><strong class="text-[var(--on-background)]">Sum</strong> all of those products into a single number.</li>
+              <li>That single number becomes <strong class="text-[var(--on-background)]">one entry</strong> in the output — called the <strong class="text-[var(--on-background)]">feature map</strong>.</li>
+              <li><strong class="text-[var(--on-background)]">Slide</strong> the filter to the next window (one pixel over, by default) and repeat, until the filter has swept over the entire image.</li>
+            </ol>
+            <p class="text-[var(--on-surface)] leading-relaxed mt-2">This sliding, multiply-and-sum process is exactly what "convolving a filter onto the image" means.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">A worked numeric example</h3>
+            <p class="text-[var(--on-surface)] leading-relaxed">Take a small 5×5 grayscale image patch and a 3×3 filter that has already been trained to respond to a horizontal intensity change:</p>
+            <div class="grid sm:grid-cols-2 gap-4 mt-2">
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-center font-code-block text-sm">
+                Image window (top-left 3×3 of the 5×5 patch)<br>
+                <div class="inline-block mt-2">3&nbsp;&nbsp;0&nbsp;&nbsp;1<br>1&nbsp;&nbsp;5&nbsp;&nbsp;8<br>2&nbsp;&nbsp;7&nbsp;&nbsp;2</div>
+              </div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-center font-code-block text-sm">
+                Filter (3×3)<br>
+                <div class="inline-block mt-2">1&nbsp;&nbsp;0&nbsp;-1<br>1&nbsp;&nbsp;0&nbsp;-1<br>1&nbsp;&nbsp;0&nbsp;-1</div>
+              </div>
+            </div>
+            <p class="text-sm text-[var(--on-surface)] mt-3">Element-wise multiply, position by position: <code class="text-[var(--secondary)]">(3×1)+(0×0)+(1×-1) + (1×1)+(5×0)+(8×-1) + (2×1)+(7×0)+(2×-1)</code>. Working through it: <code class="text-[var(--secondary)]">3 + 0 − 1 + 1 + 0 − 8 + 2 + 0 − 2 = −5</code>. That single value, <strong class="text-[var(--on-background)]">−5</strong>, becomes one entry in the output feature map. The filter then slides one column to the right, repeats the same multiply-and-sum against the next 3×3 window, and produces the next feature-map entry — and so on until the whole image has been covered.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Feature map size formula</h3>
+            <p class="text-[var(--on-surface)] leading-relaxed">For an <code class="text-[var(--secondary)]">n×n</code> image and an <code class="text-[var(--secondary)]">m×m</code> filter, the resulting feature map size is:</p>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ (n - m + 1) \times (n - m + 1) $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)]">This checks out against two concrete examples: a 6×6 image with a 3×3 filter gives <code class="text-[var(--secondary)]">6 − 3 + 1 = 4</code>, i.e. a 4×4 feature map. A 28×28 image with a 3×3 filter gives <code class="text-[var(--secondary)]">28 − 3 + 1 = 26</code>, i.e. a 26×26 feature map. Notice the feature map is always smaller than the input — a consequence revisited in the next page under Padding.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Extending to multi-channel (colored) images</h3>
+            <p class="text-[var(--on-surface)] leading-relaxed">A color image isn't a single 2D grid — it's 3 stacked grids (R, G, B). So the filter must also gain a matching depth: for a 6×6×3 image, the filter becomes 3×3×3 — one 3×3 slice of the filter for each of the 3 input channels. The convolution still happens the same way (element-wise multiply and sum), just across all three channel-slices at once, and the three per-channel sums are added together into <strong class="text-[var(--on-background)]">one single number</strong> — meaning the output of one filter is still just a single 2D feature map, exactly as in the grayscale case, regardless of how many input channels there were:</p>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ \text{image } n \times n \times c, \;\; \text{filter } m \times m \times c \;\; \Rightarrow \;\; \text{feature map } (n-m+1) \times (n-m+1) $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)]">The channel depth <code class="text-[var(--secondary)]">c</code> of the filter must always match the channel depth of the input — but it disappears from the output shape, because the per-channel products are summed into one value per spatial position.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Applying multiple filters</h3>
+            <p class="text-[var(--on-surface)] leading-relaxed">In practice a convolutional layer never applies just one filter — it applies many, in parallel, to the same input. Each filter is convolved across the entire image independently and produces its own, separate 2D feature map; with <code class="text-[var(--secondary)]">N</code> filters, you get <code class="text-[var(--secondary)]">N</code> feature maps, which are then stacked together depth-wise into a single output volume. Conceptually, different filters end up specializing in detecting different kinds of local patterns — some might become sensitive to horizontal edges, others to vertical edges, others to particular color transitions or textures — but it's important to be precise about how that happens: nobody hand-designs "this filter looks for horizontal edges." The filters start as random numbers, and gradient descent shapes each one into whatever pattern-detector actually reduces the network's loss, which very often — but not by design — turns out to resemble classic edge detectors, especially in the earliest layers.</p>
+          </div>
+
+          <div class="border-l-4 border-[var(--outline)] bg-[var(--surface-container-high)]/40 p-sm rounded-r-lg text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Illustrative aid</strong> — generated for this site.</div>
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md flex justify-center">
+            <svg viewBox="0 0 560 260" class="w-full max-w-[560px]" role="img" aria-label="A 3x3 filter sliding over a 5x5 input grid, producing one value in a 3x3 output feature map">
+              <!-- input grid labels -->
+              <text x="115" y="24" text-anchor="middle" font-size="12" class="font-label-caps" fill="var(--secondary)">INPUT (5×5)</text>
+              <!-- input grid: 5x5, cell size 38, origin (20,36) -->
+              <g font-size="13" fill="var(--on-surface)">
+                <!-- row values -->
+                <!-- grid lines -->
+                <g stroke="var(--outline-variant)" stroke-width="1" fill="none">
+                  <rect x="20" y="36" width="190" height="190"/>
+                  <line x1="58"  y1="36" x2="58"  y2="226"/>
+                  <line x1="96"  y1="36" x2="96"  y2="226"/>
+                  <line x1="134" y1="36" x2="134" y2="226"/>
+                  <line x1="172" y1="36" x2="172" y2="226"/>
+                  <line x1="20"  y1="74"  x2="210" y2="74"/>
+                  <line x1="20"  y1="112" x2="210" y2="112"/>
+                  <line x1="20"  y1="150" x2="210" y2="150"/>
+                  <line x1="20"  y1="188" x2="210" y2="188"/>
+                </g>
+                <!-- highlighted 3x3 window (top-left) -->
+                <rect x="21" y="37" width="113" height="113" fill="var(--secondary-container)" fill-opacity="0.22" stroke="var(--secondary)" stroke-width="2.5"/>
+                <!-- values -->
+                <text x="39"  y="60">3</text><text x="77"  y="60">0</text><text x="115" y="60">1</text><text x="153" y="60">2</text><text x="191" y="60">7</text>
+                <text x="39"  y="98">1</text><text x="77"  y="98">5</text><text x="115" y="98">8</text><text x="153" y="98">9</text><text x="191" y="98">3</text>
+                <text x="39"  y="136">2</text><text x="77"  y="136">7</text><text x="115" y="136">2</text><text x="153" y="136">5</text><text x="191" y="136">1</text>
+                <text x="39"  y="174">0</text><text x="77"  y="174">1</text><text x="115" y="174">3</text><text x="153" y="174">1</text><text x="191" y="174">7</text>
+                <text x="39"  y="212">4</text><text x="77"  y="212">2</text><text x="115" y="212">1</text><text x="153" y="212">6</text><text x="191" y="212">2</text>
+              </g>
+
+              <!-- filter, floating between -->
+              <text x="270" y="24" text-anchor="middle" font-size="12" class="font-label-caps" fill="var(--tertiary)">FILTER (3×3)</text>
+              <g font-size="13" fill="var(--on-tertiary)">
+                <rect x="235" y="70" width="72" height="72" fill="var(--tertiary-container)" stroke="var(--tertiary)" stroke-width="2" rx="4"/>
+                <line x1="259" y1="70" x2="259" y2="142" stroke="var(--tertiary)" stroke-width="1"/>
+                <line x1="283" y1="70" x2="283" y2="142" stroke="var(--tertiary)" stroke-width="1"/>
+                <line x1="235" y1="94" x2="307" y2="94" stroke="var(--tertiary)" stroke-width="1"/>
+                <line x1="235" y1="118" x2="307" y2="118" stroke="var(--tertiary)" stroke-width="1"/>
+                <text x="247" y="88">1</text><text x="271" y="88">0</text><text x="291" y="88">-1</text>
+                <text x="247" y="112">1</text><text x="271" y="112">0</text><text x="291" y="112">-1</text>
+                <text x="247" y="136">1</text><text x="271" y="136">0</text><text x="291" y="136">-1</text>
+              </g>
+              <text x="270" y="165" text-anchor="middle" font-size="20" fill="var(--on-surface-variant)">↓</text>
+              <text x="270" y="185" text-anchor="middle" font-size="11" fill="var(--on-surface-variant)">multiply + sum</text>
+
+              <!-- output grid -->
+              <text x="460" y="24" text-anchor="middle" font-size="12" class="font-label-caps" fill="var(--primary)">FEATURE MAP (3×3)</text>
+              <g stroke="var(--outline-variant)" stroke-width="1" fill="none">
+                <rect x="380" y="36" width="160" height="160"/>
+                <line x1="433" y1="36" x2="433" y2="196"/>
+                <line x1="487" y1="36" x2="487" y2="196"/>
+                <line x1="380" y1="89" x2="540" y2="89"/>
+                <line x1="380" y1="142" x2="540" y2="142"/>
+              </g>
+              <rect x="381" y="37" width="51" height="51" fill="var(--primary-container)" fill-opacity="0.35" stroke="var(--primary)" stroke-width="2.5"/>
+              <text x="406" y="68" text-anchor="middle" font-size="16" font-weight="700" fill="var(--on-background)">−5</text>
+              <text x="460" y="68" text-anchor="middle" font-size="13" fill="var(--on-surface-variant)">?</text>
+              <text x="513" y="68" text-anchor="middle" font-size="13" fill="var(--on-surface-variant)">?</text>
+              <text x="406" y="121" text-anchor="middle" font-size="13" fill="var(--on-surface-variant)">?</text>
+              <text x="460" y="121" text-anchor="middle" font-size="13" fill="var(--on-surface-variant)">?</text>
+              <text x="513" y="121" text-anchor="middle" font-size="13" fill="var(--on-surface-variant)">?</text>
+              <text x="406" y="174" text-anchor="middle" font-size="13" fill="var(--on-surface-variant)">?</text>
+              <text x="460" y="174" text-anchor="middle" font-size="13" fill="var(--on-surface-variant)">?</text>
+              <text x="513" y="174" text-anchor="middle" font-size="13" fill="var(--on-surface-variant)">?</text>
+
+              <text x="280" y="245" text-anchor="middle" font-size="11" fill="var(--on-surface-variant)">Highlighted 3×3 window → one filter pass → one feature-map value. Sliding the window fills in every remaining "?".</text>
+            </svg>
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on CNN fundamentals &amp; the convolution operation. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-dl-11">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. A 50×50 grayscale image is flattened and fed into a dense hidden layer of 200 units. How many weights connect the input to that one hidden layer?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. 2,500</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. 200,000</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. 500,000</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. 50,000</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Flattened input size = 50×50 = 2,500. Fully connecting to 200 hidden units = 2,500 × 200 = 500,000 weights — the same explosive-parameter-count problem the 40×40→160,000 example illustrates, just scaled up.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. Why does flattening an image into a 1D vector before feeding it to an ANN specifically hurt the network's ability to recognize objects?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. It changes the pixel values to be out of the 0-255 range</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. It destroys spatial adjacency information — pixels that were near each other in 2D are no longer treated as related once squashed into a flat list</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. It makes gradient descent mathematically impossible</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It converts the image from color to grayscale</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> An image's meaning lives in which pixels are near which other pixels (edges, shapes). Flattening treats every pixel as an interchangeable, independent input, discarding that 2D neighborhood structure — which is exactly the "loss of spatial arrangement" problem CNNs are designed to avoid.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. Where do the numeric values inside a convolutional filter come from, and how do they change during training?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. They are fixed forever once hand-designed by an engineer to detect a specific edge direction</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. They are computed directly from the average pixel value of the training images</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. They are set once using PCA on the input images and never updated</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. They are initialized randomly and then updated via backpropagation, behaving exactly like the weights of an ordinary ANN layer</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Filter values are learnable parameters, just like ANN weights — random init, then gradient-based updates via backprop. Any resemblance to a "horizontal edge detector" is an emergent result of loss minimization, not manual design.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. A 32×32×3 color image is convolved with a single 5×5×3 filter (no padding, stride 1). What is the shape of the resulting output?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. 28×28 (a single 2D feature map)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. 28×28×3 (three feature maps, one per channel)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. 32×32 (unchanged spatial size)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. 27×27×3</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Feature map size = (n−m+1)×(n−m+1) = (32−5+1) = 28, so 28×28. Even though the filter has depth 3 to match the input's 3 channels, the per-channel products are summed into one value per position — one filter always produces exactly one 2D feature map, regardless of input channel count.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. A convolutional layer applies 64 different filters to the same input volume. What does the output of that layer look like?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. A single feature map that averages the results of all 64 filters</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. 64 separate images, each resized back to the original input dimensions</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. 64 separate 2D feature maps, one per filter, stacked together depth-wise into one output volume</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Only the single feature map from whichever filter had the highest activation</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Each filter is convolved independently across the full input and produces its own feature map; with N filters you get N feature maps, stacked together into a single output volume of depth N — this is exactly how 228×228 images with 100 filters end up as 226×226×100 in the next page's pooling discussion.
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--primary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="dl-12.html" class="bg-[var(--secondary)] text-[var(--on-secondary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">Next: Padding, Strides &amp; Pooling</a>
+        </div>

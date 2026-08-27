@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>26. Naive Bayes Classifier — Sifat Notes</title>
+
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..800&family=Inter:ital,opsz,wght@0,14..32,400..700;1,14..32,400..700&family=JetBrains+Mono:wght@400..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script src="../assets/tailwind-config.js"></script>
+<link rel="stylesheet" href="../assets/theme.css">
+</head>
+<body class="antialiased min-h-screen font-body-md">
+
+<header class="bg-[var(--surface)] border-b border-[var(--outline-variant)] sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-4 md:px-lg py-2.5 md:py-sm max-w-[1200px] mx-auto">
+<a href="../index.html" class="flex items-center gap-2.5 md:gap-3 group min-w-0" title="Back to home">
+<div class="w-9 h-9 shrink-0 rounded-md bg-[var(--primary)] text-[var(--on-primary)] flex items-center justify-center font-h3 font-bold text-sm group-hover:opacity-85 transition-opacity">SN</div>
+<div class="min-w-0">
+<div class="font-h3 text-base md:text-lg font-semibold text-[var(--on-background)] leading-none truncate">Sifat Notes</div>
+<div class="hidden sm:block text-[11px] text-[var(--on-surface-variant)] mt-0.5 truncate">from CampusX's playlists</div>
+</div>
+</a>
+<nav class="hidden md:flex items-center gap-6 text-sm shrink-0">
+<a class="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors" href="../index.html">Home</a>
+<a class="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors" href="../index.html#courses">Courses</a>
+</nav>
+<div class="flex items-center gap-2 md:gap-3 shrink-0">
+<button id="mobileMenuBtn" class="md:hidden border border-[var(--outline-variant)] rounded-md p-1.5 text-[var(--on-background)] flex items-center justify-center" onclick="toggleSidebar()" aria-label="Toggle navigation">
+<span class="material-symbols-outlined text-[20px]">menu</span>
+</button>
+<button class="flex items-center gap-1.5 bg-[var(--surface-container)] border border-[var(--outline-variant)] text-[var(--on-background)] px-2.5 md:px-3 py-1.5 rounded-full text-xs font-label-caps hover:border-[var(--primary)] transition-colors" onclick="toggleTheme()" data-theme-btn>
+<span class="material-symbols-outlined text-[16px]" data-theme-icon>light_mode</span>
+<span data-theme-label class="hidden sm:inline">Light</span>
+</button>
+</div>
+</div>
+</header>
+
+
+<div class="flex flex-1">
+<div id="sidebarBackdrop" class="hidden fixed inset-0 bg-black/50 z-50 md:hidden" onclick="toggleSidebar()"></div>
+<aside id="sidebarSlot" class="flex flex-col bg-[var(--surface-container-low)] border-r border-[var(--outline-variant)] fixed left-0 top-[65px] h-[calc(100vh-65px)] w-[280px] py-md overflow-y-auto">
+<div class="px-lg mb-md">
+<input id="searchBox" placeholder="Search topics…" class="w-full bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-md px-3 py-2 text-sm text-[var(--on-background)] placeholder:text-[var(--on-surface-variant)] focus:outline-none focus:border-[var(--primary)]">
+</div>
+
+<nav class="toc flex-1 px-2 space-y-1 text-sm" id="tocNav">
+
+<div class="px-3 pt-3 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Foundations</div>
+
+<details open>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--primary)] font-semibold bg-[var(--surface-container-high)]/50">1. Introduction to ML <span class="chev text-[10px]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-01.html#day-1" class="flex px-3 py-1.5 rounded-md text-[var(--primary)] font-semibold bg-[var(--surface-container-high)]/40">Day 1: Definition</a>
+<a href="section-01.html#day-2" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 2: AI vs ML vs Deep Learning</a>
+<a href="section-01.html#day-3" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 3: Types of Machine Learning</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">2. Learning Styles <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-02.html#day-4" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 4: Batch Learning vs Online Learning (Machine Learning Training Styles)</a>
+<a href="section-02.html#day-5" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 5: Batch Learning vs Online Learning</a>
+<a href="section-02.html#day-6" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 6: Instance-Based Learning vs Model-Based Learning</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">3. ML Landscape <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-03.html#day-7" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 7: Challenges in Machine Learning (ML)</a>
+<a href="section-03.html#day-8" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 8: Applications of Machine Learning</a>
+<a href="section-03.html#day-9" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 9: ML Development Life Cycle (ML DLC)</a>
+<a href="section-03.html#day-10" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 10: Data-Related Job Roles</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">4. Tensors &amp; Setup <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-04.html#day-11" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 11: Tensors</a>
+<a href="section-04.html#day-12" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 12: Virtual Environment</a>
+<a href="section-04.html#day-14" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 14: Framing the Problem</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Data Handling</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">5. Data Gathering <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-05.html#day-15" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 15: Data Gathering</a>
+<a href="section-05.html#day-16" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 16: Working with JSON / SQL</a>
+<a href="section-05.html#day-17" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 17: Fetching Data from APIs</a>
+<a href="section-05.html#day-18" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 18: Web Scraping</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">6. Exploratory Data Analysis <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-06.html#day-19" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 19: Understanding Gathered Data — Asking Basic Questions</a>
+<a href="section-06.html#day-20" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 20: Understanding Gathered Data — EDA (Univariate Analysis)</a>
+<a href="section-06.html#day-21" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 21: Understanding Gathered Data — EDA (Bivariate Analysis)</a>
+<a href="section-06.html#day-22" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 22: Pandas Profiling Tool</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">7. Feature Engineering <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-07.html#day-23" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 23: Feature Engineering (IMP)</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">8. Feature Scaling <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-08.html#day-24" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 24: Feature Scaling — Standardization</a>
+<a href="section-08.html#day-25" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 25: Feature Scaling — Normalization</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">9. Encoding Categorical Vars <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-09.html#day-26" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 26: Encoding Categorical Variables — Ordinal / Label Encoding</a>
+<a href="section-09.html#day-27" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 27: Encoding Categorical Variables — One Hot Encoding</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">10. Column Transformer &amp; Pipelines <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-10.html#day-28" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 28: Column Transformer</a>
+<a href="section-10.html#day-29" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 29: Pipeline Transformer</a>
+<a href="section-10.html#day-30" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 30: Function Transformer</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">11. Power Transformer <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-11.html#day-31" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 31: Power Transformer</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">12. Binning &amp; Binarization <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-12.html#day-32" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 32: Binning and Binarization</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">13. Mixed / Date-Time Data <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-13.html#day-33" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 33: Handling Mixed Data</a>
+<a href="section-13.html#day-34" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 34: Handling Date and Time Variables</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">14. Missing Values <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-14.html#day-35" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 35: Handling Missing Value — Removing Values</a>
+<a href="section-14.html#day-36" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 36: Handling Numerical Missing Value (Imputing)</a>
+<a href="section-14.html#day-37" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 37: Handling Categorical Missing Value</a>
+<a href="section-14.html#day-38" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 38: Handling Missing Value — Random Sample / Missing Indicator</a>
+<a href="section-14.html#day-39" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 39: Handling Missing Value (Multivariate) — KNN Imputer</a>
+<a href="section-14.html#day-40" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 40: Handling Missing Value (Multivariate) — Iterative Imputer (MICE)</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">15. Outliers <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-15.html#day-41" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 41: Handling Outliers</a>
+<a href="section-15.html#day-42" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 42: Handling Outliers — Z-Score Method</a>
+<a href="section-15.html#day-43" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 43: Handling Outliers — IQR Method</a>
+<a href="section-15.html#day-44" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 44: Handling Outliers — Winsorization</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">16. Feature Construction <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-16.html#day-45" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 45: Feature Construction | Feature Splitting</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">17. Curse of Dimensionality <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-17.html#day-46" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 46: Curse of Dimensionality</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">18. PCA <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-18.html#day-47" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 47: Principal Component Analysis (PCA) — Geometric Intuition</a>
+<a href="section-18.html#day-48" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 48: Principal Component Analysis (PCA) — Problem Formulation &amp; Code</a>
+<a href="section-18.html#day-49" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 49: Principal Component Analysis (PCA) — MNIST Example</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Algorithms</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">19. Linear Regression <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-19.html#day-50" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 50: Simple Linear Regression</a>
+<a href="section-19.html#day-51" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 51: Simple Linear Regression (Mathematical Intuition)</a>
+<a href="section-19.html#day-52" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 52: Regression Metrics</a>
+<a href="section-19.html#day-53" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 53: Multiple Linear Regression (Geometric Intuition)</a>
+<a href="section-19.html#day-54" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 54: Multiple Linear Regression (Mathematical Formulation)</a>
+<a href="section-19.html#day-55" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 55: Multiple Linear Regression (Code)</a>
+<a href="section-19.html#day-56" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 56: Assumptions of Linear Regression</a>
+<a href="section-19.html#day-57" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 57: Gradient Descent from Scratch</a>
+<a href="section-19.html#day-58" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 58: Batch Gradient Descent</a>
+<a href="section-19.html#day-59" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 59: Stochastic Gradient Descent</a>
+<a href="section-19.html#day-60" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 60: Mini Batch Gradient Descent</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">20. Polynomial Regression <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-20.html#day-61" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 61: Polynomial Linear Regression</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">21. Bias-Variance Tradeoff <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-21.html#day-62" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 62: Bias Variance Trade Off</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">22. Regularization <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-22.html#ridge-geometric" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Ridge Regression — Geometric Intuition &amp; Code</a>
+<a href="section-22.html#ridge-gradient-descent" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Ridge Regression — Gradient Descent</a>
+<a href="section-22.html#lasso-cost" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Lasso Regression</a>
+<a href="section-22.html#lasso-sparsity" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why Lasso Creates Sparsity</a>
+<a href="section-22.html#elastic-net" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Elastic Net Regression</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">23. Logistic Regression <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-23.html#day-70" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 70: Logistic Regression (Perceptron Trick)</a>
+<a href="section-23.html#day-71" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 71: Logistic Regression (Perceptron Trick Code)</a>
+<a href="section-23.html#day-72" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 72: Logistic Regression (Sigmoid Function)</a>
+<a href="section-23.html#logistic-gradient-descent" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Gradient Descent for Logistic Regression</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">24. Classification Metrics <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-24.html#confusion-matrix" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Accuracy, Confusion Matrix &amp; Type I/II Errors</a>
+<a href="section-24.html#precision-recall-f1" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Precision, Recall &amp; F1 Score</a>
+<a href="section-24.html#roc-auc" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">ROC Curve &amp; AUC</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">25. Logistic Regression — Advanced <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-25.html#softmax-regression" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Softmax Regression (Multinomial)</a>
+<a href="section-25.html#polynomial-logistic-regression" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Polynomial Features (Non-Linear Boundaries)</a>
+<a href="section-25.html#logistic-regression-hyperparameters" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Hyperparameters</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Classification Algorithms</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">26. Naive Bayes Classifier <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-26.html#conditional-probability" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Conditional Probability</a>
+<a href="section-26.html#independent-events" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Independent Events</a>
+<a href="section-26.html#mutually-exclusive-events" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Mutually Exclusive Events</a>
+<a href="section-26.html#bayes-theorem" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Bayes' Theorem</a>
+<a href="section-26.html#bayes-worked-example" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">A Problem Worked with Bayes' Theorem</a>
+<a href="section-26.html#naive-bayes-classifier" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Naive Bayes — Intuition, Math &amp; Code</a>
+<a href="section-26.html#gaussian-naive-bayes" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Handling Numerical Data (Gaussian NB)</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">27. K-Nearest Neighbors (KNN) <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-27.html#knn-overview" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">What is KNN — Full Overview</a>
+<a href="section-27.html#how-knn-works" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">How It Works</a>
+<a href="section-27.html#effect-of-k" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Effect of K</a>
+<a href="section-27.html#knn-curse-of-dimensionality" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Curse of Dimensionality &amp; KNN</a>
+<a href="section-27.html#knn-when-to-use" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">When to Use vs Avoid</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">28. Support Vector Machines (SVM) <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-28.html#svm-geometric-intuition" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Geometric Intuition</a>
+<a href="section-28.html#svm-math" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Math</a>
+<a href="section-28.html#hard-soft-margin" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Hard Margin vs Soft Margin</a>
+<a href="section-28.html#kernel-trick" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Kernel Trick — Intuition &amp; Code</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">29. Decision Trees <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-29.html#tree-geometric-intuition" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Geometric Intuition</a>
+<a href="section-29.html#entropy-gini" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Entropy, Gini Impurity &amp; Information Gain</a>
+<a href="section-29.html#tree-hyperparameters" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Hyperparameters &amp; Overfitting/Underfitting</a>
+<a href="section-29.html#regression-trees" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Regression Trees</a>
+<a href="section-29.html#dtreeviz-visualization" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Visualization with dtreeviz</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Ensemble Learning</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">30. Ensemble Learning: Voting <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-30.html#ensemble-intro" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Introduction to Ensemble Learning</a>
+<a href="section-30.html#voting-ensemble" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Hard &amp; Soft Voting</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">31. Bagging <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-31.html#bagging-intro" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Introduction</a>
+<a href="section-31.html#bagging-classifiers" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Bagging Classifiers</a>
+<a href="section-31.html#bagging-regressors" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Bagging Regressors</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">32. Random Forest <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-32.html#rf-intro" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Intro &amp; Intuition</a>
+<a href="section-32.html#rf-bias-variance" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Bias-Variance Tradeoff in RF</a>
+<a href="section-32.html#bagging-vs-rf" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Bagging vs Random Forest</a>
+<a href="section-32.html#rf-hyperparameters" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Hyperparameters</a>
+<a href="section-32.html#rf-hyperparameter-tuning" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Tuning — GridSearchCV &amp; RandomizedSearchCV</a>
+<a href="section-32.html#oob-score" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">OOB Score</a>
+<a href="section-32.html#rf-feature-importance" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Feature Importance</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">33. AdaBoost <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-33.html#adaboost-intuition" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Geometric Intuition</a>
+<a href="section-33.html#adaboost-steps" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Step-by-Step Explanation</a>
+<a href="section-33.html#adaboost-code" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Code</a>
+<a href="section-33.html#adaboost-hyperparameters" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Hyperparameters &amp; GridSearchCV</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">34. Bagging vs Boosting <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-34.html#bvb-structural-difference" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Structural Difference</a>
+<a href="section-34.html#bvb-strengths-weaknesses" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">What Each Is Best At</a>
+<a href="section-34.html#bvb-comparison-table" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Comparison Table</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">35. Gradient Boosting <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-35.html#gb-explained" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Explained</a>
+<a href="section-35.html#gb-regression" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">For Regression</a>
+<a href="section-35.html#gb-classification" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">For Classification</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">36. XGBoost <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-36.html#xgboost-intro" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Intro to XGBoost</a>
+<a href="section-36.html#xgboost-regression" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">For Regression</a>
+<a href="section-36.html#xgboost-classification" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">For Classification</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">37. Stacking &amp; Blending <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-37.html#stacking" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Stacking</a>
+<a href="section-37.html#blending" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Blending</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Unsupervised &amp; Practical</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">38. Clustering <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-38.html#k-means" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">K-Means Clustering</a>
+<a href="section-38.html#hierarchical-clustering" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Agglomerative Hierarchical Clustering</a>
+<a href="section-38.html#dbscan" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">DBSCAN</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">39. Handling Imbalanced Data <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-39.html#the-problem" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Problem</a>
+<a href="section-39.html#undersampling" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Undersampling</a>
+<a href="section-39.html#oversampling" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Oversampling</a>
+<a href="section-39.html#smote" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">SMOTE</a>
+<a href="section-39.html#practical-guidance" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Practical Guidance</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">40. Hyperparameter Tuning (Optuna) <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-40.html#why-optuna" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why Optuna</a>
+<a href="section-40.html#bayesian-optimization-intuition" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Bayesian Optimization Intuition</a>
+<a href="section-40.html#optuna-core-concepts" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Core Concepts</a>
+<a href="section-40.html#optuna-code-example" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Code Example</a>
+<a href="section-40.html#pruning" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Pruning</a>
+</div>
+</details>
+
+</nav>
+</aside>
+
+
+  <main class="flex-1 md:ml-[280px] px-4 py-6 md:p-lg max-w-[1200px] mx-auto w-full min-w-0">
+    <nav aria-label="Breadcrumb" class="flex flex-wrap text-sm text-[var(--on-surface-variant)] mb-4"><a href="../index.html" class="hover:text-[var(--primary)]">Home</a><span class="mx-2">/</span><a href="../index.html#courses" class="hover:text-[var(--primary)]">ML Track</a><span class="mx-2">/</span><span class="text-[var(--on-background)]">26. Naive Bayes Classifier</span></nav>
+
+    <div class="space-y-xl">
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-3 py-1 mb-3">Extended Curriculum</span>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">26. Naive Bayes Classifier</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Conditional Probability · Independent vs Mutually Exclusive Events · Bayes' Theorem · A Worked Example · Naive Bayes Intuition, Math &amp; Code · Gaussian Naive Bayes</p>
+        </div>
+
+        <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm text-sm text-[var(--on-surface-variant)]">
+          <strong class="text-[var(--on-background)]">Extended notes</strong> — this topic isn't covered in the CampusX playlist notes this site is based on. Written from scratch to continue the curriculum, in the same style as the rest of the site.
+        </div>
+
+        <!-- CONDITIONAL PROBABILITY -->
+        <section id="conditional-probability" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Probability</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Conditional Probability</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Naive Bayes is a classification algorithm, but underneath it, it's 100% probability theory. Before we can understand it, we need four probability ideas in order: conditional probability, independence, mutual exclusivity, and Bayes' theorem. Each one builds on the last — take them slowly, they're short but they trip people up if rushed.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-lg text-[var(--primary)]">The idea</h3>
+            <p class="text-sm text-[var(--on-surface)]">Ordinary probability asks "what's the chance of A?" out of every possible outcome. <strong class="text-[var(--on-background)]">Conditional</strong> probability asks a narrower question: "<em>given that we already know B happened</em>, what's the chance of A now?" Knowing B happened shrinks the universe of possibilities down to just the B-world, and we ask what fraction of that smaller world also has A.</p>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+            $$ P(A \mid B) = \frac{P(A \cap B)}{P(B)} \qquad (P(B) > 0) $$
+          </div>
+          <p class="text-sm text-[var(--on-surface)]">Read it as: "out of all the times B happens, what fraction of those times does A also happen?" The numerator restricts to the world where both happen; the denominator re-normalizes so we're only looking within the B-world, not the whole original sample space.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--secondary)]">Worked example — coffee and programmers</h3>
+            <p class="text-sm text-[var(--on-surface)]">Survey of 100 people at a tech conference:</p>
+            <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs"></th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Likes coffee</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Doesn't like coffee</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Total</th></tr></thead>
+                <tbody>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Programmer</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">32</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">8</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">40</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Not a programmer</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">18</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">42</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">60</td></tr>
+                  <tr><td class="p-2.5 font-semibold">Total</td><td class="p-2.5">50</td><td class="p-2.5">50</td><td class="p-2.5">100</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Unconditional:</strong> P(likes coffee) = 50/100 = 0.5 — half of everyone at the conference likes coffee, programmer or not.</p>
+            <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Conditional:</strong> P(likes coffee | programmer) — restrict to the 40 programmers only, then ask what fraction of them like coffee: 32/40 = 0.8.</p>
+            <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ P(\text{coffee} \mid \text{programmer}) = \frac{P(\text{coffee} \cap \text{programmer})}{P(\text{programmer})} = \frac{32/100}{40/100} = \frac{0.32}{0.40} = 0.8 $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)]">Knowing someone is a programmer raised our belief that they like coffee from 50% to 80%. That jump — from the unconditional to the conditional probability — <em>is</em> the information contained in "this person is a programmer." If the two probabilities had come out equal, the information would have been worthless (see Independence, next).</p>
+          </div>
+
+          <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--tertiary)] mb-1">Rule to remember</h4>
+            <p class="text-sm text-[var(--on-surface)]">The condition (the thing after the "|") always shrinks your sample space first. Everything you compute afterward is relative to that shrunk space, not the original 100 people.</p>
+          </div>
+        </section>
+
+        <!-- INDEPENDENT EVENTS -->
+        <section id="independent-events" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Probability</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Independent Events</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Two events are <strong class="text-[var(--on-background)]">independent</strong> if knowing one happened tells you absolutely nothing about whether the other happens. Formally: A and B are independent if \( P(A \mid B) = P(A) \) — the condition doesn't move the needle at all. Plugging that into the conditional probability formula gives the multiplication rule:</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+            $$ P(A \cap B) = P(A) \cdot P(B) \quad \text{(independent events only)} $$
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">Independent example</h4>
+              <p class="text-sm text-[var(--on-surface)]">Flip a coin, then roll a die. Getting heads tells you nothing about what the die will show. P(heads) = 0.5, P(rolling a 6) = 1/6. P(heads <em>and</em> rolling a 6) = 0.5 × 1/6 = 1/12. The events don't interact.</p>
+            </div>
+            <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">Dependent example</h4>
+              <p class="text-sm text-[var(--on-surface)]">"It's raining" and "someone is carrying an umbrella." Knowing it's raining massively raises the chance of seeing an umbrella. P(umbrella | raining) ≠ P(umbrella). These events are entangled — you cannot just multiply their unconditional probabilities to get the joint probability.</p>
+            </div>
+          </div>
+
+          <p class="text-sm text-[var(--on-surface)]">The coffee/programmer example from the last section was <strong class="text-[var(--on-background)]">dependent</strong>: P(coffee | programmer) = 0.8 ≠ P(coffee) = 0.5. If it had come out to exactly 0.5, coffee-liking and being a programmer would have been independent — being told someone codes for a living would tell you nothing new about their coffee habits.</p>
+
+          <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--tertiary)] mb-1">Quick test for independence</h4>
+            <p class="text-sm text-[var(--on-surface)]">Compute \( P(A)\cdot P(B) \) and compare it to the actual \( P(A \cap B) \) from your data. Equal → independent. Different → dependent (this is also literally how a chi-squared independence test works, just dressed up with more statistics).</p>
+          </div>
+        </section>
+
+        <!-- MUTUALLY EXCLUSIVE EVENTS -->
+        <section id="mutually-exclusive-events" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Probability</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Mutually Exclusive Events</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Two events are <strong class="text-[var(--on-background)]">mutually exclusive</strong> (a.k.a. disjoint) if they can never both happen at once — \( A \cap B = \emptyset \), so \( P(A \cap B) = 0 \). If you want the probability that <em>either</em> happens, you can just add:</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+            $$ P(A \cup B) = P(A) + P(B) \quad \text{(mutually exclusive events only)} $$
+          </div>
+          <p class="text-sm text-[var(--on-surface)]">(The general addition rule for <em>any</em> two events is \( P(A \cup B) = P(A)+P(B)-P(A \cap B) \); the simple sum only works because the overlap term is zero for disjoint events.)</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--error)]">Stop and don't conflate these — the #1 mix-up in intro probability</h3>
+            <p class="text-sm text-[var(--on-surface)]">"Independent" and "mutually exclusive" sound like they're both saying "these events have nothing to do with each other," but they describe <strong class="text-[var(--on-background)]">opposite</strong> kinds of relationships. In fact, if two events both have nonzero probability, being mutually exclusive <em>forces</em> them to be dependent — the strongest possible dependence there is.</p>
+            <p class="text-sm text-[var(--on-surface)]">Here's why: if A and B are mutually exclusive, then \( P(B \mid A) = 0 \) — the instant you know A happened, B becomes impossible. But if A and B were also independent, we'd need \( P(B \mid A) = P(B) \). Both can only be true simultaneously if \( P(B) = 0 \) to begin with (a degenerate, uninteresting case). So for any two real events with actual probability of occurring, <strong class="text-[var(--on-background)]">mutually exclusive and independent are mutually exclusive with each other</strong> — pick at most one.</p>
+            <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs"></th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Independent</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Mutually Exclusive</th></tr></thead>
+                <tbody>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Can both happen together?</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Yes — happening or not is unrelated</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Never — one rules out the other</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Knowing A changes belief about B?</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">No, P(B|A) = P(B)</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Completely — P(B|A) = 0</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Key formula</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">P(A∩B) = P(A)P(B)</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">P(A∩B) = 0</td></tr>
+                  <tr><td class="p-2.5 font-semibold">Example</td><td class="p-2.5">Two separate coin flips both landing heads</td><td class="p-2.5">One coin flip landing heads <em>and</em> tails</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-sm text-[var(--on-surface)]">Practical gut-check: mutually exclusive events are usually two possible <em>outcomes of the same trial</em> ("heads vs. tails," "rainy vs. sunny today"). Independent events are usually two <em>separate</em> trials or measurements that just happen not to influence each other ("today's rain vs. tomorrow's dice roll").</p>
+          </div>
+        </section>
+
+        <!-- BAYES THEOREM -->
+        <section id="bayes-theorem" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Probability</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Bayes' Theorem</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Conditional probability lets us compute P(A|B) directly from raw counts, when we have them. But often we know P(B|A) (easy to measure) and actually want P(A|B) (what we care about, but can't measure directly). Bayes' theorem is the bridge that flips one into the other.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--primary)]">Deriving it — there's no trick, just algebra</h3>
+            <p class="text-sm text-[var(--on-surface)]">The definition of conditional probability works in both directions:</p>
+            <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ P(A \mid B) = \frac{P(A \cap B)}{P(B)} \qquad \text{and} \qquad P(B \mid A) = \frac{P(A \cap B)}{P(A)} $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)]">Both equations contain the same numerator, \( P(A \cap B) \). Rearrange the second equation to isolate it: \( P(A \cap B) = P(B \mid A) \cdot P(A) \). Now substitute that into the first equation in place of its numerator:</p>
+            <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ P(A \mid B) = \frac{P(B \mid A) \cdot P(A)}{P(B)} $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)]">That's Bayes' theorem. No new assumption was needed — it's a direct algebraic consequence of the definition of conditional probability applied twice.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">The vocabulary — memorize these four words</h3>
+            <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Term</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Symbol</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Meaning</th></tr></thead>
+                <tbody>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Posterior</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">P(A|B)</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">What we want: updated belief in A <em>after</em> seeing evidence B</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Likelihood</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">P(B|A)</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">How probable the evidence is, <em>if</em> A were true</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Prior</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">P(A)</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">What we believed about A <em>before</em> seeing any evidence</td></tr>
+                  <tr><td class="p-2.5 font-semibold">Evidence</td><td class="p-2.5">P(B)</td><td class="p-2.5">Overall probability of observing B at all, across every scenario — the normalizing constant</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-sm text-[var(--on-surface-variant)] mt-2">In words: <strong class="text-[var(--on-background)]">Posterior ∝ Likelihood × Prior</strong>. Bayes' theorem is a formal recipe for updating a prior belief once new evidence arrives.</p>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--secondary)]">The classic example: a positive disease test is often still probably wrong</h3>
+            <p class="text-sm text-[var(--on-surface)]">A rare disease affects <strong class="text-[var(--on-background)]">1% of the population</strong>. A test for it is <strong class="text-[var(--on-background)]">99% sensitive</strong> (correctly flags 99% of people who actually have the disease) and <strong class="text-[var(--on-background)]">95% specific</strong> (correctly clears 95% of people who don't have it — meaning a 5% false-positive rate). You test positive. What's the chance you actually have the disease?</p>
+            <p class="text-sm text-[var(--on-surface)]">Gut instinct says "99%, obviously, the test is 99% accurate." That instinct is wrong, and Bayes' theorem shows exactly why.</p>
+          </div>
+
+          <div>
+            <div class="border-l-4 border-[var(--outline)] bg-[var(--surface-container-high)]/40 p-sm rounded-r-lg text-xs text-[var(--on-surface-variant)] mb-3">
+              <strong class="text-[var(--on-background)]">Illustrative aid</strong> — generated for this site.
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md overflow-x-auto">
+              <svg viewBox="0 0 720 300" class="w-full min-w-[600px]" role="img" aria-label="Probability tree: 10,000 people split into disease vs no disease, then each split into test positive vs negative">
+                <text x="60" y="20" text-anchor="middle" class="font-label-caps" font-size="11" fill="var(--on-surface-variant)">10,000 PEOPLE</text>
+                <rect x="10" y="130" width="110" height="40" rx="6" fill="var(--surface-container-high)" stroke="var(--outline)"/>
+                <text x="65" y="155" text-anchor="middle" font-size="12" fill="var(--on-surface)">10,000</text>
+
+                <line x1="120" y1="150" x2="250" y2="60" stroke="var(--outline-variant)" stroke-width="1.5"/>
+                <line x1="120" y1="150" x2="250" y2="240" stroke="var(--outline-variant)" stroke-width="1.5"/>
+
+                <rect x="250" y="35" width="150" height="46" rx="6" fill="var(--secondary-container)" fill-opacity="0.15" stroke="var(--secondary)"/>
+                <text x="325" y="54" text-anchor="middle" font-size="11" fill="var(--secondary)">Disease (prior 1%)</text>
+                <text x="325" y="70" text-anchor="middle" font-size="12" font-weight="600" fill="var(--on-surface)">100 people</text>
+
+                <rect x="250" y="215" width="150" height="46" rx="6" fill="var(--surface-container-high)" stroke="var(--outline)"/>
+                <text x="325" y="234" text-anchor="middle" font-size="11" fill="var(--on-surface-variant)">No Disease (99%)</text>
+                <text x="325" y="250" text-anchor="middle" font-size="12" font-weight="600" fill="var(--on-surface)">9,900 people</text>
+
+                <line x1="400" y1="58" x2="500" y2="20" stroke="var(--outline-variant)" stroke-width="1.5"/>
+                <line x1="400" y1="58" x2="500" y2="95" stroke="var(--outline-variant)" stroke-width="1.5"/>
+                <line x1="400" y1="238" x2="500" y2="200" stroke="var(--outline-variant)" stroke-width="1.5"/>
+                <line x1="400" y1="238" x2="500" y2="278" stroke="var(--outline-variant)" stroke-width="1.5"/>
+
+                <rect x="500" y="2" width="215" height="36" rx="6" fill="var(--primary-container)" fill-opacity="0.25" stroke="var(--primary)" stroke-width="1.5"/>
+                <text x="607" y="18" text-anchor="middle" font-size="10.5" fill="var(--primary)">Test + (sensitivity 99%)</text>
+                <text x="607" y="32" text-anchor="middle" font-size="12" font-weight="700" fill="var(--on-surface)">99 — True Positive</text>
+
+                <rect x="500" y="77" width="215" height="36" rx="6" fill="var(--surface-container-high)" stroke="var(--outline-variant)"/>
+                <text x="607" y="93" text-anchor="middle" font-size="10.5" fill="var(--on-surface-variant)">Test − (1%)</text>
+                <text x="607" y="107" text-anchor="middle" font-size="12" fill="var(--on-surface)">1 — False Negative</text>
+
+                <rect x="500" y="182" width="215" height="36" rx="6" fill="var(--error-container)" fill-opacity="0.3" stroke="var(--error)" stroke-width="1.5"/>
+                <text x="607" y="198" text-anchor="middle" font-size="10.5" fill="var(--error)">Test + (false-positive rate 5%)</text>
+                <text x="607" y="212" text-anchor="middle" font-size="12" font-weight="700" fill="var(--on-surface)">495 — False Positive</text>
+
+                <rect x="500" y="260" width="215" height="36" rx="6" fill="var(--surface-container-high)" stroke="var(--outline-variant)"/>
+                <text x="607" y="276" text-anchor="middle" font-size="10.5" fill="var(--on-surface-variant)">Test − (specificity 95%)</text>
+                <text x="607" y="290" text-anchor="middle" font-size="12" fill="var(--on-surface)">9,405 — True Negative</text>
+              </svg>
+            </div>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--primary)]">Working it with counts (the easy way)</h3>
+            <p class="text-sm text-[var(--on-surface)]">Imagine 10,000 people. 1% have the disease → <strong class="text-[var(--on-background)]">100 diseased</strong>, 9,900 healthy. Of the 100 diseased, 99% test positive → <strong class="text-[var(--on-background)]">99 true positives</strong>. Of the 9,900 healthy, 5% test positive anyway → <strong class="text-[var(--on-background)]">495 false positives</strong>. Total positive tests = 99 + 495 = <strong class="text-[var(--on-background)]">594</strong>. Out of those 594 positives, only 99 are real:</p>
+            <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ P(\text{disease} \mid +) = \frac{99}{99 + 495} = \frac{99}{594} \approx 0.167 $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)]">Only about <strong class="text-[var(--on-background)]">16.7%</strong> — roughly one in six positive tests is real. The other five out of six are false alarms, purely because the healthy population (9,900 people) is so much bigger than the diseased population (100 people) that even a small 5% false-positive rate produces far more false positives (495) than the disease produces true positives (99).</p>
+            <p class="text-sm text-[var(--on-surface)]">Now the same computation via the formula, to show it matches:</p>
+            <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ P(D \mid +) = \frac{P(+ \mid D)\,P(D)}{P(+)} = \frac{P(+\mid D)P(D)}{P(+\mid D)P(D) + P(+\mid \lnot D)P(\lnot D)} = \frac{0.99 \times 0.01}{0.99\times0.01 + 0.05\times0.99} = \frac{0.0099}{0.0594} \approx 0.167 $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)]">Note the denominator — that's <strong class="text-[var(--on-background)]">"the evidence," P(B)</strong>, expanded out using the law of total probability: it's a weighted sum over every way B could happen (disease-and-positive, plus no-disease-and-positive). This expansion is how you compute the evidence term whenever you don't already have it directly.</p>
+          </div>
+
+          <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--tertiary)] mb-1">The takeaway</h4>
+            <p class="text-sm text-[var(--on-surface)]">When the prior is small (a rare condition), even a fairly accurate test produces a posterior that's still mostly wrong on a positive result — because the sheer size of the "negative" population overwhelms the test's small error rate. This is why doctors re-test, why spam filters combine many weak signals rather than trusting one, and why "the model is 99% accurate" can be a much weaker claim than it sounds if the thing being predicted is rare.</p>
+          </div>
+        </section>
+
+        <!-- WORKED EXAMPLE -->
+        <section id="bayes-worked-example" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Probability</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">A Problem Worked with Bayes' Theorem</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">One more full example, end to end, with a twist: <strong class="text-[var(--on-background)]">three</strong> possible causes instead of two, since real problems (and Naive Bayes with multiple classes) rarely stop at just two.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--primary)]">Setup — three factories, one defective bulb</h3>
+            <p class="text-sm text-[var(--on-surface)]">A warehouse stocks lightbulbs from three factories: Factory A makes 50% of the stock, Factory B makes 30%, Factory C makes 20%. Their defect rates are: A → 2% defective, B → 5% defective, C → 10% defective. You pick a random bulb from the shelf and it's <strong class="text-[var(--on-background)]">defective</strong>. What's the probability it came from Factory C?</p>
+          </div>
+
+          <div class="space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--on-background)]">Step by step</h3>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md space-y-2 text-sm text-[var(--on-surface)]">
+              <p><strong class="text-[var(--on-background)]">Step 1 — Priors:</strong> P(A) = 0.5, P(B) = 0.3, P(C) = 0.2 (the market share of each factory, before we know anything about defects).</p>
+              <p><strong class="text-[var(--on-background)]">Step 2 — Likelihoods:</strong> P(defective|A) = 0.02, P(defective|B) = 0.05, P(defective|C) = 0.10.</p>
+              <p><strong class="text-[var(--on-background)]">Step 3 — Evidence, P(defective), via the law of total probability</strong> — sum the joint probability of "defective and from this factory" across all three factories:</p>
+            </div>
+            <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ P(\text{def}) = P(\text{def}|A)P(A) + P(\text{def}|B)P(B) + P(\text{def}|C)P(C) $$
+              $$ = (0.02)(0.5) + (0.05)(0.3) + (0.10)(0.2) = 0.010 + 0.015 + 0.020 = 0.045 $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Step 4 — Apply Bayes' theorem for the factory we care about (C):</strong></p>
+            <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ P(C \mid \text{def}) = \frac{P(\text{def}\mid C)\,P(C)}{P(\text{def})} = \frac{0.10 \times 0.2}{0.045} = \frac{0.020}{0.045} \approx 0.444 $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)]">So there's a <strong class="text-[var(--on-background)]">44.4%</strong> chance the defective bulb came from Factory C — even though C only supplies 20% of all bulbs — because C's defect rate (10%) is disproportionately high. For completeness, P(A|def) = 0.010/0.045 ≈ 22.2% and P(B|def) = 0.015/0.045 ≈ 33.3%. Notice the three posteriors sum to 1 (0.222 + 0.333 + 0.444 = 1) — we've fully redistributed 100% of belief across the three possible causes, which is exactly what a classifier needs to do.</p>
+          </div>
+
+          <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">Why this example matters for what's next</h4>
+            <p class="text-sm text-[var(--on-surface)]">Notice the structure: compute prior × likelihood for <em>every</em> candidate cause, then normalize by their sum. That's exactly what a Naive Bayes classifier does at prediction time — except "factory" becomes "class label," and "defective" becomes "the features we observed."</p>
+          </div>
+        </section>
+
+        <!-- NAIVE BAYES CLASSIFIER -->
+        <section id="naive-bayes-classifier" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Classification</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Naive Bayes Classifier — Intuition, Math &amp; Simple Code</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Naive Bayes is a supervised classification algorithm that applies Bayes' theorem once per class, and picks whichever class comes out with the highest posterior probability. Instead of "which factory produced this defective bulb," it asks "which class produced this feature vector."</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--error)]">Why "naive"?</h3>
+            <p class="text-sm text-[var(--on-surface)]">A real email has many features at once — the words "free," "winner," "meeting," "attached," etc. To use Bayes' theorem with multiple features, you'd technically need \( P(\text{"free"}, \text{"winner"}, \text{"meeting"}, \ldots \mid \text{spam}) \) — the joint probability of that <em>exact combination</em> of words appearing together, for each class. Estimating that honestly requires seeing enough training examples of every possible word combination, which is impossible — the number of combinations explodes exponentially with the number of features.</p>
+            <p class="text-sm text-[var(--on-surface)]">Naive Bayes cuts through this with one deliberately unrealistic simplification, the <strong class="text-[var(--on-background)]">"naive" conditional independence assumption</strong>: it assumes that, once you know the class, every feature is independent of every other feature. That means the giant joint likelihood factors into a simple product:</p>
+            <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ P(x_1, x_2, \ldots, x_n \mid y) \approx P(x_1\mid y)\cdot P(x_2\mid y)\cdots P(x_n\mid y) = \prod_{i=1}^{n} P(x_i \mid y) $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)]">This is almost always technically false — in a spam email, "free" and "winner" tend to show up together more than chance would predict, so they're not really independent given the class. But the assumption is a useful lie: it makes each \( P(x_i\mid y) \) separately estimable from data (just count how often word \(i\) shows up in spam vs. not-spam), and in practice the classifier still ranks classes correctly far more often than the crude approximation would suggest, especially on high-dimensional data like text.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">The classification rule</h3>
+            <p class="text-sm text-[var(--on-surface)] mb-2">Apply Bayes' theorem per class, then just pick the class with the biggest posterior:</p>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ \hat{y} = \underset{y \,\in\, \{y_1,\ldots,y_k\}}{\arg\max} \; P(y) \prod_{i=1}^{n} P(x_i \mid y) $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)]">Notice the evidence term \( P(x_1,\ldots,x_n) \) — the denominator from Bayes' theorem — has vanished. That's because it's the <em>same</em> number for every class we're comparing (it doesn't depend on \(y\)), so it can't change which class wins the argmax. We only need it if we want an actual calibrated probability out at the end, not just the winning label — in which case we normalize by dividing every class's score by the sum of all classes' scores, exactly like Step 4 of the factory example above.</p>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--secondary)]">Tiny worked example — spam or not spam?</h3>
+            <p class="text-sm text-[var(--on-surface)]">Training data: 8 emails, 4 spam, 4 not-spam. We track just two words: "free" and "meeting."</p>
+            <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Class</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Emails</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Contain "free"</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Contain "meeting"</th></tr></thead>
+                <tbody>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Spam</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">4</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">3 of 4</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">1 of 4</td></tr>
+                  <tr><td class="p-2.5 font-semibold">Not Spam</td><td class="p-2.5">4</td><td class="p-2.5">1 of 4</td><td class="p-2.5">3 of 4</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-sm text-[var(--on-surface)]">Priors: P(spam) = P(not spam) = 4/8 = 0.5. Likelihoods: P(free|spam) = 0.75, P(free|not spam) = 0.25, P(meeting|spam) = 0.25, P(meeting|not spam) = 0.75. New email contains <strong class="text-[var(--on-background)]">"free" but not "meeting."</strong> Score each class (using P(¬meeting|y) = 1 − P(meeting|y)):</p>
+            <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ \text{score(spam)} = P(\text{spam})\cdot P(\text{free}|\text{spam})\cdot P(\lnot\text{meeting}|\text{spam}) = 0.5 \times 0.75 \times 0.75 = 0.281 $$
+              $$ \text{score(not spam)} = 0.5 \times 0.25 \times 0.25 = 0.031 $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)]">Normalize if you want probabilities: 0.281 / (0.281+0.031) ≈ <strong class="text-[var(--on-background)]">90.1% spam</strong>. Since 0.281 &gt; 0.031, the model predicts <strong class="text-[var(--on-background)]">spam</strong> — makes sense, an email with "free" but no "meeting" looks exactly like the spam pattern in the training data.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">sklearn code</h3>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code># MultinomialNB — for word-count style features (e.g. text classification)
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.model_selection import train_test_split
+
+emails = ["free money now", "let's schedule a meeting", "free free free winner",
+          "meeting notes attached", "you won a free prize", "project meeting tomorrow"]
+labels = [1, 0, 1, 0, 1, 0]   # 1 = spam, 0 = not spam
+
+X_train_text, X_test_text, y_train, y_test = train_test_split(
+    emails, labels, test_size=0.33, random_state=1
+)
+
+# convert text into word-count vectors
+vectorizer = CountVectorizer()
+X_train = vectorizer.fit_transform(X_train_text)
+X_test = vectorizer.transform(X_test_text)
+
+model = MultinomialNB()
+model.fit(X_train, y_train)
+
+print(model.predict(X_test))              # predicted class per test email
+print(model.predict_proba(X_test))        # [P(not spam), P(spam)] per email
+
+# GaussianNB — for continuous numeric features (see next section)
+from sklearn.naive_bayes import GaussianNB
+gnb = GaussianNB()
+# gnb.fit(X_train_numeric, y_train)</code></pre>
+            </div>
+          </div>
+        </section>
+
+        <!-- GAUSSIAN NAIVE BAYES -->
+        <section id="gaussian-naive-bayes" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Classification</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Handling Numerical Data (Gaussian Naive Bayes)</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">The spam example counted discrete word occurrences, but plenty of features are continuous — height, temperature, a sensor reading. You can't build a frequency table for "P(height = 172.3564 cm | class)" — with continuous values, essentially every observation is unique, so counting occurrences the way we did for words simply doesn't work.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--primary)]">The fix: assume a shape for the distribution</h3>
+            <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Gaussian Naive Bayes</strong> assumes that, within each class, each continuous feature follows a normal (bell-curve / Gaussian) distribution. So instead of counting, we just fit a mean and variance per feature, per class, from the training data — that's all "training" a GaussianNB model consists of. At prediction time, we plug the new data point into the normal distribution's probability density formula to get a likelihood value:</p>
+            <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ P(x_i \mid y) = \frac{1}{\sqrt{2\pi\sigma_y^2}} \exp\left(-\frac{(x_i - \mu_y)^2}{2\sigma_y^2}\right) $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)]">where \( \mu_y \) and \( \sigma_y^2 \) are the mean and variance of feature \(x_i\) computed <em>only</em> from the training rows belonging to class \(y\). Intuitively: a data point close to a class's mean gets a high likelihood for that class; a point far out in the tail gets a low one. Everything else — multiplying likelihoods across features, multiplying by the prior, taking the argmax — works exactly like before.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Choosing a flavor of Naive Bayes</h3>
+            <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Variant</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Feature type</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Typical use case</th></tr></thead>
+                <tbody>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">GaussianNB</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Continuous, roughly bell-shaped</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Iris measurements, sensor readings, medical vitals</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">MultinomialNB</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Discrete counts</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Word counts / TF for text classification, spam filtering</td></tr>
+                  <tr><td class="p-2.5 font-semibold">BernoulliNB</td><td class="p-2.5">Binary (present/absent)</td><td class="p-2.5">"Does this word appear at all?" style text features, binary indicator features</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-sm text-[var(--on-surface-variant)] mt-2">Rule of thumb: look at your feature type first. Real-valued measurements → GaussianNB. Counts of things → MultinomialNB. Yes/no indicators → BernoulliNB. Mixed feature types (some continuous, some categorical) require either splitting the model manually per feature type or preprocessing everything into one consistent representation — plain sklearn NB variants each assume one feature type throughout.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">sklearn code — GaussianNB</h3>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import accuracy_score, confusion_matrix
+
+X, y = load_iris(return_X_y=True)   # 4 continuous features: sepal/petal length & width
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+model = GaussianNB()
+model.fit(X_train, y_train)               # just computes per-class mean & variance
+
+y_pred = model.predict(X_test)
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print(confusion_matrix(y_test, y_pred))
+
+# inspect what the model learned
+print("Per-class feature means:\n", model.theta_)      # mu_y for every feature, class
+print("Per-class feature variances:\n", model.var_)    # sigma_y^2 for every feature, class</code></pre>
+            </div>
+          </div>
+
+          <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-2">Why Naive Bayes is still worth using despite the naive assumption</h4>
+            <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+              <li>Extremely fast to train (just count / average — no iterative optimization) and fast to predict</li>
+              <li>Works well with high-dimensional data (thousands of features, e.g. text) where more sophisticated models can overfit or become slow</li>
+              <li>Needs relatively little training data to estimate its parameters compared to more complex models</li>
+              <li>A strong, cheap baseline to compare fancier models against before investing in them</li>
+              <li>Naturally handles multi-class problems (more than 2 classes) without any extra machinery</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on Naive Bayes and the probability foundations behind it. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-section-26">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. Events A and B are mutually exclusive, and both have nonzero probability. Which statement must be true?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. A and B must also be independent</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. P(A ∩ B) = P(A)·P(B)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. A and B cannot be independent</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. P(A|B) = P(A)</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Mutually exclusive means P(B|A) = 0. Independence would require P(B|A) = P(B). Since both A and B have nonzero probability, P(B) ≠ 0, so P(B|A) = 0 ≠ P(B) — independence is impossible. Mutually exclusive events with nonzero probability are always dependent, the opposite of options A/B/D.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. A disease has 0.1% prevalence (much rarer than the 1% example in the notes). The test is still 99% sensitive and 95% specific. Compared to the worked example in these notes, what happens to P(disease | positive test)?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. It increases — rarer diseases are easier to detect confidently</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. It decreases even further — a smaller fraction of positives are true positives</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. It stays at exactly 16.7% — the prior doesn't affect the posterior</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It becomes exactly 99%, matching the sensitivity</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Lowering the prior P(disease) shrinks the true-positive pool (numerator) while the healthy population — and hence the false-positive pool — grows even larger relative to it. Per 10,000 people: only 10 diseased (9.9 true positives), 9,990 healthy (≈499.5 false positives). P(disease|+) ≈ 9.9/509.4 ≈ 1.9%, even lower than 16.7%. The prior is central to Bayes' theorem, directly contradicting option C.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. When a Naive Bayes classifier picks the predicted class via argmax, why can the evidence term P(x₁,...,xₙ) — the denominator from Bayes' theorem — be dropped from the computation?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. It's the same value for every class being compared, so it can't change which class has the highest score</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. It is always equal to 1 by definition</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. The naive independence assumption sets it to zero</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It's only needed for regression problems, not classification</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> The evidence P(x₁,...,xₙ) depends only on the observed features, not on which class y we're scoring — so it's a constant multiplier applied equally to every class's score. Dividing every candidate by the same constant never changes which one is largest, so argmax can safely ignore it (it's only needed if you want a calibrated probability, via normalization).
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. You're building a spam classifier using raw word-count vectors (how many times each word appears) as features. Which Naive Bayes variant is the standard choice, and why?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. GaussianNB, because word counts are numeric</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. BernoulliNB, because emails are either spam or not spam</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. GaussianNB, because it's the most accurate variant in general</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. MultinomialNB, because it's built for discrete count features like word frequencies</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> MultinomialNB models discrete counts directly and is the standard for text classification with count/TF vectors. GaussianNB assumes continuous, bell-curve-distributed features — a poor fit for sparse integer counts. BernoulliNB only tracks presence/absence, discarding the actual counts.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. In the three-factory lightbulb example, Factory A supplies 50% of bulbs and has only a 2% defect rate, while Factory C supplies 20% of bulbs with a 10% defect rate. Why did Factory C end up with the highest posterior probability (44.4%) given a defective bulb, despite supplying the fewest bulbs?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. It didn't — Factory A has the highest posterior since it supplies the most bulbs</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Priors are ignored once a defect is observed</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. The posterior weighs prior × likelihood together, and C's much higher likelihood (10% vs 2%) outweighs its smaller prior (20% vs 50%)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It's a calculation error — all three factories should be equally likely</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Posterior ∝ prior × likelihood. A's score is 0.5×0.02=0.010; C's score is 0.2×0.10=0.020 — double A's, because C's defect rate is 5× higher even though its market share is less than half of A's. Bayes' theorem always combines both terms, never just one.
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--primary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="section-27.html" class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">Next: K-Nearest Neighbors</a>
+        </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="../assets/app.js"></script>
+
+</body>
+</html>

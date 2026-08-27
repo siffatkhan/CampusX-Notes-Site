@@ -1,0 +1,395 @@
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-3 py-1 mb-3">Source: 100 Days of Deep Learning</span>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">16. Sequence-to-Sequence &amp; Encoder-Decoder</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">When input and output lengths differ · the Encoder-Decoder architecture · a full worked translation example · teacher forcing · the fixed-context-vector bottleneck</p>
+        </div>
+
+        <p class="text-[var(--on-surface)] leading-relaxed">The last two pages fixed a real problem — plain RNNs forget, LSTM/GRU remember much better. But both of them share a quiet assumption: they read <em>one</em> sequence and either summarize it into a single label, or emit one output per input timestep. Machine translation, summarization, and chatbots break that assumption completely — the output isn't the same length as the input, and might not even be knowable in advance. This page covers the architecture invented specifically to handle that: the <strong class="text-[var(--on-background)]">Encoder-Decoder</strong>, the foundation that Attention (next page) and eventually Transformers were built to improve on.</p>
+
+        <!-- WHAT IS SEQ2SEQ -->
+        <section id="what-is-seq2seq" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Seq2Seq</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">What Makes a Problem "Seq2Seq"</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Recall the five RNN "shapes" from two pages ago. Four of them are comparatively easy: one-to-many, many-to-one, and many-to-many-with-matching-length all have a predictable relationship between input length and output length. The fifth — <strong class="text-[var(--on-background)]">many-to-many with variable length</strong> — is genuinely hard, and it's common enough to deserve its own name: <strong class="text-[var(--on-background)]">Sequence-to-Sequence (Seq2Seq)</strong>.</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">A Seq2Seq problem is any task where <strong class="text-[var(--on-background)]">both the input and the output are sequences, and their lengths don't have to match</strong>. Machine translation is the canonical example: "I love deep learning" (4 English words) might become "J'adore l'apprentissage profond" (a completely different word count in French) — there's no rule that says a 4-word input produces a 4-word output. The same shape shows up in text summarization (many sentences in, a few sentences out), question-answering (a question in, an answer of unpredictable length out), chatbots, and speech-to-text.</p>
+
+          <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-md rounded-r-lg">
+            <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Why a single LSTM can't just do this.</strong> An LSTM handles variable-length <em>input</em> easily — it just loops through the sequence one timestep at a time, whether that's 5 words or 50, updating its hidden/cell state as it goes. But generating a variable-length <em>output</em> is a fundamentally different problem: the model doesn't know the output length in advance, each output word depends on words the model itself has already generated (not just on the input), and a plain LSTM has no built-in way to say "start generating now" or "stop, I'm done." Seq2Seq needs two separate roles — one network to read and compress the input, another to generate the output word by word — which is exactly why the architecture splits into an <strong class="text-[var(--on-background)]">encoder</strong> and a <strong class="text-[var(--on-background)]">decoder</strong>.</p>
+          </div>
+        </section>
+
+        <!-- ENCODER-DECODER ARCHITECTURE -->
+        <section id="encoder-decoder" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Seq2Seq</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">The Encoder-Decoder Architecture</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">The reference paper here is Sutskever, Vinyals &amp; Le's <em>"Sequence to Sequence Learning with Neural Networks"</em> (2014), and the architecture it introduces is built from two separate LSTM (or GRU) networks with clearly divided jobs.</p>
+
+          <div class="grid gap-3">
+            <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-md rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">The Encoder — reads and compresses</h4>
+              <p class="text-sm text-[var(--on-surface)]">Takes the input sequence one word at a time — e.g. "I am a student." Each word is fed into an LSTM cell at its own timestep; the LSTM updates its hidden state \(h\) and cell state \(c\) at every step, carrying forward everything it has understood so far, exactly as covered in the LSTM page. After the <em>last</em> input word is processed, the encoder's final hidden state and cell state together become the <strong class="text-[var(--on-background)]">context vector</strong> — a fixed-size, compressed numerical summary of the entire input sentence's meaning. Think of it like reading a whole sentence, then closing your eyes and holding only the gist of it in your head — that gist is the context vector.</p>
+            </div>
+            <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-md rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">The Decoder — generates, one word at a time</h4>
+              <p class="text-sm text-[var(--on-surface)]">The decoder's own LSTM doesn't start "blank." Its initial hidden state and cell state are set <em>equal to</em> the encoder's final hidden/cell state — <code class="text-[var(--secondary)]">decoder_initial_state = encoder_final_state</code>. The decoder inherits the encoder's compressed understanding as its own starting memory; that's how the context vector actually gets used in this architecture — not fed in fresh at every step, just planted once as the decoder's starting point. A special <code class="text-[var(--secondary)]">&lt;START&gt;</code> token is then fed in as the decoder's first input, telling it "begin generating now." At each timestep the decoder predicts the next word, that predicted (or, during training, the true) word is fed back in as the input for the following timestep, and this continues until the decoder outputs a special <code class="text-[var(--secondary)]">&lt;END&gt;</code> token telling the system to stop.</p>
+            </div>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed"><strong class="text-[var(--on-background)]">Why <code class="text-[var(--secondary)]">&lt;START&gt;</code> and <code class="text-[var(--secondary)]">&lt;END&gt;</code> are necessary at all:</strong> without them the decoder has no way to know when to begin (there's no "real" previous word to feed in at the very first decoder timestep, so <code class="text-[var(--secondary)]">&lt;START&gt;</code> is an artificial first input, essentially a "go" signal) or when to stop (output length is variable and unknown ahead of time, so without <code class="text-[var(--secondary)]">&lt;END&gt;</code> the model would keep generating indefinitely, or you'd need to hardcode a crude maximum length).</p>
+
+          <div class="border-l-4 border-[var(--outline)] bg-[var(--surface-container-high)]/40 p-sm rounded-r-lg text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Illustrative aid</strong> — generated for this site to visualize the architecture.</div>
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md flex justify-center overflow-x-auto">
+            <svg viewBox="0 0 1010 400" class="w-full max-w-[1010px] min-w-[760px]" role="img" aria-label="Encoder-Decoder architecture: three encoder LSTM cells process the words I, am, fine, collapsing into a final hidden and cell state passed as a context vector into four decoder LSTM cells, which generate the words Je, vais, bien and an END token one at a time via softmax">
+              <defs>
+                <marker id="s2sArrowSec" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                  <path d="M0,0 L10,5 L0,10 z" fill="var(--secondary)"/>
+                </marker>
+                <marker id="s2sArrowPri" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                  <path d="M0,0 L10,5 L0,10 z" fill="var(--primary)"/>
+                </marker>
+                <marker id="s2sArrowTer" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                  <path d="M0,0 L10,5 L0,10 z" fill="var(--tertiary)"/>
+                </marker>
+              </defs>
+
+              <!-- ENCODER outer boundary -->
+              <rect x="12" y="95" width="378" height="260" rx="16" fill="var(--secondary-container)" fill-opacity="0.06" stroke="var(--outline-variant)" stroke-width="1.5" stroke-dasharray="6 4"/>
+              <text x="30" y="118" font-size="12" fill="var(--secondary)" class="font-label-caps">ENCODER — reads &amp; compresses</text>
+
+              <!-- DECODER outer boundary -->
+              <rect x="550" y="95" width="445" height="260" rx="16" fill="var(--tertiary-container)" fill-opacity="0.06" stroke="var(--outline-variant)" stroke-width="1.5" stroke-dasharray="6 4"/>
+              <text x="568" y="118" font-size="12" fill="var(--tertiary)" class="font-label-caps">DECODER — generates, one word at a time</text>
+
+              <!-- ENCODER CELLS -->
+              <!-- cell 1 -->
+              <rect x="30" y="150" width="100" height="70" rx="12" fill="var(--secondary-container)" fill-opacity="0.20" stroke="var(--secondary)" stroke-width="2"/>
+              <text x="80" y="180" text-anchor="middle" font-size="12" font-weight="600" fill="var(--on-background)">LSTM</text>
+              <text x="80" y="197" text-anchor="middle" font-size="10" fill="var(--on-surface-variant)">t = 1</text>
+              <line x1="80" y1="300" x2="80" y2="222" stroke="var(--primary)" stroke-width="2.5" marker-end="url(#s2sArrowPri)"/>
+              <text x="80" y="317" text-anchor="middle" font-size="12" fill="var(--primary)">"I"</text>
+
+              <!-- h1,c1 -->
+              <line x1="130" y1="185" x2="148" y2="185" stroke="var(--secondary)" stroke-width="2.5" marker-end="url(#s2sArrowSec)"/>
+              <text x="139" y="175" text-anchor="middle" font-size="9" fill="var(--secondary)">h₁,c₁</text>
+
+              <!-- cell 2 -->
+              <rect x="150" y="150" width="100" height="70" rx="12" fill="var(--secondary-container)" fill-opacity="0.20" stroke="var(--secondary)" stroke-width="2"/>
+              <text x="200" y="180" text-anchor="middle" font-size="12" font-weight="600" fill="var(--on-background)">LSTM</text>
+              <text x="200" y="197" text-anchor="middle" font-size="10" fill="var(--on-surface-variant)">t = 2</text>
+              <line x1="200" y1="300" x2="200" y2="222" stroke="var(--primary)" stroke-width="2.5" marker-end="url(#s2sArrowPri)"/>
+              <text x="200" y="317" text-anchor="middle" font-size="12" fill="var(--primary)">"am"</text>
+
+              <!-- h2,c2 -->
+              <line x1="250" y1="185" x2="268" y2="185" stroke="var(--secondary)" stroke-width="2.5" marker-end="url(#s2sArrowSec)"/>
+              <text x="259" y="175" text-anchor="middle" font-size="9" fill="var(--secondary)">h₂,c₂</text>
+
+              <!-- cell 3 -->
+              <rect x="270" y="150" width="100" height="70" rx="12" fill="var(--secondary-container)" fill-opacity="0.20" stroke="var(--secondary)" stroke-width="2"/>
+              <text x="320" y="180" text-anchor="middle" font-size="12" font-weight="600" fill="var(--on-background)">LSTM</text>
+              <text x="320" y="197" text-anchor="middle" font-size="10" fill="var(--on-surface-variant)">t = 3</text>
+              <line x1="320" y1="300" x2="320" y2="222" stroke="var(--primary)" stroke-width="2.5" marker-end="url(#s2sArrowPri)"/>
+              <text x="320" y="317" text-anchor="middle" font-size="12" fill="var(--primary)">"fine"</text>
+
+              <!-- bridge into context vector -->
+              <line x1="370" y1="185" x2="418" y2="185" stroke="var(--tertiary)" stroke-width="3" marker-end="url(#s2sArrowTer)"/>
+
+              <!-- context vector box -->
+              <rect x="420" y="158" width="120" height="55" rx="12" fill="var(--tertiary-container)" fill-opacity="0.25" stroke="var(--tertiary)" stroke-width="2.5"/>
+              <text x="480" y="180" text-anchor="middle" font-size="11" font-weight="600" fill="var(--on-background)">Context Vector</text>
+              <text x="480" y="196" text-anchor="middle" font-size="10" fill="var(--tertiary)">(h₃, c₃)</text>
+
+              <!-- bridge into decoder -->
+              <line x1="540" y1="185" x2="562" y2="185" stroke="var(--tertiary)" stroke-width="3" marker-end="url(#s2sArrowTer)"/>
+              <text x="551" y="172" text-anchor="middle" font-size="9" fill="var(--tertiary)">init state</text>
+
+              <!-- DECODER CELLS -->
+              <!-- d1 -->
+              <rect x="564" y="150" width="90" height="70" rx="12" fill="var(--tertiary-container)" fill-opacity="0.18" stroke="var(--tertiary)" stroke-width="2"/>
+              <text x="609" y="180" text-anchor="middle" font-size="12" font-weight="600" fill="var(--on-background)">LSTM</text>
+              <text x="609" y="197" text-anchor="middle" font-size="10" fill="var(--on-surface-variant)">d1</text>
+              <line x1="609" y1="300" x2="609" y2="222" stroke="var(--primary)" stroke-width="2.5" marker-end="url(#s2sArrowPri)"/>
+              <text x="609" y="317" text-anchor="middle" font-size="11" fill="var(--primary)">&lt;START&gt;</text>
+              <line x1="609" y1="148" x2="609" y2="95" stroke="var(--secondary)" stroke-width="2.5" marker-end="url(#s2sArrowSec)"/>
+              <rect x="579" y="60" width="60" height="26" rx="6" fill="var(--surface-container-high)" stroke="var(--secondary)" stroke-width="1.5"/>
+              <text x="609" y="77" text-anchor="middle" font-size="10" fill="var(--on-background)">softmax</text>
+              <text x="609" y="48" text-anchor="middle" font-size="12" fill="var(--secondary)">"Je"</text>
+
+              <!-- d1-d2 h,c -->
+              <line x1="654" y1="185" x2="672" y2="185" stroke="var(--tertiary)" stroke-width="2" marker-end="url(#s2sArrowTer)"/>
+
+              <!-- d2 -->
+              <rect x="674" y="150" width="90" height="70" rx="12" fill="var(--tertiary-container)" fill-opacity="0.18" stroke="var(--tertiary)" stroke-width="2"/>
+              <text x="719" y="180" text-anchor="middle" font-size="12" font-weight="600" fill="var(--on-background)">LSTM</text>
+              <text x="719" y="197" text-anchor="middle" font-size="10" fill="var(--on-surface-variant)">d2</text>
+              <line x1="719" y1="300" x2="719" y2="222" stroke="var(--primary)" stroke-width="2.5" marker-end="url(#s2sArrowPri)"/>
+              <text x="719" y="317" text-anchor="middle" font-size="12" fill="var(--primary)">"Je"</text>
+              <line x1="719" y1="148" x2="719" y2="95" stroke="var(--secondary)" stroke-width="2.5" marker-end="url(#s2sArrowSec)"/>
+              <rect x="689" y="60" width="60" height="26" rx="6" fill="var(--surface-container-high)" stroke="var(--secondary)" stroke-width="1.5"/>
+              <text x="719" y="77" text-anchor="middle" font-size="10" fill="var(--on-background)">softmax</text>
+              <text x="719" y="48" text-anchor="middle" font-size="12" fill="var(--secondary)">"vais"</text>
+
+              <!-- d2-d3 h,c -->
+              <line x1="764" y1="185" x2="782" y2="185" stroke="var(--tertiary)" stroke-width="2" marker-end="url(#s2sArrowTer)"/>
+
+              <!-- d3 -->
+              <rect x="784" y="150" width="90" height="70" rx="12" fill="var(--tertiary-container)" fill-opacity="0.18" stroke="var(--tertiary)" stroke-width="2"/>
+              <text x="829" y="180" text-anchor="middle" font-size="12" font-weight="600" fill="var(--on-background)">LSTM</text>
+              <text x="829" y="197" text-anchor="middle" font-size="10" fill="var(--on-surface-variant)">d3</text>
+              <line x1="829" y1="300" x2="829" y2="222" stroke="var(--primary)" stroke-width="2.5" marker-end="url(#s2sArrowPri)"/>
+              <text x="829" y="317" text-anchor="middle" font-size="12" fill="var(--primary)">"vais"</text>
+              <line x1="829" y1="148" x2="829" y2="95" stroke="var(--secondary)" stroke-width="2.5" marker-end="url(#s2sArrowSec)"/>
+              <rect x="799" y="60" width="60" height="26" rx="6" fill="var(--surface-container-high)" stroke="var(--secondary)" stroke-width="1.5"/>
+              <text x="829" y="77" text-anchor="middle" font-size="10" fill="var(--on-background)">softmax</text>
+              <text x="829" y="48" text-anchor="middle" font-size="12" fill="var(--secondary)">"bien"</text>
+
+              <!-- d3-d4 h,c -->
+              <line x1="874" y1="185" x2="892" y2="185" stroke="var(--tertiary)" stroke-width="2" marker-end="url(#s2sArrowTer)"/>
+
+              <!-- d4 -->
+              <rect x="894" y="150" width="90" height="70" rx="12" fill="var(--tertiary-container)" fill-opacity="0.18" stroke="var(--tertiary)" stroke-width="2"/>
+              <text x="939" y="180" text-anchor="middle" font-size="12" font-weight="600" fill="var(--on-background)">LSTM</text>
+              <text x="939" y="197" text-anchor="middle" font-size="10" fill="var(--on-surface-variant)">d4</text>
+              <line x1="939" y1="300" x2="939" y2="222" stroke="var(--primary)" stroke-width="2.5" marker-end="url(#s2sArrowPri)"/>
+              <text x="939" y="317" text-anchor="middle" font-size="12" fill="var(--primary)">"bien"</text>
+              <line x1="939" y1="148" x2="939" y2="95" stroke="var(--secondary)" stroke-width="2.5" marker-end="url(#s2sArrowSec)"/>
+              <rect x="909" y="60" width="60" height="26" rx="6" fill="var(--surface-container-high)" stroke="var(--secondary)" stroke-width="1.5"/>
+              <text x="939" y="77" text-anchor="middle" font-size="10" fill="var(--on-background)">softmax</text>
+              <text x="939" y="48" text-anchor="middle" font-size="12" fill="var(--secondary)">&lt;END&gt;</text>
+
+              <text x="505" y="345" text-anchor="middle" font-size="10" fill="var(--on-surface-variant)">Bottom row = input words in (via embeddings) · Top row = predicted words out (via softmax) · Teacher forcing feeds the TRUE previous word back in during training</text>
+            </svg>
+          </div>
+          <p class="text-sm text-[var(--on-surface)]">Read left to right: the encoder's three LSTM cells each take one input word (arriving from below) plus the hidden/cell state handed off from the previous cell, and after the last word ("fine"), the final \((h_3, c_3)\) becomes the context vector — shown as the bridge box in the middle. That context vector becomes the <em>starting</em> hidden/cell state for the decoder's first cell, which then runs the same left-to-right chain, except now each cell also produces a predicted word (via a softmax layer, shown above each decoder cell) at every step.</p>
+        </section>
+
+        <!-- EMBEDDINGS AND CONTEXT VECTOR -->
+        <section id="embeddings-and-context-vector" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Seq2Seq</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Embeddings In, Context Vector Out</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Neither the encoder nor the decoder actually sees raw words — every word is first converted into a dense numerical <strong class="text-[var(--on-background)]">embedding</strong> vector by an embedding layer that sits directly below the LSTM cells, on both the encoder and decoder side. This is a big improvement over one-hot encoding, where each word is a huge, mostly-zero vector (as large as the entire vocabulary) that carries no notion of meaning — under one-hot encoding, "cat" and "dog" are just as "different" from each other as "cat" and "car." Embeddings instead represent each word as a small, dense vector (e.g. 100 or 300 numbers, no forced zeros), learned so that semantically similar words end up close together in that vector space — for example, "I", "am", and "fine" might become <code class="text-[var(--secondary)]">[0.21, -0.05, 0.88, ...]</code>, <code class="text-[var(--secondary)]">[0.11, 0.42, -0.09, ...]</code>, and <code class="text-[var(--secondary)]">[0.67, -0.31, 0.15, ...]</code> respectively. These embeddings can either be <strong class="text-[var(--on-background)]">pretrained</strong> (Word2Vec, GloVe — trained separately on huge text corpora, useful when your own training data is limited) or <strong class="text-[var(--on-background)]">trained from scratch</strong> as part of the Seq2Seq network end-to-end, tailored to the specific task.</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">It's easy to confuse an embedding with the context vector, since both are "just vectors of numbers" — but they represent fundamentally different things:</p>
+
+          <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead>
+                <tr class="bg-[var(--surface-container-high)]">
+                  <th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs"></th>
+                  <th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Embedding</th>
+                  <th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Context Vector</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">What it represents</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">A single word or token's meaning</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">The meaning of the <em>entire</em> input sequence</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">When it's created</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Before/as input enters the network (a lookup)</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">After the encoder has processed the whole sequence</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Fixed or contextual</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Static per word (in classic embeddings like Word2Vec)</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Built dynamically depending on everything seen so far</td></tr>
+                <tr><td class="p-2.5 font-semibold">Analogy</td><td class="p-2.5">A dictionary definition of one word</td><td class="p-2.5">A one-paragraph summary of an entire book</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">In short: embeddings go <em>in</em>, one per word; the context vector comes <em>out</em>, once, after the encoder finishes reading the whole sentence.</p>
+        </section>
+
+        <!-- WORKED EXAMPLE -->
+        <section id="worked-example" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Seq2Seq</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Worked Example — Training on "I am fine" → "Je vais bien"</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Walking through one full training example end to end makes every piece above concrete. The toy task: translate the English sentence "I am fine" into French, "Je vais bien."</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm text-sm text-[var(--on-surface)]">
+            <strong class="text-[var(--on-background)]">Step 1 — add boundary tokens to the target.</strong> The target sequence is first wrapped in the special tokens: <code class="text-[var(--secondary)]">&lt;START&gt; Je vais bien &lt;END&gt;</code>. This is what the decoder is trained to predict, one token at a time.
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Step 2 — encoder forward pass, word by word</h3>
+            <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Timestep</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Input word</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">What happens</th></tr></thead>
+                <tbody>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">t1</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">"I"</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">embedding("I") → LSTM cell → updates h₁, c₁</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">t2</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">"am"</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">embedding("am") → LSTM cell (using h₁, c₁) → updates h₂, c₂</td></tr>
+                  <tr><td class="p-2.5 font-semibold">t3</td><td class="p-2.5">"fine"</td><td class="p-2.5">embedding("fine") → LSTM cell (using h₂, c₂) → updates h₃, c₃</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-sm text-[var(--on-surface-variant)] mt-2">After t3, \((h_3, c_3)\) <em>is</em> the context vector — the encoder has now "read and understood" the whole sentence.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Step 3 — decoder forward pass, with teacher forcing</h3>
+            <p class="text-sm text-[var(--on-surface)] mb-2">The decoder's LSTM starts with \((h_3, c_3)\) as its own initial state.</p>
+            <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Timestep</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Decoder input</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Softmax predicts</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Actual target</th></tr></thead>
+                <tbody>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">d1</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">&lt;START&gt;</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">"Je" (hopefully)</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">"Je"</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">d2</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">"Je" (true word, not the model's own guess)</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">"vais"</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">"vais"</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">d3</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">"vais" (true word)</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">"bien"</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">"bien"</td></tr>
+                  <tr><td class="p-2.5 font-semibold">d4</td><td class="p-2.5">"bien" (true word)</td><td class="p-2.5">&lt;END&gt;</td><td class="p-2.5">&lt;END&gt;</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm text-sm text-[var(--on-surface)]">
+            <strong class="text-[var(--on-background)]">The softmax output layer, at every decoder timestep:</strong> the LSTM cell's hidden state is passed through a Dense layer whose output size equals the <em>entire vocabulary</em> (e.g. 50,000 nodes for a 50,000-word vocabulary), then a softmax activation converts those raw scores into a probability distribution over every possible word — "here's how likely each word in the vocabulary is to be the correct next word." The highest-probability word is picked as the prediction (this is <strong class="text-[var(--on-background)]">greedy decoding</strong>; more advanced systems use beam search instead). The output layer needs one slot per vocabulary word because the decoder isn't choosing from some small fixed set — it has to be able to produce <em>any</em> word in the target language at any step.
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm text-sm text-[var(--on-surface)]">
+            <strong class="text-[var(--on-background)]">Loss — categorical cross-entropy.</strong> At every decoder timestep the model is doing multi-class classification — picking one word out of the entire vocabulary — so the loss is categorical cross-entropy, not MSE (MSE would treat word indices as if they were continuous numbers, which makes no sense for categorical labels). Since the true label is one-hot, the loss for one timestep simplifies to \( -\log(\text{predicted probability of the correct word}) \): confident-and-correct predictions produce a loss near 0, confident-and-wrong predictions are punished heavily. The total loss for the training example is the sum (or average) across all decoder timesteps, then backpropagation computes the gradient of that loss with respect to every weight (encoder LSTM, decoder LSTM, embeddings, softmax), and an optimizer like Adam uses those gradients to update every weight slightly — repeated across thousands or millions of sentence pairs until the model generalizes well.
+          </div>
+        </section>
+
+        <!-- TEACHER FORCING -->
+        <section id="teacher-forcing" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Seq2Seq</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Teacher Forcing — Training on the Ground Truth, Not the Guess</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Look again at the worked example's decoder table above: at every step, the input fed to the <em>next</em> timestep is the <strong class="text-[var(--on-background)]">true</strong> previous word ("Je," "vais," "bien"), not whatever the decoder actually predicted. This deliberate choice is called <strong class="text-[var(--on-background)]">teacher forcing</strong>, and it exists to solve a real training problem.</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">During training, the "natural" thing to feed into the decoder at each step would be whatever it just predicted — that's exactly what happens later at inference time, when there's no ground truth available to fall back on. But early in training the model is bad at this task. If it predicts garbage at timestep 2 and that garbage gets fed into timestep 3, the error compounds: the model spends the rest of the sequence trying to recover from a bad start instead of actually learning the next-word patterns it's supposed to be learning. Teacher forcing's fix is simple: <strong class="text-[var(--on-background)]">during training, regardless of what the decoder actually predicted, always feed the ground-truth word as the input to the next timestep.</strong></p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm text-sm text-[var(--on-surface)]">
+            <strong class="text-[var(--on-background)]">Concretely:</strong> suppose at d2 the true word is "vais," but the model incorrectly predicts "suis." With teacher forcing, "vais" (the correct word) is still what gets fed into d3 — not the model's wrong guess "suis." Every timestep is trained on a clean signal this way, so learning is faster and more stable, and the loss at each step reflects that step's own prediction quality rather than being polluted by an earlier mistake compounding forward.
+          </div>
+
+          <div class="border-l-4 border-[var(--error)] bg-[var(--error-container)]/10 p-md rounded-r-lg">
+            <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">The trade-off: exposure bias.</strong> Teacher forcing creates a mismatch between training and inference. During training, the decoder always sees correct previous words; at inference, it only ever has its own (possibly wrong) previous predictions to condition on. This means the model can behave noticeably worse at inference than it appeared to during training, especially once an early error occurs and starts compounding — a gap known as <strong class="text-[var(--on-background)]">exposure bias</strong>. Refinements like <em>scheduled sampling</em> (gradually mixing in the model's own predictions during training, rather than using pure ground truth throughout) exist specifically to narrow this gap, though the original Sutskever et al. architecture uses full teacher forcing throughout.</p>
+          </div>
+        </section>
+
+        <!-- PRACTICAL IMPROVEMENTS -->
+        <section id="practical-improvements" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Seq2Seq</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Three Practical Improvements From the Original Paper</h2>
+          </div>
+
+          <div class="grid gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-1">
+              <h3 class="font-h3 text-base text-[var(--secondary)]">Deep (stacked) LSTMs</h3>
+              <p class="text-sm text-[var(--on-surface)]">Instead of one row of LSTM cells, stack several rows on top of each other (the original paper used 4 layers in both encoder and decoder). Each layer's output at a given timestep feeds both forward in time (to the next timestep, same layer) and upward (into the next layer at the same timestep) — similar in spirit to how CNNs build from edges to shapes to objects, lower LSTM layers tend to pick up local, word-level patterns while higher layers build more abstract, sentence-level meaning. More layers means more capacity to capture subtle patterns, at the cost of more computation and a higher risk of overfitting on small datasets. In a stacked encoder-decoder, the encoder-to-decoder handoff happens per layer — a 3-layer stack hands off 3 separate \((h,c)\) pairs, one per layer.</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-1">
+              <h3 class="font-h3 text-base text-[var(--secondary)]">Reversing the encoder input</h3>
+              <p class="text-sm text-[var(--on-surface)]">A surprising trick from the original paper: feed the input sentence in <em>reverse</em> order ("student a am I" instead of "I am a student"). Since an LSTM's hidden state is most strongly influenced by whatever it processed most recently, reversing the input places the first word of the source sentence right next to the start of decoding, shortening the effective distance information has to travel between corresponding words — introducing many short-range dependencies even in an overall long sentence, which made optimization noticeably easier in practice. It's a practical trick rather than a universal law (it helps most when sentence structure roughly aligns front-to-front across the two languages), and attention — up next — makes it largely unnecessary, since attention lets the decoder access any encoder timestep directly rather than depending on recency.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- BOTTLENECK PROBLEM -->
+        <section id="bottleneck-problem" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Seq2Seq</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">The Encoder-Decoder Bottleneck</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">This architecture works well for short sentences. But look again at what actually gets passed from encoder to decoder: <strong class="text-[var(--on-background)]">one</strong> fixed-size vector, \((h_3, c_3)\) — regardless of whether the input sentence had 3 words or 30. Every bit of meaning in the entire input has to be squeezed through that single, fixed-capacity channel.</p>
+
+          <div class="border-l-4 border-[var(--error)] bg-[var(--error-container)]/10 p-md rounded-r-lg">
+            <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Why this is a genuine information bottleneck.</strong> For long sequences, compressing the entire meaning into one fixed-size context vector causes real information loss — early words in a long sentence get diluted or effectively forgotten by the time the encoder finishes reading the rest. The decoder, meanwhile, has no way to "look back" at specific parts of the input once decoding starts; it's stuck reusing that same single static summary at every output timestep, even though different output words logically depend on different parts of the input sentence. A single vector simply cannot scale to represent long, detailed sequences — it's a hard capacity limit baked into the architecture itself, not something more training or a bigger LSTM alone can fix.</p>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">This puts unfair pressure on both halves of the network at once: the <strong class="text-[var(--on-background)]">encoder</strong> has to anticipate and pack in everything the decoder might ever need, all before the decoder has even started generating anything, and the <strong class="text-[var(--on-background)]">decoder</strong> is then stuck reusing that same static summary at every single output step. A fixed-size vector is an information bottleneck — and it's exactly this bottleneck that the next page's topic, <strong class="text-[var(--on-background)]">Attention</strong>, was invented to remove: instead of relying on one final context vector, the decoder gets access to <em>all</em> of the encoder's hidden states, and dynamically decides — freshly, at every single decoding step — which parts of the input actually matter right now.</p>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on Seq2Seq &amp; the Encoder-Decoder. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-dl-16">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. Why can't a single plain LSTM be used directly for a task like machine translation?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. LSTMs can't process variable-length input at all</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. LSTMs don't have hidden states</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. A single LSTM handles variable-length input fine, but has no built-in mechanism to generate an independently-lengthed output sequence, decide when to stop, or condition on its own prior outputs</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. LSTMs cannot be trained with backpropagation</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Variable-length input is the easy part — an LSTM just loops through it. Generating a variable-length output is fundamentally different: the model must decide length, condition on its own generated tokens, and know when to stop — exactly why the encoder/decoder split exists.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. What exactly is passed from the encoder to the decoder in the vanilla (Sutskever et al.) architecture?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Every encoder hidden state, one per input timestep</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Only the encoder's final hidden state and cell state (h, c) — used as the decoder's initial state</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. The raw input words, unprocessed</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. The encoder's embedding layer weights</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> decoder_initial_state = encoder_final_state. Only the final (h, c) — the context vector — is handed off; every earlier encoder hidden state is discarded. That's precisely the design attention later fixes.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. During training with teacher forcing, the decoder predicts "suis" at timestep d2 but the true word is "vais." What is fed into the decoder as input at timestep d3?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. "suis" — whatever the model actually predicted</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. The average of "suis" and "vais"</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. &lt;START&gt;, restarting the sequence</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. "vais" — the ground-truth word, regardless of the model's own (wrong) prediction</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> That's the definition of teacher forcing — always feed the true previous word during training, so errors don't compound across timesteps. The cost is exposure bias, since inference has no ground truth to fall back on.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. Why is categorical cross-entropy the correct loss function for training the decoder, rather than MSE?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Each decoder timestep is a multi-class classification problem over the vocabulary (via softmax); MSE would wrongly treat word indices as continuous numeric values</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. MSE cannot be backpropagated</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Cross-entropy is always faster to compute than MSE</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. The encoder requires cross-entropy to function</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Every decoder timestep picks one word out of the whole vocabulary via softmax — a multi-class classification problem, which categorical cross-entropy is designed for. MSE doesn't make sense over categorical, one-hot targets.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. What is the fundamental limitation of the vanilla (no-attention) Encoder-Decoder architecture that motivates Attention?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. It cannot use LSTM cells</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. It requires labeled data</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Compressing the entire input sequence into one fixed-size context vector is an information bottleneck — long sequences lose detail, and the decoder can't look back at specific parts of the input during generation</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It cannot handle sentences shorter than 5 words</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> One fixed-size vector must represent an entire input sequence regardless of its length — for long sentences this causes real information loss, and the decoder has no way to revisit specific input words. Attention removes exactly this bottleneck by giving the decoder access to every encoder hidden state.
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--secondary)] text-[var(--on-secondary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--secondary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="dl-17.html" class="bg-[var(--secondary)] text-[var(--on-secondary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">Next: Attention Mechanism</a>
+        </div>

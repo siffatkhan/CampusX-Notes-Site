@@ -1,0 +1,169 @@
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-3 py-1 mb-3">Source: CampusX — 100 Days of Machine Learning</span>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">5. Data Gathering</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">CSV/TSV · JSON / SQL · APIs · Web Scraping</p>
+        </div>
+
+        <!-- DAY 15 -->
+        <section id="day-15" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 15</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Data Gathering</h2>
+          </div>
+          <h3 class="font-h3 text-lg text-[var(--on-background)]">1. Working with CSV/TSV</h3>
+          <p class="text-sm text-[var(--on-surface-variant)]">pandas' <code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">read_csv</code> takes many optional arguments to handle real-world messy files. Each option below solves one specific loading problem.</p>
+          <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container)]/50">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead>
+                <tr class="bg-[var(--surface-container-high)]">
+                  <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Method / Argument</th>
+                  <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">What it does</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50"><code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">pd.read_csv("cars.csv")</code></td><td class="p-3 border-b border-[var(--outline-variant)]/50">Load a CSV file</td></tr>
+                <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50"><code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">pd.read_csv(url)</code></td><td class="p-3 border-b border-[var(--outline-variant)]/50">Load from a URL by passing the link directly</td></tr>
+                <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50"><code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">pd.read_csv("cars.tsv", sep="\t")</code></td><td class="p-3 border-b border-[var(--outline-variant)]/50">Load a TSV (tab-separated) file</td></tr>
+                <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50"><code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">names=[...]</code></td><td class="p-3 border-b border-[var(--outline-variant)]/50">Add missing column names</td></tr>
+                <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50"><code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">index_col="car_id"</code></td><td class="p-3 border-b border-[var(--outline-variant)]/50">Set index column</td></tr>
+                <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50"><code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">header=1</code></td><td class="p-3 border-b border-[var(--outline-variant)]/50">Skip header rows</td></tr>
+                <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50"><code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">usecols=[...]</code></td><td class="p-3 border-b border-[var(--outline-variant)]/50">Use specific columns only</td></tr>
+                <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50"><code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">skiprows=[...]</code></td><td class="p-3 border-b border-[var(--outline-variant)]/50">Skip useless rows</td></tr>
+                <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50"><code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">nrows=100</code></td><td class="p-3 border-b border-[var(--outline-variant)]/50">Load limited rows</td></tr>
+                <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50"><code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">encoding="latin1"</code></td><td class="p-3 border-b border-[var(--outline-variant)]/50">Fix encoding errors</td></tr>
+                <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50"><code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">on_bad_lines="skip"</code></td><td class="p-3 border-b border-[var(--outline-variant)]/50">Skip corrupted lines</td></tr>
+                <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50"><code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">dtype={'price': float}</code></td><td class="p-3 border-b border-[var(--outline-variant)]/50">Force datatypes</td></tr>
+                <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50"><code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">parse_dates=["date"]</code></td><td class="p-3 border-b border-[var(--outline-variant)]/50">Parse dates automatically</td></tr>
+                <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50"><code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">converters={"col": func}</code></td><td class="p-3 border-b border-[var(--outline-variant)]/50">Use converters for cleaning values</td></tr>
+                <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50"><code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">na_values=["-", "null"]</code></td><td class="p-3 border-b border-[var(--outline-variant)]/50">Mark custom missing values</td></tr>
+                <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3"><code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">chunksize=1000</code></td><td class="p-3">Handle large files using chunks — process each chunk inside a loop</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- DAY 16 -->
+        <section id="day-16" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 16</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Working with JSON / SQL</h2>
+          </div>
+          <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+            <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+            <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code># Read JSON
+pd.read_json("file.json")
+
+# Read SQL
+pd.read_sql_query("SELECT * FROM table", connection)</code></pre>
+          </div>
+        </section>
+
+        <!-- DAY 17 -->
+        <section id="day-17" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 17</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Fetching Data from APIs</h2>
+          </div>
+          <ul class="text-sm text-[var(--on-surface)] space-y-1.5 list-disc list-inside">
+            <li>APIs are a data pipeline that help two software systems interact.</li>
+            <li>We use the <code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">requests</code> library in Python to make an HTTP request that hits any route/API.</li>
+            <li>RapidAPI is a source for different kinds of data APIs.</li>
+          </ul>
+        </section>
+
+        <!-- DAY 18 -->
+        <section id="day-18" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 18</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Web Scraping</h2>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">Web scraping is the last data-gathering technique in this arc: pulling data directly out of a website's HTML when no CSV, JSON, SQL source, or API is available for it. The source notes for this day are limited to the heading itself — the practical scraping workflow (fetching page HTML and parsing it with a library like BeautifulSoup) is covered as part of the broader Data Gathering skillset alongside CSV/TSV, JSON/SQL, and APIs above.</p>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on Day 15–18. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-section-05">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. A 40GB CSV won't fit in memory, and a few of its rows are malformed (extra commas) causing parser crashes. Which combination of read_csv arguments addresses both problems?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. usecols and index_col</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. names and header</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. chunksize (memory) and on_bad_lines="skip" (malformed rows)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. parse_dates and converters</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> chunksize handles files too large for memory by loading and processing in chunks inside a loop; on_bad_lines="skip" skips corrupted/malformed lines instead of crashing the parser. The other pairs solve unrelated problems (column selection/naming, date parsing/value cleaning).
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. A CSV uses "-" and "NA" as placeholders for missing prices instead of leaving cells blank, so pandas loads them as ordinary strings rather than NaN. Which argument fixes this at load time?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. dtype={'price': float}</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. na_values=["-", "NA"]</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. skiprows=["-", "NA"]</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. encoding="latin1"</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> na_values lets you mark custom strings (like "-" or "null") as missing values so pandas converts them to NaN on load, rather than treating them as literal text. dtype forces a column's type but won't recognize custom missing markers on its own.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. You need to pull live currency exchange rates that update every minute from a third-party service into your Python script. Per Day 17, what's the mechanism, and what Python library executes it?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Hit the provider's API route with an HTTP request, using the requests library</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. pd.read_csv with chunksize</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. pd.read_sql_query only</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. converters argument</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Per Day 17, APIs are a data pipeline connecting two software systems, and Python's requests library is used to make an HTTP request that hits any route/API — exactly the tool for pulling live third-party data like exchange rates.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. Your source data lives in a relational database and you only need the results of a specific filtered query, not the whole table. Which loading method is the right fit?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. pd.read_json("file.json")</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. pd.read_csv with usecols</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. requests.get()</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. pd.read_sql_query("SELECT ... WHERE ...", connection)</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> pd.read_sql_query takes a SQL query string plus a connection object, so a filtered SELECT with a WHERE clause pulls exactly the subset needed directly from the database — unlike read_json (file-based) or read_csv (flat-file based).
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. A dataset you need for a project doesn't exist as a downloadable file and the site publishing it offers no API. Which of the four Day 15–18 techniques is the appropriate last resort, and why?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. JSON/SQL loading, since it works on any structured source</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Web scraping, since it extracts data directly from a site's HTML when no file, database access, or API exists</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. CSV loading with na_values</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. API fetching via requests, since every website exposes an API</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Web scraping exists precisely for the case where no CSV/JSON/SQL export and no API are available — you pull the data straight out of the rendered HTML instead. Option D is wrong because not every site exposes an API, which is exactly why scraping is needed as a fallback.
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--primary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="section-06.html" class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">
+            Next: Exploratory Data Analysis →
+          </a>
+        </div>

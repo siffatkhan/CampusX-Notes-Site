@@ -1,0 +1,233 @@
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-3 py-1 mb-3">Source: CampusX — 100 Days of Machine Learning</span>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">20. Polynomial Regression</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Fitting curves with a linear model · feature transformation · when it breaks down</p>
+        </div>
+
+        <!-- DAY 61 -->
+        <section id="day-61" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 61</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Polynomial Linear Regression</h2>
+          </div>
+
+          <h3 class="font-h3 text-lg text-[var(--primary)]">1. What Problem It Solves</h3>
+          <p class="text-[var(--on-surface)] leading-relaxed">Linear regression fits a straight line. Some data is curved — a straight line fails to follow it. Polynomial regression fixes this by adding powers of the existing features.</p>
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm text-sm text-[var(--on-surface)]">
+            <strong class="text-[var(--on-background)]">Example.</strong> You try to predict price from size. The relationship curves upward. A straight line misses the pattern; a polynomial curve fits it.
+          </div>
+
+          <h3 class="font-h3 text-lg text-[var(--primary)]">2. Why It's Still Called "Linear" Regression</h3>
+          <p class="text-[var(--on-surface)] leading-relaxed">The trick: you create new features like x², x³, etc., but the relationship between the <em>coefficients</em> (the slopes) and y stays linear.</p>
+          <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+            <li>The model stays linear <strong class="text-[var(--on-background)]">in its coefficients</strong> — no coefficient multiplies another coefficient</li>
+            <li>So optimization (least squares / gradient descent) stays exactly as simple as ordinary linear regression</li>
+            <li>Form stays: \( y = \beta_0 + \beta_1 x + \beta_2 x^2 + \beta_3 x^3 + \dots \)</li>
+          </ul>
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+            $$ y = \beta_0 + \beta_1 x + \beta_2 x^2 + \beta_3 x^3 + \cdots $$
+          </div>
+
+          <h3 class="font-h3 text-lg text-[var(--primary)]">3. Underfitting vs Overfitting</h3>
+          <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Regime</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Cause</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Symptom</th></tr></thead>
+              <tbody>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Underfitting</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Low degree, model too simple</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Misses patterns, high bias</td></tr>
+                <tr><td class="p-2.5 font-semibold">Overfitting</td><td class="p-2.5">High degree, model too complex</td><td class="p-2.5">Touches almost every point, learns noise, high variance</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">Goal: find the degree that balances both.</p>
+
+          <h3 class="font-h3 text-lg text-[var(--primary)]">4–5. Feature Transformation (Two Inputs, Degree 2)</h3>
+          <p class="text-[var(--on-surface)] leading-relaxed">Say you have 2 input columns and choose degree = 2. Inputs: \(x_1, x_2\). We create polynomial features up to degree 2.</p>
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">Original features</h4>
+              <p class="text-sm text-[var(--on-surface)]">\(x_1, x_2\)</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">After polynomial expansion (degree 2)</h4>
+              <p class="text-sm text-[var(--on-surface)]">\(1,\ x_1,\ x_2,\ x_1^2,\ x_2^2,\ x_1 x_2\)</p>
+              <p class="text-xs text-[var(--on-surface-variant)] mt-1">Total features = 6</p>
+            </div>
+          </div>
+
+          <h3 class="font-h3 text-lg text-[var(--primary)]">6. Final Model Equation</h3>
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+            $$ y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \beta_3 x_1^2 + \beta_4 x_2^2 + \beta_5 x_1 x_2 $$
+          </div>
+          <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+            <li>\(x_1^2, x_2^2\) → capture curvature</li>
+            <li>\(x_1 x_2\) → captures interaction between features</li>
+          </ul>
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm text-sm text-[var(--on-surface)]">
+            <strong class="text-[var(--on-background)]">Example.</strong> If study hours and sleep both increase, performance might rise differently than if either increased alone — that's interaction.
+          </div>
+
+          <h3 class="font-h3 text-lg text-[var(--primary)]">7. How Many Features Are Created</h3>
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+            $$ \text{Number of features} = \frac{(n+d)!}{n! \, d!} $$
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">Where \(n\) = number of original features, \(d\) = degree. Here \(n=2, d=2 \Rightarrow 6\) features.</p>
+
+          <h3 class="font-h3 text-lg text-[var(--primary)]">8. Small Numeric Example</h3>
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm text-sm text-[var(--on-surface)]">
+            Input: \(x_1 = 2,\ x_2 = 3\)<br>
+            Transformed: \(1,\ 2,\ 3,\ 4\ (2^2),\ 9\ (3^2),\ 6\ (2 \times 3)\)<br>
+            The model now uses these 6 values to predict y.
+          </div>
+
+          <h3 class="font-h3 text-lg text-[var(--primary)]">9. Code Example — scikit-learn</h3>
+          <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+            <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+            <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>import numpy as np
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LinearRegression
+
+# sample data (2 features)
+X = np.array([
+    [1, 2],
+    [2, 3],
+    [3, 4],
+    [4, 5]
+])
+
+y = np.array([5, 9, 15, 23])
+
+# create polynomial features (degree 2)
+poly = PolynomialFeatures(degree=2)
+X_poly = poly.fit_transform(X)
+
+print("Transformed Features:")
+print(X_poly)
+
+# train model
+model = LinearRegression()
+model.fit(X_poly, y)
+
+# prediction
+new = np.array([[5, 6]])
+new_poly = poly.transform(new)
+
+prediction = model.predict(new_poly)
+print("Prediction:", prediction)</code></pre>
+          </div>
+
+          <h3 class="font-h3 text-lg text-[var(--primary)]">10. Key Intuition to Remember</h3>
+          <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+            <li>You are not changing the model</li>
+            <li>You are changing the input space</li>
+            <li>You make the data linearly separable in higher dimensions</li>
+          </ul>
+          <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm text-[var(--on-surface)]">
+            Simple view: original space → curved pattern. New (expanded) space → becomes linear.
+          </div>
+
+          <h3 class="font-h3 text-lg text-[var(--primary)]">11–12. Common Mistakes &amp; When to Use</h3>
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="border-l-4 border-[var(--error)] bg-[var(--error-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--error)] mb-1">Common Mistakes</h4>
+              <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+                <li>Using high degree blindly</li>
+                <li>Not scaling features before polynomial expansion</li>
+                <li>Ignoring interaction term importance</li>
+                <li>Not validating model on unseen data</li>
+              </ul>
+            </div>
+            <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">Use vs Avoid</h4>
+              <p class="text-sm text-[var(--on-surface)] mb-1"><strong class="text-[var(--on-background)]">Use when:</strong> data shows a curve pattern, a simple linear model fails, feature interaction matters.</p>
+              <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Avoid when:</strong> too many features and risk of overfitting is high.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on Day 61. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-section-20">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. Why is polynomial regression still classified as "linear" regression even though it fits curves?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Because the fitted curve looks straight at small scales</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Because the model is linear in its coefficients, not in the input features</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Because it uses gradient descent</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Because sklearn's LinearRegression class is reused</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Reusing sklearn's LinearRegression class (option D) is a consequence, not the reason. The real reason is structural: no coefficient multiplies another coefficient — the equation is linear in β₀, β₁, β₂… even though it's nonlinear in x. That's what keeps optimization as simple as ordinary least squares.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. You have n = 3 original features and choose degree d = 2 for PolynomialFeatures. Using the formula (n+d)!/(n!·d!), how many total features result?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. 6</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. 9</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. 10</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. 12</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> (n+d)!/(n!·d!) = (3+2)!/(3!·2!) = 120/(6·2) = 10. (The n=2, d=2 example in the notes gives 6 — don't just re-apply that number to a different n.)
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. A degree-15 polynomial is fit to 20 noisy data points and achieves near-zero training error but performs terribly on new data. What is happening, in the notes' own vocabulary?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Overfitting — high complexity, learns noise, high variance</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Underfitting — too simple, high bias</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. A feature-scaling bug only</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Interaction terms cancelling out</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> High degree relative to the amount of data is the textbook overfitting setup: the model "touches almost every point," learns noise instead of signal, and has high variance — great training fit, poor generalization.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. In the degree-2, 2-feature expansion \(1, x_1, x_2, x_1^2, x_2^2, x_1x_2\), which single term is specifically responsible for modeling how the two original features jointly affect y (beyond their individual effects)?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. \(x_1^2\)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. \(x_2^2\)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. the constant term, 1</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. \(x_1 x_2\)</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> \(x_1^2\) and \(x_2^2\) capture curvature in each feature individually. \(x_1x_2\) is the interaction term — it captures cases like "study hours and sleep both increasing changes performance differently than either alone."
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. Per the notes' "key intuition," what is actually happening when you apply PolynomialFeatures before fitting a LinearRegression?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. You are replacing the linear model with a nonlinear one</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. You are reducing the number of features to fight the curse of dimensionality</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. You are changing the input space so the data becomes linearly fit-able in the new, higher-dimensional space</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. You are converting the regression problem into classification</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> The notes are explicit: "You are not changing the model. You are changing the input space." The curved pattern in original space becomes fit-able by a linear function once you add the extra polynomial dimensions.
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--primary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="section-21.html" class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">
+            Next: Bias-Variance Tradeoff →
+          </a>
+        </div>

@@ -1,0 +1,155 @@
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-3 py-1 mb-3">Source: CampusX — 100 Days of Machine Learning</span>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">17. Curse of Dimensionality</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Why more features aren't always better · Sparsity · Dimensionality Reduction</p>
+        </div>
+
+        <!-- DAY 46 -->
+        <section id="day-46" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 46</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Curse of Dimensionality</h2>
+          </div>
+
+          <div class="border-l-4 border-[var(--outline)] bg-[var(--surface-container-high)]/40 p-sm rounded-r-lg text-sm text-[var(--on-surface-variant)]">
+            <strong class="text-[var(--on-background)]">Note on Feature Selection:</strong> will be covered in detail later, after algorithms — it is used after model building to check whether adding or removing a feature affects the model.
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed"><strong class="text-[var(--on-background)]">Dimension</strong> means number of features. Adding features improves a model only if they add useful information. After a limit, performance stops improving or decreases. Reason: noise increases, not signal.</p>
+          <p class="text-[var(--on-surface-variant)] text-sm">In image classification, only pixels covering the object matter. Extra background pixels add complexity, not accuracy. More features ≠ more knowledge.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--primary)]">Where the Curse Appears</h3>
+            <p class="text-sm text-[var(--on-surface)]">The curse of dimensionality appears in high-dimensional data: images (many pixels), text data (many words), genomics (many genes).</p>
+            <p class="text-sm text-[var(--on-surface)]">The core problem is <strong class="text-[var(--on-background)]">sparsity among columns</strong>. In high dimensions, most values are zero.</p>
+            <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm text-[var(--on-surface)]">
+              <strong class="text-[var(--on-background)]">Example:</strong> 10,000 word features. Each document uses 100 words. 9,900 features are zero.
+            </div>
+            <p class="text-sm text-[var(--on-surface-variant)]">As a result, data points become far apart, and pattern learning becomes hard.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Problems Caused</h3>
+            <ul class="text-sm text-[var(--on-surface)] list-disc list-inside space-y-1 bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <li>Sparsity increases</li>
+              <li>Distance measures lose meaning</li>
+              <li>Overfitting risk increases</li>
+              <li>Computation cost increases and training time increases</li>
+              <li>Storage increases and performance may drop</li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Solution: Dimensionality Reduction</h3>
+            <p class="text-sm text-[var(--on-surface-variant)] mb-2">Reduce features while keeping important information. Two methods:</p>
+            <div class="grid sm:grid-cols-2 gap-3">
+              <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg">
+                <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">A. Feature Selection</h4>
+                <p class="text-sm text-[var(--on-surface)]">Select important original features. Original features remain unchanged.</p>
+                <ul class="text-sm text-[var(--on-surface)] list-disc list-inside space-y-1 mt-1">
+                  <li><strong class="text-[var(--on-background)]">Forward Selection:</strong> start empty, add useful features</li>
+                  <li><strong class="text-[var(--on-background)]">Backward Elimination:</strong> start full, remove useless features</li>
+                </ul>
+              </div>
+              <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg">
+                <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--tertiary)] mb-1">B. Feature Extraction</h4>
+                <p class="text-sm text-[var(--on-surface)]">Create new reduced features from old ones. Transform data into a lower dimension.</p>
+                <table class="w-full text-left border-collapse text-sm mt-2">
+                  <tbody>
+                    <tr><td class="py-1 font-semibold text-[var(--on-background)]">PCA</td><td class="py-1 text-[var(--on-surface)]">Maximizes variance</td></tr>
+                    <tr><td class="py-1 font-semibold text-[var(--on-background)]">LDA</td><td class="py-1 text-[var(--on-surface)]">Maximizes class separation</td></tr>
+                    <tr><td class="py-1 font-semibold text-[var(--on-background)]">t-SNE</td><td class="py-1 text-[var(--on-surface)]">Used for 2D or 3D visualization</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on Day 46. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-section-17">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. A text classifier uses 10,000 word features, but a typical document only contains 100 distinct words. What core problem does this illustrate?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Multicollinearity between words</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Sparsity — most of the 9,900 unused feature values are zero</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. MNAR missingness</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Class imbalance</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> This is the notes' own worked example of sparsity: "10,000 word features. Each document uses 100 words. 9,900 features are zero." The stated problem in high dimensions is that most values are zero — not missingness, imbalance, or correlation between features.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. You keep adding more features to a model and accuracy improves at first, then plateaus, then starts to decrease. What is the notes' explanation for the decrease?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. The learning rate becomes too high</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. The training data becomes MCAR</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Noise increases, not signal — added features stop adding useful information</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Gradient descent always diverges past 2 features</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Per the notes: "Adding features improves model only if they add useful information. After a limit, performance stops improving or decreases. Reason: noise increases, not signal." The other options are unrelated concepts from other sections.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. You want to reduce dimensionality but a domain expert insists the model must remain fully interpretable in terms of the original named columns (e.g. "salary," "age"). Which family of technique satisfies this constraint?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Feature Selection (e.g. Forward Selection / Backward Elimination) — original features remain unchanged</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Feature Extraction via PCA — it creates new combined features</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. t-SNE — it's meant for visualization anyway</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. LDA — it maximizes class separation, not interpretability</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Feature Selection keeps "important original features... original features remain unchanged," preserving interpretability. Feature Extraction techniques (PCA, LDA, t-SNE) instead create new transformed features that are combinations of the originals, sacrificing direct interpretability.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. Which technique is specifically described as maximizing class separation, rather than maximizing overall variance?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. PCA</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. t-SNE</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Forward Selection</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. LDA</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> The notes list: "PCA: Maximizes variance, LDA: Maximizes class separation, t-SNE: Used for 2D or 3D visualization." LDA is the one tied to class separation.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. In an image classification task, why do extra background pixels typically hurt rather than help accuracy?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Because pixels are always MNAR</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Because only pixels covering the object matter — extra pixels add complexity, not accuracy</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Because pixel values must first be Winsorized</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Because background pixels are categorical, not numerical</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> The notes state directly: "In image classification, only pixels covering object matter. Extra background pixels add complexity, not accuracy. More features ≠ more knowledge." This is the running theme of the curse of dimensionality — irrelevant dimensions add noise, not signal.
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--primary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="section-18.html" class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">
+            Next: PCA →
+          </a>
+        </div>

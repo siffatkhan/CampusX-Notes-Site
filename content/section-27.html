@@ -1,0 +1,279 @@
+        <div>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">27. K-Nearest Neighbors (KNN)</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">"Judged by the company you keep" · distance metrics · choosing K · the curse of dimensionality strikes again</p>
+        </div>
+
+        <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm text-sm text-[var(--on-surface-variant)]">
+          <strong class="text-[var(--on-background)]">Extended notes</strong> — this topic isn't covered in the CampusX playlist notes this site is based on. Written from scratch to continue the curriculum, in the same style as the rest of the site.
+        </div>
+
+        <p class="text-[var(--on-surface)] leading-relaxed">Every model so far — Linear/Logistic Regression, Ridge/Lasso — works by <strong class="text-[var(--on-background)]">learning parameters</strong> during training: a fixed set of weights that summarize the whole dataset, after which the training data itself can be thrown away. KNN is a completely different philosophy: it doesn't learn anything at training time. It just remembers the data, and does all its "thinking" at prediction time by looking at what's nearby.</p>
+
+        <!-- KNN OVERVIEW -->
+        <section id="knn-overview" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Classification & Regression</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">What is KNN? Full Overview</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">The whole algorithm is one sentence: to predict a new point, find the K training points closest to it, and let them vote (or average). That's it — no cost function, no gradient descent, no coefficients to learn.</p>
+
+          <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">Analogy — you're judged by the company you keep</h4>
+            <p class="text-sm text-[var(--on-surface)]">Imagine you move to a new neighborhood and someone asks "is this person trustworthy?" One reasonable heuristic: look at their five closest friends. If four of the five are known to be trustworthy, guess that this new person probably is too. You're not analyzing the person directly — you're borrowing the label of whoever is most similar to (closest to) them. That's exactly what KNN does with data points instead of people, and "closeness" measured by a distance formula instead of friendship.</p>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Because it stores the entire training set and defers all computation to prediction time, KNN is called a <strong class="text-[var(--on-background)]">lazy learner</strong> (as opposed to an <strong class="text-[var(--on-background)]">eager learner</strong> like logistic regression, which does all its work upfront during <code class="text-[var(--primary)]">.fit()</code> and predicts in constant time afterward). It's also called <strong class="text-[var(--on-background)]">instance-based learning</strong> — the "model" isn't a formula, it's literally just the stored training instances.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm text-sm text-[var(--on-surface)]">
+            <strong class="text-[var(--on-background)]">Task type — both.</strong> KNN is one of the few algorithms on this site that natively does <strong class="text-[var(--on-background)]">Classification</strong> (predict a category) <em>and</em> <strong class="text-[var(--on-background)]">Regression</strong> (predict a number) with the exact same neighbor-finding step — only the last step (vote vs. average) differs.
+          </div>
+        </section>
+
+        <!-- HOW IT WORKS -->
+        <section id="how-knn-works" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Classification & Regression</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">How It Works</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">For a new point \(x\): compute the distance from \(x\) to every point in the training set, sort by distance, keep the K closest, then combine their labels.</p>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Distance metrics</h3>
+            <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Metric</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Formula</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Intuition</th></tr></thead>
+                <tbody>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Euclidean (L2)</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">\( \sqrt{\sum_i (x_i-y_i)^2} \)</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Straight-line ("as the crow flies") distance — the default, most common choice</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Manhattan (L1)</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">\( \sum_i |x_i-y_i| \)</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">"City block" distance — sum of moves along each axis, like walking a rectangular street grid instead of cutting diagonally</td></tr>
+                  <tr><td class="p-2.5 font-semibold">Minkowski</td><td class="p-2.5">\( \left(\sum_i |x_i-y_i|^p\right)^{1/p} \)</td><td class="p-2.5">The general form — p=2 gives Euclidean, p=1 gives Manhattan; sklearn's default metric, tunable via its <code class="text-[var(--primary)]">p</code> parameter</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Combining the K neighbors' labels</h3>
+            <div class="grid sm:grid-cols-2 gap-3">
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">Classification → majority vote.</strong> Look at the K neighbors' class labels, predict whichever class appears most often. (Ties are typically broken by falling back to the single nearest neighbor, or by using an odd K to avoid ties in binary problems.)
+              </div>
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">Regression → averaging.</strong> Take the mean (sometimes distance-weighted) of the K neighbors' target values. If your 5 nearest houses sold for $300k, $310k, $295k, $320k, $305k, predict roughly $306k.
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Code — KNN for both tasks</h3>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import make_pipeline
+
+# --- Classification ---
+clf = make_pipeline(
+    StandardScaler(),                      # essential — see "when to avoid" below
+    KNeighborsClassifier(
+        n_neighbors=5,
+        metric='minkowski', p=2,           # p=2 -> Euclidean distance
+        weights='distance'                 # closer neighbors count more than farther ones
+    )
+)
+clf.fit(X_train, y_train)
+y_pred = clf.predict(X_test)
+
+# --- Regression --- (identical shape, different output type)
+reg = make_pipeline(
+    StandardScaler(),
+    KNeighborsRegressor(n_neighbors=5, weights='distance')
+)
+reg.fit(X_train, y_train_continuous)
+y_pred_continuous = reg.predict(X_test)</code></pre>
+            </div>
+          </div>
+
+          <div class="border-l-4 border-[var(--outline)] bg-[var(--surface-container-high)]/40 p-sm rounded-r-lg text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Note.</strong> <code class="text-[var(--primary)]">weights='distance'</code> gives closer neighbors more say than farther ones (typically weighted by 1/distance) instead of every one of the K neighbors getting an equal vote (<code class="text-[var(--primary)]">weights='uniform'</code>, the default) — often a small but free accuracy improvement.</div>
+        </section>
+
+        <!-- EFFECT OF K -->
+        <section id="effect-of-k" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Classification & Regression</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">The Effect of K — Bias-Variance in Action</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">K is KNN's single most important hyperparameter, and it maps directly onto Section 21's Bias-Variance Tradeoff — arguably more transparently than any other model on this site.</p>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="border-l-4 border-[var(--error)] bg-[var(--error-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--error)] mb-1">Small K (e.g. K=1)</h4>
+              <p class="text-sm text-[var(--on-surface)]">The prediction is decided by a single nearest neighbor. The decision boundary becomes extremely jagged, wrapping tightly around individual points — including mislabeled or noisy ones. This is <strong class="text-[var(--on-background)]">overfitting</strong>: low bias (it can represent very complex boundaries) but <strong class="text-[var(--on-background)]">high variance</strong> — a different training sample (or one flipped label) can swing predictions dramatically.</p>
+            </div>
+            <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">Large K (e.g. K=N)</h4>
+              <p class="text-sm text-[var(--on-surface)]">With K equal to the whole training set, every prediction is just "the overall majority class" (or the global mean, for regression) — completely ignoring where the query point actually sits. This is <strong class="text-[var(--on-background)]">underfitting</strong>: the boundary becomes smooth to the point of uselessness — <strong class="text-[var(--on-background)]">high bias</strong>, low variance.</p>
+            </div>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">The right K sits in between, and — just like polynomial degree in Section 20 or \(\lambda\) in Section 22 — is found empirically: sweep a range of K values, measure validation error (or run cross-validation) for each, and pick the K at the bottom of the U-shaped error curve.</p>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Code — sweeping K with cross-validation</h3>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from sklearn.model_selection import cross_val_score
+import numpy as np
+
+k_values = range(1, 31)
+mean_scores = []
+
+for k in k_values:
+    model = make_pipeline(StandardScaler(), KNeighborsClassifier(n_neighbors=k))
+    scores = cross_val_score(model, X_train, y_train, cv=5, scoring='accuracy')
+    mean_scores.append(scores.mean())
+
+best_k = k_values[np.argmax(mean_scores)]
+print(f"best K = {best_k}, CV accuracy = {max(mean_scores):.3f}")
+# plotting mean_scores against k_values shows the classic bias-variance "U" —
+# low accuracy at very small k (noisy), rising, then falling again at large k (oversmoothed)</code></pre>
+            </div>
+          </div>
+        </section>
+
+        <!-- CURSE OF DIMENSIONALITY -->
+        <section id="knn-curse-of-dimensionality" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Concept</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Why the Curse of Dimensionality Hits KNN Especially Hard</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Section 17 introduced the curse of dimensionality: as the number of features grows, the volume of the feature space explodes, and data points become sparse — everything ends up far from everything else. No algorithm on this site depends more directly on the idea of "distance = meaningful similarity" than KNN, which makes it the textbook victim of this effect.</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">In high dimensions, a striking thing happens to distances: the ratio between the distance to the <em>nearest</em> point and the distance to the <em>farthest</em> point tends toward 1. In plain English — everyone starts looking roughly equally far away. If your "5 nearest neighbors" aren't meaningfully closer to the query point than the other 995 points in a 1,000-point dataset, then "nearest" has stopped carrying useful information, and KNN's core assumption (nearby points are similar) breaks down.</p>
+
+          <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm text-[var(--on-surface)]">
+            <strong class="text-[var(--on-background)]">Practical takeaway.</strong> With very high-dimensional data (hundreds of features), consider dimensionality reduction (Section 18's PCA) before applying KNN, or favor an algorithm that doesn't rely on raw distance at all.
+          </div>
+        </section>
+
+        <!-- WHEN TO USE -->
+        <section id="knn-when-to-use" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Practical</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">When to Use KNN — and When to Avoid It</h2>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">Good fit when...</h4>
+              <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+                <li>The dataset is small to medium sized</li>
+                <li>The number of features is modest (curse of dimensionality kept at bay)</li>
+                <li>You want a fast-to-build baseline with almost no tuning</li>
+                <li>The true decision boundary is irregular/non-linear and you'd rather not hand-engineer polynomial features</li>
+              </ul>
+            </div>
+            <div class="border-l-4 border-[var(--error)] bg-[var(--error-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--error)] mb-1">Avoid / be careful when...</h4>
+              <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+                <li><strong class="text-[var(--on-background)]">Large datasets</strong> — prediction requires scanning (in the naive case) every training point, making inference slow at large N; there is no "trained model," only stored data</li>
+                <li><strong class="text-[var(--on-background)]">Many features</strong> — curse of dimensionality erodes the meaning of "nearest"</li>
+                <li><strong class="text-[var(--on-background)]">Unscaled features</strong> — KNN is purely distance-based, so a feature ranging 0–100,000 (like income) will completely dominate a feature ranging 0–1 (like a normalized score) unless you scale first; <strong class="text-[var(--on-background)]">feature scaling isn't optional here, it's required</strong></li>
+                <li>You need to explain <em>why</em> a prediction was made in terms of learned rules or coefficients — KNN has none, only "these were the closest points"</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm text-sm text-[var(--on-surface)]">
+            <strong class="text-[var(--on-background)]">Rule of thumb:</strong> KNN is cheap to train (there is no training) but expensive to predict — the exact opposite trade-off of most parametric models like logistic regression, which are expensive to train but essentially free to predict afterward.
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on KNN. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-section-27">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. Why is KNN called a "lazy learner"?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. It has low accuracy compared to other models</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. It does no real computation during training — it just stores the data and defers all the work to prediction time</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. It only works on small datasets</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It requires no hyperparameters</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> "Lazy" refers to the training/prediction split: eager learners (logistic regression, etc.) do all their work at fit-time and predict instantly; KNN's fit() just stores data, deferring (being "lazy" about) all real computation until you actually ask for a prediction.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. A KNN classifier with K=1 gets 100% training accuracy but poor test accuracy. In bias-variance terms, what's happening?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. High bias, low variance — underfitting</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Low bias, low variance — a well-fit model</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Low bias, high variance — overfitting; K=1 memorizes every training point including noise</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. This behavior is unrelated to bias-variance</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> K=1 always predicts using a single nearest neighbor, which means training accuracy is always 100% (every training point is its own nearest neighbor) — a classic overfitting signature. This is a low-bias, high-variance model, exactly Section 21's overfitting corner.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. Why must features typically be scaled (e.g. with StandardScaler) before fitting KNN?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. KNN's distance calculations would otherwise be dominated by whichever feature happens to have the largest numeric range</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. KNN cannot process negative numbers</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Scaling is only needed for regression, not classification, versions of KNN</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It's not actually necessary, it's just a convention</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Euclidean/Manhattan distance is computed directly from raw feature values. A feature measured in the tens of thousands (income) will swamp a feature measured on a 0-1 scale in the distance formula, effectively making the model ignore the smaller-scale feature entirely — regardless of its true predictive value.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. In a 500-dimensional feature space, you notice that the distance from a query point to its "nearest" neighbor is almost the same as the distance to its "farthest" neighbor. What does this signal?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. The data is perfectly separable</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. K should be set to 1</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. The Manhattan distance should be used instead of Euclidean</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. The curse of dimensionality — in high dimensions, all points tend to become roughly equidistant, so "nearest neighbor" stops carrying meaningful information</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> This near-nearest/farthest ratio collapsing toward 1 is the textbook symptom of the curse of dimensionality — a direct threat to KNN, whose entire premise is that "close" points are meaningfully more similar than "far" points.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. Compared to logistic regression, what is KNN's training-vs-prediction time trade-off?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Both slow to train, both slow to predict</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. KNN is nearly free to "train" (just stores data) but relatively slow to predict; logistic regression is the opposite — slower upfront training, near-instant prediction afterward</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. KNN is slow to train and fast to predict</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. There is no meaningful difference between the two</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> KNN defers all work to prediction time (must scan/compare against stored training points), while logistic regression does all its work during fit() via iterative optimization and then predicts with one cheap dot product — an inverted cost profile.
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--primary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="section-28.html" class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">Next: Support Vector Machines</a>
+        </div>

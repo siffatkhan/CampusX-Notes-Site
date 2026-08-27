@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>39. Handling Imbalanced Data — Sifat Notes</title>
+
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..800&family=Inter:ital,opsz,wght@0,14..32,400..700;1,14..32,400..700&family=JetBrains+Mono:wght@400..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script src="../assets/tailwind-config.js"></script>
+<link rel="stylesheet" href="../assets/theme.css">
+</head>
+<body class="antialiased min-h-screen font-body-md">
+
+<header class="bg-[var(--surface)] border-b border-[var(--outline-variant)] sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-4 md:px-lg py-2.5 md:py-sm max-w-[1200px] mx-auto">
+<a href="../index.html" class="flex items-center gap-2.5 md:gap-3 group min-w-0" title="Back to home">
+<div class="w-9 h-9 shrink-0 rounded-md bg-[var(--primary)] text-[var(--on-primary)] flex items-center justify-center font-h3 font-bold text-sm group-hover:opacity-85 transition-opacity">SN</div>
+<div class="min-w-0">
+<div class="font-h3 text-base md:text-lg font-semibold text-[var(--on-background)] leading-none truncate">Sifat Notes</div>
+<div class="hidden sm:block text-[11px] text-[var(--on-surface-variant)] mt-0.5 truncate">from CampusX's playlists</div>
+</div>
+</a>
+<nav class="hidden md:flex items-center gap-6 text-sm shrink-0">
+<a class="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors" href="../index.html">Home</a>
+<a class="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors" href="../index.html#courses">Courses</a>
+</nav>
+<div class="flex items-center gap-2 md:gap-3 shrink-0">
+<button id="mobileMenuBtn" class="md:hidden border border-[var(--outline-variant)] rounded-md p-1.5 text-[var(--on-background)] flex items-center justify-center" onclick="toggleSidebar()" aria-label="Toggle navigation">
+<span class="material-symbols-outlined text-[20px]">menu</span>
+</button>
+<button class="flex items-center gap-1.5 bg-[var(--surface-container)] border border-[var(--outline-variant)] text-[var(--on-background)] px-2.5 md:px-3 py-1.5 rounded-full text-xs font-label-caps hover:border-[var(--primary)] transition-colors" onclick="toggleTheme()" data-theme-btn>
+<span class="material-symbols-outlined text-[16px]" data-theme-icon>light_mode</span>
+<span data-theme-label class="hidden sm:inline">Light</span>
+</button>
+</div>
+</div>
+</header>
+
+
+<div class="flex flex-1">
+<div id="sidebarBackdrop" class="hidden fixed inset-0 bg-black/50 z-50 md:hidden" onclick="toggleSidebar()"></div>
+<aside id="sidebarSlot" class="flex flex-col bg-[var(--surface-container-low)] border-r border-[var(--outline-variant)] fixed left-0 top-[65px] h-[calc(100vh-65px)] w-[280px] py-md overflow-y-auto">
+<div class="px-lg mb-md">
+<input id="searchBox" placeholder="Search topics…" class="w-full bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-md px-3 py-2 text-sm text-[var(--on-background)] placeholder:text-[var(--on-surface-variant)] focus:outline-none focus:border-[var(--primary)]">
+</div>
+
+<nav class="toc flex-1 px-2 space-y-1 text-sm" id="tocNav">
+
+<div class="px-3 pt-3 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Foundations</div>
+
+<details open>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--primary)] font-semibold bg-[var(--surface-container-high)]/50">1. Introduction to ML <span class="chev text-[10px]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-01.html#day-1" class="flex px-3 py-1.5 rounded-md text-[var(--primary)] font-semibold bg-[var(--surface-container-high)]/40">Day 1: Definition</a>
+<a href="section-01.html#day-2" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 2: AI vs ML vs Deep Learning</a>
+<a href="section-01.html#day-3" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 3: Types of Machine Learning</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">2. Learning Styles <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-02.html#day-4" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 4: Batch Learning vs Online Learning (Machine Learning Training Styles)</a>
+<a href="section-02.html#day-5" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 5: Batch Learning vs Online Learning</a>
+<a href="section-02.html#day-6" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 6: Instance-Based Learning vs Model-Based Learning</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">3. ML Landscape <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-03.html#day-7" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 7: Challenges in Machine Learning (ML)</a>
+<a href="section-03.html#day-8" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 8: Applications of Machine Learning</a>
+<a href="section-03.html#day-9" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 9: ML Development Life Cycle (ML DLC)</a>
+<a href="section-03.html#day-10" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 10: Data-Related Job Roles</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">4. Tensors &amp; Setup <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-04.html#day-11" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 11: Tensors</a>
+<a href="section-04.html#day-12" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 12: Virtual Environment</a>
+<a href="section-04.html#day-14" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 14: Framing the Problem</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Data Handling</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">5. Data Gathering <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-05.html#day-15" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 15: Data Gathering</a>
+<a href="section-05.html#day-16" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 16: Working with JSON / SQL</a>
+<a href="section-05.html#day-17" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 17: Fetching Data from APIs</a>
+<a href="section-05.html#day-18" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 18: Web Scraping</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">6. Exploratory Data Analysis <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-06.html#day-19" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 19: Understanding Gathered Data — Asking Basic Questions</a>
+<a href="section-06.html#day-20" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 20: Understanding Gathered Data — EDA (Univariate Analysis)</a>
+<a href="section-06.html#day-21" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 21: Understanding Gathered Data — EDA (Bivariate Analysis)</a>
+<a href="section-06.html#day-22" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 22: Pandas Profiling Tool</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">7. Feature Engineering <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-07.html#day-23" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 23: Feature Engineering (IMP)</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">8. Feature Scaling <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-08.html#day-24" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 24: Feature Scaling — Standardization</a>
+<a href="section-08.html#day-25" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 25: Feature Scaling — Normalization</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">9. Encoding Categorical Vars <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-09.html#day-26" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 26: Encoding Categorical Variables — Ordinal / Label Encoding</a>
+<a href="section-09.html#day-27" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 27: Encoding Categorical Variables — One Hot Encoding</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">10. Column Transformer &amp; Pipelines <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-10.html#day-28" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 28: Column Transformer</a>
+<a href="section-10.html#day-29" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 29: Pipeline Transformer</a>
+<a href="section-10.html#day-30" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 30: Function Transformer</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">11. Power Transformer <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-11.html#day-31" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 31: Power Transformer</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">12. Binning &amp; Binarization <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-12.html#day-32" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 32: Binning and Binarization</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">13. Mixed / Date-Time Data <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-13.html#day-33" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 33: Handling Mixed Data</a>
+<a href="section-13.html#day-34" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 34: Handling Date and Time Variables</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">14. Missing Values <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-14.html#day-35" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 35: Handling Missing Value — Removing Values</a>
+<a href="section-14.html#day-36" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 36: Handling Numerical Missing Value (Imputing)</a>
+<a href="section-14.html#day-37" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 37: Handling Categorical Missing Value</a>
+<a href="section-14.html#day-38" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 38: Handling Missing Value — Random Sample / Missing Indicator</a>
+<a href="section-14.html#day-39" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 39: Handling Missing Value (Multivariate) — KNN Imputer</a>
+<a href="section-14.html#day-40" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 40: Handling Missing Value (Multivariate) — Iterative Imputer (MICE)</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">15. Outliers <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-15.html#day-41" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 41: Handling Outliers</a>
+<a href="section-15.html#day-42" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 42: Handling Outliers — Z-Score Method</a>
+<a href="section-15.html#day-43" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 43: Handling Outliers — IQR Method</a>
+<a href="section-15.html#day-44" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 44: Handling Outliers — Winsorization</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">16. Feature Construction <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-16.html#day-45" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 45: Feature Construction | Feature Splitting</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">17. Curse of Dimensionality <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-17.html#day-46" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 46: Curse of Dimensionality</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">18. PCA <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-18.html#day-47" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 47: Principal Component Analysis (PCA) — Geometric Intuition</a>
+<a href="section-18.html#day-48" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 48: Principal Component Analysis (PCA) — Problem Formulation &amp; Code</a>
+<a href="section-18.html#day-49" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 49: Principal Component Analysis (PCA) — MNIST Example</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Algorithms</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">19. Linear Regression <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-19.html#day-50" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 50: Simple Linear Regression</a>
+<a href="section-19.html#day-51" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 51: Simple Linear Regression (Mathematical Intuition)</a>
+<a href="section-19.html#day-52" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 52: Regression Metrics</a>
+<a href="section-19.html#day-53" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 53: Multiple Linear Regression (Geometric Intuition)</a>
+<a href="section-19.html#day-54" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 54: Multiple Linear Regression (Mathematical Formulation)</a>
+<a href="section-19.html#day-55" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 55: Multiple Linear Regression (Code)</a>
+<a href="section-19.html#day-56" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 56: Assumptions of Linear Regression</a>
+<a href="section-19.html#day-57" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 57: Gradient Descent from Scratch</a>
+<a href="section-19.html#day-58" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 58: Batch Gradient Descent</a>
+<a href="section-19.html#day-59" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 59: Stochastic Gradient Descent</a>
+<a href="section-19.html#day-60" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 60: Mini Batch Gradient Descent</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">20. Polynomial Regression <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-20.html#day-61" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 61: Polynomial Linear Regression</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">21. Bias-Variance Tradeoff <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-21.html#day-62" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 62: Bias Variance Trade Off</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">22. Regularization <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-22.html#ridge-geometric" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Ridge Regression — Geometric Intuition &amp; Code</a>
+<a href="section-22.html#ridge-gradient-descent" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Ridge Regression — Gradient Descent</a>
+<a href="section-22.html#lasso-cost" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Lasso Regression</a>
+<a href="section-22.html#lasso-sparsity" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why Lasso Creates Sparsity</a>
+<a href="section-22.html#elastic-net" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Elastic Net Regression</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">23. Logistic Regression <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-23.html#day-70" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 70: Logistic Regression (Perceptron Trick)</a>
+<a href="section-23.html#day-71" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 71: Logistic Regression (Perceptron Trick Code)</a>
+<a href="section-23.html#day-72" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 72: Logistic Regression (Sigmoid Function)</a>
+<a href="section-23.html#logistic-gradient-descent" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Gradient Descent for Logistic Regression</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">24. Classification Metrics <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-24.html#confusion-matrix" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Accuracy, Confusion Matrix &amp; Type I/II Errors</a>
+<a href="section-24.html#precision-recall-f1" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Precision, Recall &amp; F1 Score</a>
+<a href="section-24.html#roc-auc" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">ROC Curve &amp; AUC</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">25. Logistic Regression — Advanced <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-25.html#softmax-regression" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Softmax Regression (Multinomial)</a>
+<a href="section-25.html#polynomial-logistic-regression" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Polynomial Features (Non-Linear Boundaries)</a>
+<a href="section-25.html#logistic-regression-hyperparameters" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Hyperparameters</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Classification Algorithms</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">26. Naive Bayes Classifier <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-26.html#conditional-probability" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Conditional Probability</a>
+<a href="section-26.html#independent-events" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Independent Events</a>
+<a href="section-26.html#mutually-exclusive-events" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Mutually Exclusive Events</a>
+<a href="section-26.html#bayes-theorem" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Bayes' Theorem</a>
+<a href="section-26.html#bayes-worked-example" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">A Problem Worked with Bayes' Theorem</a>
+<a href="section-26.html#naive-bayes-classifier" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Naive Bayes — Intuition, Math &amp; Code</a>
+<a href="section-26.html#gaussian-naive-bayes" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Handling Numerical Data (Gaussian NB)</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">27. K-Nearest Neighbors (KNN) <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-27.html#knn-overview" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">What is KNN — Full Overview</a>
+<a href="section-27.html#how-knn-works" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">How It Works</a>
+<a href="section-27.html#effect-of-k" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Effect of K</a>
+<a href="section-27.html#knn-curse-of-dimensionality" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Curse of Dimensionality &amp; KNN</a>
+<a href="section-27.html#knn-when-to-use" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">When to Use vs Avoid</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">28. Support Vector Machines (SVM) <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-28.html#svm-geometric-intuition" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Geometric Intuition</a>
+<a href="section-28.html#svm-math" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Math</a>
+<a href="section-28.html#hard-soft-margin" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Hard Margin vs Soft Margin</a>
+<a href="section-28.html#kernel-trick" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Kernel Trick — Intuition &amp; Code</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">29. Decision Trees <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-29.html#tree-geometric-intuition" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Geometric Intuition</a>
+<a href="section-29.html#entropy-gini" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Entropy, Gini Impurity &amp; Information Gain</a>
+<a href="section-29.html#tree-hyperparameters" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Hyperparameters &amp; Overfitting/Underfitting</a>
+<a href="section-29.html#regression-trees" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Regression Trees</a>
+<a href="section-29.html#dtreeviz-visualization" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Visualization with dtreeviz</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Ensemble Learning</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">30. Ensemble Learning: Voting <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-30.html#ensemble-intro" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Introduction to Ensemble Learning</a>
+<a href="section-30.html#voting-ensemble" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Hard &amp; Soft Voting</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">31. Bagging <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-31.html#bagging-intro" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Introduction</a>
+<a href="section-31.html#bagging-classifiers" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Bagging Classifiers</a>
+<a href="section-31.html#bagging-regressors" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Bagging Regressors</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">32. Random Forest <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-32.html#rf-intro" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Intro &amp; Intuition</a>
+<a href="section-32.html#rf-bias-variance" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Bias-Variance Tradeoff in RF</a>
+<a href="section-32.html#bagging-vs-rf" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Bagging vs Random Forest</a>
+<a href="section-32.html#rf-hyperparameters" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Hyperparameters</a>
+<a href="section-32.html#rf-hyperparameter-tuning" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Tuning — GridSearchCV &amp; RandomizedSearchCV</a>
+<a href="section-32.html#oob-score" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">OOB Score</a>
+<a href="section-32.html#rf-feature-importance" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Feature Importance</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">33. AdaBoost <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-33.html#adaboost-intuition" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Geometric Intuition</a>
+<a href="section-33.html#adaboost-steps" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Step-by-Step Explanation</a>
+<a href="section-33.html#adaboost-code" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Code</a>
+<a href="section-33.html#adaboost-hyperparameters" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Hyperparameters &amp; GridSearchCV</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">34. Bagging vs Boosting <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-34.html#bvb-structural-difference" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Structural Difference</a>
+<a href="section-34.html#bvb-strengths-weaknesses" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">What Each Is Best At</a>
+<a href="section-34.html#bvb-comparison-table" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Comparison Table</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">35. Gradient Boosting <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-35.html#gb-explained" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Explained</a>
+<a href="section-35.html#gb-regression" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">For Regression</a>
+<a href="section-35.html#gb-classification" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">For Classification</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">36. XGBoost <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-36.html#xgboost-intro" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Intro to XGBoost</a>
+<a href="section-36.html#xgboost-regression" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">For Regression</a>
+<a href="section-36.html#xgboost-classification" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">For Classification</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">37. Stacking &amp; Blending <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-37.html#stacking" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Stacking</a>
+<a href="section-37.html#blending" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Blending</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Unsupervised &amp; Practical</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">38. Clustering <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-38.html#k-means" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">K-Means Clustering</a>
+<a href="section-38.html#hierarchical-clustering" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Agglomerative Hierarchical Clustering</a>
+<a href="section-38.html#dbscan" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">DBSCAN</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">39. Handling Imbalanced Data <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-39.html#the-problem" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Problem</a>
+<a href="section-39.html#undersampling" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Undersampling</a>
+<a href="section-39.html#oversampling" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Oversampling</a>
+<a href="section-39.html#smote" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">SMOTE</a>
+<a href="section-39.html#practical-guidance" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Practical Guidance</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">40. Hyperparameter Tuning (Optuna) <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-40.html#why-optuna" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why Optuna</a>
+<a href="section-40.html#bayesian-optimization-intuition" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Bayesian Optimization Intuition</a>
+<a href="section-40.html#optuna-core-concepts" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Core Concepts</a>
+<a href="section-40.html#optuna-code-example" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Code Example</a>
+<a href="section-40.html#pruning" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Pruning</a>
+</div>
+</details>
+
+</nav>
+</aside>
+
+
+  <main class="flex-1 md:ml-[280px] px-4 py-6 md:p-lg max-w-[1200px] mx-auto w-full min-w-0">
+    <nav aria-label="Breadcrumb" class="flex flex-wrap text-sm text-[var(--on-surface-variant)] mb-4"><a href="../index.html" class="hover:text-[var(--primary)]">Home</a><span class="mx-2">/</span><a href="../index.html#courses" class="hover:text-[var(--primary)]">ML Track</a><span class="mx-2">/</span><span class="text-[var(--on-background)]">39. Handling Imbalanced Data</span></nav>
+
+    <div class="space-y-xl">
+        <div>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">39. Handling Imbalanced Data</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Why accuracy lies on skewed classes · undersampling &amp; oversampling · SMOTE's synthetic interpolation · class_weight, and avoiding leakage</p>
+        </div>
+
+        <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm text-sm text-[var(--on-surface-variant)]">
+          <strong class="text-[var(--on-background)]">Extended notes</strong> — this topic isn't covered in the CampusX playlist notes this site is based on. Written from scratch to continue the curriculum, in the same style as the rest of the site.
+        </div>
+
+        <!-- THE PROBLEM -->
+        <section id="the-problem" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Classification</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">The Problem — When Classes Aren't Balanced</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Every classification example you've seen so far quietly assumed the classes show up in roughly similar numbers. Real data is rarely that polite. Fraud detection: maybe 0.1% of transactions are fraudulent. Disease screening: maybe 2% of patients actually have the rare condition. Manufacturing defect detection: maybe 1 in 10,000 parts is defective. These are <strong class="text-[var(--on-background)]">imbalanced classification</strong> problems, and they break the naive way of training and evaluating models.</p>
+
+          <div class="border-l-4 border-[var(--error)] bg-[var(--error-container)]/10 p-md rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--on-error-container)] mb-2">The 99% accuracy trap</h4>
+            <p class="text-sm text-[var(--on-surface)]">Suppose 99% of transactions in your dataset are legitimate and 1% are fraud. A model that does <em>nothing</em> — that simply predicts "not fraud" for every single transaction, ignoring the input entirely — scores <strong class="text-[var(--on-background)]">99% accuracy</strong>. It also catches exactly zero fraud, which is the entire point of building the model in the first place. Accuracy is computed as (correct predictions) / (total predictions), and when one class dominates the total, a model can rack up a high score just by parroting the majority class, never learning anything about what makes the minority class distinct.</p>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-lg text-[var(--primary)]">Why this connects back to the Confusion Matrix</h3>
+            <p class="text-sm text-[var(--on-surface)]">The Classification Metrics page's confusion matrix explains exactly why this happens and how to see past it. The lazy "always predict majority" model gets <strong class="text-[var(--on-background)]">true negatives</strong> on almost every row (correctly saying "not fraud" for the 99% that really aren't), zero <strong class="text-[var(--on-background)]">true positives</strong> (it never once correctly flags actual fraud), and — critically — 100% <strong class="text-[var(--on-background)]">false negatives</strong> on the class you actually care about catching. Metrics that ignore this imbalance (plain accuracy) look great; metrics computed specifically on the minority class — recall, precision, F1 — reveal the model is useless. This is exactly why the metrics page emphasized precision/recall/F1 over raw accuracy for skewed problems: they force you to look at how the model performs on the class that actually matters.</p>
+          </div>
+
+          <p class="text-sm text-[var(--on-surface)]">Beyond the evaluation problem, there's a training problem too: most learning algorithms are implicitly trying to minimize overall error across the whole training set. With 99 examples of one class for every 1 of another, the loss signal from the majority class dominates by sheer volume, and the model has very little incentive to learn the minority class's pattern at all — even if that pattern is perfectly learnable in principle. The rest of this page covers the standard toolkit for fixing this at the data level (resampling) and the algorithm level (class weighting).</p>
+        </section>
+
+        <!-- UNDERSAMPLING -->
+        <section id="undersampling" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Concept</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Undersampling</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">The simplest fix: throw away majority-class rows until the classes are balanced (or closer to it). <code class="text-[var(--primary)]">RandomUnderSampler</code> does exactly this — it randomly removes majority-class samples until the class ratio you asked for is reached.</p>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">Upside</h4>
+              <p class="text-sm text-[var(--on-surface)]">Fast, simple, and shrinks the dataset — useful when you have so much majority-class data that training on all of it is itself a computational burden.</p>
+            </div>
+            <div class="border-l-4 border-[var(--error)] bg-[var(--error-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--on-error-container)] mb-1">Tradeoff — loses information</h4>
+              <p class="text-sm text-[var(--on-surface)]">You're literally deleting real, potentially useful data. If the majority class has meaningful internal variety (several distinct sub-patterns), randomly discarding most of it can remove sub-patterns the model needed to see, hurting its ability to distinguish "hard" majority-class examples from the minority class.</p>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Code — RandomUnderSampler</h3>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from imblearn.under_sampling import RandomUnderSampler
+from collections import Counter
+
+print("Before:", Counter(y_train))   # e.g. {0: 9900, 1: 100}
+
+rus = RandomUnderSampler(sampling_strategy=0.5, random_state=1)  # minority:majority = 1:2 after
+X_res, y_res = rus.fit_resample(X_train, y_train)
+
+print("After:", Counter(y_res))      # e.g. {0: 200, 1: 100}</code></pre>
+            </div>
+          </div>
+        </section>
+
+        <!-- OVERSAMPLING -->
+        <section id="oversampling" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Concept</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Oversampling</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">The mirror-image approach: instead of removing majority-class rows, duplicate minority-class rows until the classes are balanced. <code class="text-[var(--primary)]">RandomOverSampler</code> picks minority-class rows at random (with replacement) and copies them until the desired ratio is reached.</p>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">Upside</h4>
+              <p class="text-sm text-[var(--on-surface)]">No data is thrown away — every original row, majority and minority, is still represented. Preserves all the information undersampling would have discarded.</p>
+            </div>
+            <div class="border-l-4 border-[var(--error)] bg-[var(--error-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--on-error-container)] mb-1">Tradeoff — overfitting risk</h4>
+              <p class="text-sm text-[var(--on-surface)]">Because the "new" minority rows are exact copies, the model can effectively memorize those specific points rather than learning the general pattern behind them. With enough duplication, a flexible model (like a deep Decision Tree or KNN with small K) can carve out decision boundaries that fit these repeated points suspiciously precisely — classic overfitting, just induced by duplication instead of by model complexity alone.</p>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Code — RandomOverSampler</h3>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from imblearn.over_sampling import RandomOverSampler
+from collections import Counter
+
+print("Before:", Counter(y_train))   # e.g. {0: 9900, 1: 100}
+
+ros = RandomOverSampler(sampling_strategy=1.0, random_state=1)  # fully balance 1:1
+X_res, y_res = ros.fit_resample(X_train, y_train)
+
+print("After:", Counter(y_res))      # e.g. {0: 9900, 1: 9900} -- minority rows duplicated</code></pre>
+            </div>
+          </div>
+        </section>
+
+        <!-- SMOTE -->
+        <section id="smote" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Concept</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">SMOTE — Synthetic Minority Oversampling Technique</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">SMOTE fixes oversampling's core weakness — exact duplication — with one clean idea: instead of copying an existing minority point, <strong class="text-[var(--on-background)]">manufacture a brand-new synthetic point</strong> that lies between two real minority points that are already close together. The model then sees genuinely new (if artificial) data rather than repeated points.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-lg text-[var(--primary)]">The interpolation mechanic</h3>
+            <ol class="text-sm text-[var(--on-surface)] list-decimal list-inside space-y-1.5">
+              <li>Pick a minority-class point, call it \(x\).</li>
+              <li>Find its k-nearest minority-class neighbors (a small k, e.g. 5, is typical).</li>
+              <li>Randomly pick one of those neighbors, call it \(x_{nn}\).</li>
+              <li>Generate a new synthetic point somewhere on the straight line segment between \(x\) and \(x_{nn}\):</li>
+            </ol>
+            <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ x_{\text{new}} = x + \lambda \cdot (x_{nn} - x), \qquad \lambda \sim \text{Uniform}(0, 1) $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)]">λ is a random number between 0 and 1, so \(x_{new}\) lands at a random point somewhere between \(x\) and its neighbor — not on top of either one. Repeat this process (choosing a random minority point and a random one of its neighbors each time) until you've generated as many synthetic points as you need to reach your target balance.</p>
+          </div>
+
+          <p class="text-sm text-[var(--on-surface)]">Because each synthetic point sits in the local neighborhood of real minority points — where the minority class is known to actually exist — SMOTE effectively "fills in" the gaps between sparse minority observations, rather than stacking weight onto identical copies. This gives the model more varied minority-class examples to learn a genuine decision boundary from, instead of a boundary shaped around a few overrepresented exact points.</p>
+
+          <div>
+            <div class="border-l-4 border-[var(--outline)] bg-[var(--surface-container-high)]/40 p-sm rounded-r-lg text-xs text-[var(--on-surface-variant)] mb-3">
+              <strong class="text-[var(--on-background)]">Illustrative aid</strong> — generated for this site.
+            </div>
+            <div class="grid sm:grid-cols-2 gap-4 bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-lg">
+              <div class="flex flex-col items-center gap-2">
+                <svg viewBox="0 0 220 200" class="w-full max-w-[240px]" role="img" aria-label="Before SMOTE: many majority-class points, a few sparse minority-class points">
+                  <text x="110" y="16" text-anchor="middle" font-size="11" fill="var(--on-surface-variant)" class="font-label-caps">BEFORE</text>
+                  <!-- majority points, dense -->
+                  <g fill="var(--on-surface)" fill-opacity="0.5">
+                    <circle cx="30" cy="40" r="4"/><circle cx="55" cy="55" r="4"/><circle cx="80" cy="35" r="4"/><circle cx="105" cy="50" r="4"/>
+                    <circle cx="40" cy="70" r="4"/><circle cx="70" cy="80" r="4"/><circle cx="95" cy="65" r="4"/><circle cx="120" cy="75" r="4"/>
+                    <circle cx="25" cy="100" r="4"/><circle cx="55" cy="105" r="4"/><circle cx="85" cy="95" r="4"/><circle cx="115" cy="100" r="4"/>
+                    <circle cx="140" cy="60" r="4"/><circle cx="160" cy="85" r="4"/><circle cx="150" cy="110" r="4"/><circle cx="180" cy="70" r="4"/>
+                    <circle cx="190" cy="100" r="4"/><circle cx="170" cy="40" r="4"/><circle cx="45" cy="130" r="4"/><circle cx="90" cy="130" r="4"/>
+                  </g>
+                  <!-- minority points, sparse -->
+                  <circle cx="60" cy="160" r="5" fill="var(--error)"/>
+                  <circle cx="110" cy="170" r="5" fill="var(--error)"/>
+                  <circle cx="150" cy="155" r="5" fill="var(--error)"/>
+                  <text x="110" y="192" text-anchor="middle" font-size="9" fill="var(--error)">3 minority points, sparse</text>
+                </svg>
+              </div>
+              <div class="flex flex-col items-center gap-2">
+                <svg viewBox="0 0 220 200" class="w-full max-w-[240px]" role="img" aria-label="After SMOTE: same majority points, minority class now has synthetic points interpolated along lines between original minority points">
+                  <text x="110" y="16" text-anchor="middle" font-size="11" fill="var(--on-surface-variant)" class="font-label-caps">AFTER SMOTE</text>
+                  <g fill="var(--on-surface)" fill-opacity="0.5">
+                    <circle cx="30" cy="40" r="4"/><circle cx="55" cy="55" r="4"/><circle cx="80" cy="35" r="4"/><circle cx="105" cy="50" r="4"/>
+                    <circle cx="40" cy="70" r="4"/><circle cx="70" cy="80" r="4"/><circle cx="95" cy="65" r="4"/><circle cx="120" cy="75" r="4"/>
+                    <circle cx="25" cy="100" r="4"/><circle cx="55" cy="105" r="4"/><circle cx="85" cy="95" r="4"/><circle cx="115" cy="100" r="4"/>
+                    <circle cx="140" cy="60" r="4"/><circle cx="160" cy="85" r="4"/><circle cx="150" cy="110" r="4"/><circle cx="180" cy="70" r="4"/>
+                    <circle cx="190" cy="100" r="4"/><circle cx="170" cy="40" r="4"/><circle cx="45" cy="130" r="4"/><circle cx="90" cy="130" r="4"/>
+                  </g>
+                  <!-- original minority -->
+                  <circle cx="60" cy="160" r="5" fill="var(--error)"/>
+                  <circle cx="110" cy="170" r="5" fill="var(--error)"/>
+                  <circle cx="150" cy="155" r="5" fill="var(--error)"/>
+                  <!-- interpolation lines -->
+                  <line x1="60" y1="160" x2="110" y2="170" stroke="var(--tertiary)" stroke-width="1" stroke-dasharray="3 2"/>
+                  <line x1="110" y1="170" x2="150" y2="155" stroke="var(--tertiary)" stroke-width="1" stroke-dasharray="3 2"/>
+                  <!-- synthetic points along the lines -->
+                  <circle cx="72" cy="163" r="4" fill="var(--tertiary)"/>
+                  <circle cx="88" cy="167" r="4" fill="var(--tertiary)"/>
+                  <circle cx="125" cy="165" r="4" fill="var(--tertiary)"/>
+                  <circle cx="135" cy="161" r="4" fill="var(--tertiary)"/>
+                  <text x="110" y="192" text-anchor="middle" font-size="9" fill="var(--tertiary)">new synthetic points, interpolated</text>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Code — SMOTE</h3>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from imblearn.over_sampling import SMOTE
+from collections import Counter
+
+print("Before:", Counter(y_train))   # e.g. {0: 9900, 1: 100}
+
+smote = SMOTE(k_neighbors=5, sampling_strategy=1.0, random_state=1)
+X_res, y_res = smote.fit_resample(X_train, y_train)
+
+print("After:", Counter(y_res))      # e.g. {0: 9900, 1: 9900} -- new synthetic points, not copies</code></pre>
+            </div>
+          </div>
+
+          <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg">
+            <p class="text-sm text-[var(--on-surface)]">SMOTE isn't magic — it only interpolates <em>within</em> the region already spanned by known minority points, so it can't invent an entirely new mode of the minority class that never appeared in training. It can also generate noisy synthetic points if minority-class points are themselves scattered near the majority class's region (a variant, <strong class="text-[var(--on-background)]">Borderline-SMOTE</strong>, specifically targets points near the decision boundary to address this). Still, plain SMOTE is a strong, widely used default.</p>
+          </div>
+        </section>
+
+        <!-- PRACTICAL GUIDANCE -->
+        <section id="practical-guidance" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Concept</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Practical Guidance — Avoiding Leakage</h2>
+          </div>
+
+          <div class="border-l-4 border-[var(--error)] bg-[var(--error-container)]/10 p-md rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--on-error-container)] mb-2">The single most important rule: resample ONLY the training set</h4>
+            <p class="text-sm text-[var(--on-surface)]">Never apply undersampling, oversampling, or SMOTE to your validation or test set — and never resample <em>before</em> splitting into train/test. Your validation and test sets exist to estimate how the model will perform on real, naturally-imbalanced future data. If you balance them artificially, that estimate becomes meaningless — you'd be measuring performance on a distribution that will never actually occur in production.</p>
+            <p class="text-sm text-[var(--on-surface)] mt-2">There's a subtler leakage risk with SMOTE specifically: if you run SMOTE on the <em>entire</em> dataset before splitting, some synthetic training points can end up interpolated using neighbor information from points that later land in your test set — meaning your model was effectively trained using information derived from test data. Always split first, then resample the training portion only.</p>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-lg text-[var(--primary)]">Doing this safely inside cross-validation</h3>
+            <p class="text-sm text-[var(--on-surface)]">The same logic applies inside k-fold cross-validation: resampling must happen <em>inside</em> each fold's training portion, not once on the whole dataset before the folds are cut — otherwise synthetic/duplicated points derived from a row can leak into a different fold's validation split. <code class="text-[var(--primary)]">imblearn</code> provides its own <code class="text-[var(--primary)]">Pipeline</code> (distinct from sklearn's) specifically so that resampling steps are correctly refit fresh within each CV fold, using only that fold's training data.</p>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from imblearn.pipeline import Pipeline   # NOTE: imblearn's Pipeline, not sklearn's
+from imblearn.over_sampling import SMOTE
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score, StratifiedKFold
+
+pipeline = Pipeline([
+    ('smote', SMOTE(random_state=1)),          # applied fresh, inside each fold's training data only
+    ('clf', RandomForestClassifier(random_state=1))
+])
+
+cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=1)
+scores = cross_val_score(pipeline, X_train, y_train, cv=cv, scoring='f1')
+print("CV F1 scores:", scores)
+print("Mean F1:", scores.mean())
+
+# Final fit for deployment: fit the pipeline once on the full training set
+pipeline.fit(X_train, y_train)
+print("Test F1:", f1_score(y_test, pipeline.predict(X_test)))  # X_test/y_test never resampled</code></pre>
+            </div>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-lg text-[var(--secondary)]">A resampling-free alternative — class_weight='balanced'</h3>
+            <p class="text-sm text-[var(--on-surface)]">Many sklearn estimators (<code class="text-[var(--primary)]">LogisticRegression</code>, <code class="text-[var(--primary)]">SVC</code>, <code class="text-[var(--primary)]">DecisionTreeClassifier</code>, <code class="text-[var(--primary)]">RandomForestClassifier</code>, and others) accept a <code class="text-[var(--primary)]">class_weight</code> parameter. Setting <code class="text-[var(--primary)]">class_weight='balanced'</code> doesn't touch your data at all — instead, it automatically reweights the loss function so that misclassifying a minority-class example is penalized more heavily than misclassifying a majority-class one, roughly in inverse proportion to each class's frequency. This nudges the model to pay attention to the minority class without generating or deleting a single row, avoiding both undersampling's information loss and oversampling/SMOTE's added complexity and leakage surface.</p>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from sklearn.linear_model import LogisticRegression
+
+# No resampling at all -- the loss function itself compensates for imbalance
+clf = LogisticRegression(class_weight='balanced', max_iter=1000)
+clf.fit(X_train, y_train)   # trained directly on the original imbalanced data</code></pre>
+            </div>
+            <p class="text-sm text-[var(--on-surface-variant)]">A good rule of thumb: try <code class="text-[var(--primary)]">class_weight='balanced'</code> first — it's free, has zero leakage risk, and requires no extra library. Reach for SMOTE or explicit resampling when class_weight alone isn't enough, or for algorithms that don't expose a class_weight option at all.</p>
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on Handling Imbalanced Data. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-section-39">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. A dataset is 99.5% negative / 0.5% positive. A model that always predicts "negative" scores 99.5% accuracy. Why is this score misleading?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. It isn't misleading — 99.5% accuracy always indicates a strong model</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Accuracy can only be computed on balanced datasets</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. The model has zero recall on the positive class — it never correctly identifies a single positive case, even though raw accuracy looks high because the majority class dominates the total count</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Accuracy is undefined when classes are imbalanced</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Accuracy = correct / total, and with 99.5% of rows negative, predicting "negative" always gets nearly all of the total right by volume alone. But this model produces zero true positives and 100% false negatives on the class that matters — precision, recall, and F1 (from the Classification Metrics page) expose this failure, while accuracy hides it.</div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. What is the key mechanical difference between RandomOverSampler and SMOTE when creating new minority-class rows?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. RandomOverSampler removes rows; SMOTE duplicates rows</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. They are functionally identical — both duplicate the same random rows</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. SMOTE only works on the majority class</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. RandomOverSampler creates exact duplicates of existing minority points; SMOTE generates new synthetic points by interpolating between a minority point and one of its nearest minority neighbors</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> RandomOverSampler literally copies rows, which can encourage a model to overfit to those exact repeated points. SMOTE instead picks a minority point and one of its k-nearest minority neighbors, then generates a new point somewhere along the line segment between them (x_new = x + λ(x_nn − x), λ ∈ [0,1]) — a genuinely new, if synthetic, data point.</div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. You apply SMOTE to your entire dataset (both what will become train and test rows) before doing train_test_split. What's wrong with this order of operations?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Nothing — the order of SMOTE and train_test_split never matters</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Synthetic points can be interpolated using information from points that later land in the test set, leaking test information into training, and the test set itself becomes artificially balanced instead of reflecting the real, naturally-imbalanced distribution</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. SMOTE requires the data to already be split before it can run at all, so this would throw an error</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It only affects performance on the training set, never the test set</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Resampling (SMOTE especially) must happen only on the training portion, after splitting. Resampling before splitting both leaks neighbor information across the eventual train/test boundary and corrupts the test set's class distribution, making test performance no longer representative of real-world, naturally-imbalanced deployment data.</div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. Why does imblearn provide its own Pipeline class instead of relying solely on sklearn's Pipeline when resampling is involved in cross-validation?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. It ensures resampling steps are refit fresh using only each CV fold's own training data, rather than resampling once outside the fold loop, which would let information leak across folds</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. sklearn's Pipeline is strictly faster, so imblearn's version exists purely for convenience with no correctness benefit</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. sklearn's Pipeline cannot contain a classifier as its final step</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. imblearn's Pipeline is required only for RandomUnderSampler, never for SMOTE</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> sklearn's Pipeline doesn't support resampling steps that change the number of rows (its transformers must preserve row count). imblearn's Pipeline extends this so a resampler is correctly re-applied fresh to each fold's training split during cross_val_score/GridSearchCV, keeping validation folds free of leaked resampled information — the same reasoning as never resampling the held-out test set.</div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. You want to address class imbalance without generating any synthetic rows or deleting any real ones, and your chosen algorithm supports it. What's the most direct option?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. RandomUnderSampler with sampling_strategy=1.0</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. SMOTE with k_neighbors=5</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. class_weight='balanced' on the estimator, leaving the training data untouched</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. RandomOverSampler with sampling_strategy=1.0</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> class_weight='balanced' reweights the loss function to penalize minority-class errors more heavily, without touching the dataset at all — no rows added, none removed. The other three options (undersampling, oversampling, SMOTE) all modify the actual rows the model trains on.</div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--primary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="section-40.html" class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">Next: Hyperparameter Tuning with Optuna</a>
+        </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="../assets/app.js"></script>
+
+</body>
+</html>

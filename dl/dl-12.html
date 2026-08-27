@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>12. CNN — Padding, Strides & Pooling — Sifat Notes</title>
+
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..800&family=Inter:ital,opsz,wght@0,14..32,400..700;1,14..32,400..700&family=JetBrains+Mono:wght@400..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script src="../assets/tailwind-config.js"></script>
+<link rel="stylesheet" href="../assets/theme.css">
+</head>
+<body class="antialiased min-h-screen font-body-md">
+
+<header class="bg-[var(--surface)] border-b border-[var(--outline-variant)] sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-4 md:px-lg py-2.5 md:py-sm max-w-[1200px] mx-auto">
+<a href="../index.html" class="flex items-center gap-2.5 md:gap-3 group min-w-0" title="Back to home">
+<div class="w-9 h-9 shrink-0 rounded-md bg-[var(--primary)] text-[var(--on-primary)] flex items-center justify-center font-h3 font-bold text-sm group-hover:opacity-85 transition-opacity">SN</div>
+<div class="min-w-0">
+<div class="font-h3 text-base md:text-lg font-semibold text-[var(--on-background)] leading-none truncate">Sifat Notes</div>
+<div class="hidden sm:block text-[11px] text-[var(--on-surface-variant)] mt-0.5 truncate">from CampusX's playlists</div>
+</div>
+</a>
+<nav class="hidden md:flex items-center gap-6 text-sm shrink-0">
+<a class="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors" href="../index.html">Home</a>
+<a class="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors" href="../index.html#courses">Courses</a>
+</nav>
+<div class="flex items-center gap-2 md:gap-3 shrink-0">
+<button id="mobileMenuBtn" class="md:hidden border border-[var(--outline-variant)] rounded-md p-1.5 text-[var(--on-background)] flex items-center justify-center" onclick="toggleSidebar()" aria-label="Toggle navigation">
+<span class="material-symbols-outlined text-[20px]">menu</span>
+</button>
+<button class="flex items-center gap-1.5 bg-[var(--surface-container)] border border-[var(--outline-variant)] text-[var(--on-background)] px-2.5 md:px-3 py-1.5 rounded-full text-xs font-label-caps hover:border-[var(--primary)] transition-colors" onclick="toggleTheme()" data-theme-btn>
+<span class="material-symbols-outlined text-[16px]" data-theme-icon>light_mode</span>
+<span data-theme-label class="hidden sm:inline">Light</span>
+</button>
+</div>
+</div>
+</header>
+
+
+<div class="flex flex-1">
+<div id="sidebarBackdrop" class="hidden fixed inset-0 bg-black/50 z-50 md:hidden" onclick="toggleSidebar()"></div>
+<aside id="sidebarSlot" class="flex flex-col bg-[var(--surface-container-low)] border-r border-[var(--outline-variant)] fixed left-0 top-[65px] h-[calc(100vh-65px)] w-[280px] py-md overflow-y-auto">
+<div class="px-lg mb-md">
+<input id="searchBox" placeholder="Search topics…" class="w-full bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-md px-3 py-2 text-sm text-[var(--on-background)] placeholder:text-[var(--on-surface-variant)] focus:outline-none focus:border-[var(--secondary)]">
+</div>
+
+<nav class="toc flex-1 px-2 space-y-1 text-sm" id="tocNav">
+
+<div class="px-3 pt-3 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Foundations</div>
+
+<details open>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--secondary)] font-semibold bg-[var(--surface-container-high)]/50">1. Introduction to Deep Learning <span class="chev text-[10px]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-01.html#dl-vs-ml" class="flex px-3 py-1.5 rounded-md text-[var(--secondary)] font-semibold bg-[var(--surface-container-high)]/40">Deep Learning vs ML</a>
+<a href="dl-01.html#types-of-neural-networks" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Types of Neural Networks</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">2. The Perceptron <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-02.html#perceptron" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Perceptron</a>
+<a href="dl-02.html#perceptron-trick" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Perceptron Trick</a>
+<a href="dl-02.html#perceptron-loss" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Perceptron Loss Function</a>
+<a href="dl-02.html#problem-with-perceptron" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Problem with Perceptron</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">3. Multi-Layer Perceptron <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-03.html#mlp-notation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">MLP Notation</a>
+<a href="dl-03.html#mlp-intuition" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">MLP Intuition</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">4. Forward Propagation <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-04.html#forward-propagation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Forward Propagation — Worked Example</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">5. Loss Functions <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-05.html#loss-functions-intro" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Loss vs Cost Function</a>
+<a href="dl-05.html#mse" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Mean Squared Error (MSE)</a>
+<a href="dl-05.html#mae" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Mean Absolute Error (MAE)</a>
+<a href="dl-05.html#huber-loss" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Huber Loss</a>
+<a href="dl-05.html#binary-cross-entropy" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Binary Cross-Entropy</a>
+<a href="dl-05.html#categorical-cross-entropy" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Categorical Cross-Entropy</a>
+<a href="dl-05.html#sparse-categorical-cross-entropy" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Sparse Categorical Cross-Entropy</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Training Deep Networks</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">6. Backpropagation <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-06.html#backprop-what" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Backpropagation — What</a>
+<a href="dl-06.html#backprop-how" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Backpropagation — How</a>
+<a href="dl-06.html#backprop-worked-example" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Worked Numeric Example</a>
+<a href="dl-06.html#derivative-vs-gradient" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Derivative vs Gradient</a>
+<a href="dl-06.html#epoch-vs-iteration" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Epoch vs Iteration</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">7. Vanishing &amp; Exploding Gradients <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-07.html#vanishing-gradient-problem" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Vanishing Gradient Problem</a>
+<a href="dl-07.html#detecting-vgp" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Detecting It</a>
+<a href="dl-07.html#solutions-to-vgp" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Solutions</a>
+<a href="dl-07.html#exploding-gradient-problem" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Exploding Gradient Problem</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">8. Training Toolkit <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-08.html#mlp-memoization" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">MLP Memoization</a>
+<a href="dl-08.html#gradient-descent-in-nn" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Gradient Descent in NNs</a>
+<a href="dl-08.html#improving-nn-performance" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Improving NN Performance</a>
+<a href="dl-08.html#early-stopping" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Early Stopping</a>
+<a href="dl-08.html#data-scaling-nn" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Data Scaling</a>
+<a href="dl-08.html#dropout-layer" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Dropout Layer</a>
+<a href="dl-08.html#regularization-dl" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Regularization</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">9. Activation Functions <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-09.html#why-activation-functions" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why Activation Functions</a>
+<a href="dl-09.html#ideal-activation-properties" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Ideal Properties</a>
+<a href="dl-09.html#sigmoid-activation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Sigmoid</a>
+<a href="dl-09.html#tanh-activation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Tanh</a>
+<a href="dl-09.html#relu-activation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">ReLU</a>
+<a href="dl-09.html#relu-variants" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">ReLU Variants</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">10. Optimizers <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-10.html#momentum" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Momentum</a>
+<a href="dl-10.html#nesterov-accelerated-gradient" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Nesterov (NAG)</a>
+<a href="dl-10.html#adagrad" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">AdaGrad</a>
+<a href="dl-10.html#rmsprop" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">RMSProp</a>
+<a href="dl-10.html#adam-optimizer" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Adam</a>
+<a href="dl-10.html#weight-initialization" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Weight Initialization</a>
+<a href="dl-10.html#batch-normalization" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Batch Normalization</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Convolutional Networks</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">11. CNN Fundamentals <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-11.html#cnn-intuition" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">CNN Intuition</a>
+<a href="dl-11.html#why-not-ann" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why Not Plain ANN</a>
+<a href="dl-11.html#convolution-operation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Convolution Operation</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">12. Padding, Strides &amp; Pooling <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-12.html#padding" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Padding</a>
+<a href="dl-12.html#strides" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Strides</a>
+<a href="dl-12.html#pooling" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Pooling</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">13. Architectures &amp; Transfer Learning <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-13.html#classic-cnn-architectures" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Classic CNN Architectures</a>
+<a href="dl-13.html#transfer-learning" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Transfer Learning</a>
+<a href="dl-13.html#feature-extraction" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Feature Extraction</a>
+<a href="dl-13.html#fine-tuning" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Fine-Tuning</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Sequence Models &amp; Attention</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">14. Recurrent Neural Networks <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-14.html#why-feedforward-fails" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why Feedforward Fails</a>
+<a href="dl-14.html#rnn-hidden-state" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Hidden State</a>
+<a href="dl-14.html#rnn-unrolled" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Unrolled Through Time</a>
+<a href="dl-14.html#bptt" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Backpropagation Through Time</a>
+<a href="dl-14.html#rnn-limitations" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">RNN Limitations</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">15. LSTM &amp; GRU <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-15.html#lstm-motivation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why LSTM</a>
+<a href="dl-15.html#lstm-gates" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Three Gates</a>
+<a href="dl-15.html#gru" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">GRU</a>
+<a href="dl-15.html#lstm-vs-gru" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">LSTM vs GRU</a>
+<a href="dl-15.html#bidirectional-rnn" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Bidirectional RNN</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">16. Seq2Seq &amp; Encoder-Decoder <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-16.html#what-is-seq2seq" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">What Is Seq2Seq</a>
+<a href="dl-16.html#encoder-decoder" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Encoder-Decoder Architecture</a>
+<a href="dl-16.html#teacher-forcing" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Teacher Forcing</a>
+<a href="dl-16.html#bottleneck-problem" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Bottleneck Problem</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">17. Attention Mechanism <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-17.html#attention-bottleneck-recap" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Solving the Bottleneck</a>
+<a href="dl-17.html#how-attention-works" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">How Attention Works</a>
+<a href="dl-17.html#calculating-attention-weights" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Calculating Attention Weights</a>
+<a href="dl-17.html#self-attention-vs-cross-attention-preview" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Self vs Cross Attention</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">18. The Transformer Architecture <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-18.html#why-transformers" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why Transformers</a>
+<a href="dl-18.html#self-attention" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Self-Attention</a>
+<a href="dl-18.html#multi-head-attention" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Multi-Head Attention</a>
+<a href="dl-18.html#positional-encoding" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Positional Encoding</a>
+<a href="dl-18.html#transformer-architecture" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Full Architecture</a>
+<a href="dl-18.html#bert" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">BERT</a>
+<a href="dl-18.html#gpt" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">GPT</a>
+<a href="dl-18.html#terminology-hierarchy" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Transformer vs LLM vs GPT</a>
+</div>
+</details>
+
+</nav>
+</aside>
+
+
+  <main class="flex-1 md:ml-[280px] px-4 py-6 md:p-lg max-w-[1200px] mx-auto w-full min-w-0">
+    <nav aria-label="Breadcrumb" class="flex flex-wrap text-sm text-[var(--on-surface-variant)] mb-4"><a href="../index.html" class="hover:text-[var(--secondary)]">Home</a><span class="mx-2">/</span><a href="../index.html#courses" class="hover:text-[var(--secondary)]">DL Track</a><span class="mx-2">/</span><span class="text-[var(--on-background)]">12. Padding, Strides & Pooling</span></nav>
+
+    <div class="space-y-xl">
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-3 py-1 mb-3">Source: 100 Days of Deep Learning</span>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">12. CNN — Padding, Strides &amp; Pooling</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Why feature maps shrink · valid vs. same padding · strided convolution · max/min/average/global pooling</p>
+        </div>
+
+        <!-- PADDING -->
+        <section id="padding" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Padding</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Padding</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Plain convolution, as covered on the previous page, shrinks the image every time it's applied — an n×n image with an m×m filter produces an (n−m+1)×(n−m+1) output. Left unaddressed, that shrinkage causes two separate problems.</p>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">Problem 1 — progressive information loss</h4>
+              <p class="text-sm text-[var(--on-surface)]">A feature map is already smaller than the image that produced it. Apply a second convolutional layer to that feature map, and it shrinks again — and again with a third layer. Stack several convolutional layers, as any real CNN does, and the spatial dimensions can shrink to almost nothing well before the network is deep enough to have learned useful high-level features, destroying information the network never got the chance to use.</p>
+            </div>
+            <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--tertiary)] mb-1">Problem 2 — border pixels are under-used</h4>
+              <p class="text-sm text-[var(--on-surface)]">As a filter slides across an image, a pixel near the center gets caught inside the filter's window many times over the course of the sweep, while a pixel sitting in a corner or along an edge only ever falls inside the window a handful of times. That means center pixels effectively contribute to far more output values than border pixels do — the network implicitly treats the edges of the image as less important, and information sitting near the border gets under-represented or lost.</p>
+            </div>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed"><strong class="text-[var(--on-background)]">The fix — padding.</strong> Add an extra border of rows and columns (top, bottom, left, and right) around the image before convolving. This border is generally filled with zeros. Padding fixes both problems at once: because the effective input is now larger, the output feature map can be made equal in size to the original (pre-padding) image instead of shrinking — solving problem 1; and because what used to be a border pixel is now surrounded by real neighbors on every side (the padding fills in what used to be "off the edge"), it gets caught inside the sliding filter roughly as often as a center pixel — solving problem 2.</p>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Padded feature map size formula</h3>
+            <p class="text-[var(--on-surface)] leading-relaxed">Let <code class="text-[var(--secondary)]">p</code> be the padding amount — how many rows/columns of zeros are added on <em>each</em> side. The formula becomes:</p>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ (n + 2p - f + 1) \times (n + 2p - f + 1) $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)]">Here <code class="text-[var(--secondary)]">n</code> is the original image size, <code class="text-[var(--secondary)]">f</code> is the filter size, and <code class="text-[var(--secondary)]">p</code> appears as <code class="text-[var(--secondary)]">2p</code> because padding is added on both sides of each dimension (e.g. both left and right). Choosing <code class="text-[var(--secondary)]">p</code> so that the output size exactly equals the input size <code class="text-[var(--secondary)]">n</code> is precisely what "same" padding (below) does.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Keras conventions: "valid" vs. "same"</h3>
+            <div class="grid sm:grid-cols-2 gap-3">
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">valid</strong> — no padding at all (<code class="text-[var(--secondary)]">p = 0</code>). The output shrinks according to the plain (n−m+1) formula. This is the default, "do nothing extra" option.
+              </div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">same</strong> — Keras automatically computes and adds just enough zero-padding so that the output feature map has the <em>same</em> width and height as the input. This is the option you reach for whenever you want to stack many convolutional layers without the spatial dimensions collapsing before the network is deep enough to be useful.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- STRIDES -->
+        <section id="strides" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Strides</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Strides</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">A <strong class="text-[var(--on-background)]">stride</strong> is how many pixels the filter jumps between successive convolution steps, instead of always moving one pixel at a time. Take a 7×7 image and a 3×3 filter. With <strong class="text-[var(--on-background)]">stride 1</strong> — the default assumed everywhere on the previous page — the filter shifts one pixel right at a time across a row, and one pixel down when it wraps to the next row; this is written as stride (1,1). With <strong class="text-[var(--on-background)]">stride 2</strong>, the filter instead jumps two pixels to the right each step, and two pixels down when moving to the next row — stride (2,2). Whenever the stride is greater than 1, the operation is called a <strong class="text-[var(--on-background)]">strided convolution</strong>.</p>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Stride alone</strong>
+              <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-3 mt-2 overflow-x-auto text-center">
+                $$ \left\lfloor \frac{n - f}{s} \right\rfloor + 1 $$
+              </div>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Stride + padding combined</strong>
+              <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-3 mt-2 overflow-x-auto text-center">
+                $$ \left\lfloor \frac{n + 2p - f}{s} \right\rfloor + 1 $$
+              </div>
+            </div>
+          </div>
+
+          <p class="text-sm text-[var(--on-surface)]">Increasing the stride shrinks the feature map faster than stride 1 does — which means it's entirely possible for <code class="text-[var(--secondary)]">(n + 2p − f) / s</code> to come out as a decimal (say, 4.5) rather than a whole number. When that happens, the sliding window simply runs out of room to fit one more full step, so the result is <strong class="text-[var(--on-background)]">floored</strong> down to the nearest whole number — the network just discards that leftover fractional slice of the image on that pass, rather than trying to convolve a partial window.</p>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Why use a stride greater than 1?</h3>
+            <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md">
+              <li><strong class="text-[var(--on-background)]">You want higher-level features, not low-level detail.</strong> Skipping pixels forces the filter to summarize more of the image per step, coarsening what it captures — useful when fine-grained low-level information isn't needed.</li>
+              <li><strong class="text-[var(--on-background)]">Speed.</strong> A larger stride means fewer positions to compute per layer, which directly reduces computation and makes training faster.</li>
+            </ul>
+            <p class="text-sm text-[var(--on-surface-variant)] mt-2">In practice, though, stride is a relatively minor tool in modern architecture design — it's used far less often than pooling (below) for down-sampling, since pooling generally achieves the same shrinkage more deliberately and with useful side-effects of its own.</p>
+          </div>
+        </section>
+
+        <!-- POOLING -->
+        <section id="pooling" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Pooling</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Pooling</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Pooling is a technique for down-sampling a feature map — deliberately shrinking it while trying to retain its most important signal. It exists to solve two problems that plain convolution (even with strides) doesn't fully address.</p>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">Problem 1 — memory</h4>
+              <p class="text-sm text-[var(--on-surface)]">A 228×228 image is a common input size in serious CNN architectures. Convolve it with 100 filters (no padding, stride 1, 3×3 filters) and each filter produces a 226×226 feature map — 100 of them stacked gives a <strong class="text-[var(--on-background)]">226×226×100</strong> output volume. That's an enormous amount of data to hold in memory for just one convolutional layer, and real networks stack many such layers. Something has to shrink that volume down, or memory usage spirals out of control. Stride can help reduce this, but pooling is generally the better tool.</p>
+            </div>
+            <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--tertiary)] mb-1">Problem 2 — translation variance</h4>
+              <p class="text-sm text-[var(--on-surface)]">Convolution is inherently location-dependent — it detects a feature at whatever specific position that feature happens to appear in the image, and the resulting activation shows up at that same position in the feature map. For a task like classification, that's usually the opposite of what you want: "is there a cat in this picture" should have the same answer whether the cat is in the top-left corner or dead center. Pooling makes the learned features more <strong class="text-[var(--on-background)]">location-independent</strong> by summarizing a whole neighborhood into one value, so a small shift in the input has little to no effect on the pooled output.</p>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">How pooling works</h3>
+            <p class="text-[var(--on-surface)] leading-relaxed">Pooling typically operates on a feature map after a non-linearity like ReLU has already been applied to it. To run pooling, you specify three things — exactly like specifying a convolution: <strong class="text-[var(--on-background)]">window size</strong> (the region it looks at, e.g. 2×2), <strong class="text-[var(--on-background)]">stride</strong> (how far the window moves each step), and <strong class="text-[var(--on-background)]">pooling type</strong>. The window then slides across the feature map exactly like a mini-convolution — except instead of a weighted multiply-and-sum against a learned filter, it takes a simple, parameter-free aggregate (a max, a min, an average) of whatever values fall inside the window at each step.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">The four pooling types</h3>
+            <div class="grid sm:grid-cols-2 gap-3">
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">Max pooling</strong> — picks the largest (most dominant/strongest) activation in each window, eliminating weaker, low-level details and keeping only the loudest signal. This is by far the most commonly used pooling type in practice.
+              </div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">Min pooling</strong> — picks the smallest value in each window. Used far less often than max pooling, since the largest activation is usually the more informative signal for detecting "is this feature present."
+              </div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">Average pooling</strong> — takes the mean of all values in the window, producing a smoother summary rather than picking out one extreme value.
+              </div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">Global pooling</strong> — the extreme case: the window covers the <em>entire</em> feature map at once, collapsing it down to a single scalar value. <strong class="text-[var(--on-background)]">Global max pooling</strong> returns the single largest value anywhere in the feature map; <strong class="text-[var(--on-background)]">global average pooling</strong> returns the mean of every value in it. Global pooling is often used right before a classifier head, replacing a Flatten layer.
+              </div>
+            </div>
+          </div>
+
+          <div class="border-l-4 border-[var(--outline)] bg-[var(--surface-container-high)]/40 p-sm rounded-r-lg text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Illustrative aid</strong> — generated for this site.</div>
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md flex justify-center">
+            <svg viewBox="0 0 480 240" class="w-full max-w-[480px]" role="img" aria-label="A 4x4 feature map reduced to a 2x2 output via 2x2 max pooling with stride 2">
+              <text x="115" y="22" text-anchor="middle" font-size="12" class="font-label-caps" fill="var(--secondary)">FEATURE MAP (4×4)</text>
+              <!-- 4x4 grid, cell 42, origin (20,34) -->
+              <g stroke="var(--outline-variant)" stroke-width="1" fill="none">
+                <rect x="20" y="34" width="168" height="168"/>
+                <line x1="62"  y1="34" x2="62"  y2="202"/>
+                <line x1="104" y1="34" x2="104" y2="202"/>
+                <line x1="146" y1="34" x2="146" y2="202"/>
+                <line x1="20"  y1="76"  x2="188" y2="76"/>
+                <line x1="20"  y1="118" x2="188" y2="118"/>
+                <line x1="20"  y1="160" x2="188" y2="160"/>
+              </g>
+              <!-- quadrant highlights -->
+              <rect x="21" y="35" width="83" height="83" fill="var(--secondary-container)" fill-opacity="0.22" stroke="var(--secondary)" stroke-width="2"/>
+              <rect x="105" y="35" width="82" height="83" fill="var(--tertiary-container)" fill-opacity="0.22" stroke="var(--tertiary)" stroke-width="2"/>
+              <rect x="21" y="119" width="83" height="82" fill="var(--primary-container)" fill-opacity="0.22" stroke="var(--primary)" stroke-width="2"/>
+              <rect x="105" y="119" width="82" height="82" fill="var(--error-container)" fill-opacity="0.22" stroke="var(--error)" stroke-width="2"/>
+              <!-- values -->
+              <g font-size="14" fill="var(--on-surface)">
+                <text x="35"  y="60">1</text><text x="77"  y="60" font-weight="700" fill="var(--secondary)">3</text><text x="119" y="60" font-weight="700" fill="var(--tertiary)">2</text><text x="161" y="60">4</text>
+                <text x="35"  y="102" font-weight="700" fill="var(--secondary)">5</text><text x="77"  y="102">6</text><text x="119" y="102">1</text><text x="161" y="102">2</text>
+                <text x="35"  y="144">3</text><text x="77"  y="144">1</text><text x="119" y="144">8</text><text x="161" y="144">0</text>
+                <text x="35"  y="186" font-weight="700" fill="var(--primary)">2</text><text x="77"  y="186">4</text><text x="119" y="186">3</text><text x="161" y="186" font-weight="700" fill="var(--error)">9</text>
+              </g>
+
+              <text x="230" y="122" text-anchor="middle" font-size="20" fill="var(--on-surface-variant)">→</text>
+              <text x="230" y="145" text-anchor="middle" font-size="10" fill="var(--on-surface-variant)">2×2 max pool</text>
+              <text x="230" y="158" text-anchor="middle" font-size="10" fill="var(--on-surface-variant)">stride 2</text>
+
+              <text x="370" y="22" text-anchor="middle" font-size="12" class="font-label-caps" fill="var(--primary)">OUTPUT (2×2)</text>
+              <g stroke="var(--outline-variant)" stroke-width="1" fill="none">
+                <rect x="310" y="34" width="120" height="120"/>
+                <line x1="370" y1="34" x2="370" y2="154"/>
+                <line x1="310" y1="94" x2="430" y2="94"/>
+              </g>
+              <rect x="311" y="35" width="58" height="58" fill="var(--secondary-container)" fill-opacity="0.18"/>
+              <rect x="371" y="35" width="58" height="58" fill="var(--tertiary-container)" fill-opacity="0.18"/>
+              <rect x="311" y="95" width="58" height="58" fill="var(--primary-container)" fill-opacity="0.18"/>
+              <rect x="371" y="95" width="58" height="58" fill="var(--error-container)" fill-opacity="0.18"/>
+              <g font-size="18" font-weight="700">
+                <text x="340" y="70" text-anchor="middle" fill="var(--secondary)">6</text>
+                <text x="400" y="70" text-anchor="middle" fill="var(--tertiary)">4</text>
+                <text x="340" y="130" text-anchor="middle" fill="var(--primary)">4</text>
+                <text x="400" y="130" text-anchor="middle" fill="var(--error)">9</text>
+              </g>
+              <text x="240" y="225" text-anchor="middle" font-size="11" fill="var(--on-surface-variant)">Each colored 2×2 window keeps only its bolded maximum value — the strongest activation "wins" each region.</text>
+            </svg>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Advantages &amp; disadvantages of pooling</h3>
+            <div class="grid sm:grid-cols-2 gap-3">
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">Advantages</strong>
+                <ul class="list-disc list-inside mt-1 space-y-0.5 text-[var(--on-surface)]">
+                  <li>Reduces feature map size, directly cutting memory and compute cost</li>
+                  <li>Introduces translation invariance — small shifts in the input barely change the pooled output</li>
+                  <li>Max pooling specifically enhances the strongest features by discarding weaker surrounding activations</li>
+                  <li>No parameters to learn — pooling is a fixed, deterministic operation, adding zero extra weights to train</li>
+                </ul>
+              </div>
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">Disadvantages</strong>
+                <p class="mt-1 text-[var(--on-surface)]">Pooling is a lossy operation — collapsing a whole window down to one number (a max, a min, an average) necessarily throws away everything else that was in that window. Some information is unavoidably lost every time pooling is applied, which is part of why some modern architectures (like ResNet-style designs) use it more sparingly, leaning more on strided convolutions or global pooling near the very end of the network instead of scattering pooling layers throughout.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on padding, strides &amp; pooling. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-dl-12">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. Padding an image with a border of zeros before convolving addresses which two problems at once?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Overfitting and slow training speed</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Progressive shrinkage of the feature map across layers, and border pixels being under-represented compared to center pixels</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. High memory use and translation variance</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Vanishing gradients and dead ReLU units</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Padding keeps the feature map from shrinking layer after layer, and gives border pixels more neighbors to be caught inside the sliding filter's window — addressing both the shrinkage problem and the "center pixels matter more" problem. Memory and translation variance are what pooling addresses instead.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. You want a convolutional layer's output to have exactly the same width and height as its input. Which Keras padding setting achieves this, and roughly how?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. "valid" — it removes the filter entirely</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. "valid" — it uses stride 0</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. "same" — it automatically computes and adds just enough zero-padding to keep output size equal to input size</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. "same" — it forces the filter size to 1×1</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> "valid" means no padding (output shrinks); "same" pads with zeros just enough to make the output spatial size match the input. "valid" is the one that shrinks; "same" is the one that preserves size.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. A 9×9 image is convolved with a 3×3 filter, no padding, stride 2. Using ⌊(n−f)/s⌋+1, what is the output size?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. 4×4</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. 3×3</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. 5×5</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. 7×7</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> (9−3)/2 + 1 = 6/2 + 1 = 3 + 1 = 4, giving a 4×4 feature map — a clean integer in this case, but the same formula is exactly where a decimal result would need to be floored down.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. A 228×228 image convolved with 100 filters (3×3, valid padding, stride 1) produces a 226×226×100 output volume. Why is this specifically a problem pooling is meant to solve?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. It means the filters were initialized incorrectly</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. It causes the gradients to vanish during backpropagation</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. It means the model cannot be trained with backpropagation at all</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Storing that many large feature maps consumes a huge amount of memory, and this compounds further with each additional convolutional layer</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> This is precisely the "memory issue" pooling addresses — a 226×226×100 volume is a lot of numbers to store for one layer, and stacking more convolutional layers on top compounds the problem further unless something down-samples the feature maps.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. What makes max pooling, specifically, "translation invariant" in a way that helps classification tasks?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. It learns a set of weights that are invariant to rotation</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. It increases the spatial resolution of the feature map</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. As long as the strongest activation stays somewhere inside the same pooling window, a small shift in the input doesn't change the pooled output value</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It removes the need for convolutional layers entirely</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Because max pooling only reports the single largest value in a window, small shifts of the underlying feature within that window don't change the output — the window's max is robust to exactly where inside it the peak activation sits, which is what gives pooled features their location-independence.
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--primary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="dl-13.html" class="bg-[var(--secondary)] text-[var(--on-secondary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">Next: CNN Architectures &amp; Transfer Learning</a>
+        </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="../assets/app.js"></script>
+
+</body>
+</html>

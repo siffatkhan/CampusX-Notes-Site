@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{TITLE}} — Sifat Notes</title>
+
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..800&family=Inter:ital,opsz,wght@0,14..32,400..700;1,14..32,400..700&family=JetBrains+Mono:wght@400..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script src="{{ROOT}}assets/tailwind-config.js"></script>
+<link rel="stylesheet" href="{{ROOT}}assets/theme.css">
+</head>
+<body class="antialiased min-h-screen font-body-md">
+
+{{HEADER}}
+
+<div class="flex flex-1">
+<div id="sidebarBackdrop" class="hidden fixed inset-0 bg-black/50 z-50 md:hidden" onclick="toggleSidebar()"></div>
+{{SIDEBAR}}
+
+  <main class="flex-1 md:ml-[280px] px-4 py-6 md:p-lg max-w-[1200px] mx-auto w-full min-w-0">
+    <nav aria-label="Breadcrumb" class="flex flex-wrap text-sm text-[var(--on-surface-variant)] mb-4">{{CRUMBS}}</nav>
+
+    <div class="space-y-xl">
+{{CONTENT}}
+    </div>
+  </main>
+</div>
+
+<script src="{{ROOT}}assets/app.js"></script>
+{{EXTRA_JS}}
+</body>
+</html>

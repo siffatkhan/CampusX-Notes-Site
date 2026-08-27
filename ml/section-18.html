@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>18. PCA — Sifat Notes</title>
+
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..800&family=Inter:ital,opsz,wght@0,14..32,400..700;1,14..32,400..700&family=JetBrains+Mono:wght@400..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script src="../assets/tailwind-config.js"></script>
+<link rel="stylesheet" href="../assets/theme.css">
+</head>
+<body class="antialiased min-h-screen font-body-md">
+
+<header class="bg-[var(--surface)] border-b border-[var(--outline-variant)] sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-4 md:px-lg py-2.5 md:py-sm max-w-[1200px] mx-auto">
+<a href="../index.html" class="flex items-center gap-2.5 md:gap-3 group min-w-0" title="Back to home">
+<div class="w-9 h-9 shrink-0 rounded-md bg-[var(--primary)] text-[var(--on-primary)] flex items-center justify-center font-h3 font-bold text-sm group-hover:opacity-85 transition-opacity">SN</div>
+<div class="min-w-0">
+<div class="font-h3 text-base md:text-lg font-semibold text-[var(--on-background)] leading-none truncate">Sifat Notes</div>
+<div class="hidden sm:block text-[11px] text-[var(--on-surface-variant)] mt-0.5 truncate">from CampusX's playlists</div>
+</div>
+</a>
+<nav class="hidden md:flex items-center gap-6 text-sm shrink-0">
+<a class="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors" href="../index.html">Home</a>
+<a class="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors" href="../index.html#courses">Courses</a>
+</nav>
+<div class="flex items-center gap-2 md:gap-3 shrink-0">
+<button id="mobileMenuBtn" class="md:hidden border border-[var(--outline-variant)] rounded-md p-1.5 text-[var(--on-background)] flex items-center justify-center" onclick="toggleSidebar()" aria-label="Toggle navigation">
+<span class="material-symbols-outlined text-[20px]">menu</span>
+</button>
+<button class="flex items-center gap-1.5 bg-[var(--surface-container)] border border-[var(--outline-variant)] text-[var(--on-background)] px-2.5 md:px-3 py-1.5 rounded-full text-xs font-label-caps hover:border-[var(--primary)] transition-colors" onclick="toggleTheme()" data-theme-btn>
+<span class="material-symbols-outlined text-[16px]" data-theme-icon>light_mode</span>
+<span data-theme-label class="hidden sm:inline">Light</span>
+</button>
+</div>
+</div>
+</header>
+
+
+<div class="flex flex-1">
+<div id="sidebarBackdrop" class="hidden fixed inset-0 bg-black/50 z-50 md:hidden" onclick="toggleSidebar()"></div>
+<aside id="sidebarSlot" class="flex flex-col bg-[var(--surface-container-low)] border-r border-[var(--outline-variant)] fixed left-0 top-[65px] h-[calc(100vh-65px)] w-[280px] py-md overflow-y-auto">
+<div class="px-lg mb-md">
+<input id="searchBox" placeholder="Search topics…" class="w-full bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-md px-3 py-2 text-sm text-[var(--on-background)] placeholder:text-[var(--on-surface-variant)] focus:outline-none focus:border-[var(--primary)]">
+</div>
+
+<nav class="toc flex-1 px-2 space-y-1 text-sm" id="tocNav">
+
+<div class="px-3 pt-3 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Foundations</div>
+
+<details open>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--primary)] font-semibold bg-[var(--surface-container-high)]/50">1. Introduction to ML <span class="chev text-[10px]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-01.html#day-1" class="flex px-3 py-1.5 rounded-md text-[var(--primary)] font-semibold bg-[var(--surface-container-high)]/40">Day 1: Definition</a>
+<a href="section-01.html#day-2" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 2: AI vs ML vs Deep Learning</a>
+<a href="section-01.html#day-3" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 3: Types of Machine Learning</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">2. Learning Styles <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-02.html#day-4" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 4: Batch Learning vs Online Learning (Machine Learning Training Styles)</a>
+<a href="section-02.html#day-5" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 5: Batch Learning vs Online Learning</a>
+<a href="section-02.html#day-6" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 6: Instance-Based Learning vs Model-Based Learning</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">3. ML Landscape <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-03.html#day-7" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 7: Challenges in Machine Learning (ML)</a>
+<a href="section-03.html#day-8" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 8: Applications of Machine Learning</a>
+<a href="section-03.html#day-9" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 9: ML Development Life Cycle (ML DLC)</a>
+<a href="section-03.html#day-10" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 10: Data-Related Job Roles</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">4. Tensors &amp; Setup <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-04.html#day-11" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 11: Tensors</a>
+<a href="section-04.html#day-12" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 12: Virtual Environment</a>
+<a href="section-04.html#day-14" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 14: Framing the Problem</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Data Handling</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">5. Data Gathering <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-05.html#day-15" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 15: Data Gathering</a>
+<a href="section-05.html#day-16" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 16: Working with JSON / SQL</a>
+<a href="section-05.html#day-17" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 17: Fetching Data from APIs</a>
+<a href="section-05.html#day-18" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 18: Web Scraping</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">6. Exploratory Data Analysis <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-06.html#day-19" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 19: Understanding Gathered Data — Asking Basic Questions</a>
+<a href="section-06.html#day-20" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 20: Understanding Gathered Data — EDA (Univariate Analysis)</a>
+<a href="section-06.html#day-21" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 21: Understanding Gathered Data — EDA (Bivariate Analysis)</a>
+<a href="section-06.html#day-22" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 22: Pandas Profiling Tool</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">7. Feature Engineering <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-07.html#day-23" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 23: Feature Engineering (IMP)</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">8. Feature Scaling <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-08.html#day-24" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 24: Feature Scaling — Standardization</a>
+<a href="section-08.html#day-25" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 25: Feature Scaling — Normalization</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">9. Encoding Categorical Vars <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-09.html#day-26" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 26: Encoding Categorical Variables — Ordinal / Label Encoding</a>
+<a href="section-09.html#day-27" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 27: Encoding Categorical Variables — One Hot Encoding</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">10. Column Transformer &amp; Pipelines <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-10.html#day-28" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 28: Column Transformer</a>
+<a href="section-10.html#day-29" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 29: Pipeline Transformer</a>
+<a href="section-10.html#day-30" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 30: Function Transformer</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">11. Power Transformer <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-11.html#day-31" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 31: Power Transformer</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">12. Binning &amp; Binarization <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-12.html#day-32" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 32: Binning and Binarization</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">13. Mixed / Date-Time Data <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-13.html#day-33" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 33: Handling Mixed Data</a>
+<a href="section-13.html#day-34" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 34: Handling Date and Time Variables</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">14. Missing Values <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-14.html#day-35" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 35: Handling Missing Value — Removing Values</a>
+<a href="section-14.html#day-36" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 36: Handling Numerical Missing Value (Imputing)</a>
+<a href="section-14.html#day-37" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 37: Handling Categorical Missing Value</a>
+<a href="section-14.html#day-38" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 38: Handling Missing Value — Random Sample / Missing Indicator</a>
+<a href="section-14.html#day-39" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 39: Handling Missing Value (Multivariate) — KNN Imputer</a>
+<a href="section-14.html#day-40" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 40: Handling Missing Value (Multivariate) — Iterative Imputer (MICE)</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">15. Outliers <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-15.html#day-41" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 41: Handling Outliers</a>
+<a href="section-15.html#day-42" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 42: Handling Outliers — Z-Score Method</a>
+<a href="section-15.html#day-43" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 43: Handling Outliers — IQR Method</a>
+<a href="section-15.html#day-44" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 44: Handling Outliers — Winsorization</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">16. Feature Construction <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-16.html#day-45" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 45: Feature Construction | Feature Splitting</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">17. Curse of Dimensionality <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-17.html#day-46" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 46: Curse of Dimensionality</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">18. PCA <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-18.html#day-47" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 47: Principal Component Analysis (PCA) — Geometric Intuition</a>
+<a href="section-18.html#day-48" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 48: Principal Component Analysis (PCA) — Problem Formulation &amp; Code</a>
+<a href="section-18.html#day-49" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 49: Principal Component Analysis (PCA) — MNIST Example</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Algorithms</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">19. Linear Regression <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-19.html#day-50" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 50: Simple Linear Regression</a>
+<a href="section-19.html#day-51" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 51: Simple Linear Regression (Mathematical Intuition)</a>
+<a href="section-19.html#day-52" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 52: Regression Metrics</a>
+<a href="section-19.html#day-53" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 53: Multiple Linear Regression (Geometric Intuition)</a>
+<a href="section-19.html#day-54" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 54: Multiple Linear Regression (Mathematical Formulation)</a>
+<a href="section-19.html#day-55" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 55: Multiple Linear Regression (Code)</a>
+<a href="section-19.html#day-56" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 56: Assumptions of Linear Regression</a>
+<a href="section-19.html#day-57" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 57: Gradient Descent from Scratch</a>
+<a href="section-19.html#day-58" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 58: Batch Gradient Descent</a>
+<a href="section-19.html#day-59" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 59: Stochastic Gradient Descent</a>
+<a href="section-19.html#day-60" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 60: Mini Batch Gradient Descent</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">20. Polynomial Regression <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-20.html#day-61" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 61: Polynomial Linear Regression</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">21. Bias-Variance Tradeoff <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-21.html#day-62" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 62: Bias Variance Trade Off</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">22. Regularization <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-22.html#ridge-geometric" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Ridge Regression — Geometric Intuition &amp; Code</a>
+<a href="section-22.html#ridge-gradient-descent" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Ridge Regression — Gradient Descent</a>
+<a href="section-22.html#lasso-cost" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Lasso Regression</a>
+<a href="section-22.html#lasso-sparsity" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why Lasso Creates Sparsity</a>
+<a href="section-22.html#elastic-net" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Elastic Net Regression</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">23. Logistic Regression <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-23.html#day-70" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 70: Logistic Regression (Perceptron Trick)</a>
+<a href="section-23.html#day-71" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 71: Logistic Regression (Perceptron Trick Code)</a>
+<a href="section-23.html#day-72" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 72: Logistic Regression (Sigmoid Function)</a>
+<a href="section-23.html#logistic-gradient-descent" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Gradient Descent for Logistic Regression</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">24. Classification Metrics <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-24.html#confusion-matrix" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Accuracy, Confusion Matrix &amp; Type I/II Errors</a>
+<a href="section-24.html#precision-recall-f1" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Precision, Recall &amp; F1 Score</a>
+<a href="section-24.html#roc-auc" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">ROC Curve &amp; AUC</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">25. Logistic Regression — Advanced <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-25.html#softmax-regression" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Softmax Regression (Multinomial)</a>
+<a href="section-25.html#polynomial-logistic-regression" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Polynomial Features (Non-Linear Boundaries)</a>
+<a href="section-25.html#logistic-regression-hyperparameters" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Hyperparameters</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Classification Algorithms</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">26. Naive Bayes Classifier <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-26.html#conditional-probability" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Conditional Probability</a>
+<a href="section-26.html#independent-events" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Independent Events</a>
+<a href="section-26.html#mutually-exclusive-events" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Mutually Exclusive Events</a>
+<a href="section-26.html#bayes-theorem" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Bayes' Theorem</a>
+<a href="section-26.html#bayes-worked-example" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">A Problem Worked with Bayes' Theorem</a>
+<a href="section-26.html#naive-bayes-classifier" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Naive Bayes — Intuition, Math &amp; Code</a>
+<a href="section-26.html#gaussian-naive-bayes" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Handling Numerical Data (Gaussian NB)</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">27. K-Nearest Neighbors (KNN) <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-27.html#knn-overview" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">What is KNN — Full Overview</a>
+<a href="section-27.html#how-knn-works" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">How It Works</a>
+<a href="section-27.html#effect-of-k" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Effect of K</a>
+<a href="section-27.html#knn-curse-of-dimensionality" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Curse of Dimensionality &amp; KNN</a>
+<a href="section-27.html#knn-when-to-use" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">When to Use vs Avoid</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">28. Support Vector Machines (SVM) <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-28.html#svm-geometric-intuition" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Geometric Intuition</a>
+<a href="section-28.html#svm-math" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Math</a>
+<a href="section-28.html#hard-soft-margin" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Hard Margin vs Soft Margin</a>
+<a href="section-28.html#kernel-trick" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Kernel Trick — Intuition &amp; Code</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">29. Decision Trees <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-29.html#tree-geometric-intuition" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Geometric Intuition</a>
+<a href="section-29.html#entropy-gini" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Entropy, Gini Impurity &amp; Information Gain</a>
+<a href="section-29.html#tree-hyperparameters" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Hyperparameters &amp; Overfitting/Underfitting</a>
+<a href="section-29.html#regression-trees" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Regression Trees</a>
+<a href="section-29.html#dtreeviz-visualization" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Visualization with dtreeviz</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Ensemble Learning</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">30. Ensemble Learning: Voting <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-30.html#ensemble-intro" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Introduction to Ensemble Learning</a>
+<a href="section-30.html#voting-ensemble" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Hard &amp; Soft Voting</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">31. Bagging <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-31.html#bagging-intro" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Introduction</a>
+<a href="section-31.html#bagging-classifiers" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Bagging Classifiers</a>
+<a href="section-31.html#bagging-regressors" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Bagging Regressors</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">32. Random Forest <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-32.html#rf-intro" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Intro &amp; Intuition</a>
+<a href="section-32.html#rf-bias-variance" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Bias-Variance Tradeoff in RF</a>
+<a href="section-32.html#bagging-vs-rf" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Bagging vs Random Forest</a>
+<a href="section-32.html#rf-hyperparameters" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Hyperparameters</a>
+<a href="section-32.html#rf-hyperparameter-tuning" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Tuning — GridSearchCV &amp; RandomizedSearchCV</a>
+<a href="section-32.html#oob-score" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">OOB Score</a>
+<a href="section-32.html#rf-feature-importance" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Feature Importance</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">33. AdaBoost <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-33.html#adaboost-intuition" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Geometric Intuition</a>
+<a href="section-33.html#adaboost-steps" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Step-by-Step Explanation</a>
+<a href="section-33.html#adaboost-code" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Code</a>
+<a href="section-33.html#adaboost-hyperparameters" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Hyperparameters &amp; GridSearchCV</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">34. Bagging vs Boosting <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-34.html#bvb-structural-difference" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Structural Difference</a>
+<a href="section-34.html#bvb-strengths-weaknesses" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">What Each Is Best At</a>
+<a href="section-34.html#bvb-comparison-table" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Comparison Table</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">35. Gradient Boosting <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-35.html#gb-explained" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Explained</a>
+<a href="section-35.html#gb-regression" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">For Regression</a>
+<a href="section-35.html#gb-classification" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">For Classification</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">36. XGBoost <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-36.html#xgboost-intro" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Intro to XGBoost</a>
+<a href="section-36.html#xgboost-regression" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">For Regression</a>
+<a href="section-36.html#xgboost-classification" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">For Classification</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">37. Stacking &amp; Blending <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-37.html#stacking" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Stacking</a>
+<a href="section-37.html#blending" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Blending</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Unsupervised &amp; Practical</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">38. Clustering <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-38.html#k-means" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">K-Means Clustering</a>
+<a href="section-38.html#hierarchical-clustering" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Agglomerative Hierarchical Clustering</a>
+<a href="section-38.html#dbscan" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">DBSCAN</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">39. Handling Imbalanced Data <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-39.html#the-problem" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Problem</a>
+<a href="section-39.html#undersampling" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Undersampling</a>
+<a href="section-39.html#oversampling" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Oversampling</a>
+<a href="section-39.html#smote" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">SMOTE</a>
+<a href="section-39.html#practical-guidance" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Practical Guidance</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">40. Hyperparameter Tuning (Optuna) <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-40.html#why-optuna" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why Optuna</a>
+<a href="section-40.html#bayesian-optimization-intuition" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Bayesian Optimization Intuition</a>
+<a href="section-40.html#optuna-core-concepts" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Core Concepts</a>
+<a href="section-40.html#optuna-code-example" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Code Example</a>
+<a href="section-40.html#pruning" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Pruning</a>
+</div>
+</details>
+
+</nav>
+</aside>
+
+
+  <main class="flex-1 md:ml-[280px] px-4 py-6 md:p-lg max-w-[1200px] mx-auto w-full min-w-0">
+    <nav aria-label="Breadcrumb" class="flex flex-wrap text-sm text-[var(--on-surface-variant)] mb-4"><a href="../index.html" class="hover:text-[var(--primary)]">Home</a><span class="mx-2">/</span><a href="../index.html#courses" class="hover:text-[var(--primary)]">ML Track</a><span class="mx-2">/</span><span class="text-[var(--on-background)]">18. PCA</span></nav>
+
+    <div class="space-y-xl">
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-3 py-1 mb-3">Source: CampusX — 100 Days of Machine Learning</span>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">18. PCA</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Geometric Intuition · Problem Formulation & Code · MNIST Worked Example</p>
+        </div>
+
+        <!-- DAY 47 -->
+        <section id="day-47" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 47</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Principal Component Analysis (PCA) — Geometric Intuition</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">PCA is an <strong class="text-[var(--on-background)]">unsupervised</strong> machine learning technique, having just input, no output. PCA can transform higher-dimensional data into lower-dimensional data while keeping the core essence of the data.</p>
+
+          <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">PCA Benefits</h4>
+            <ul class="text-sm text-[var(--on-surface)] list-disc list-inside space-y-1">
+              <li>Data size reduction, resulting in faster execution of algorithms</li>
+              <li>Visualization in the needed dimension</li>
+            </ul>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--on-background)]">Feature Selection vs Feature Extraction — the intuition</h3>
+            <p class="text-sm text-[var(--on-surface)]">Feature selection is keeping only those columns that are important for predicting outputs. If we don't know which column is more necessary, we should project the data onto a scatter plot and check the spread/distance: whichever projection has a lengthier spread — bigger variance — we select those columns.</p>
+            <p class="text-sm text-[var(--on-surface)]">If we come across a set of columns that has roughly equal variance, we use a <strong class="text-[var(--on-background)]">feature extraction</strong> technique instead. For example: rooms and washrooms are both important for predicting the price of a home, so we can't just remove one column — instead we make a new column, <code>house_size</code>, that predicts the price.</p>
+            <p class="text-sm text-[var(--on-surface-variant)]">The number of principal components is always less than n, the number of original features in the data.</p>
+          </div>
+
+          <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">Why variance, not mean?</h4>
+            <p class="text-sm text-[var(--on-surface)]">Formula: \( (x - \bar{x})^2 / n \). Spread is not variance, but spread is directly proportional to variance. We must <strong class="text-[var(--on-background)]">maximize variance</strong> so as not to disturb the relationship between data points when transforming higher-dimensional data to lower dimension.</p>
+          </div>
+
+          <details class="deepdive bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl px-md">
+            <summary class="py-3 font-semibold text-sm text-[var(--on-background)]">EXTRA — Mean, Variance, Covariance, and Eigenvectors, built up from scratch</summary>
+            <div class="pb-4 text-sm text-[var(--on-surface-variant)] leading-relaxed space-y-4">
+
+              <div>
+                <strong class="text-[var(--on-background)]">1. Mean (center of data)</strong>
+                <p>Mean is the average of values.</p>
+                <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center my-2">
+                  $$ \text{mean} = \frac{x_1 + x_2 + \dots + x_n}{n} $$
+                </div>
+                <p><strong class="text-[var(--on-background)]">Example:</strong> data [2, 4, 6] → mean = (2 + 4 + 6) / 3 = 4.</p>
+                <p><strong class="text-[var(--on-background)]">Intuition:</strong> mean is the center point of your data. Think of placing weights on a rod — mean is the balance point.</p>
+              </div>
+
+              <div>
+                <strong class="text-[var(--on-background)]">2. Variance (spread of data)</strong>
+                <p>Variance tells how far values are from the mean.</p>
+                <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center my-2">
+                  $$ \text{variance} = \text{average of } (x_i - \text{mean})^2 $$
+                </div>
+                <p><strong class="text-[var(--on-background)]">Example:</strong> data [2, 4, 6], mean = 4. Deviations: (2−4)² = 4, (4−4)² = 0, (6−4)² = 4. Variance = (4 + 0 + 4) / 3 = 2.67.</p>
+                <p><strong class="text-[var(--on-background)]">Intuition:</strong> low variance → data is tight. High variance → data is spread out.</p>
+              </div>
+
+              <div>
+                <strong class="text-[var(--on-background)]">3. Standard Deviation (SD)</strong>
+                <p>SD = square root of variance.</p>
+                <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center my-2">
+                  $$ SD = \sqrt{\text{variance}} $$
+                </div>
+                <p><strong class="text-[var(--on-background)]">Example:</strong> SD = √2.67 ≈ 1.63.</p>
+                <p><strong class="text-[var(--on-background)]">Why SD?</strong> Variance is squared, so its units become weird. SD brings it back to the original scale — it's the average distance from the mean.</p>
+              </div>
+
+              <div>
+                <strong class="text-[var(--on-background)]">4. From 1D to 2D (important jump)</strong>
+                <p>Now data has 2 features, e.g. Height and Weight. Each point = (x, y). Now we care about spread in x, spread in y, and the relationship between x and y. This leads to covariance.</p>
+              </div>
+
+              <div>
+                <strong class="text-[var(--on-background)]">5. Covariance (relationship between features)</strong>
+                <p>Covariance measures how two variables move together.</p>
+                <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center my-2">
+                  $$ \text{cov}(x,y) = \text{average of } (x_i - \text{mean}_x)(y_i - \text{mean}_y) $$
+                </div>
+                <p><strong class="text-[var(--on-background)]">Intuition:</strong> positive → both increase together. Negative → one increases, the other decreases. Zero → no relation.</p>
+              </div>
+
+              <div>
+                <strong class="text-[var(--on-background)]">6. Covariance Matrix</strong>
+                <p>For 2D:</p>
+                <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center my-2">
+                  $$ \begin{bmatrix} \text{var}(x) & \text{cov}(x,y) \\ \text{cov}(y,x) & \text{var}(y) \end{bmatrix} $$
+                </div>
+                <p>This matrix summarizes spread and direction.</p>
+              </div>
+
+              <div>
+                <strong class="text-[var(--on-background)]">7. Eigenvectors and Eigenvalues</strong>
+                <p>Now comes the core idea. Given the covariance matrix, we extract eigenvectors (directions) and eigenvalues (importance of those directions).</p>
+                <p class="mt-2"><strong class="text-[var(--on-background)]">7.1 Eigenvectors (directions).</strong> An eigenvector is the direction in which data varies most — the direction where data points spread out the most. Think: the data cloud is tilted, and the eigenvector tells you "this is the main direction of spread."</p>
+                <p class="mt-2"><strong class="text-[var(--on-background)]">7.2 Eigenvalues (magnitude).</strong> An eigenvalue tells you how much variance exists along that direction. Large eigenvalue → important direction. Small eigenvalue → less important.</p>
+              </div>
+
+              <div>
+                <strong class="text-[var(--on-background)]">Simple analogy</strong>
+                <p>Imagine a stretched ellipse: the long axis is the major direction → high variance → big eigenvalue. The short axis is the minor direction → low variance → small eigenvalue. Eigenvectors = axes directions, eigenvalues = axis lengths.</p>
+              </div>
+
+              <div>
+                <strong class="text-[var(--on-background)]">8. Visual intuition</strong>
+                <p>Data is like a tilted cloud. Normal axes (x-axis, y-axis) don't align with it. Eigenvectors rotate the axes to align with the data.</p>
+              </div>
+
+              <div>
+                <strong class="text-[var(--on-background)]">9. Now connect everything to PCA</strong>
+                <p>PCA's goal: reduce dimensions (columns) but keep maximum information. It uses scikit-learn internally, but the concept is pure math.</p>
+                <p class="mt-2"><strong class="text-[var(--on-background)]">Step-by-step PCA flow:</strong></p>
+                <ol class="list-decimal list-inside space-y-1 mt-1">
+                  <li><strong class="text-[var(--on-background)]">Mean center data</strong> — subtract the mean from every point, so data is centered at the origin</li>
+                  <li><strong class="text-[var(--on-background)]">Compute covariance matrix</strong> — captures spread and relationships</li>
+                  <li><strong class="text-[var(--on-background)]">Compute eigenvectors and eigenvalues</strong> from the covariance matrix — eigenvectors → directions of max variance, eigenvalues → how much variance</li>
+                  <li><strong class="text-[var(--on-background)]">Sort eigenvalues (descending), pick top k</strong> — e.g. 2D → reduce to 1D → pick the largest eigenvalue's direction</li>
+                  <li><strong class="text-[var(--on-background)]">Project data</strong> onto the selected eigenvectors — this gives reduced dimensions with maximum preserved information</li>
+                </ol>
+              </div>
+
+              <div>
+                <strong class="text-[var(--on-background)]">10. Final connection (everything together)</strong>
+                <ul class="list-disc list-inside space-y-1 mt-1">
+                  <li>Mean → centers data</li>
+                  <li>Variance → measures spread</li>
+                  <li>Covariance → shows relationships</li>
+                  <li>Covariance matrix → full structure</li>
+                  <li>Eigenvectors → best directions</li>
+                  <li>Eigenvalues → importance of directions</li>
+                  <li>PCA → selects top directions and projects data</li>
+                </ul>
+              </div>
+
+              <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+                <strong class="text-[var(--on-background)]">11. One-line intuition</strong>
+                <p>PCA finds the direction where your data spreads the most and keeps that, ignoring the rest.</p>
+              </div>
+
+              <div>
+                <strong class="text-[var(--on-background)]">12. Real-world intuition</strong>
+                <p>Think of shadows: a 3D object casts a 2D shadow. You choose the angle that preserves the most shape. That angle = eigenvector; its importance = eigenvalue.</p>
+              </div>
+            </div>
+          </details>
+
+          <div>
+            <div class="border-l-4 border-[var(--outline)] bg-[var(--surface-container-high)]/40 p-sm rounded-r-lg text-xs text-[var(--on-surface-variant)] mb-3">
+              <strong class="text-[var(--on-background)]">Illustrative aid</strong> — generated for this site, not quoted from the source notes.
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-lg flex flex-col items-center gap-2">
+              <svg viewBox="0 0 340 260" class="w-full max-w-[420px]" role="img" aria-label="Scatter of 2D points with a principal-axis line drawn through the direction of maximum spread, and a secondary axis perpendicular to it">
+                <line x1="20" y1="130" x2="320" y2="130" stroke="var(--outline-variant)" stroke-width="1"/>
+                <line x1="170" y1="20" x2="170" y2="240" stroke="var(--outline-variant)" stroke-width="1"/>
+                <!-- PC2: minor axis, perpendicular, short -->
+                <line x1="130" y1="180" x2="210" y2="80" stroke="var(--secondary)" stroke-width="2" stroke-dasharray="4 3"/>
+                <!-- PC1: major axis, long, direction of maximum variance -->
+                <line x1="40" y1="200" x2="300" y2="60" stroke="var(--primary)" stroke-width="2.5"/>
+                <text x="292" y="50" class="font-label-caps" font-size="11" fill="var(--primary)">PC1</text>
+                <text x="214" y="74" class="font-label-caps" font-size="11" fill="var(--secondary)">PC2</text>
+                <!-- scatter points roughly along PC1 with some spread -->
+                <circle cx="60" cy="195" r="4" fill="var(--on-surface)" fill-opacity="0.75"/>
+                <circle cx="80" cy="178" r="4" fill="var(--on-surface)" fill-opacity="0.75"/>
+                <circle cx="95" cy="190" r="4" fill="var(--on-surface)" fill-opacity="0.75"/>
+                <circle cx="110" cy="160" r="4" fill="var(--on-surface)" fill-opacity="0.75"/>
+                <circle cx="130" cy="150" r="4" fill="var(--on-surface)" fill-opacity="0.75"/>
+                <circle cx="140" cy="165" r="4" fill="var(--on-surface)" fill-opacity="0.75"/>
+                <circle cx="155" cy="130" r="4" fill="var(--on-surface)" fill-opacity="0.75"/>
+                <circle cx="170" cy="140" r="4" fill="var(--on-surface)" fill-opacity="0.75"/>
+                <circle cx="185" cy="115" r="4" fill="var(--on-surface)" fill-opacity="0.75"/>
+                <circle cx="200" cy="120" r="4" fill="var(--on-surface)" fill-opacity="0.75"/>
+                <circle cx="215" cy="100" r="4" fill="var(--on-surface)" fill-opacity="0.75"/>
+                <circle cx="230" cy="95" r="4" fill="var(--on-surface)" fill-opacity="0.75"/>
+                <circle cx="245" cy="85" r="4" fill="var(--on-surface)" fill-opacity="0.75"/>
+                <circle cx="260" cy="90" r="4" fill="var(--on-surface)" fill-opacity="0.75"/>
+                <circle cx="275" cy="70" r="4" fill="var(--on-surface)" fill-opacity="0.75"/>
+              </svg>
+              <p class="text-xs text-[var(--on-surface-variant)] text-center max-w-md">PC1 (solid) is the direction of maximum variance — where the point cloud spreads out the most. PC2 (dashed) is perpendicular, capturing the remaining, much smaller spread.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- DAY 48 -->
+        <section id="day-48" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 48</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Principal Component Analysis (PCA) — Problem Formulation & Code</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">PCA has to find such a unit vector for which the projected value is maximum — we have to <strong class="text-[var(--on-background)]">maximize variance</strong>.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-lg text-[var(--primary)]">1. Problem PCA Solves</h3>
+            <p class="text-sm text-[var(--on-surface)]">You have high-dimensional data with many features. Problems include redundant features, noise, slow models, and hard visualization. The goal is to reduce dimensions and keep maximum information. The core idea is to find new axes where data variance is maximum.</p>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-lg text-[var(--secondary)]">2. Key Intuition</h3>
+            <p class="text-sm text-[var(--on-surface)]">PCA performs a <strong class="text-[var(--on-background)]">rotation of axes</strong>, not deletion of data. Old axes represent original features; new axes represent directions of maximum variance. You project data onto these new axes.</p>
+            <p class="text-sm text-[var(--on-surface)]">PCA finds new axes — called principal components — that point in the directions of maximum variance in your data. Think of it as turning your coordinate system so that the first axis captures the most variation, the second captures the next most, and so on.</p>
+          </div>
+
+          <div class="grid gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">3. Variance (Why important)</h4>
+              <p class="text-sm text-[var(--on-surface)]">Variance means how spread out data is. High variance means more information, low variance means less useful information. PCA keeps directions with highest variance and drops directions with low variance.</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">4. Covariance (Relationship between features)</h4>
+              <p class="text-sm text-[var(--on-surface)]">Variance works on one feature; covariance works on two features. Positive means both increase together, negative means one increases and the other decreases, zero means no relation. PCA uses this to understand how features move together.</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">5. Covariance Matrix</h4>
+              <p class="text-sm text-[var(--on-surface)]">Shows relationships between all features. Example in 2D:</p>
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center my-2">
+                $$ \begin{bmatrix} \text{var}(x) & \text{cov}(x,y) \\ \text{cov}(y,x) & \text{var}(y) \end{bmatrix} $$
+              </div>
+              <p class="text-sm text-[var(--on-surface-variant)]">Diagonal values are variances, off-diagonal values are covariance, and the matrix is symmetric.</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">6. Correlation vs Covariance</h4>
+              <p class="text-sm text-[var(--on-surface)]">Covariance is scale dependent and hard to compare. Correlation is scaled covariance and lies between −1 and 1. Both give the same direction insight. PCA usually uses the covariance matrix.</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">7. Linear Transformation (Core concept)</h4>
+              <p class="text-sm text-[var(--on-surface)]">Transformation means changing data space. A matrix performs rotation, stretching, and compression. When you multiply a vector by a matrix, you get a transformed vector. The matrix acts as a transformation rule.</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">8. Eigenvectors and Eigenvalues</h4>
+              <p class="text-sm text-[var(--on-surface)]">Eigenvectors are special directions where, after transformation, direction stays the same and only magnitude changes. Eigenvalues show how much stretching happens. Key equation:</p>
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center my-2">
+                $$ A v = \lambda v $$
+              </div>
+              <p class="text-sm text-[var(--on-surface-variant)]">A is the matrix, v is the eigenvector, λ is the eigenvalue.</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">9. Why Eigen Things Matter in PCA</h4>
+              <p class="text-sm text-[var(--on-surface)]">Eigenvectors define directions of the new axes. Eigenvalues define the importance of each axis. A higher eigenvalue means more variance and more importance.</p>
+            </div>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-lg text-[var(--primary)]">10. PCA Step-by-Step</h3>
+            <ol class="text-sm text-[var(--on-surface)] list-decimal list-inside space-y-2">
+              <li><strong class="text-[var(--on-background)]">Mean centering.</strong> Subtract the mean from each feature to shift data to the origin and improve results.</li>
+              <li><strong class="text-[var(--on-background)]">Compute covariance matrix</strong> using: <code>np.cov(X.T)</code></li>
+              <li><strong class="text-[var(--on-background)]">Perform eigen decomposition</strong> to find eigenvalues and eigenvectors.</li>
+              <li><strong class="text-[var(--on-background)]">Sort eigenvalues in descending order</strong> and pick the top k.</li>
+              <li><strong class="text-[var(--on-background)]">Select top eigenvectors.</strong> These become the principal components.</li>
+              <li><strong class="text-[var(--on-background)]">Transform data</strong> using the projection: \( X_{new} = X \cdot V \), where V contains the selected eigenvectors.</li>
+            </ol>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">11. Dimensionality Reduction</h4>
+              <p class="text-sm text-[var(--on-surface)]">You reduce dimensions like 3D to 2D to 1D. The number of components depends on how much variance you want to retain.</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">12. Explained Variance</h4>
+              <p class="text-sm text-[var(--on-surface)]">Shows how much information each component keeps.</p>
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center my-2">
+                $$ \text{explained\_variance} = \frac{\text{eigen\_value}}{\sum \text{eigen\_values}} $$
+              </div>
+              <p class="text-sm text-[var(--on-surface-variant)]">Used to decide the number of components.</p>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">13. Code Example (Minimal)</h3>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+<button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+<pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>import numpy as np
+
+X = np.array([[2, 3],
+              [3, 4],
+              [4, 5]])
+
+X_meaned = X - np.mean(X, axis=0)
+
+cov_matrix = np.cov(X_meaned.T)
+
+eigen_values, eigen_vectors = np.linalg.eig(cov_matrix)
+
+idx = np.argsort(eigen_values)[::-1]
+eigen_vectors = eigen_vectors[:, idx]
+
+V = eigen_vectors[:, :1]
+
+X_reduced = np.dot(X_meaned, V)
+
+print(X_reduced)</code></pre>
+</div>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--tertiary)] mb-1">14. Important Points for Exams</h4>
+              <ul class="text-sm text-[var(--on-surface)] list-disc list-inside space-y-1">
+                <li>PCA is unsupervised</li>
+                <li>PCA is linear</li>
+                <li>PCA is sensitive to scaling — use standardization</li>
+                <li>PCA works best when features are correlated</li>
+              </ul>
+            </div>
+            <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">15. When to Use PCA</h4>
+              <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Use</strong> when you have too many features, features are correlated, visualization is needed, or speed optimization is needed.</p>
+              <p class="text-sm text-[var(--on-surface)] mt-1"><strong class="text-[var(--on-background)]">Avoid</strong> when interpretability is critical or features are already few.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- DAY 49 -->
+        <section id="day-49" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 49</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Principal Component Analysis (PCA) — MNIST Example</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">A full worked example: PCA applied to the MNIST digit dataset, with a KNN classifier trained before and after dimensionality reduction. Dataset: column 0 = label (digit), columns 1–784 = pixel values (a 28×28 image flattened).</p>
+
+          <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+<button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+<pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>import pandas as pd
+import matplotlib.pyplot as plt
+
+# ===================== 1. LOAD DATA =====================
+# Read MNIST CSV
+df = pd.read_csv('/kaggle/input/datasets/animatronbot/mnist-digit-recognizer/train.csv')
+
+# Dataset:
+# column 0 = label (digit)
+# columns 1-784 = pixel values (28x28 image flattened)
+
+
+# ===================== 2. SPLIT INTO X AND Y =====================
+# X = features (pixels)
+X = df.iloc[:, 1:]
+
+# Y = target (digit label)
+Y = df.iloc[:, 0]
+
+
+# ===================== 3. TRAIN-TEST SPLIT =====================
+from sklearn.model_selection import train_test_split
+
+x_train, x_test, y_train, y_test = train_test_split(
+    X, Y,
+    test_size=0.2,        # 20% test data
+    random_state=42       # fixed shuffle -> same split every run
+)
+
+# random_state:
+# fixes randomness -> reproducible results
+
+
+# ===================== 4. KNN BEFORE SCALING =====================
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score
+
+knn = KNeighborsClassifier()
+
+# KNN stores training data (no real training phase)
+knn.fit(x_train, y_train)
+
+# Predict using nearest neighbors
+y_pred = knn.predict(x_test)
+
+# Check accuracy
+print("Accuracy before scaling:", accuracy_score(y_test, y_pred))
+
+
+# ===================== 5. FEATURE SCALING =====================
+from sklearn.preprocessing import StandardScaler
+
+scaler = StandardScaler()
+
+# fit -> learn mean and std from training data
+# transform -> apply scaling
+x_train = scaler.fit_transform(x_train)
+x_test = scaler.transform(x_test)
+
+# scaling:
+# converts data to mean=0, std=1
+# prevents large-value features dominating distance
+
+
+# ===================== 6. PCA (DIMENSION REDUCTION) =====================
+from sklearn.decomposition import PCA
+
+# reduce 784 features -> 100 important features
+pca = PCA(n_components=100)
+
+# fit -> learn principal components
+# transform -> project data onto new axes
+x_train_trf = pca.fit_transform(x_train)
+x_test_trf = pca.transform(x_test)
+
+# PCA:
+# rotates data -> keeps directions with max variance
+# reduces noise + computation
+
+
+# ===================== 7. KNN AFTER PCA =====================
+knn = KNeighborsClassifier()
+
+knn.fit(x_train_trf, y_train)
+
+y_pred = knn.predict(x_test_trf)
+
+print("Accuracy after PCA:", accuracy_score(y_test, y_pred))
+
+
+# ===================== 8. PCA INTERNALS =====================
+# eigenvalues -> importance of each component
+print("Explained variance:", pca.explained_variance_)
+
+# eigenvectors -> directions of new axes
+print("PCA components shape:", pca.components_.shape)
+# shape = (100, 784)
+
+
+# ===================== 9. VISUALIZE ONE IMAGE =====================
+# take one sample and reshape to 28x28
+image = df.iloc[0, 1:].values.reshape(28, 28)
+
+plt.imshow(image, cmap='gray')
+plt.title(f"Label: {df.iloc[0,0]}")
+plt.show()
+
+
+# ===================== FINAL FLOW =====================
+# image -> flatten -> scale -> PCA -> KNN -> prediction</code></pre>
+</div>
+
+          <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-2">Walkthrough</h4>
+            <ol class="text-sm text-[var(--on-surface)] list-decimal list-inside space-y-1">
+              <li>Load the MNIST CSV, split into pixel features (X) and digit label (Y)</li>
+              <li>Train/test split with <code>test_size=0.2</code> and a fixed <code>random_state=42</code> for reproducibility</li>
+              <li>Run KNN directly on the raw 784-pixel features and record baseline accuracy</li>
+              <li>Standardize features with <code>StandardScaler</code> (mean=0, std=1) so large-value pixels don't dominate distance calculations</li>
+              <li>Apply <code>PCA(n_components=100)</code> — reduce 784 features down to the 100 directions of maximum variance</li>
+              <li>Re-run KNN on the 100-dimensional PCA-transformed data and compare accuracy</li>
+              <li>Inspect PCA internals: <code>pca.explained_variance_</code> (eigenvalues — importance per component) and <code>pca.components_.shape</code> which is (100, 784) — the eigenvectors, one 784-length direction per retained component</li>
+            </ol>
+            <p class="text-sm text-[var(--on-surface-variant)] mt-2"><strong class="text-[var(--on-background)]">Final flow:</strong> image → flatten → scale → PCA → KNN → prediction.</p>
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on Day 47–49. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-section-18">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. Two candidate features, "rooms" and "washrooms," both project with roughly equal spread/variance when predicting house price. Per the notes' geometric intuition, what should you do?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Drop whichever has the smaller name alphabetically</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Use feature selection to keep only one of them</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Use feature extraction — e.g. construct a combined column like house_size — since neither alone should be discarded</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Always keep both unchanged and ignore variance entirely</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> The notes give exactly this example: "If we come across such set of columns which has equal variance then we use feature extraction technique. Like rooms and washrooms are both important... so we can't remove any column but instead we make a new column of house_size." Feature selection (dropping a column) is appropriate only when one column is clearly less important by variance.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. You compute the covariance matrix of a 2D dataset and find the off-diagonal covariance is 0, but var(x) ≠ var(y). What does this imply about the principal components?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. PCA cannot be applied when covariance is zero</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. The principal axes already align with the original x and y axes — the one with larger variance is PC1</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Both features must be dropped since they are unrelated</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. PC1 and PC2 will have identical eigenvalues</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Covariance = 0 means no linear relationship, so the data cloud isn't "tilted" — eigenvectors of a diagonal covariance matrix are the standard basis vectors themselves (x-axis, y-axis). The eigenvalues equal var(x) and var(y) directly, so whichever axis has the larger variance becomes PC1 (larger eigenvalue = more important direction), and the other becomes PC2.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. In the MNIST code, StandardScaler is applied BEFORE PCA. If you skipped scaling and ran PCA directly on raw pixel values (0–255), what is the most likely consequence, per the notes' stated properties of PCA?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. No difference — PCA is unaffected by feature scale</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. PCA would fail to run entirely, throwing an error</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. PCA would become supervised</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Components would be skewed toward high-magnitude pixel features, since PCA is explicitly noted as sensitive to scaling</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Section 14's "Important Points for Exams" states plainly: "PCA is sensitive to scaling so use standardization." Since PCA maximizes variance, unscaled features with larger numeric ranges would dominate the variance calculation and distort the resulting principal components — this is exactly why the MNIST pipeline scales before applying PCA.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. After running <code>pca = PCA(n_components=100)</code> and <code>pca.fit_transform(x_train)</code> on the 784-pixel MNIST data, what is the shape of <code>pca.components_</code>, and what does it represent?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. (100, 784) — 100 eigenvectors, each a direction across the original 784 pixel dimensions</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. (784, 100) — 784 eigenvalues for 100 samples</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. (100,) — a 1D array of accuracy scores</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. (10, 784) — one direction per MNIST digit class</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> The code comment states directly: "eigenvectors -> directions of new axes... PCA components shape: shape = (100, 784)." Each of the 100 retained principal components is itself a direction (eigenvector) defined across all 784 original pixel dimensions — unrelated to the 10 digit classes, which PCA (unsupervised) never sees.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. A dataset has only 3 features, all weakly correlated with each other, and the business requirement is that the final model must clearly explain predictions in terms of the original named features. Should you apply PCA here?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Yes, PCA should always be applied before any model</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Yes, because PCA always improves accuracy on any dataset</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. No — PCA works best when features are correlated, and should be avoided when interpretability is critical or features are already few</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. No, because PCA only works on labeled data</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> The notes' "When to Use PCA" section says to avoid PCA "when interpretability is critical or features are already few," and that "PCA works best when features are correlated" — both conditions argue against it here. PCA being unsupervised (option D's premise) is true but is not why it should be avoided; it works on unlabeled data just fine.
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--primary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="section-19.html" class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">
+            Next: Linear Regression →
+          </a>
+        </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="../assets/app.js"></script>
+
+</body>
+</html>

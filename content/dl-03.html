@@ -1,0 +1,187 @@
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-3 py-1 mb-3">Source: 100 Days of Deep Learning</span>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">3. Multi-Layer Perceptron</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Weight Notation · Why Stacking Perceptrons Creates Nonlinear Boundaries · The Complete Pipeline</p>
+        </div>
+
+        <!-- DAY 8 -->
+        <section id="mlp-notation" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Day 8</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">MLP Notation</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Once a network has more than one perceptron arranged across multiple layers, we need a consistent way to name every single weight — a plain "\(w\)" is no longer enough because there could be hundreds of them. The standard scalar notation used for this is:</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+            $$ w_{ij}^{[l]} $$
+          </div>
+
+          <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Symbol</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Meaning</th></tr></thead>
+              <tbody>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">\(l\)</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">The index of the <strong class="text-[var(--on-background)]">current</strong> layer the weight feeds into — e.g. \([1]\) for the first hidden layer, \([2]\) for the second hidden layer, and so on.</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">\(i\)</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">The index of the neuron in the <strong class="text-[var(--on-background)]">previous</strong> layer that the weight originates <strong class="text-[var(--on-background)]">from</strong>.</td></tr>
+                <tr><td class="p-2.5 font-semibold">\(j\)</td><td class="p-2.5">The index of the neuron in the <strong class="text-[var(--on-background)]">current</strong> layer \([l]\) that the weight connects <strong class="text-[var(--on-background)]">to</strong>.</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-md rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">Worked example</h4>
+            <p class="text-sm text-[var(--on-surface)]">\(w_{23}^{[1]}\) reads as: the weight on the connection from the <strong class="text-[var(--on-background)]">2nd neuron</strong> in the previous layer (here, the input layer) to the <strong class="text-[var(--on-background)]">3rd neuron</strong> in the <strong class="text-[var(--on-background)]">1st hidden layer</strong>. Breaking the symbol apart: the superscript \([1]\) tells you "we are looking at the first hidden layer"; the first subscript \(2\) tells you "the signal is coming from neuron #2 of whatever layer feeds into this one"; the second subscript \(3\) tells you "it's landing on neuron #3 of the current layer." Every single weight in a network — no matter how large — can be uniquely named this way, which is exactly what makes it possible to write backpropagation's update rules generically for a network of any size.</p>
+          </div>
+        </section>
+
+        <!-- DAY 9 -->
+        <section id="mlp-intuition" class="space-y-5 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Day 9</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">MLP Intuition</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">A single perceptron cannot create a nonlinear decision boundary because it is, structurally, a linear model — its output is always some linear combination of its inputs passed through one activation function, which geometrically can only ever be a straight line or flat hyperplane. The fix is not to make one perceptron smarter; it's to combine <strong class="text-[var(--on-background)]">multiple</strong> perceptrons into a network — a Multi-Layer Perceptron — that as a whole is capable of representing far more complex, curved decision boundaries.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-lg text-[var(--secondary)]">How does an MLP create a nonlinear boundary?</h3>
+            <p class="text-sm text-[var(--on-surface)]">Each individual neuron in a hidden layer still only draws its own straight line. But an MLP takes several of these individually-linear neurons and forms <strong class="text-[var(--on-background)]">linear combinations</strong> of them in the next layer — that is, it weights and sums together the outputs of several straight-line neurons, then applies another activation function on top. Combining several straight lines this way, and then bending each combination through a nonlinearity, lets the network carve out a decision region built from many straight-line segments — which, especially with more layers and more neurons, can approximate curved boundaries of essentially any shape. Each additional hidden layer effectively lets the network combine the previous layer's shapes into an even more complex shape.</p>
+          </div>
+
+          <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--tertiary)] mb-1">Universal function approximator</h4>
+            <p class="text-sm text-[var(--on-surface)]">This is the core reason neural networks are described as <strong class="text-[var(--on-background)]">universal function approximators</strong>: given enough hidden layers, enough neurons, and enough training time, a neural network can approximate essentially any mathematical function that maps inputs to outputs — linear or not. This doesn't mean any specific small network can learn any function easily or efficiently, only that the architecture itself has no theoretical ceiling in the same way a single linear perceptron does.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-3">Complete Pipeline (Core Intuition)</h3>
+            <p class="text-sm text-[var(--on-surface)] mb-3">Tracing one prediction through a small MLP — for example, predicting placement chances from two inputs, CGPA and IQ — end to end looks like this:</p>
+            <div class="space-y-0 max-w-md mx-auto">
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2.5 text-sm text-center font-semibold">INPUTS: CGPA, IQ</div>
+              <div class="text-center text-[var(--outline)]">↓</div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2.5 text-sm text-center">Multiply by Weights</div>
+              <div class="text-center text-[var(--outline)]">↓</div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2.5 text-sm text-center">Add Bias (z)</div>
+              <div class="text-center text-[var(--outline)]">↓</div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2.5 text-sm text-center">Activation Function (a)</div>
+              <div class="text-center text-[var(--outline)]">↓</div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2.5 text-sm text-center">Hidden Neurons</div>
+              <div class="text-center text-[var(--outline)]">↓</div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2.5 text-sm text-center">Multiply by New Weights</div>
+              <div class="text-center text-[var(--outline)]">↓</div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2.5 text-sm text-center">Add New Bias</div>
+              <div class="text-center text-[var(--outline)]">↓</div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2.5 text-sm text-center">Activation Function</div>
+              <div class="text-center text-[var(--outline)]">↓</div>
+              <div class="bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/40 rounded-lg px-4 py-2.5 text-sm text-center font-semibold">Final Prediction (ŷ)</div>
+              <div class="text-center text-[var(--outline)]">↓</div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2.5 text-sm text-center">Compute Loss</div>
+              <div class="text-center text-[var(--outline)]">↓</div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2.5 text-sm text-center">Backpropagation (Gradients)</div>
+              <div class="text-center text-[var(--outline)]">↓</div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2.5 text-sm text-center">Update Weights</div>
+              <div class="text-center text-[var(--outline)]">↓ repeat ↺</div>
+              <div class="bg-[var(--primary-container)]/10 border border-[var(--primary)]/40 rounded-lg px-4 py-2.5 text-sm text-center font-semibold">Repeat Thousands of Times</div>
+            </div>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-lg text-[var(--secondary)]">The One Equation to Remember</h3>
+            <p class="text-sm text-[var(--on-surface)]">For every single neuron in an MLP, regardless of which layer it sits in, the computation performed is always identical in form:</p>
+            <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ z = \sum_i w_i x_i + b, \qquad a = f(z) $$
+            </div>
+            <p class="text-xs text-[var(--on-surface-variant)]">\(x_i\) = inputs to the neuron; \(w_i\) = learnable weights; \(b\) = learnable bias; \(z = \sum w_i x_i + b\) = the pre-activation sum; \(f(\cdot)\) = the activation function; \(a\) = the neuron's output, which becomes an input to the next layer.</p>
+          </div>
+
+          <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">Adding nodes to the output layer</h4>
+            <p class="text-sm text-[var(--on-surface)]">For multiclass classification, the output layer is given multiple nodes — one per class — where the node producing the highest probability tells us which class the network believes the input belongs to. Similarly, when the underlying relationship in the data is highly complex, adding more and more hidden layers gives the network the extra capacity needed to shape a decision boundary complex enough to fit it — which loops back to the "universal function approximator" idea above.</p>
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on Day 8–9. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-dl-03">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. In the notation \(w_{ij}^{[l]}\), what does the subscript \(i\) represent?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. The current layer number</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. The neuron in the current layer \([l]\) that the weight goes to</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. The neuron in the previous layer that the weight originates from</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. The activation function used</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> \(l\) is the current layer, \(i\) is the source neuron in the previous layer, and \(j\) is the destination neuron in the current layer \([l]\).
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. What does \(w_{23}^{[1]}\) refer to?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Weight from neuron 3 in the input layer to neuron 2 in hidden layer 1</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Weight from neuron 2 in the input (previous) layer to neuron 3 in the 1st hidden layer</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. The bias of neuron 3 in layer 2</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Weight from hidden layer 1 to hidden layer 2</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Superscript [1] = 1st hidden layer is the destination layer; first subscript 2 = source neuron #2 (previous layer); second subscript 3 = destination neuron #3 (current layer).
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. Why can't a single perceptron create a nonlinear decision boundary?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Its output is always some linear combination of inputs, which is geometrically a straight line/hyperplane</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. It has too few weights</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. It has no bias term</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It uses the sigmoid activation only</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> A single perceptron is structurally a linear model; combining multiple perceptrons across layers is what lets the network form a nonlinear boundary.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. In the MLP pipeline diagram, what step comes immediately after "Compute Loss"?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Final Prediction</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Activation Function</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Add Bias</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Backpropagation (Gradients)</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> The pipeline goes: prediction → compute loss → backpropagation (gradients) → update weights → repeat.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. For any neuron in an MLP, the "one equation to remember" is z = Σwᵢxᵢ + b, a = f(z). What does 'a' represent?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. The pre-activation weighted sum</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. The neuron's output, after activation</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. The learning rate</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. The bias term</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> z is the pre-activation sum of weighted inputs plus bias; a = f(z) is the neuron's actual output after applying the activation function, which is passed to the next layer.
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--primary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="dl-04.html" class="bg-[var(--secondary)] text-[var(--on-secondary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">Next: Forward Propagation</a>
+        </div>

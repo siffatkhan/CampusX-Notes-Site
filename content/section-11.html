@@ -1,0 +1,159 @@
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-3 py-1 mb-3">Source: CampusX — 100 Days of Machine Learning</span>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">11. Power Transformer</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Box-Cox · Yeo-Johnson</p>
+        </div>
+
+        <!-- DAY 31 -->
+        <section id="day-31" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 31</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Power Transformer</h2>
+          </div>
+          <p class="text-[var(--on-surface)] leading-relaxed">Automatically find the best power to apply to a feature to make it close to normal.</p>
+
+          <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">Difference from Function Transformer</h4>
+            <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+              <li>Function Transformer uses fixed formulas.</li>
+              <li>Power Transformer finds the best power automatically.</li>
+            </ul>
+          </div>
+
+          <h3 class="font-h3 text-lg text-[var(--on-background)]">Types of Power Transformer</h3>
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+              <h4 class="font-h3 text-base text-[var(--secondary)]">1. Box-Cox Transform</h4>
+              <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">What it does:</strong> finds the best power \( \lambda \) for transformation.</p>
+              <p class="text-sm text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Limitation:</strong> only works on positive values.</p>
+              <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+                <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+                <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from sklearn.preprocessing import PowerTransformer
+pt = PowerTransformer(method="box-cox")
+df_transformed = pt.fit_transform(df[["col"]])</code></pre>
+              </div>
+            </div>
+
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+              <h4 class="font-h3 text-base text-[var(--tertiary)]">2. Yeo-Johnson Transform</h4>
+              <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">What it does:</strong> same idea as Box-Cox. Supports zero and negative values.</p>
+              <p class="text-sm text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Why better:</strong> works on all numeric data; often gives better results.</p>
+              <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+                <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+                <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>pt = PowerTransformer(method="yeo-johnson")
+df_transformed = pt.fit_transform(df[["col"]])</code></pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm text-[var(--on-surface)]">
+            <strong class="text-[var(--on-background)]">How Power Transformer Works:</strong> it tries different powers of x, and selects the power that makes data most normal. You do not choose the power manually.
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">When to Use Which</h3>
+            <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead>
+                  <tr class="bg-[var(--surface-container-high)]">
+                    <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Use Function Transformer when</th>
+                    <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Use Power Transformer when</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td class="p-3 border-b border-[var(--outline-variant)]/50">You understand your data well.</td><td class="p-3 border-b border-[var(--outline-variant)]/50">You want automation.</td></tr>
+                  <tr><td class="p-3 border-b border-[var(--outline-variant)]/50">You want full control.</td><td class="p-3 border-b border-[var(--outline-variant)]/50">You have many features.</td></tr>
+                  <tr><td class="p-3">You know which formula fits your data.</td><td class="p-3">You want consistent normalization.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on Day 31. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-section-11">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. A "profit" column contains negative values (losses), zeros (break-even), and positive values (gains). Which PowerTransformer method must you use?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. method="box-cox"</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. method="yeo-johnson"</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Either works identically</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Neither — PowerTransformer cannot handle this column</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Box-Cox's limitation is "only works on positive values." Yeo-Johnson "supports zero and negative values" and "works on all numeric data" — the only valid choice when the column has losses (negative) and break-even (zero) values.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. What is the fundamental difference between Function Transformer and Power Transformer?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Function Transformer only works on categorical data</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Power Transformer requires a target variable, Function Transformer doesn't</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Function Transformer applies a fixed formula you choose; Power Transformer automatically finds the best power</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. They are identical in every way</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> "Function Transformer uses fixed formulas. Power Transformer finds the best power automatically." You don't manually pick the power for PowerTransformer — it tries different powers and selects the one that makes data most normal.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. You have deep domain knowledge that a specific column follows a known right-skew pattern best fixed by a square-root relationship, and you want full manual control over the exact formula. Per the "When to Use Which" guidance, what should you reach for?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. PowerTransformer(method="box-cox")</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. PowerTransformer(method="yeo-johnson")</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. OneHotEncoder</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Function Transformer</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> "Use Function Transformer when: You understand your data well. You want full control. You know which formula fits your data." That's exactly this scenario — known formula + desire for manual control.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. You have 40 numeric features across a large dataset and want each one automatically normalized without manually inspecting and choosing a formula for each. Which approach fits best?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Power Transformer — you want automation, many features, consistent normalization</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Function Transformer — it's faster to write per-column lambdas</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. LabelEncoder</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. ColumnTransformer alone, with no scaling transformer</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> "Use Power Transformer when: You want automation. You have many features. You want consistent normalization." That is exactly this scenario — 40 features, no manual per-column formula selection desired.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. You run <code>PowerTransformer(method="box-cox").fit_transform(df[["price"]])</code> and it throws an error. The "price" column contains a few rows equal to 0. Why?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. PowerTransformer requires categorical input</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Box-Cox only works on strictly positive values, and zero is not positive</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. fit_transform can't take a DataFrame column</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. "price" must first be one-hot encoded</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Box-Cox's stated limitation is that it "only works on positive values" — zero fails that requirement. Switching to <code>method="yeo-johnson"</code> would fix this, since it "supports zero and negative values."
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--primary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="section-12.html" class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">
+            Next: Binning & Binarization →
+          </a>
+        </div>

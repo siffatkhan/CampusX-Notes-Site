@@ -1,0 +1,246 @@
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-3 py-1 mb-3">Source: 100 Days of Deep Learning</span>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">2. The Perceptron</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">What a Perceptron Is · The Perceptron Trick · The Perceptron Loss Function · Why It Fails on Nonlinear Data</p>
+        </div>
+
+        <!-- DAY 4 -->
+        <section id="perceptron" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Day 4</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">The Perceptron</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">The perceptron is the single most important building block in deep learning — it is a mathematical function/model originally designed for supervised machine learning, and because of the way it is structured, it turned out to also be the foundational unit that every larger neural network is built from. Understanding it fully pays off for everything that follows.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-lg text-[var(--secondary)]">The Math</h3>
+            <p class="text-sm text-[var(--on-surface)]">Given inputs \(x_1, x_2, \dots\), each input has an associated <strong class="text-[var(--on-background)]">weight</strong> \(w_1, w_2, \dots\) that represents the strength of that feature — how much that particular input matters for the decision being made. All the weighted inputs are summed together along with a <strong class="text-[var(--on-background)]">bias</strong> term \(b\) to produce a single number \(z\):</p>
+            <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ z = w_1x_1 + w_2x_2 + b $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)]">That \(z\) is then passed through an <strong class="text-[var(--on-background)]">activation function</strong> \(f\), producing the final output:</p>
+            <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ y = f(z) $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)]">The activation function's job is to squash \(z\) — which can be any real number — into a constrained, useful range, such as \([0, 1]\) or \([-1, 1]\). So the target/prediction \(y\) is a function of \(z\), and \(z\) itself is a function of the weighted inputs and the bias.</p>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">Neuron vs. Perceptron</h4>
+              <p class="text-sm text-[var(--on-surface)]">A biological neuron is enormously complex — it can receive billions of inputs, and we still don't fully understand everything that happens inside its nucleus as it processes them. A perceptron is a deliberate simplification: we know exactly what happens — multiply each input by a weight, sum them with a bias, and pass the result through an activation function. The perceptron is <strong class="text-[var(--on-background)]">inspired by</strong> the neuron, but it is not a true copy of it. One concrete difference is <strong class="text-[var(--on-background)]">neuroplasticity</strong>: a biological neuron's input connections can physically strengthen or weaken over time as the brain adapts, whereas a perceptron's weights only change when an external training algorithm updates them — they don't self-organize.</p>
+            </div>
+            <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--tertiary)] mb-1">"A perceptron is nothing but a line"</h4>
+              <p class="text-sm text-[var(--on-surface)]">Because \(z = w_1x_1 + w_2x_2 + b\) is a linear equation, the decision boundary a perceptron draws between two classes is always a straight line (or, in higher dimensions, a flat hyperplane). This is both its power and its fundamental limitation: it can only separate data that is linearly separable — data that can be split cleanly by a straight line. Give it nonlinear data, and the perceptron simply fails, no matter how it's trained.</p>
+            </div>
+          </div>
+
+          <div class="border-l-4 border-[var(--error)] bg-[var(--error-container)]/10 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--error)] mb-1">Why a perceptron cannot learn XOR</h4>
+            <p class="text-sm text-[var(--on-surface)]">XOR (exclusive OR) outputs 1 when its two binary inputs differ (0,1 → 1 and 1,0 → 1) and 0 when they match (0,0 → 0 and 1,1 → 0). Plot these four points on a 2D plane and there is no single straight line that separates the "1" outputs from the "0" outputs — the true points sit on opposite corners from each other. Since a perceptron can only draw a straight-line decision boundary, and XOR is fundamentally a nonlinear function, a single perceptron can never learn it. This single failure is historically significant — it's the reason the field moved toward stacking multiple perceptrons into <strong class="text-[var(--on-background)]">multi-layer</strong> networks, which can bend and combine multiple lines into a nonlinear boundary.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">What Happens Inside a Single Neuron</h3>
+            <p class="text-sm text-[var(--on-surface)] mb-2">In a standard neural network, essentially every neuron except the input neurons carries an activation function. The general rule:</p>
+            <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md">
+              <li><strong class="text-[var(--on-background)]">Hidden neurons</strong> — each has an activation function.</li>
+              <li><strong class="text-[var(--on-background)]">Output neurons</strong> — each has an activation function appropriate for the task (or linear, for regression).</li>
+              <li><strong class="text-[var(--on-background)]">Input neurons</strong> — typically have no activation function; they simply pass the raw input features forward.</li>
+            </ul>
+            <ol class="text-sm text-[var(--on-surface)] list-decimal list-inside space-y-1 mt-3">
+              <li>Receive inputs from the previous layer.</li>
+              <li>Multiply each input by its corresponding weight.</li>
+              <li>Add all the weighted inputs together.</li>
+              <li>Add a bias.</li>
+              <li>Apply the activation function.</li>
+              <li>Output the result to the next layer.</li>
+            </ol>
+            <p class="text-sm text-[var(--on-surface)] mt-3">Written generally, for any number of inputs:</p>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ z = w_1x_1 + w_2x_2 + \cdots + w_nx_n + b, \qquad a = f(z) $$
+            </div>
+            <p class="text-xs text-[var(--on-surface-variant)] mt-2">where \(x_i\) = inputs, \(w_i\) = weights, \(b\) = bias, \(z\) = weighted sum (pre-activation), \(f\) = activation function, \(a\) = the neuron's output.</p>
+          </div>
+        </section>
+
+        <!-- DAY 5 -->
+        <section id="perceptron-trick" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Day 5</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">The Perceptron Trick</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Before loss functions and gradient descent, the original perceptron algorithm learned its weights through a simple, geometric, iterative rule known as the <strong class="text-[var(--on-background)]">perceptron trick</strong>. A tool like <a href="https://www.desmos.com" target="_blank" rel="noopener" class="text-[var(--secondary)] underline">Desmos</a> is useful here — it lets you visualize a line in the 2D plane and watch it move as you change its coefficients, which builds real intuition for what the trick is doing.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--secondary)]">Step 1 — Which side of the line is a point on?</h3>
+            <p class="text-sm text-[var(--on-surface)]">Take the line's equation and simply substitute the point's coordinates into it. If the resulting value is less than 0, the point lies in the <strong class="text-[var(--on-background)]">negative region</strong>; if it is greater than 0, the point lies in the <strong class="text-[var(--on-background)]">positive region</strong>. This one check is the entire basis of the algorithm: for every misclassified point, we know exactly which side of the line it incorrectly falls on.</p>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--secondary)]">Step 2 — Move the line toward the misclassified point</h3>
+            <p class="text-sm text-[var(--on-surface)]">Once we know a point is on the wrong side, we nudge the line's weights and bias using that point's own coordinates:</p>
+            <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+              <li>If a point that should be positive is sitting in the <strong class="text-[var(--on-background)]">negative</strong> region, we <strong class="text-[var(--on-background)]">add</strong> the point's coordinate values to the line's weights (and bias) — this pulls the line toward the negative region, bringing that point onto the correct side.</li>
+              <li>If a point that should be negative is sitting in the <strong class="text-[var(--on-background)]">positive</strong> region, we <strong class="text-[var(--on-background)]">subtract</strong> the point's coordinate values — this pushes the line toward the positive region instead.</li>
+            </ul>
+            <p class="text-sm text-[var(--on-surface)]">The reason this works is geometric: adding a point's own coordinates to a line's coefficients shifts and rotates the line in the direction of that point, effectively "pulling" the boundary across it. Repeating this update, one misclassified point at a time, over many iterations is literally how the classical perceptron algorithm finds its weights.</p>
+          </div>
+
+          <div class="border-l-4 border-[var(--error)] bg-[var(--error-container)]/10 p-md rounded-r-lg space-y-2">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--error)] mb-1">Three problems with the perceptron trick</h4>
+            <ol class="text-sm text-[var(--on-surface)] list-decimal list-inside space-y-2">
+              <li><strong class="text-[var(--on-background)]">No guarantee of the best line.</strong> The trick only reacts to whichever point is currently misclassified. If a badly-placed point (say, an outlier) forces an update, the line can shift toward accommodating that one point — there's nothing in the algorithm ensuring the resulting line is actually the best possible separator overall.</li>
+              <li><strong class="text-[var(--on-background)]">No way to quantify quality.</strong> The trick tells you "move the line" but gives you no numeric score for how good or bad the current line is. You can't compare two candidate lines, or track whether the model is actually improving — there's no measurement, only a reactive nudge.</li>
+              <li><strong class="text-[var(--on-background)]">Convergence problems.</strong> Sometimes the line simply refuses to settle — it keeps oscillating between updates and never converges to a stable solution, particularly if the data isn't cleanly linearly separable.</li>
+            </ol>
+            <p class="text-sm text-[var(--on-surface)] mt-2">All three problems point to the same underlying gap: there is no formal, differentiable measure of error to optimize. That gap is exactly what a <strong class="text-[var(--on-background)]">loss function</strong> fills.</p>
+          </div>
+        </section>
+
+        <!-- DAY 6 -->
+        <section id="perceptron-loss" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Day 6</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">The Perceptron Loss Function</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">A loss function is a function that tells us numerically how good or bad our model is currently performing — exactly the missing piece from the perceptron trick. Perceptron error is calculated differently from how logistic regression or linear regression calculate theirs: instead of a distance-based or probability-based error, the perceptron uses <strong class="text-[var(--on-background)]">hinge loss</strong>:</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+            $$ L = \frac{1}{n}\sum_{i=1}^{n} \max\big(0,\, -y_i \cdot f(x_i)\big) $$
+          </div>
+
+          <p class="text-sm text-[var(--on-surface)]">Here \(n\) is the number of rows (samples), \(y_i\) is the true label (+1 or −1), and \(f(x_i)\) is the model's raw prediction for that row. The term \(-y \cdot f(x)\) is the key to reading this formula: when the prediction has the <strong class="text-[var(--on-background)]">same sign</strong> as the true label (a correct classification), \(y \cdot f(x)\) is positive, so \(-y \cdot f(x)\) is negative, and \(\max(0, \text{negative number})\) evaluates to 0 — a correctly classified point contributes <strong class="text-[var(--on-background)]">zero</strong> loss. When the prediction has the <strong class="text-[var(--on-background)]">opposite sign</strong> from the true label (a misclassification), \(y \cdot f(x)\) is negative, so \(-y \cdot f(x)\) is positive, and that positive value becomes the penalty added to the loss. In short: correct points cost nothing, wrong points cost something proportional to how wrong they are, and the total loss is the average of those penalties across all \(n\) rows.</p>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Activation + Loss pairings by task</h3>
+            <p class="text-sm text-[var(--on-surface)] mb-2">Different tasks pair a specific activation function on the output layer with a specific loss function suited to measuring error for that task:</p>
+            <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead>
+                  <tr class="bg-[var(--surface-container-high)]">
+                    <th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Loss Function</th>
+                    <th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Activation</th>
+                    <th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Task</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Hinge Loss</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Step</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Perceptron</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Log Loss (Binary Cross-Entropy)</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Sigmoid</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Logistic Regression</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Categorical Cross-Entropy</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Softmax</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Multiclass Classification</td></tr>
+                  <tr><td class="p-2.5 font-semibold">MSE</td><td class="p-2.5">Linear</td><td class="p-2.5">Regression (Linear Regression)</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-xs text-[var(--on-surface-variant)] mt-2">This table is worth memorizing — it recurs throughout deep learning any time you're choosing an output layer and loss function for a new model.</p>
+          </div>
+        </section>
+
+        <!-- DAY 7 -->
+        <section id="problem-with-perceptron" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Day 7</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">The Problem With the Perceptron</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Even with a proper loss function to guide it, a single perceptron has a hard ceiling: it can only work on <strong class="text-[var(--on-background)]">linearly separable data</strong>. Give it data that requires a curved or complex boundary and it simply cannot converge to a correct solution, no matter how the loss function or trick are tuned — the model's own structure (one straight-line boundary) is the bottleneck, not the training method.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md text-sm text-[var(--on-surface)]">
+            <strong class="text-[var(--on-background)]">Hands-on tool:</strong> <a href="https://playground.tensorflow.org/#activation=tanh&batchSize=10&dataset=circle&regDataset=reg-plane&learningRate=0.03&regularizationRate=0&noise=0&networkShape=4,2,2&seed=0.30539&showTestData=false&discretize=false&percTrainData=50&x=true&y=true&xTimesY=true&xSquared=true&ySquared=true&cosX=false&sinX=false&cosY=false&sinY=false&collectStats=false&problem=regression&initZero=false&hideText=false" target="_blank" rel="noopener" class="text-[var(--secondary)] underline">playground.tensorflow.org</a> is a great tool for interactively experimenting with neural networks — you can watch, in real time, how adding layers and neurons lets a network bend a straight decision boundary into a curved one that separates nonlinear data like the "circle" dataset.</p>
+          </div>
+
+          <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-md rounded-r-lg space-y-2">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">The fix: Multi-Layer Perceptron (MLP)</h4>
+            <p class="text-sm text-[var(--on-surface)]">The solution to the single perceptron's linear-only limitation is to stack multiple perceptrons together into layers — an <strong class="text-[var(--on-background)]">MLP</strong>. Instead of one straight-line boundary, a network of many perceptrons can combine several lines into a boundary of arbitrary complexity. The genuinely hard part of making this work is not the architecture itself, but <strong class="text-[var(--on-background)]">training</strong> it — specifically, the algorithm called <strong class="text-[var(--on-background)]">backpropagation</strong>, which figures out how to adjust every weight in every layer of a multi-layer network based on the final output error. That is the subject of the next few pages.</p>
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on Day 4–7. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-dl-02">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. Why can a single perceptron never learn the XOR function?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. XOR has too many inputs for a perceptron</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. XOR outputs are not binary</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. XOR's true points cannot be separated by any single straight line, but a perceptron can only draw straight-line boundaries</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. XOR requires a bias term and perceptrons don't support bias</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> A perceptron is "nothing but a line" — its decision boundary is always linear. XOR is a nonlinear function (its 1-outputs sit on opposite corners from its 0-outputs), so no straight line can separate them.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. In the perceptron trick, a positive-class point is currently misclassified into the negative region. What update is applied?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Add the point's coordinates to the line's weights/bias</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Subtract the point's coordinates from the line's weights/bias</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Multiply the weights by the point's coordinates</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. No update — the trick can't fix this case</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> If we need to move the line toward the negative region (to correctly capture a positive point stuck there), we add the point's values to the weights and bias — this pulls the line toward it.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. A point is correctly classified by the perceptron (prediction and true label share the same sign). What is its hinge loss contribution?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. A large positive value</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Zero</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. A negative value</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Undefined</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> For a correct prediction, \(y \cdot f(x)\) is positive, so \(-y \cdot f(x)\) is negative, and \(\max(0, \text{negative})=0\). Correctly classified points contribute zero loss.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. Which activation/loss pairing is used for multiclass classification?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Step + Hinge Loss</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Sigmoid + Log Loss</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Linear + MSE</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Softmax + Categorical Cross-Entropy</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Per the activation/loss table: Softmax activation is paired with Categorical Cross-Entropy loss specifically for multiclass classification.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. What is the real bottleneck that a single perceptron cannot overcome even with a good loss function?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. It cannot use a bias term</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. It cannot use gradient descent</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Its structure only allows a single linear (straight-line) decision boundary</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It cannot process more than 2 inputs</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> The loss function only improves how well the single line is fit — it can't change the fact that the model's structure is one straight-line boundary. Fixing this requires a structural change: stacking perceptrons into an MLP.
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--primary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="dl-03.html" class="bg-[var(--secondary)] text-[var(--on-secondary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">Next: Multi-Layer Perceptron</a>
+        </div>

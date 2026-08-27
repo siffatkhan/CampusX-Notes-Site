@@ -1,0 +1,1340 @@
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-3 py-1 mb-3">Source: CampusX — 100 Days of Machine Learning</span>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">19. Linear Regression</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Simple &amp; Multiple Linear Regression · OLS Closed-Form Solution · Regression Metrics · Assumptions · Gradient Descent (Batch / Stochastic / Mini-Batch)</p>
+        </div>
+
+        <!-- DAY 50 -->
+        <section id="day-50" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 50</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Simple Linear Regression</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Simple Linear Regression is a supervised regression algorithm. It is easy to understand and foundational — most advanced regression algorithms build on it.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-lg text-[var(--primary)]">What is "linear data"?</h3>
+            <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+              <li>When input increases, output changes at a constant rate.</li>
+              <li>The relationship looks like a straight line (or a flat hyperplane in higher dimensions).</li>
+              <li>Linear data exhibits a directly proportional relationship — a constant change in an input variable produces a constant change in the output variable.</li>
+            </ul>
+            <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Example:</strong> if 1 year of experience adds 10k salary, then 2 years adds 20k. That is linear behavior. Real data is never perfect, so points scatter around a line rather than sitting exactly on it. <strong class="text-[var(--on-background)]">Goal:</strong> find the best-fit line that passes as closely as possible through all points.</p>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">What the model does</h4>
+              <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+                <li>Looks at all points</li>
+                <li>Tries many candidate lines</li>
+                <li>Picks the line closest to all points — the <strong class="text-[var(--on-background)]">best fit line</strong></li>
+              </ul>
+            </div>
+            <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">Types of Linear Regression</h4>
+              <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+                <li><strong class="text-[var(--on-background)]">Simple</strong> → one input (experience → salary)</li>
+                <li><strong class="text-[var(--on-background)]">Multiple</strong> → many inputs (experience, CGPA → salary)</li>
+                <li><strong class="text-[var(--on-background)]">Polynomial</strong> → curved relationship</li>
+                <li><strong class="text-[var(--on-background)]">Regularization</strong> → prevents overfitting</li>
+              </ul>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Equation of a Line</h3>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ y = mx + b $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)] mt-2"><code class="text-[var(--primary)]">m</code> → slope, <code class="text-[var(--primary)]">b</code> → intercept. <code class="text-[var(--primary)]">m</code> and <code class="text-[var(--primary)]">b</code> are <strong class="text-[var(--on-background)]">parameters</strong>; <code class="text-[var(--primary)]">x</code> is the <strong class="text-[var(--on-background)]">input</strong>.</p>
+          </div>
+
+          <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Term</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Meaning</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Examples</th></tr></thead>
+              <tbody>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Input</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Values you give the model to get a prediction — data.</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Experience, CGPA</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Parameter</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Values the model <strong class="text-[var(--on-background)]">learns</strong> during training — not chosen by you.</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">m (slope), b (intercept)</td></tr>
+                <tr><td class="p-2.5 font-semibold">Hyperparameter</td><td class="p-2.5">Settings you <strong class="text-[var(--on-background)]">choose</strong> before training starts — the model does not learn them.</td><td class="p-2.5">Learning rate, epochs, batch size, polynomial degree, K in KNN, max depth</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="text-xs text-[var(--on-surface-variant)]">Input → Data. Parameter → Learned. Hyperparameter → Chosen.</p>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Understanding slope (m)</strong> — slope tells how much output changes when input changes; it is the weightage of x over y. Example: m = 10 → x = 1 gives y +10; x = 2 gives y +20. Higher slope → stronger effect of x on y. Lower slope → weaker effect.
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Understanding intercept (b)</strong> — intercept is the value of y when x = 0. Example: b = 5000. Even with 0 years experience, predicted salary = 5000. This is the base value of the line.
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Code — Fitting a Simple Linear Regression</h3>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>import matplotlib.pyplot as plt
+
+# scatter plot of data — shows real data points
+plt.scatter(df['experience'], df['salary'])
+plt.xlabel('years of experience')   # x-axis label
+plt.ylabel('salary in rs')          # y-axis label
+
+# selecting input (X) and output (y)
+x = df.iloc[:, 0:1]   # all rows, first column
+
+# if multiple input columns, e.g. experience + cgpa + age
+x = df[['experience', 'cgpa', 'age']]
+
+# target column (output)
+y = df.iloc[:, -1]    # last column
+
+from sklearn.model_selection import train_test_split
+
+# split data into training and testing
+x_train, x_test, y_train, y_test = train_test_split(
+    x, y, test_size=0.2, random_state=2
+)
+
+from sklearn.linear_model import LinearRegression
+
+# create model
+lr = LinearRegression()
+
+# train model on training data
+lr.fit(x_train, y_train)
+
+# predict for ONE data point
+# reshape is needed because the model expects 2D input
+lr.predict(x_test.iloc[0].values.reshape(1, 1))
+
+# predict for ALL test data
+y_pred = lr.predict(x_test)
+
+# visualize best fit line
+plt.scatter(df['experience'], df['salary'])
+
+# plot prediction line using training data
+plt.plot(x_train, lr.predict(x_train), color='red')
+plt.xlabel('years of experience')
+plt.ylabel('salary in rs')
+
+# get slope (m)
+m = lr.coef_
+
+# get intercept (b)
+b = lr.intercept_
+
+# equation y = m*x + b</code></pre>
+            </div>
+          </div>
+
+          <details class="deepdive">
+            <summary class="font-h3 text-lg text-[var(--on-background)]">Common Misconceptions About Linear Regression (Q&amp;A)</summary>
+            <div class="space-y-4 mt-3 text-sm text-[var(--on-surface)]">
+              <div>
+                <p><strong class="text-[var(--on-background)]">1. What is Linear Regression?</strong> A supervised ML algorithm that predicts a continuous numerical value — e.g. House Size (X) → House Price (Y). The goal is to learn the relationship between input features and output.</p>
+              </div>
+              <div>
+                <p><strong class="text-[var(--on-background)]">2. Does Linear Regression draw one line or many?</strong></p>
+                <p>❌ Misconception: one line for every training example. ✅ Correct: it learns only <strong class="text-[var(--on-background)]">one</strong> best-fit line (or one hyperplane with multiple features).</p>
+                <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)] mt-2">
+                  <table class="w-full text-left border-collapse text-sm">
+                    <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2 border-b border-[var(--outline-variant)] font-label-caps text-xs">Size</th><th class="p-2 border-b border-[var(--outline-variant)] font-label-caps text-xs">Price</th></tr></thead>
+                    <tbody>
+                      <tr><td class="p-2 border-b border-[var(--outline-variant)]/50">1000</td><td class="p-2 border-b border-[var(--outline-variant)]/50">200</td></tr>
+                      <tr><td class="p-2 border-b border-[var(--outline-variant)]/50">1200</td><td class="p-2 border-b border-[var(--outline-variant)]/50">240</td></tr>
+                      <tr><td class="p-2 border-b border-[var(--outline-variant)]/50">1500</td><td class="p-2 border-b border-[var(--outline-variant)]/50">300</td></tr>
+                      <tr><td class="p-2 border-b border-[var(--outline-variant)]/50">1800</td><td class="p-2 border-b border-[var(--outline-variant)]/50">360</td></tr>
+                      <tr><td class="p-2">2000</td><td class="p-2">400</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <p class="mt-2">The algorithm finds one line that best fits all points — it does not draw a separate line per house.</p>
+              </div>
+              <div>
+                <p><strong class="text-[var(--on-background)]">3. What does the model learn?</strong> An equation. For one feature: \( \hat{y} = mx + b \), where x = input feature, ŷ = predicted value, m = slope (weight), b = intercept (bias). Example: ŷ = 0.2x. This equation <strong class="text-[var(--on-background)]">is</strong> the trained model.</p>
+              </div>
+              <div>
+                <p><strong class="text-[var(--on-background)]">4. What happens during prediction?</strong> Learned equation ŷ = 0.2x. New house, size = 1700 → ŷ = 0.2 × 1700 = 340. The model simply substitutes the input into the equation — no retraining, no new line.</p>
+              </div>
+              <div>
+                <p><strong class="text-[var(--on-background)]">5. Where does the predicted value lie?</strong> Every predicted value lies <strong class="text-[var(--on-background)]">on</strong> the regression line. Model ŷ = 0.2x, input 1700 → prediction 340. The point (1700, 340) sits on the line.</p>
+              </div>
+              <div>
+                <p><strong class="text-[var(--on-background)]">6. Where does the actual value lie?</strong> Suppose the real price is 360. The actual value is <strong class="text-[var(--on-background)]">not required</strong> to be on the line — only the prediction lies on the line.</p>
+              </div>
+              <div>
+                <p><strong class="text-[var(--on-background)]">7. What is error?</strong> Error is computed per individual data point. Formula: Error = Actual − Predicted. Example: Actual 360, Prediction 340 → Error = 20. Every sample has its own error.</p>
+              </div>
+              <div>
+                <p><strong class="text-[var(--on-background)]">8. Why don't we add errors directly?</strong> Errors 50, −50, 20 add up to 20 — this looks small even though the model made two huge mistakes, because positive and negative errors cancel out. That's why we square them instead: 50² = 2500, (−50)² = 2500, 20² = 400 — now every error is positive.</p>
+              </div>
+            </div>
+          </details>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--primary)]">The Cost Function</h3>
+            <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Most important concept:</strong> the cost function is <strong class="text-[var(--on-background)]">not</strong> calculated for one sample — it is calculated over all training samples (or a batch). A large cost means the line fits the training data poorly; a small cost means it fits well. Gradient descent's only job is to keep changing m and b until this cost becomes as small as possible. The meaning of the cost matters more than its exact value — a cost of 100 alone doesn't tell you whether the model is good; you interpret it by comparing to previous iterations or to other models on the same problem.</p>
+            <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Actual</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Prediction</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Error</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Squared</th></tr></thead>
+                <tbody>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50">200</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">190</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">10</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">100</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50">300</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">320</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">−20</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">400</td></tr>
+                  <tr><td class="p-2.5">400</td><td class="p-2.5">390</td><td class="p-2.5">10</td><td class="p-2.5">100</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-sm text-[var(--on-surface)]">Sum of squares = 600. Mean Squared Error = 600 / 3 = 200. Linear regression's cost (halved MSE):</p>
+            <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ J = \frac{1}{2n}\sum_{i=1}^{n}(y_i - \hat{y}_i)^2 $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)]">With n = 3: Cost = 600 / (2 × 3) = 100. This single value represents how well the model performs overall.</p>
+          </div>
+
+          <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Error</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Cost Function</th></tr></thead>
+              <tbody>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50">For one sample</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">For the whole dataset (or a batch)</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Actual − Prediction</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Average of squared errors</td></tr>
+                <tr><td class="p-2.5">Many errors exist (e.g. 100 houses → 100 errors)</td><td class="p-2.5">Only one cost value per dataset/batch</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">How Linear Regression Learns — Step by Step</h3>
+            <ol class="text-sm text-[var(--on-surface)] space-y-1.5 list-decimal list-inside bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md">
+              <li><strong class="text-[var(--on-background)]">Step 1:</strong> Start with a random line. Example ŷ = 0.1x.</li>
+              <li><strong class="text-[var(--on-background)]">Step 2:</strong> Predict every training sample (e.g. actual 200/300/400 → predicted 180/260/380).</li>
+              <li><strong class="text-[var(--on-background)]">Step 3:</strong> Calculate every error (20, 40, 20).</li>
+              <li><strong class="text-[var(--on-background)]">Step 4:</strong> Square every error (400, 1600, 400).</li>
+              <li><strong class="text-[var(--on-background)]">Step 5:</strong> Calculate one cost value from those squared errors.</li>
+              <li><strong class="text-[var(--on-background)]">Step 6:</strong> Gradient Descent changes slope and intercept to reduce the cost.</li>
+              <li><strong class="text-[var(--on-background)]">Step 7:</strong> Repeat thousands of times until the cost becomes very small. Final equation ŷ = 0.2x — training is finished.</li>
+            </ol>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">What Happens During Testing?</h3>
+            <p class="text-sm text-[var(--on-surface)]">The line is already learned — nothing changes. Test house, size = 1700 → prediction 340. Suppose actual price is 360 → error 20. Repeat for every test sample, then compute MSE, RMSE, MAE, R². These metrics measure how good the trained model is on <strong class="text-[var(--on-background)]">unseen</strong> data. The model is <strong class="text-[var(--on-background)]">not</strong> updated using the test set.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-3">Training vs Testing</h3>
+            <div class="grid sm:grid-cols-2 gap-6">
+              <div class="space-y-0">
+                <p class="text-center text-xs font-label-caps uppercase tracking-wider text-[var(--primary)] mb-2">Training</p>
+                <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2.5 text-sm text-center">Training Data</div>
+                <div class="text-center text-[var(--outline)]">↓</div>
+                <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2.5 text-sm text-center">Draw the current regression line</div>
+                <div class="text-center text-[var(--outline)]">↓</div>
+                <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2.5 text-sm text-center">Make predictions</div>
+                <div class="text-center text-[var(--outline)]">↓</div>
+                <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2.5 text-sm text-center">Errors</div>
+                <div class="text-center text-[var(--outline)]">↓</div>
+                <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2.5 text-sm text-center">Cost function</div>
+                <div class="text-center text-[var(--outline)]">↓</div>
+                <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2.5 text-sm text-center">Update line via gradient descent</div>
+                <div class="text-center text-[var(--outline)]">↓</div>
+                <div class="bg-[var(--primary-container)]/10 border border-[var(--primary)]/40 rounded-lg px-4 py-2.5 text-sm text-center">Repeat until final w and b</div>
+                <p class="text-xs text-[var(--on-surface-variant)] text-center mt-2">Goal: learn the best line.</p>
+              </div>
+              <div class="space-y-0">
+                <p class="text-center text-xs font-label-caps uppercase tracking-wider text-[var(--secondary)] mb-2">Testing</p>
+                <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2.5 text-sm text-center">Test Data</div>
+                <div class="text-center text-[var(--outline)]">↓</div>
+                <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2.5 text-sm text-center">Final learned line</div>
+                <div class="text-center text-[var(--outline)]">↓</div>
+                <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2.5 text-sm text-center">Predictions</div>
+                <div class="text-center text-[var(--outline)]">↓</div>
+                <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2.5 text-sm text-center">Compare with actual</div>
+                <div class="text-center text-[var(--outline)]">↓</div>
+                <div class="bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/40 rounded-lg px-4 py-2.5 text-sm text-center">Evaluation metrics</div>
+                <p class="text-xs text-[var(--on-surface-variant)] text-center mt-2">Goal: measure performance. Do <strong class="text-[var(--on-background)]">not</strong> update the model.</p>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">The Complete Linear Regression Pipeline</h3>
+            <div class="space-y-0 max-w-xl mx-auto">
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2.5 text-sm text-center font-semibold">WHOLE DATASET</div>
+              <div class="text-center text-[var(--outline)]">↓</div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2.5 text-sm text-center">Split into Train / Test</div>
+              <div class="grid grid-cols-2 gap-4 my-1">
+                <div class="text-center text-[var(--outline)]">↓</div>
+                <div class="text-center text-[var(--outline)]">↓</div>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div class="bg-[var(--primary-container)]/10 border border-[var(--primary)]/40 rounded-lg px-3 py-2.5 text-xs text-center">TRAINING SET<br>(X_train, y_train)</div>
+                <div class="bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/40 rounded-lg px-3 py-2.5 text-xs text-center">TEST SET<br>(X_test, y_test)<br><span class="text-[var(--on-surface-variant)]">(waits — see below)</span></div>
+              </div>
+              <div class="text-center text-[var(--outline)]">↓</div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2.5 text-sm text-center">Initialize random w and b</div>
+              <div class="text-center text-[var(--outline)]">↓</div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2.5 text-sm text-center">Predict ALL training samples</div>
+              <div class="text-center text-[var(--outline)]">↓</div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2.5 text-sm text-center">Compute training errors</div>
+              <div class="text-center text-[var(--outline)]">↓</div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2.5 text-sm text-center">Compute training cost</div>
+              <div class="text-center text-[var(--outline)]">↓</div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2.5 text-sm text-center">Gradient Descent updates w and b</div>
+              <div class="text-center text-[var(--outline)]">↓ repeat many times ↺</div>
+              <div class="bg-[var(--primary-container)]/10 border border-[var(--primary)]/40 rounded-lg px-4 py-2.5 text-sm text-center font-semibold">Final learned equation (w and b fixed)</div>
+              <div class="grid grid-cols-2 gap-4 my-1">
+                <div class="text-center text-[var(--outline)]">↓</div>
+                <div class="text-center text-[var(--outline)]">↓</div>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-3 py-2.5 text-xs text-center">Predict training<br>(optional check)</div>
+                <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-3 py-2.5 text-xs text-center">Predict test samples</div>
+              </div>
+              <div class="grid grid-cols-2 gap-4 my-1">
+                <div></div>
+                <div class="text-center text-[var(--outline)]">↓</div>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div></div>
+                <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-3 py-2.5 text-xs text-center">Compare predictions with actual test values</div>
+              </div>
+              <div class="grid grid-cols-2 gap-4 my-1">
+                <div></div>
+                <div class="text-center text-[var(--outline)]">↓</div>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div></div>
+                <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-3 py-2.5 text-xs text-center">Compute MSE, RMSE, MAE, R²</div>
+              </div>
+              <div class="grid grid-cols-2 gap-4 my-1">
+                <div></div>
+                <div class="text-center text-[var(--outline)]">↓</div>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div></div>
+                <div class="bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/40 rounded-lg px-3 py-2.5 text-xs text-center font-semibold">Evaluate model performance</div>
+              </div>
+            </div>
+            <p class="text-sm text-[var(--on-surface)] mt-4"><strong class="text-[var(--on-background)]">The single sentence that keeps this clear:</strong> training data is used to learn and optimize the model (by minimizing the cost), while test data is used only to evaluate how well the already-trained model performs. The test data never changes the learned weight (w) or bias (b).</p>
+          </div>
+
+          <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-md rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--tertiary)] mb-2">Final Summary — The 6 Sentences to Remember</h4>
+            <ol class="text-sm text-[var(--on-surface)] space-y-1 list-decimal list-inside">
+              <li>Linear regression learns one best-fit line from the training data.</li>
+              <li>Every prediction is obtained by substituting the input into the learned equation.</li>
+              <li>Predicted values always lie on the regression line.</li>
+              <li>Actual values may be above or below the line, and their difference from the prediction is the error (residual).</li>
+              <li>Each sample has its own error, but the cost function combines the errors of all training samples into one value that the model minimizes during training.</li>
+              <li>After training, the learned line is fixed. The test set is only used to evaluate the model — it does not change the line.</li>
+            </ol>
+            <p class="text-sm text-[var(--on-surface)] mt-2"><strong class="text-[var(--on-background)]">We optimize cost on the training data or test data?</strong> Only on the training data.</p>
+          </div>
+        </section>
+
+        <!-- DAY 51 -->
+        <section id="day-51" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 51</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Simple Linear Regression (Mathematical Intuition)</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">You try to draw a straight line that best fits the data: \( Y = mX + b \), where m = slope (how steep the line is) and b = intercept (where the line cuts the Y-axis). <strong class="text-[var(--on-background)]">Goal:</strong> predicted value close to actual value, and a line that fits most points well.</p>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+              <h3 class="font-h3 text-base text-[var(--primary)]">Closed Form Solution (OLS)</h3>
+              <p class="text-sm text-[var(--on-surface)]">Closed form means: you directly compute m and b using a formula — no iteration, no guessing. Plug values into the formula, get the exact answer. This is <strong class="text-[var(--on-background)]">OLS (Ordinary Least Squares)</strong>. Used when data is small and dimensions are low (like 1 feature).</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+              <h3 class="font-h3 text-base text-[var(--secondary)]">Gradient Descent (Non-Closed Form)</h3>
+              <p class="text-sm text-[var(--on-surface)]">No direct formula. Start with random values (e.g. m = 0, b = 0) and improve step by step, repeating until error becomes small. At each step: calculate error using MSE, check direction (increase/decrease m?), move in the direction where error decreases. Used when data is large or has many features (high dimension).</p>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Scikit-learn Class</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Internally Uses</th></tr></thead>
+              <tbody>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">LinearRegression</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">OLS (closed form)</td></tr>
+                <tr><td class="p-2.5 font-semibold">SGDRegressor</td><td class="p-2.5">Gradient Descent</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Mathematical Intuition of m (Slope)</h3>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ m = \frac{\sum_{i=1}^{n}(x_i - \bar{x})(y_i - \bar{y})}{\sum_{i=1}^{n}(x_i - \bar{x})^2} $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)] mt-2">Numerator → how x and y move together (covariance-style term). Denominator → spread of x, i.e. how much the values of X are scattered from their average (variance-style term). If x increases and y increases → m is positive. If x increases and y decreases → m is negative.</p>
+            <div class="grid sm:grid-cols-2 gap-3 mt-2">
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Low spread</strong> — values close together, small variation. Example: X = [2, 3, 4].</div>
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">High spread</strong> — values far apart, large variation. Example: X = [1, 10, 100].</div>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Finding b (Intercept)</h3>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ b = \bar{y} - m\bar{x} $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)] mt-2">Once m is known: take the mean of y and x, then subtract the effect of the slope.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Loss / Cost Function</h3>
+            <p class="text-sm text-[var(--on-surface)]">You need a way to measure error: \( e = y_{actual} - y_{predicted} \). The cost function is the overall error of the model — the <strong class="text-[var(--on-background)]">Mean Squared Error</strong>:</p>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ MSE = \frac{1}{n}\sum_{i=1}^{n}(y_i - \hat{y}_i)^2 $$
+            </div>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-lg text-[var(--primary)]">Why Square, Not Absolute?</h3>
+            <p class="text-sm text-[var(--on-surface)]">We square instead of taking the absolute value so opposite-sign distances don't cancel each other out, and — critically — because |x| is not differentiable at 0, while gradient descent needs a smooth, differentiable function to find a direction to move in.</p>
+            <div class="grid sm:grid-cols-2 gap-3">
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">If we use square:</strong> large errors become very large, the model focuses on big mistakes, and the function is smooth → easy math.</div>
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">If we use absolute:</strong> all errors treated equally, harder to optimize mathematically (non-differentiable corner at 0).</div>
+            </div>
+            <p class="text-sm text-[var(--on-surface)]">So: MSE is easier for optimization and works well with OLS.</p>
+          </div>
+
+          <details class="deepdive">
+            <summary class="font-h3 text-lg text-[var(--on-background)]">Your Code Explanation — Manual Linear Regression (MeraLR)</summary>
+            <div class="mt-3 space-y-3">
+              <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+                <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+                <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>class MeraLR:
+
+    def __init__(self):
+        self.m = None
+        self.b = None
+
+    def fit(self, X_train, y_train):
+
+        num = 0
+        den = 0
+
+        # Loop through all data points
+        for i in range(X_train.shape[0]):
+
+            # numerator: covariance part
+            num = num + ((X_train[i] - X_train.mean()) * (y_train[i] -
+y_train.mean()))
+
+            # denominator: variance part
+            den = den + ((X_train[i] - X_train.mean()) * (X_train[i] -
+X_train.mean()))
+
+        # slope
+        self.m = num / den
+
+        # intercept
+        self.b = y_train.mean() - (self.m * X_train.mean())
+
+        print(self.m)
+        print(self.b)
+
+    def predict(self, X_test):
+        return self.m * X_test + self.b</code></pre>
+              </div>
+              <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">fit()</strong> — computes m manually using the covariance / variance formula. Step by step: loop over all points, compute numerator and denominator, divide to get slope, then compute b using the mean formula.</p>
+              <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">predict()</strong> — applies the learned equation y = mx + b to a new input to get a prediction.</p>
+            </div>
+          </details>
+
+          <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-2">Key Takeaways</h4>
+            <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+              <li>Linear Regression = fit best straight line</li>
+              <li>OLS = direct formula method</li>
+              <li>Gradient Descent = iterative method</li>
+              <li>m = relationship between x and y</li>
+              <li>b = starting point of the line</li>
+              <li>MSE = error measurement</li>
+              <li>Squaring error makes the model care about large mistakes</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- DAY 52 -->
+        <section id="day-52" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 52</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Regression Metrics</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Setup: Input CGPA, Output Salary. The model gives predictions — now the question is: "Is this model good or bad?" You need a number to judge it. Without metrics you only see a line and cannot compare models. With metrics, you get a score, can compare models, and can improve them.</p>
+
+          <div class="grid sm:grid-cols-3 gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Error</strong> — difference for one data point. \( y - \hat{y} \). Example: real salary 50k, predicted 40k → error 10k. Raw difference.
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Loss function</strong> — error for one point after applying a transforming formula: \( |y-\hat{y}| \) or \( (y-\hat{y})^2 \). Example: take absolute → |10| = 10; square it → 100. Why transform? Raw error cancels out (+/−); you want the magnitude of the mistake.
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Cost function</strong> — the average loss over the entire dataset, which the model aims to minimize during training.
+            </div>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--primary)]">Mean Absolute Error (MAE)</h3>
+            <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ MAE = \frac{1}{n}\sum_{i=1}^{n}|y_i - \hat{y}_i| $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">What happens:</strong> for each point, take the distance between real and predicted, ignore the sign, add all distances, divide by total points. <strong class="text-[var(--on-background)]">Intuition:</strong> "On average, how wrong am I?" If MAE = 5k, predictions are off by 5k on average.</p>
+            <div class="grid sm:grid-cols-2 gap-3">
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">Advantages</strong>
+                <ul class="list-disc list-inside mt-1 space-y-0.5 text-[var(--on-surface)]">
+                  <li>Same unit as output</li>
+                  <li>Easy to understand</li>
+                  <li>Robust to outliers — outliers do not dominate</li>
+                </ul>
+                <p class="mt-1 text-[var(--on-surface-variant)]">Example — errors 2, 3, 4, 100: MAE = (2+3+4+100)/4 = 27.25. The outlier (100) affects the result, but not insanely.</p>
+              </div>
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">Disadvantages</strong>
+                <p class="mt-1 text-[var(--on-surface)]">Not differentiable at 0 — the graph of |x| has a sharp corner there. Gradient descent needs smooth curves; the slope is undefined at 0, which makes optimization harder.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--secondary)]">Mean Squared Error (MSE)</h3>
+            <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ MSE = \frac{1}{n}\sum_{i=1}^{n}(y_i - \hat{y}_i)^2 $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Meaning:</strong> squares the error and averages it — large errors become very large. <strong class="text-[var(--on-background)]">Intuition:</strong> "Punish large mistakes more."</p>
+            <p class="text-sm text-[var(--on-surface-variant)]">Example — errors 2, 3, 4, 100: squared → 4, 9, 16, 10000 — huge impact from the 100. One outlier dominates everything.</p>
+            <div class="grid sm:grid-cols-2 gap-3">
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">Advantages</strong>
+                <ul class="list-disc list-inside mt-1 space-y-0.5 text-[var(--on-surface)]">
+                  <li>Differentiable</li>
+                  <li>Easy for optimization</li>
+                  <li>Used in most algorithms</li>
+                </ul>
+                <p class="mt-1 text-[var(--on-surface-variant)]">Why square helps: removes the negative sign, makes the function smooth, easy to optimize via gradient descent.</p>
+              </div>
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">Disadvantages</strong>
+                <ul class="list-disc list-inside mt-1 space-y-0.5 text-[var(--on-surface)]">
+                  <li>Unit becomes squared — hard to interpret back</li>
+                  <li>Not robust to outliers — big errors become extremely big and dominate the result</li>
+                </ul>
+              </div>
+            </div>
+            <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Rule:</strong> more outliers → use MAE. Clean data → use MSE.</p>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--tertiary)]">Root Mean Squared Error (RMSE)</h3>
+            <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ RMSE = \sqrt{MSE} = \sqrt{\frac{1}{n}\sum_{i=1}^{n}(y_i - \hat{y}_i)^2} $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Why the square root?</strong> MSE's unit is squared — e.g. salary becomes (rupees)², which is meaningless. RMSE brings it back to the original unit. Intuition: same as MSE but easier to interpret. If RMSE = 5k, error is around 5k.</p>
+            <div class="grid sm:grid-cols-2 gap-3">
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">Advantages</strong>
+                <ul class="list-disc list-inside mt-1 space-y-0.5 text-[var(--on-surface)]">
+                  <li>Same unit as output</li>
+                  <li>Penalizes large errors</li>
+                  <li>Common in deep learning</li>
+                </ul>
+              </div>
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">Disadvantages</strong>
+                <p class="mt-1 text-[var(--on-surface)]">Still sensitive to outliers, still not robust — squaring still happens inside, so outliers still dominate.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--primary)]">R² Score (Coefficient of Determination — Goodness of Fit)</h3>
+            <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Baseline idea:</strong> imagine you ignore the model and predict "everyone's salary = average salary" — the mean model. Now compare your regression line vs. the mean line. R² measures: <em>"How much better is my regression model than just predicting the mean?"</em></p>
+            <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ R^2 = 1 - \frac{SS_{res}}{SS_{mean}} = 1 - \frac{\sum_{i=1}^{n}(y_i - \hat{y}_i)^2}{\sum_{i=1}^{n}(y_i - \bar{y})^2} $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)]">The closer we get to perfection, the more R² moves toward 1 — the numerator (SS<sub>res</sub>) approaches zero as the regression line covers all points. The closer we get to just predicting the mean, the more R² moves toward 0.</p>
+            <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Case</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Condition</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Meaning</th></tr></thead>
+                <tbody>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">R² = 1 (perfect)</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">SS<sub>res</sub> = 0</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">The regression model makes no error, so the numerator is zero and 1 − 0 = 1.</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">R² = 0 (same as mean)</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">SS<sub>res</sub> = SS<sub>mean</sub></td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">The model is equal to the mean model — the input features add nothing.</td></tr>
+                  <tr><td class="p-2.5 font-semibold">R² &lt; 0 (worse than mean)</td><td class="p-2.5">SS<sub>res</sub> &gt; SS<sub>mean</sub></td><td class="p-2.5">The model is garbage — it makes more error than just predicting the mean. Can happen when the data is non-linear but you apply a linear model to it.</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Real interpretation:</strong> R² = 0.80 means 80% of the variation is explained, 20% is unknown. If CGPA → Salary gives R² = 0.80, CGPA explains 80% of the variance in salary; the remaining 20% could be anything not captured mathematically. <strong class="text-[var(--on-background)]">Important:</strong> it does NOT mean accuracy — it means explanation power.</p>
+            <div class="grid sm:grid-cols-2 gap-3">
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Advantages</strong> — easy to interpret, independent of unit, good for model comparison.</div>
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Disadvantage</strong> — adding an irrelevant column (e.g. temperature to a salary model) introduces more variance; instead of decreasing, R² can sometimes <em>increase</em> because of that irrelevant input.</p></div>
+            </div>
+          </div>
+
+          <div class="border-l-4 border-[var(--error)] bg-[var(--error-container)]/10 p-md rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--on-error-container)] mb-1">The Problem with R²</h4>
+            <p class="text-sm text-[var(--on-surface)]">Every time you add a new feature — even a useless one — R² can only stay the same or increase, never decrease. Why? The model gets more flexibility and can fit noise. So R² alone can mislead you into thinking a model with more features is better, when it's really just overfitting to noise.</p>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--secondary)]">Adjusted R² Score</h3>
+            <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ \text{Adjusted } R^2 = 1 - \frac{(1-R^2)(n-1)}{n-k-1} $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)]">k = number of features (columns), n = number of rows, R² = the normal R² score. It is designed to remove the flaw that R² has when irrelevant columns are added. Adding an irrelevant column increases k, which lowers the denominator (n − k − 1), which increases the fraction being subtracted from 1 — so Adjusted R² comes out <strong class="text-[var(--on-background)]">lower</strong> than plain R². It works the opposite way too: adding a genuinely relevant column pushes Adjusted R² <strong class="text-[var(--on-background)]">higher</strong> than plain R². It becomes a reliable metric when dealing with many input features or multiple linear regression.</p>
+            <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Intuition:</strong> "You only get rewarded if the new feature is useful." Useless feature → Adjusted R² goes down. Useful feature → Adjusted R² goes up.</p>
+          </div>
+
+          <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-md rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-2">Final Mental Model</h4>
+            <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+              <li>MAE → average mistake</li>
+              <li>MSE → punish big mistakes</li>
+              <li>RMSE → readable MSE</li>
+              <li>R² → how much the model explains</li>
+              <li>Adjusted R² → real performance accounting for the number of features used</li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Key Comparison</h3>
+            <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead>
+                  <tr class="bg-[var(--surface-container-high)]">
+                    <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Metric</th>
+                    <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Outliers</th>
+                    <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Unit</th>
+                    <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Use Case</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">MAE</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Robust</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Same as output</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Noisy data</td></tr>
+                  <tr><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">MSE</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Not robust</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Squared</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Optimization</td></tr>
+                  <tr><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">RMSE</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Not robust</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Same as output</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Practical error reporting</td></tr>
+                  <tr><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">R²</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Not about error</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Unitless</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Model quality</td></tr>
+                  <tr><td class="p-3 font-semibold">Adjusted R²</td><td class="p-3">Better than R²</td><td class="p-3">Unitless</td><td class="p-3">Multiple features</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- DAY 53 -->
+        <section id="day-53" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 53</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Multiple Linear Regression (Geometric Intuition)</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Multiple Linear Regression extends simple linear regression. In simple linear regression we have only one input feature: \( y = mx + b \). In multiple linear regression we have more than one input feature:</p>
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+            $$ y = b_0 + b_1x_1 + b_2x_2 + \cdots + b_nx_n $$
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Understanding the terms</strong>
+              <ul class="list-disc list-inside mt-1 space-y-0.5 text-[var(--on-surface)]">
+                <li>y → target value (output)</li>
+                <li>x₁, x₂, …, xₙ → input features</li>
+                <li>b₀ → intercept (bias)</li>
+                <li>b₁, b₂, …, bₙ → coefficients (weights)</li>
+              </ul>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Meaning of coefficients</strong>
+              <ul class="list-disc list-inside mt-1 space-y-0.5 text-[var(--on-surface)]">
+                <li>b₁, b₂, … show the importance of each feature — a higher value means a stronger effect on the output, and tells how much y changes when that feature changes.</li>
+                <li>b₀ (intercept) — the value of y when all inputs are zero; the starting point of the prediction.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-lg text-[var(--primary)]">Geometric Interpretation</h3>
+            <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+              <li><strong class="text-[var(--on-background)]">2D (one feature)</strong> → a line</li>
+              <li><strong class="text-[var(--on-background)]">3D (two features)</strong> → a plane</li>
+              <li><strong class="text-[var(--on-background)]">4D or more</strong> → a hyperplane</li>
+            </ul>
+            <p class="text-sm text-[var(--on-surface)]">So: linear regression fits a line; multiple regression fits a plane or hyperplane.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Why It Matters</h3>
+            <p class="text-sm text-[var(--on-surface)]">Real-world problems rarely depend on one variable — multiple regression captures the combined effect of many features. Example: house price depends on size, location, and number of rooms together.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Dataset Generation (Scikit-learn)</h3>
+            <p class="text-sm text-[var(--on-surface)]">You can generate synthetic data using scikit-learn's <code class="text-[var(--primary)]">make_regression</code> function. It creates linear datasets, supports multiple features, and is useful for practice and testing models — set the number of features, then generate X (inputs) and y (output).</p>
+          </div>
+        </section>
+
+        <!-- DAY 54 -->
+        <section id="day-54" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 54</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Multiple Linear Regression (Mathematical Formulation)</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">The goal is the same as before — minimize the sum of squared errors — but now with n input features and n+1 unknown parameters (b₀ … bₙ), it is far more convenient to work in matrix form rather than expand n separate partial derivatives by hand.</p>
+
+          <div class="border-l-4 border-[var(--outline)] bg-[var(--surface-container-high)]/40 p-sm rounded-r-lg text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Illustrative aid</strong> — the source page for this derivation was an embedded image that didn't extract as text. The step-by-step below is reconstructed to reach the same closed-form result the notes state directly on Day 57 (\( w = (X^TX)^{-1}X^Ty \)) and use in the Day 55 code — not a verbatim transcription of the original page.</div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--primary)]">1. The Design Matrix (the "bias trick")</h3>
+            <p class="text-sm text-[var(--on-surface)]">Prepend a column of 1s to the feature matrix X so the intercept b₀ can be treated as just another coefficient multiplying a constant "feature" of 1. This is exactly what <code class="text-[var(--primary)]">np.insert(X_train, 0, 1, axis=1)</code> does in the code on Day 55.</p>
+            <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ Y = X\beta + \varepsilon $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)]">Where X is the (n × (k+1)) design matrix (first column all 1s), β = [b₀, b₁, …, b_k]ᵀ is the vector of intercept + coefficients, Y is the vector of actual targets, and ε is the vector of residual errors.</p>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--secondary)]">2. Cost Function in Matrix Form</h3>
+            <p class="text-sm text-[var(--on-surface)]">The same "sum of squared errors" cost, written compactly as a dot product of the residual vector with itself:</p>
+            <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ J(\beta) = \frac{1}{n}(Y - X\beta)^T(Y - X\beta) $$
+            </div>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--tertiary)]">3. Minimizing — the Normal Equation</h3>
+            <p class="text-sm text-[var(--on-surface)]">Because J(β) is convex (a bowl-shaped quadratic in β), its minimum is exactly where the gradient with respect to β is the zero vector. Differentiate and set to zero:</p>
+            <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ \nabla_\beta J(\beta) = -2X^TY + 2X^TX\beta = 0 $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)]">Rearranging:</p>
+            <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ X^TX\beta = X^TY $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)]">Solving for β by left-multiplying both sides by \( (X^TX)^{-1} \) gives the <strong class="text-[var(--on-background)]">closed-form OLS solution</strong> (the "Normal Equation") — the exact same formula quoted on Day 57 as \( w = (X^TX)^{-1}X^Ty \):</p>
+            <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ \beta = (X^TX)^{-1}X^TY $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)]">β₀ (the first entry) is the intercept; β₁ … β_k are the coefficients — exactly what <code class="text-[var(--primary)]">betas[0]</code> and <code class="text-[var(--primary)]">betas[1:]</code> pull apart in the Day 55 code.</p>
+          </div>
+
+          <div class="border-l-4 border-[var(--outline)] bg-[var(--surface-container-high)]/40 p-sm rounded-r-lg text-xs text-[var(--on-surface-variant)]">
+            This matrix invertibility, \( (X^TX)^{-1} \), is exactly what breaks down when features are duplicated or perfectly correlated — see "No multicollinearity" in Day 56 and the "non-invertible matrix" failure mode covered in Day 57.
+          </div>
+        </section>
+
+        <!-- DAY 55 -->
+        <section id="day-55" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 55</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Multiple Linear Regression (Code)</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">A from-scratch implementation that computes the Normal Equation directly, mirroring the derivation from Day 54.</p>
+
+          <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+            <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+            <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>import numpy as np
+
+class MeraLR:
+    def __init__(self):
+        self.coef_ = None
+        self.intercept_ = None
+
+    def fit(self, X_train, Y_train):
+        X_train = np.insert(X_train, 0, 1, axis=1)
+        print(X_train)
+        # calculate the coeffs
+        betas = np.linalg.inv(np.dot(X_train.T, X_train)).dot(X_train.T).dot(Y_train)
+        self.intercept_ = betas[0]
+        self.coef_ = betas[1:]
+        # print(betas)
+
+    def predicted(self, X_test):
+        y_pred = np.dot(X_test, self.coef_) + self.intercept_
+        # Each row -> multiply with slope coefs -> sum all -> add intercept, for each row
+        return y_pred
+
+
+lr = MeraLR()
+
+lr.fit(X_train, y_train)
+
+y_predict = lr.predicted(X_test)
+print(y_predict)
+
+r2_score(y_test, y_predict)
+
+lr.coef_
+lr.intercept_</code></pre>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">fit()</strong> — inserts a column of 1s at position 0 so the intercept is folded into the same matrix multiplication as the coefficients, computes β = (XᵀX)⁻¹XᵀY via <code class="text-[var(--primary)]">np.linalg.inv</code>, then splits the result: first element → intercept, remaining elements → coefficients.
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">predicted()</strong> — for each row, multiplies feature values by their learned slope coefficients, sums them, and adds the intercept: \( \hat{y} = X\beta_{1:} + \beta_0 \).
+            </div>
+          </div>
+        </section>
+
+        <!-- DAY 56 -->
+        <section id="day-56" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 56</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Assumptions of Linear Regression</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Linear regression's coefficients and its statistical guarantees are only trustworthy when the following five assumptions roughly hold. Violating one doesn't necessarily make the model useless, but it undermines the reliability of the coefficients, p-values, or predictions in specific ways.</p>
+
+          <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead>
+                <tr class="bg-[var(--surface-container-high)]">
+                  <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">#</th>
+                  <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Assumption</th>
+                  <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">What It Means</th>
+                  <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">How to Detect</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">1</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">Linear relationship</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">There <strong class="text-[var(--on-background)]">should</strong> be a linear relationship between input and output — that's the entire premise of fitting a straight line/hyperplane.</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">Scatter plots of each feature vs. target; residual vs. fitted plots.</td>
+                </tr>
+                <tr>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">2</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">No multicollinearity</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">Input columns should be independent of one another — no strong correlation between features.</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">Variance Inflation Factor (VIF) — a value of 5 or more indicates multicollinearity; also a correlation heatmap via <code class="text-[var(--primary)]">corr()</code>.</td>
+                </tr>
+                <tr>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">3</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">Normality of residuals</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">The difference between actual and predicted value (the error/residual) should follow a normal distribution when plotted.</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">Histogram / Q-Q plot of residuals.</td>
+                </tr>
+                <tr>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">4</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">Homoscedasticity</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">"Homo" = same, "scedasticity" = spread. Residuals must have equal (constant) spread across all fitted values — not fan out or shrink.</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">Plot residuals vs. fitted values — spread should look like a flat, even band, not a cone.</td>
+                </tr>
+                <tr>
+                  <td class="p-3 font-semibold">5</td>
+                  <td class="p-3 font-semibold">No autocorrelation of errors</td>
+                  <td class="p-3">Residuals should not be correlated with each other (e.g. one error predicting the next) — a common violation in time-series/sequential data.</td>
+                  <td class="p-3">Plot residuals in sequence order; check for patterns.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="border-l-4 border-[var(--error)] bg-[var(--error-container)]/10 p-md rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--on-error-container)] mb-1">Why These Matter in Practice</h4>
+            <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+              <li>Violating <strong class="text-[var(--on-background)]">linearity</strong> means the model systematically under- or over-predicts in some regions — a curved/polynomial relationship forced into a straight line.</li>
+              <li>Violating <strong class="text-[var(--on-background)]">no multicollinearity</strong> makes individual coefficients unstable and hard to interpret — two correlated features can "steal" importance from each other, and in the extreme case (perfectly duplicated features) the Normal Equation's \( X^TX \) becomes non-invertible.</li>
+              <li>Violating <strong class="text-[var(--on-background)]">homoscedasticity</strong> doesn't bias the coefficients themselves but makes their confidence intervals/standard errors unreliable.</li>
+              <li>Violating <strong class="text-[var(--on-background)]">no autocorrelation</strong> is especially common in time-series data, where consecutive errors are related — this also inflates the false sense of precision in standard errors.</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- DAY 57 -->
+        <section id="day-57" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 57</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Gradient Descent from Scratch</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Gradient descent is an optimization technique that takes a differentiable function and finds its minima. It is the general algorithm used in linear regression, logistic regression, and is the backbone of deep learning.</p>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">OLS vs Gradient Descent</h3>
+            <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead>
+                  <tr class="bg-[var(--surface-container-high)]">
+                    <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs"></th>
+                    <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">OLS (Ordinary Least Squares)</th>
+                    <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Gradient Descent</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">Method</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Direct formula, no iteration: \( w = (X^TX)^{-1}X^Ty \). Computes weights in one step using matrix inversion.</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Iterative optimization: \( w = w - \alpha\nabla J \). Start with random weights, update step by step.</td></tr>
+                  <tr><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">What happens</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Multiply XᵀX → take its inverse → multiply with Xᵀy → get exact best weights.</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Loop: (1) predict ŷ, (2) compute error, (3) compute gradient, (4) update weights — repeat until error reduces.</td></tr>
+                  <tr><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">Pros</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Exact solution; no learning rate; no epochs; same result every time.</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Works with huge datasets; no matrix inversion; scales well; works with regularization.</td></tr>
+                  <tr><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">Cons</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Matrix inversion costs O(n³) — very slow for large feature counts, high memory usage; fails if the matrix is not invertible (singular).</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Needs a learning rate; needs epochs; can converge slowly; can get stuck if poorly tuned.</td></tr>
+                  <tr><td class="p-3 font-semibold">Best for</td><td class="p-3">Small datasets, few features.</td><td class="p-3">Large datasets, high-dimensional data, when data doesn't fit in memory.</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-sm text-[var(--on-surface)] mt-2"><strong class="text-[var(--on-background)]">Core difference in one line:</strong> OLS solves directly using math. GD learns step by step using error.</p>
+          </div>
+
+          <div class="border-l-4 border-[var(--error)] bg-[var(--error-container)]/10 p-md rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--on-error-container)] mb-1">Why OLS Can Fail: Non-Invertible Matrices</h4>
+            <p class="text-sm text-[var(--on-surface)]">If a matrix has no inverse, it's called non-invertible (singular). The most common reason: duplicate or perfectly dependent features. Example — a "Size" and an "Area in sq ft" column that contain exactly the same values (1000/1000, 1200/1200, 1500/1500 …). The second feature adds nothing new; because of this redundancy, XᵀX cannot be inverted, and the Normal Equation cannot be computed.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">The Update Rule</h3>
+            <p class="text-sm text-[var(--on-surface)]">Naively subtracting the raw slope causes drastic jumps, so we scale it by a <strong class="text-[var(--on-background)]">learning rate</strong> η (typically ~0.01):</p>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ b_{new} = b_{old} - \eta \cdot \text{slope} \qquad\qquad w_{new} = w_{old} - \alpha\frac{\partial J}{\partial w} $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)]">A higher learning rate causes jumps to the opposite side, skipping the solution; a lower learning rate converges very slowly.</p>
+            <div class="grid sm:grid-cols-2 gap-3 mt-2">
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">Case 1</strong> — ∂J/∂w = 5, α = 0.1, w_old = 8<br>
+                w_new = 8 − (0.1)(5) = 8 − 0.5 = <strong class="text-[var(--on-background)]">7.5</strong> → positive gradient → w decreases
+              </div>
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">Case 2</strong> — ∂J/∂w = −5, α = 0.1, w_old = 2<br>
+                w_new = 2 − (0.1)(−5) = 2 + 0.5 = <strong class="text-[var(--on-background)]">2.5</strong> → negative gradient → w increases
+              </div>
+            </div>
+            <p class="text-sm text-[var(--on-surface)] mt-2">At the minimum: ∂J/∂w = 0 → w_new = w_old (no change).</p>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-lg text-[var(--primary)]">The Intuition to Remember</h3>
+            <p class="text-sm text-[var(--on-surface)]">Imagine you're blindfolded on a hill and can only feel the ground beneath your feet. If the ground tilts upward to your right (positive slope, which makes the new w smaller), you know downhill is left, so you decrease w. If the ground tilts upward to your left (negative slope, which adds to the new w value), you know downhill is right, so you increase w. If the ground feels flat (gradient = 0), you're at the bottom of the valley — the cost is minimum. Near a local minimum, the derivative gets smaller and smaller, so the update step also shrinks automatically — you can reach the minimum without manually decaying the learning rate, because the derivative is doing that work for you.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Convex vs Non-Convex Functions</h3>
+            <div class="grid sm:grid-cols-2 gap-3">
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">Convex</strong> — a single bowl shape, one global minimum. No matter where you start, gradient descent always slides down to the same lowest point — no risk of getting stuck. Linear regression's MSE cost is convex — a big reason MSE is popular: gradient descent is guaranteed to converge to the true minimum.
+              </div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">Non-convex</strong> — multiple bumps and dips (multiple local minima), not just one. Where you start matters — gradient descent might slide into a local minimum that looks like the bottom locally but isn't the true global minimum. Neural network cost functions are almost always non-convex, which is why deep learning training is trickier — you can get stuck in a local minimum, a saddle point, or a plateau.
+              </div>
+            </div>
+            <p class="text-sm text-[var(--on-surface)] mt-2"><strong class="text-[var(--on-background)]">Key mathematical difference:</strong> a function J(w) is convex if, for any two points w₁, w₂ on the curve, the line segment (chord) connecting them never goes below the curve:</p>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ J(\theta w_1 + (1-\theta) w_2) \le \theta J(w_1) + (1-\theta) J(w_2), \quad \theta \in [0,1] $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)]">θ is a mixing knob between 0 and 1 — it tells you how far you're walking from w₁ to w₂ along the straight line \( \theta w_1 + (1-\theta) w_2 \): θ = 0 → standing exactly at w₂; θ = 1 → standing exactly at w₁; θ = 0.5 → exactly halfway between them. The test in plain words: pick two points on the curve, draw a straight chord connecting them. Convex → the chord stays above or on the curve everywhere between them. Non-convex → the chord dips below the curve somewhere.</p>
+            <p class="text-sm text-[var(--on-surface)] mt-2"><strong class="text-[var(--on-background)]">Worked example:</strong> for the convex curve J(w) = w², pick w₁ = −2 and w₂ = 3. At the midpoint (θ = 0.5), the actual curve sits at 0.25 while the chord sits at 6.5 — curve ≤ chord, holding everywhere. For the non-convex curve J(w) = w⁴ − 4w², pick w₁ = −1.8 and w₂ = 1.8 (both in the two dips) — the chord is flat around −2.46, but the actual curve pokes up to 0 in the middle, sitting <em>above</em> the chord. That's the violation: curve &gt; chord means the inequality fails — exactly what non-convex means.</p>
+            <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)] mt-3">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs"></th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Convex</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Non-convex</th></tr></thead>
+                <tbody>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Minima</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">One (global)</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Many (local + global)</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Starting point</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Doesn't matter</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Matters a lot</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Guarantee</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Always finds the minimum</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">May get stuck in a local minimum</td></tr>
+                  <tr><td class="p-2.5 font-semibold">Example</td><td class="p-2.5">Linear / logistic regression</td><td class="p-2.5">Neural networks</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-sm text-[var(--on-surface)] mt-2">That's why techniques like momentum, learning-rate scheduling, and random restarts exist — they help gradient descent escape bad local minima in non-convex landscapes.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Deriving the Gradient — Step by Step</h3>
+            <ol class="text-sm text-[var(--on-surface)] space-y-1.5 list-decimal list-inside bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md">
+              <li>We make a prediction: \( \hat{y} = wx + b \)</li>
+              <li>We calculate the loss: \( L = (\hat{y} - y)^2 \)</li>
+              <li>We compute the derivative \( \partial L/\partial w \) — this answers "if I change w a tiny bit, how much will the loss change?"</li>
+              <li>We update the weight: \( w_{new} = w_{old} - \alpha \dfrac{\partial L}{\partial w} \), where α is the learning rate.</li>
+            </ol>
+            <p class="text-sm text-[var(--on-surface)] mt-2">Differentiating the MSE cost with respect to b and m directly gives the two slope formulas used by the update rule:</p>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center space-y-2">
+              $$ \frac{\partial J}{\partial b} = \frac{-2}{n}\sum_{i=1}^{n}(y_i - mx_i - b) $$
+              $$ \frac{\partial J}{\partial m} = \frac{-2}{n}\sum_{i=1}^{n}(y_i - mx_i - b)x_i $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)]">Direction is now a combination of two different variables, m and b — that's why it's called a <strong class="text-[var(--on-background)]">gradient</strong> and not simply a derivative. Each algorithm has a different loss function, so the differentiation changes accordingly, but the mechanics (b, learning rate) stay the same.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Putting It Together — Steps &amp; Worked Example</h3>
+            <ol class="text-sm text-[var(--on-surface)] space-y-1.5 list-decimal list-inside bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md">
+              <li>Initialize random values for m and b.</li>
+              <li>Set epochs = 100, learning rate (lr) = 0.1.</li>
+              <li>For i in epochs: b = b − lr × slope; m = m − lr × slope.</li>
+            </ol>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group mt-3">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>b = -100
+m = 78.35
+lr = 0.1
+epochs = 10
+
+for i in range(epochs):
+    loss_slope = -2 * np.sum(y - m*X.ravel() - b)
+    b = b - (lr * loss_slope)
+
+y_pred = m * X + b
+plt.plot(X, y_pred)
+plt.scatter(X, y)</code></pre>
+            </div>
+          </div>
+
+          <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-md rounded-r-lg">
+            <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Linear Regression:</strong> "I want to find the best line through data." <strong class="text-[var(--on-background)]">Gradient Descent:</strong> "I will slowly adjust the line until it fits best." Linear regression defines <em>what</em> we want (the best-fit line); gradient descent is one <em>way</em> to find that best-fit line by iteratively reducing error.</p>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Learning rate impact</strong>
+              <ul class="list-disc list-inside mt-1 space-y-0.5 text-[var(--on-surface)]">
+                <li>Small lr → many iterations/time to converge</li>
+                <li>Optimum lr (e.g. 0.1) → optimum steps to find the minima</li>
+                <li>Large lr (e.g. 0.5) → skips the actual target, bouncing back and forth</li>
+              </ul>
+              <p class="mt-1 text-[var(--on-surface-variant)]">To check whether the chosen learning rate is optimal, plot the cost function per iteration and check that it is decreasing. Practical approach: try a range — start with 0.001, then 0.01, then 0.1, then 1 — until you find a reasonable value.</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Loss-function &amp; data effects on GD</strong>
+              <ul class="list-disc list-inside mt-1 space-y-0.5 text-[var(--on-surface)]">
+                <li>Non-convex loss functions (common in deep learning) can create a <strong class="text-[var(--on-background)]">saddle point</strong> — a flat plateau that takes much longer to cross; with too few epochs you may never reach the solution.</li>
+                <li>When input features are on similar scales, the cost function's contour plot is more circular, and gradient descent descends much faster — it's always better to scale data before running gradient descent on linear regression.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="space-y-3">
+            <div class="border-l-4 border-[var(--outline)] bg-[var(--surface-container-high)]/40 p-sm rounded-r-lg text-xs text-[var(--on-surface-variant)]">
+              <strong class="text-[var(--on-background)]">Illustrative aid</strong> — generated for this site, not quoted from the source notes.
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+              <h3 class="font-h3 text-lg text-[var(--on-background)]">Gradient Descent on a 1D Loss Curve</h3>
+              <p class="text-sm text-[var(--on-surface)]">A toy loss J(x) = (x − 3)² with a single minimum at x = 3. Drag the learning-rate slider and watch the step path — too small and it crawls, too large and it overshoots/oscillates, matching the "small vs. optimum vs. large learning rate" behavior described above.</p>
+              <canvas id="gdChart" height="260"></canvas>
+              <div class="flex items-center gap-3 text-sm">
+                <label for="lrSlider" class="text-[var(--on-surface-variant)] whitespace-nowrap">Learning rate (α):</label>
+                <input type="range" id="lrSlider" min="0.01" max="0.9" step="0.01" value="0.1" oninput="updateGD()" class="flex-1 accent-[var(--primary)]">
+                <span class="font-mono text-[var(--on-background)] w-12 text-right" id="lrVal">0.10</span>
+              </div>
+              <p class="text-xs text-[var(--on-surface-variant)]">Steps plotted: <span id="gdStepsCount" class="font-mono text-[var(--on-background)]">25</span> — path recomputed live via <code class="text-[var(--primary)]">x_new = x_old − α · 2(x_old − 3)</code> each time you move the slider.</p>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Three Types of Gradient Descent</h3>
+            <p class="text-sm text-[var(--on-surface)]">They differ in how much data they look at before updating the weights.</p>
+            <div class="space-y-3 mt-2">
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">1. Batch Gradient Descent (BGD)</strong> — uses the entire training dataset to compute the gradient before making a single update. Example: 10,000 house-price examples → Batch GD calculates the average gradient across all 10,000 rows, then updates w once.
+                <ul class="list-disc list-inside mt-1 text-[var(--on-surface)]"><li>Very stable, smooth path to the minimum</li><li>Slow — one update requires a full pass over the data</li><li>Can't handle datasets too big to fit in memory</li></ul>
+              </div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">2. Stochastic Gradient Descent (SGD)</strong> — uses just ONE random training example per update. Example: same 10,000 rows — SGD picks row #4521, computes the gradient from just that row, updates w; picks another random row, updates again — 10,000 times per epoch.
+                <ul class="list-disc list-inside mt-1 text-[var(--on-surface)]"><li>Very fast updates, works well with huge/streaming data</li><li>Noisy, zig-zaggy path — doesn't move smoothly downhill</li><li>The noise can actually help escape shallow local minima (useful in non-convex problems like neural nets)</li></ul>
+              </div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">3. Mini-Batch Gradient Descent</strong> — uses a small batch (e.g. 32, 64, 128 examples) per update, a middle ground. Example: same 10,000 rows split into batches of 64 → ~156 updates per epoch instead of 1 (batch) or 10,000 (SGD).
+                <ul class="list-disc list-inside mt-1 text-[var(--on-surface)]"><li>Faster than batch, smoother than SGD</li><li>This is what's actually used in almost all real deep learning training</li><li>Batch size (32/64/128/256…) is a tunable hyperparameter</li></ul>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Quick Reference — Batch vs SGD vs Mini-Batch</h3>
+            <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead>
+                  <tr class="bg-[var(--surface-container-high)]">
+                    <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Type</th>
+                    <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Data per Update</th>
+                    <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Path Shape</th>
+                    <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Speed per Update</th>
+                    <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Best For</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">Batch GD</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Entire dataset</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Smooth, direct</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Slow</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Small datasets, convex problems</td></tr>
+                  <tr><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">SGD</td><td class="p-3 border-b border-[var(--outline-variant)]/50">1 example</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Very noisy zig-zag</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Very fast</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Huge/streaming data, escaping local minima</td></tr>
+                  <tr><td class="p-3 font-semibold">Mini-batch GD</td><td class="p-3">Small batch (32–256)</td><td class="p-3">Slightly noisy</td><td class="p-3">Fast</td><td class="p-3">Standard choice — used in almost all deep learning</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-sm text-[var(--on-surface)] mt-2">Simple way to remember it: the more examples you average over before updating, the smoother (but slower) your path downhill. One extreme is "look at everything, then take one careful step" (Batch). The other is "look at one thing, take a step, look at another thing, take a step" (SGD). Mini-batch is the practical compromise everyone actually uses.</p>
+          </div>
+        </section>
+
+        <!-- DAY 58 -->
+        <section id="day-58" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 58</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Batch Gradient Descent</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">In batch gradient descent, we use the total data (all rows) to update/calculate the slope each step. It is slow and has computational drawbacks for large data — that motivates stochastic and mini-batch variants. Batch GD is rare in practice; it's used when the cost function is convex but the dataset is manageable in size. Stochastic GD is used far more widely.</p>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Applying Gradient Descent to Multiple Linear Regression</h3>
+            <p class="text-sm text-[var(--on-surface)]">Mathematical formulation: \( y = b_0 + b_1x_1 + b_2x_2 \). We start with random values, e.g. b₀ = 0 and slopes b₁ = 1, b₂ = 1, then update each:</p>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ b_0 = b_0 - \eta \cdot \text{slope}_{b_0} \qquad b_1 = b_1 - \eta \cdot \text{slope}_{b_1} \qquad b_2 = b_2 - \eta \cdot \text{slope}_{b_2} \\ $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)]">Each slope is found by differentiating the MSE loss function with respect to that particular parameter — the MSE is expanded and then partial-differentiated term by term.</p>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--primary)]">What "Update Once Per Full Pass" Actually Means</h3>
+            <p class="text-sm text-[var(--on-surface)]">"Calculates across all 10,000 rows, then updates once" means:</p>
+            <ol class="text-sm text-[var(--on-surface)] space-y-1 list-decimal list-inside">
+              <li>Loop through all 10,000 houses</li>
+              <li>For each one, compute how far off the prediction was</li>
+              <li>Average all 10,000 of those errors into one number</li>
+              <li>Use that one number to move w a single time</li>
+              <li>Repeat — go through all 10,000 rows again for the next update</li>
+            </ol>
+            <p class="text-sm text-[var(--on-surface)] mt-2"><strong class="text-[var(--on-background)]">Trace it with numbers:</strong></p>
+            <div class="grid sm:grid-cols-2 gap-3">
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">Pass 1</strong>
+                <p class="mt-1 text-[var(--on-surface)]">w = 3 (starting value). House 1 (size = 1000): prediction = 3 × 1000 = 3000, actual price = 2000 → large error. Same for all 10,000 houses → average gradient computed, say it comes out to +8. Update: w_new = 3 − 0.01(8) = <strong class="text-[var(--on-background)]">2.92</strong>.</p>
+              </div>
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">Pass 2</strong>
+                <p class="mt-1 text-[var(--on-surface)]">w is now 2.92 (the model's value — not stored in the rows). House 1 is the exact same row — size 1000, price 2000. But now prediction = 2.92 × 1000 = 2920, a better prediction purely because w changed. Repeat for all 10,000 houses → new average gradient, say +5. Update: w_new = 2.92 − 0.01(5) = <strong class="text-[var(--on-background)]">2.87</strong>.</p>
+              </div>
+            </div>
+            <p class="text-sm text-[var(--on-surface)] mt-2"><strong class="text-[var(--on-background)]">The clean way to say it:</strong> the data stays frozen. The model's parameter w evolves. Each pass, you feed the same 10,000 rows through the model, but the model itself is a little smarter (has a better w) than the previous pass — so the predictions, errors, and resulting gradient differ each time, even though the input data never moved.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Batch GD — Compact Numeric Example</h3>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code># Data
+X = [[1, 2],
+     [3, 4],
+     [5, 6]]
+
+y = [5, 11, 17]
+
+w = [1, 1]
+b = 0
+
+# Step 1: Prediction (use ALL samples)
+y_hat = Xw + b
+y_hat = [3, 7, 11]
+
+# Step 2: Error (ALL samples)
+error = y - y_hat
+      = [2, 4, 6]
+
+# Step 3: Gradient (core step)
+# grad_J = (-2/n) * X.T @ (y - y_hat)
+# Transpose:
+X.T = [[1, 3, 5],
+       [2, 4, 6]]
+# Multiply:
+X.T . error = [44, 56]
+
+# Final gradient:
+gradient = [-29.33, -37.33]</code></pre>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ \nabla J = \frac{-2}{n} X^T(y - \hat{y}) $$
+            </div>
+          </div>
+
+          <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-md rounded-r-lg space-y-2">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--tertiary)]">Key Insight (Most Important)</h4>
+            <p class="text-sm text-[var(--on-surface)]">Each weight uses ALL samples together — w₁'s gradient contribution is (1×2) + (3×4) + (5×6) across samples s1, s2, s3. No sample is skipped.</p>
+            <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Why it's slow on large data:</strong> if there are 1M samples, w₁'s gradient = (x₁×e₁) + (x₂×e₂) + … + (x₁₀₀₀₀₀₀×e₁₀₀₀₀₀₀) — huge multiplications per step, repeated for every feature and every epoch.</p>
+            <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">One-line intuition:</strong> Batch GD sees ALL errors → takes ONE update.</p>
+          </div>
+        </section>
+
+        <!-- DAY 59 -->
+        <section id="day-59" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 59</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Stochastic Gradient Descent</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed"><strong class="text-[var(--on-background)]">Problem with batch GD:</strong> say you have 1,000 rows, 5 columns (so 6 coefficients including the intercept), and 50 epochs — every single epoch requires a full pass over all 1,000 rows before the weights move even once. That cost compounds badly as data grows.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--primary)]">Batch vs Stochastic — The Setup</h3>
+            <p class="text-sm text-[var(--on-surface)]">Current weight (w) = 2.0, learning rate (α) = 0.1.</p>
+            <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+              <li><strong class="text-[var(--on-background)]">In Batch GD:</strong> you do all the work of looking at every row just to move the weight from 2.0 to 2.033 — you have to look at all rows before the weight moves even a tiny bit.</li>
+              <li><strong class="text-[var(--on-background)]">In Stochastic GD:</strong> you look at Row B, see the error was −1, and update the weight immediately to 2.1. Then you move to Row C and update again.</li>
+            </ul>
+            <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">The analogy:</strong> Batch is "polite" — it waits for everyone to speak before making a decision. Stochastic is "impulsive" — it reacts to every single person it meets. This is why Batch GD is so much slower once you have millions of rows.</p>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Why SGD is used</strong>
+              <ul class="list-disc list-inside mt-1 space-y-0.5 text-[var(--on-surface)]">
+                <li>Fast and requires fewer epochs; gives faster convergence</li>
+                <li>Not necessary to load all data into RAM</li>
+                <li>Randomly selects a row and updates — that's why it's called "stochastic": it's random, so it won't be perfectly stable</li>
+                <li>Used for big data because it converges faster</li>
+                <li>Used for non-convex functions — surfaces with multiple local minima and one global minimum: in batch GD you can get permanently stuck in a local minimum, but in stochastic GD the randomness of picking different rows each step can knock you back out of a shallow local minimum</li>
+              </ul>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">The tradeoff</strong>
+              <p class="mt-1 text-[var(--on-surface)]">The problem with stochastic GD is that even near the true solution (the global minimum), it still shows randomness — bouncing around — even though you'd want stability there. That's what motivates the <strong class="text-[var(--on-background)]">learning schedule</strong> concept: gradually decreasing the learning rate over time so updates get smaller and more stable as training progresses, letting SGD settle near the minimum instead of bouncing around it indefinitely.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- DAY 60 -->
+        <section id="day-60" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 60</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Mini Batch Gradient Descent</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Mini-batch GD groups rows into batches — it sits in between Batch and Stochastic GD. Example: 100 rows, one batch of 10 rows → 10 total batches. In each epoch we now perform a number of updates equal to the number of batches, instead of one update (Batch) or one update per row (Stochastic).</p>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Code — MBGDRegressor</h3>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>import random
+
+class MBGDRegressor:
+
+    def __init__(self, batch_size, learning_rate=0.01, epochs=100):
+
+        self.coef_ = None
+        self.intercept_ = None
+        self.lr = learning_rate
+        self.epochs = epochs
+        self.batch_size = batch_size
+
+    def fit(self, X_train, y_train):
+        # init your coefs
+        self.intercept_ = 0
+        self.coef_ = np.ones(X_train.shape[1])
+
+        for i in range(self.epochs):
+
+            for j in range(int(X_train.shape[0] / self.batch_size)):
+
+                idx = random.sample(range(X_train.shape[0]), self.batch_size)
+
+                y_hat = np.dot(X_train[idx], self.coef_) + self.intercept_
+                # print("Shape of y_hat", y_hat.shape)
+                intercept_der = -2 * np.mean(y_train[idx] - y_hat)
+                self.intercept_ = self.intercept_ - (self.lr * intercept_der)
+
+                coef_der = -2 * np.dot((y_train[idx] - y_hat), X_train[idx])
+                self.coef_ = self.coef_ - (self.lr * coef_der)
+
+        print(self.intercept_, self.coef_)
+
+    def predict(self, X_test):
+        return np.dot(X_test, self.coef_) + self.intercept_
+
+
+mbr = MBGDRegressor(batch_size=int(X_train.shape[0] / 50), learning_rate=0.01, epochs=100)
+
+mbr.fit(X_train, y_train)</code></pre>
+            </div>
+            <p class="text-sm text-[var(--on-surface)] mt-2">Note the batch size is derived as <code class="text-[var(--primary)]">X_train.shape[0] / 50</code> — i.e. the caller chooses "50 batches per epoch" and lets the regressor compute the resulting rows-per-batch. Inside <code class="text-[var(--primary)]">fit()</code>, each inner loop iteration draws a random sample of <code class="text-[var(--primary)]">batch_size</code> row indices (without a fixed order across epochs), predicts on just that subset, computes the mean gradient over the subset, and updates the intercept and coefficients — exactly the "group of rows" compromise between Batch (all rows) and Stochastic (one row) gradient descent.</p>
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on Day 50–60. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-section-19">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. You have 1 million rows, 200 features, and one of your features is a perfect duplicate of another (e.g. "size_sqft" and "size_sqft_copy"). You need an exact, one-shot solution. Which approach — and why does it specifically fail here?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. OLS — it always converges regardless of feature correlation</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Gradient Descent — it requires an invertible matrix just like OLS</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. OLS would fail here — the duplicate feature makes XᵀX singular (non-invertible), so the Normal Equation β = (XᵀX)⁻¹XᵀY cannot be computed; Gradient Descent has no such requirement and also scales better at this size</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Neither works with duplicate features — the duplicate column must be manually removed before either method can run at all</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Duplicate/perfectly dependent features make XᵀX singular, so OLS's matrix inversion breaks (as covered in Day 57's "why does this happen" walkthrough). Gradient Descent never inverts a matrix, so it's unaffected by this specific failure mode — and at 1M rows / 200 features, GD's iterative approach also avoids OLS's O(n³) inversion cost. (D is wrong — GD tolerates the redundant feature without needing it removed first.)
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. You add 10 randomly-generated, meaningless columns to your regression's feature set. R² increases from 0.62 to 0.71. What's the most defensible conclusion?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. The new columns are genuinely predictive — R² only rises when features help</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. R² is misleading here — it can rise from added flexibility/noise-fitting alone; check Adjusted R² instead, which penalizes useless features via the k (feature count) term</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. This proves the model is now underfitting</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. R² is unitless so this increase is meaningless in any interpretation</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Day 52 explicitly covers this: adding any feature — even a useless one — gives the model more flexibility to fit noise, so R² can only stay flat or increase, never decrease. Adjusted R² exists precisely to correct this: its (n−k−1) denominator shrinks as k grows, penalizing additions that don't earn their keep — for random noise columns, Adjusted R² would very likely drop even as R² rises.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. Your dataset is 50 million rows, doesn't fit in RAM, and you're training a neural-network-style non-convex loss where you're worried about getting trapped in a shallow local minimum. Which gradient descent variant best matches BOTH constraints, and why?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Batch GD — its smooth, direct path guarantees the global minimum on any loss surface</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. OLS — it computes the exact optimum in one step regardless of dataset size</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Batch GD, because averaging over all rows removes the risk of local minima entirely</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Stochastic (or mini-batch) GD — neither needs the full dataset in memory per update, and the per-update noise from sampling can knock the optimizer out of shallow local minima that Batch GD would get stuck in</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Batch GD requires the whole dataset for every single update (fails the memory constraint) and its smooth path is exactly what lets it get stuck in a local minimum on non-convex surfaces (Day 57/59). SGD and mini-batch GD only need a row or small batch per update — feasible for 50M rows — and their randomness is explicitly called out as a mechanism for escaping shallow local minima, unlike batch's deterministic descent. OLS is not even applicable to non-convex/neural-style losses.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. A model's residuals, when plotted against the predicted values, form a clear cone shape — small spread for low predictions, wide spread for high predictions. Which assumption is violated, and what does that specifically compromise?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Homoscedasticity — residual spread must be constant across fitted values; violating it doesn't bias coefficients but makes their standard errors/confidence intervals unreliable</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. No multicollinearity — this pattern always means two input features are correlated</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Normality of residuals — a cone shape means residuals aren't normally distributed</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. No autocorrelation — the cone pattern indicates sequential errors are correlated</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> A cone/fan shape in a residual-vs-fitted plot is the textbook signature of heteroscedasticity — unequal spread across fitted values, violating the homoscedasticity assumption from Day 56. Multicollinearity is detected via VIF/correlation heatmaps on inputs, not this plot; normality is checked via a histogram/Q-Q plot of residuals, not a cone shape; autocorrelation is checked by residuals in sequence order.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. You're running gradient descent on a scaled, single-feature linear regression and get R² = −0.3 on the test set. What does this specifically tell you?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. R² can't be negative — this indicates a bug in the R² calculation, not the model</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. The model explains −30% of the variance, meaning it is 30% worse than random guessing</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. SS_res > SS_mean — the regression line makes more error than simply predicting the mean every time; the model is worse than the naive baseline, which can happen if the underlying relationship is non-linear or the model badly underfit/diverged</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. R² is only defined on training data, so a negative test R² is not meaningful</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Day 52 spells this out directly: R² &lt; 0 happens when SS_res &gt; SS_mean, meaning the fitted line performs worse than the trivial "predict the mean" baseline — often a sign of applying a linear model to a non-linear relationship (or, in a gradient descent context, a poorly-tuned/diverged fit). It is not a computation error, and R² is routinely computed on held-out test data to evaluate generalization — that's the entire point of the train/test metric step in the Day 50 pipeline.
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--primary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="section-20.html" class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">
+            Next: Polynomial Regression →
+          </a>
+        </div>

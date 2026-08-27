@@ -1,0 +1,262 @@
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-3 py-1 mb-3">Source: CampusX — 100 Days of Machine Learning</span>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">3. ML Landscape</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Challenges in ML · Applications · Development Life Cycle · Data-Related Job Roles</p>
+        </div>
+
+        <!-- DAY 7 -->
+        <section id="day-7" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 7</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Challenges in Machine Learning (ML)</h2>
+          </div>
+          <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container)]/50">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead>
+                <tr class="bg-[var(--surface-container-high)]">
+                  <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">#</th>
+                  <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Challenge</th>
+                  <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Detail</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">1</td><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">Data Collection</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Sources: APIs, web scraping, databases. Challenge: collecting relevant and sufficient data.</td></tr>
+                <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">2</td><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">Insufficient / Labelled Data</td><td class="p-3 border-b border-[var(--outline-variant)]/50">ML models need enough examples to learn patterns. Labelled data is required for supervised learning.</td></tr>
+                <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">3</td><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">Unreasonable Effectiveness of Data</td><td class="p-3 border-b border-[var(--outline-variant)]/50">With huge datasets, even simple algorithms perform well. Quality matters less than quantity in some cases.</td></tr>
+                <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">4</td><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">Non-Representative Data</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Data may not reflect the real-world scenario. Leads to sampling noise (random errors) and sampling bias (systematic errors).</td></tr>
+                <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">5</td><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">Poor Quality Data</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Missing values, duplicates, inconsistent data. Cleaning can take more time than model training.</td></tr>
+                <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">6</td><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">Irrelevant Features</td><td class="p-3 border-b border-[var(--outline-variant)]/50">"Garbage in, garbage out." Feature engineering: create meaningful features, remove irrelevant ones.</td></tr>
+                <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">7</td><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">Overfitting</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Model memorizes training data but fails on new data. Solution: regularization, more data, cross-validation.</td></tr>
+                <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">8</td><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">Underfitting</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Model too simple, fails to capture patterns. Solution: more complex model, better features.</td></tr>
+                <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">9</td><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">Software Integration</td><td class="p-3 border-b border-[var(--outline-variant)]/50">ML models must integrate with existing systems, APIs, or apps.</td></tr>
+                <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">10</td><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">Offline Learning / Deployment</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Some ML models cannot update in real-time; need batch updates.</td></tr>
+                <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 font-semibold">11</td><td class="p-3 font-semibold">Cost Involved</td><td class="p-3">Computational resources, storage, maintenance. MLOps: automates deployment, monitoring, scaling, retraining.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- DAY 8 -->
+        <section id="day-8" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 8</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Applications of Machine Learning</h2>
+          </div>
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">1. Retail</h4>
+              <p class="text-sm text-[var(--on-surface)]">Predict popular products, market basket analysis, recommendation systems (Amazon).</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">2. Banking and Finance</h4>
+              <p class="text-sm text-[var(--on-surface)]">Fraud detection, credit scoring, stock prediction.</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">3. Transport</h4>
+              <p class="text-sm text-[var(--on-surface)]">Route optimization, autonomous vehicles, demand prediction.</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">4. Manufacturing</h4>
+              <p class="text-sm text-[var(--on-surface)]">Predictive maintenance (e.g. robotic arm in car production).</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm sm:col-span-2">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">5. Social Media</h4>
+              <p class="text-sm text-[var(--on-surface)]">Sentiment analysis (reviews, tweets). Influences stock decisions, product recommendations.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- DAY 9 -->
+        <section id="day-9" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 9</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">ML Development Life Cycle (ML DLC)</h2>
+          </div>
+          <ol class="space-y-3">
+            <li class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">1. Problem Framing</h4>
+              <p class="text-sm text-[var(--on-surface)]">Define clear ML objectives and scope.</p>
+            </li>
+            <li class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">2. Data Collection</h4>
+              <p class="text-sm text-[var(--on-surface)]">APIs, web scraping, databases, data warehouses.</p>
+            </li>
+            <li class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">3. Data Pre-processing</h4>
+              <p class="text-sm text-[var(--on-surface)]">Cleaning, integration, transformation, reduction.</p>
+            </li>
+            <li class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">4. Exploratory Data Analysis (EDA)</h4>
+              <p class="text-sm text-[var(--on-surface)]">Study input-output relationships. Uni-variate, bi-variate, multi-variate analysis. Detect outliers, handle imbalanced datasets.</p>
+            </li>
+            <li class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">5. Feature Engineering &amp; Selection</h4>
+              <p class="text-sm text-[var(--on-surface)]">Features = input columns. Create new features by combining columns. Select most important features.</p>
+            </li>
+            <li class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">6. Model Training, Evaluation &amp; Selection</h4>
+              <p class="text-sm text-[var(--on-surface)]">Try multiple algorithms. Evaluate using metrics (accuracy, precision, recall). Hyperparameter tuning to improve performance. Ensemble learning: combine multiple models for better results.</p>
+            </li>
+            <li class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">7. Model Deployment</h4>
+              <p class="text-sm text-[var(--on-surface)]">Deploy on servers (Heroku, AWS, etc.).</p>
+            </li>
+            <li class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">8. Testing</h4>
+              <p class="text-sm text-[var(--on-surface)]">A/B testing to compare model versions.</p>
+            </li>
+            <li class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">9. Optimization &amp; Maintenance</h4>
+              <p class="text-sm text-[var(--on-surface)]">Model &amp; data backups, automation, load balancing. Retraining to prevent model decay.</p>
+            </li>
+          </ol>
+        </section>
+
+        <!-- DAY 10 -->
+        <section id="day-10" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 10</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Data-Related Job Roles</h2>
+          </div>
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">1. Data Engineer</h4>
+              <p class="text-sm text-[var(--on-surface)]">Collect and prepare data, build pipelines.</p>
+              <p class="text-xs text-[var(--on-surface-variant)] mt-1">Skills: databases, ETL, backend systems.</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">2. Data Analyst</h4>
+              <p class="text-sm text-[var(--on-surface)]">Summarize and visualize data, support decisions.</p>
+              <p class="text-xs text-[var(--on-surface-variant)] mt-1">Skills: SQL, Excel, visualization tools.</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">3. Data Scientist</h4>
+              <p class="text-sm text-[var(--on-surface)]">Combines engineering + statistics + ML modeling. Full-stack data professional.</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">4. ML Engineer</h4>
+              <p class="text-sm text-[var(--on-surface)]">Deploy ML models to production. Focus on scaling, optimization, reliability.</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm sm:col-span-2">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">5. MLOps Engineer</h4>
+              <p class="text-sm text-[var(--on-surface)]">Automate ML lifecycle: deployment, monitoring, retraining.</p>
+            </div>
+          </div>
+
+          <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+            <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+              <li><strong class="text-[var(--on-background)]">ML Engineer / MLOps Engineer</strong> — highest earning potential, strong demand, future-proof.</li>
+              <li><strong class="text-[var(--on-background)]">Data Scientist</strong> — very high salary, versatile, stable demand.</li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Database vs Data Warehouse (Simple)</h3>
+            <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container)]/50">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead>
+                  <tr class="bg-[var(--surface-container-high)]">
+                    <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Feature</th>
+                    <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Database</th>
+                    <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Data Warehouse</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">Purpose</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Store daily operational data</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Store historical, analytical data</td></tr>
+                  <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">Data Type</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Current/transactional</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Aggregated, historical</td></tr>
+                  <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">Queries</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Frequent, simple</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Complex analytics</td></tr>
+                  <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">Users</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Application developers</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Data analysts, BI teams</td></tr>
+                  <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 font-semibold">Example</td><td class="p-3">MySQL, PostgreSQL</td><td class="p-3">Amazon Redshift, Snowflake</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on Day 7–10. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-section-03">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. A model scores 99% training accuracy but only 60% test accuracy. A colleague also mentions that on a survey collected only from one city, the model performs poorly nationwide. Which two challenges from the notes are illustrated respectively?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Underfitting; poor quality data</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Overfitting; non-representative data (sampling bias)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Overfitting; irrelevant features</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Underfitting; cost involved</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> A huge gap between training and test accuracy is the definition of overfitting (model memorizes training data but fails on new data). Data from only one city that doesn't reflect the full population is a case of sampling bias under non-representative data.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. Where does Feature Engineering & Selection sit in the ML Development Life Cycle relative to EDA and Model Training?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Before Data Collection</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. After Model Deployment</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. After EDA, before Model Training, Evaluation & Selection</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Replaces EDA entirely</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> The ML DLC order is: Problem Framing → Data Collection → Data Pre-processing → EDA → Feature Engineering & Selection → Model Training, Evaluation & Selection → Deployment → Testing → Optimization & Maintenance.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. A startup needs someone who can automate deployment, monitoring, scaling, and retraining of ML models in production. Which role from Day 10 fits best, and which Day 7 challenge does that role primarily address?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Data Analyst; Poor Quality Data</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. MLOps Engineer; Cost Involved / Offline Learning-Deployment</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Data Engineer; Insufficient Data</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Data Scientist; Irrelevant Features</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> The MLOps Engineer role is defined exactly as automating the ML lifecycle (deployment, monitoring, retraining), which directly addresses the "Cost Involved" (MLOps automates deployment/monitoring/scaling/retraining) and "Offline Learning / Deployment" challenges from Day 7.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. A BI team wants complex historical analytics across five years of aggregated sales, not day-to-day transactional lookups. Per Day 10's comparison, what should they query?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. A data warehouse (e.g. Redshift, Snowflake)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. A transactional database (e.g. MySQL)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Either works identically</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Neither — this requires an API</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Data warehouses store historical, aggregated data and are built for complex analytics used by data analysts/BI teams — exactly this use case. Databases are optimized for frequent, simple, current/transactional queries by application developers.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. "With huge datasets, even simple algorithms perform well; quality matters less than quantity in some cases." Which Day 7 challenge/observation does this describe, and how does it relate to challenge #2?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Poor Quality Data — it says data quality never matters</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Overfitting — more data always causes overfitting</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Cost Involved — it's purely about compute cost</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. "Unreasonable Effectiveness of Data" — it's the opposite pull from #2 (Insufficient/Labelled Data), showing scale can sometimes compensate for a lack of sophistication, not for a total lack of data</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> This is challenge #3, "Unreasonable Effectiveness of Data." It sits in tension with #2 (models need enough labeled examples): #2 says insufficient data is a blocker, while #3 says once you have huge volumes, even simple algorithms can do well — scale of data can offset algorithmic sophistication, but you still need the data to exist in the first place.
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--primary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="section-04.html" class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">
+            Next: Tensors &amp; Setup →
+          </a>
+        </div>

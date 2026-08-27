@@ -1,0 +1,168 @@
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-3 py-1 mb-3">Source: 100 Days of Deep Learning</span>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">1. Introduction to Deep Learning</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Deep Learning vs. Machine Learning · The Five Core Types of Neural Networks</p>
+        </div>
+
+        <!-- DAY 2 -->
+        <section id="dl-vs-ml" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Day 2</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Deep Learning vs. Machine Learning</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Deep Learning (DL) is a subset of Machine Learning (ML) built around <strong class="text-[var(--on-background)]">artificial neural networks</strong> — models loosely inspired by how neurons in the brain connect and pass signals to one another. The word "deep" refers to the number of layers stacked between the input and the output: a network with several hidden layers between input and output is considered "deep," as opposed to a "shallow" model with just one or two.</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">The practical distinction that matters most day-to-day is <strong class="text-[var(--on-background)]">who does the feature engineering</strong>. In classical ML, a human decides which input features matter — for example, hand-picking "size," "location," and "number of rooms" before feeding them to a regression model. In deep learning, the network is given comparatively raw data (pixels, audio waveforms, raw text) and learns the useful intermediate representations — edges, shapes, phonemes, word relationships — on its own, layer by layer, without a human manually designing them.</p>
+
+          <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Aspect</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Machine Learning</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Deep Learning</th></tr></thead>
+              <tbody>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Features</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Hand-engineered by a human</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Learned automatically from raw data</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Data needs</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Works reasonably with small/medium data</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Needs large amounts of data to shine</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Compute</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Modest — runs fine on a CPU</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Heavy — usually needs GPUs/TPUs</td></tr>
+                <tr><td class="p-2.5 font-semibold">Scaling behavior</td><td class="p-2.5">Performance plateaus after a point, even with more data</td><td class="p-2.5">Performance tends to keep improving with more data and compute</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">Key takeaway</h4>
+            <p class="text-sm text-[var(--on-surface)]">Deep learning is not a replacement for machine learning — it is machine learning done with neural networks deep enough to learn their own features. That extra depth is what lets it handle unstructured data (images, audio, text) that classical ML struggles to hand-engineer features for.</p>
+          </div>
+        </section>
+
+        <!-- DAY 3 -->
+        <section id="types-of-neural-networks" class="space-y-5 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Day 3</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Types of Neural Networks</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Different problems shape data differently — a photo, a sentence, a stock-price sequence, and a fraud signal are not the same kind of object — and different neural network architectures exist because each one is built around assumptions that fit a particular shape of data well. Here are the five foundational types.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-lg text-[var(--secondary)]">1. Multi-Layer Perceptron (MLP)</h3>
+            <p class="text-sm text-[var(--on-surface)]">An MLP is the most basic deep learning architecture: an <strong class="text-[var(--on-background)]">input layer</strong>, one or more <strong class="text-[var(--on-background)]">hidden layers</strong>, and an <strong class="text-[var(--on-background)]">output layer</strong>, with every neuron in one layer connected to every neuron in the next (a "fully connected" or "dense" network). It makes no special assumption about the structure of the input — it just treats it as a flat vector of numbers — which makes it general-purpose but less efficient than specialized architectures for images or sequences. It is used mostly in <strong class="text-[var(--on-background)]">supervised learning</strong> tasks on tabular or already-vectorized data, such as predicting a price from a handful of numeric features or classifying a fixed-size feature vector.</p>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-lg text-[var(--secondary)]">2. Convolutional Neural Network (CNN)</h3>
+            <p class="text-sm text-[var(--on-surface)]">A CNN is built around the idea of scanning small, learnable filters ("kernels") across an input to detect local patterns — edges, textures, shapes — and then combining those local detections into increasingly abstract features in deeper layers. This weight-sharing structure makes CNNs far more efficient than an MLP at processing grid-like data, because the network doesn't need a separate weight for every pixel-to-neuron connection. CNNs are used mostly in <strong class="text-[var(--on-background)]">image and video processing</strong> — classification, object detection, segmentation — and are also applied to any data with a strong local/spatial structure.</p>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-lg text-[var(--secondary)]">3. Recurrent Neural Network (RNN)</h3>
+            <p class="text-sm text-[var(--on-surface)]">MLPs and CNNs are <strong class="text-[var(--on-background)]">feed-forward networks</strong> — information flows in one direction only, from input to output, with no memory of what came before. An RNN is different: at certain points inside the hidden layers, information is fed <strong class="text-[var(--on-background)]">back</strong> into the network as it processes the next item in a sequence, effectively giving the network a form of memory of everything it has seen so far, which it uses to improve its next prediction. Because of this looping structure, RNNs are used for <strong class="text-[var(--on-background)]">time series, sequential data, and ordered data</strong> in general — things like sentences (where word order matters), stock prices over time, or sensor readings collected over time.</p>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-lg text-[var(--secondary)]">4. Autoencoders</h3>
+            <p class="text-sm text-[var(--on-surface)]">An autoencoder is trained to reconstruct its own input: it takes input data, squeezes it through a narrow "bottleneck" layer that forces the network to compress it into a smaller representation, and then tries to reconstruct the original input from that compressed representation as accurately as possible. In other words, the goal is to <strong class="text-[var(--on-background)]">compress data without losing quality</strong>, and by doing so the network is forced to learn which features of the data are actually essential to keep. This makes autoencoders useful for dimensionality reduction, denoising, anomaly detection, and as a building block inside more advanced generative models.</p>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-lg text-[var(--secondary)]">5. Generative Adversarial Networks (GANs)</h3>
+            <p class="text-sm text-[var(--on-surface)]">A GAN pits two networks against each other: a <strong class="text-[var(--on-background)]">generator</strong>, which tries to produce fake data realistic enough to pass as genuine, and a <strong class="text-[var(--on-background)]">discriminator</strong>, which tries to tell real data apart from the generator's fakes. As training proceeds, the generator gets better at fooling the discriminator, and the discriminator gets better at catching it — an adversarial back-and-forth that (ideally) pushes the generator toward producing highly realistic outputs. GANs are the architecture behind synthetic image generation, deepfakes, data augmentation, and other generative tasks.</p>
+          </div>
+
+          <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Network</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Core Idea</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Typical Use</th></tr></thead>
+              <tbody>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">MLP</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Fully connected layers, feed-forward</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Tabular supervised learning</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">CNN</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Local filters scanned over a grid</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Image / video processing</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">RNN</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Feedback loop gives the network memory</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Time series / sequential data</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Autoencoder</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Compress then reconstruct input</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Compression, denoising, anomaly detection</td></tr>
+                <tr><td class="p-2.5 font-semibold">GAN</td><td class="p-2.5">Generator vs. discriminator competition</td><td class="p-2.5">Synthetic data / image generation</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on Day 2–3. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-dl-01">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. What is the single biggest practical difference between classical ML and deep learning, per the source notes?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. DL never uses labeled data</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. DL learns its own features from raw data instead of relying on hand-engineered ones</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. ML always outperforms DL on large data</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. DL cannot be supervised</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Classical ML relies on humans selecting/engineering features; deep networks learn useful intermediate representations automatically, layer by layer, which is why they scale well to raw, unstructured data.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. Which architecture is defined by feeding information from hidden layers back into itself, giving it a form of memory across a sequence?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. MLP</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. CNN</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. RNN</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Autoencoder</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> MLPs and CNNs are feed-forward — info moves start to end linearly. RNNs loop info back inside the hidden layers, which is exactly what enables them to model sequential/time-series data.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. An autoencoder's defining structural feature is:</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. A compressed bottleneck layer it must reconstruct the input from</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Two competing networks trained adversarially</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Filters scanned across a grid of pixels</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Feedback loops carrying memory forward</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Autoencoders compress input data into a smaller representation without losing important quality, then reconstruct the original from that compressed form — forcing the network to learn which features matter most.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. In a GAN, what is the role of the discriminator?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Compress the input into a bottleneck</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Scan filters across an image</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Remember previous time steps in a sequence</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Try to tell real data apart from the generator's fake data</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> The generator produces fakes; the discriminator's job is to catch them. Their adversarial competition is what drives the generator to improve.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. Why is an MLP a poor structural fit for raw image data compared to a CNN?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. MLPs cannot be trained with gradient descent</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. MLPs treat input as a flat vector with a separate connection per value, ignoring local spatial structure that CNN filters exploit</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. MLPs only work on labeled data</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. MLPs require adversarial training</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> An MLP is fully connected and structure-agnostic, so it needs a huge number of weights and ignores spatial locality. CNNs share weights via small local filters scanned across the grid, exploiting the fact that nearby pixels are related.
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--primary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="dl-02.html" class="bg-[var(--secondary)] text-[var(--on-secondary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">Next: The Perceptron</a>
+        </div>

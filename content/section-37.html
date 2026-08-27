@@ -1,0 +1,331 @@
+        <div>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">37. Stacking &amp; Blending</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Learning to combine models instead of voting · out-of-fold predictions and why they matter · StackingClassifier/Regressor · Blending as a faster, leakier cousin</p>
+        </div>
+
+        <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm text-sm text-[var(--on-surface-variant)]">
+          <strong class="text-[var(--on-background)]">Extended notes</strong> — this topic isn't covered in the CampusX playlist notes this site is based on. Written from scratch to continue the curriculum, in the same style as the rest of the site.
+        </div>
+
+        <!-- STACKING -->
+        <section id="stacking" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Ensemble</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Stacking</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Back on the Voting page you saw the fifth family of the ensemble tree get a one-line mention and get shelved: <strong class="text-[var(--on-background)]">Stacking</strong>. Voting combines several different models with a <em>fixed</em> rule — majority vote, or an average of probabilities. That rule is decided by you, in advance, and never changes no matter how the base models actually perform. Stacking asks a sharper question: instead of hand-picking "average them" or "majority vote," what if a model <em>learned</em> the best way to combine the base models' predictions?</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-lg text-[var(--primary)]">The core idea — a model that learns from other models' outputs</h3>
+            <p class="text-sm text-[var(--on-surface)]">Stacking ("stacked generalization") works in two layers:</p>
+            <ol class="text-sm text-[var(--on-surface)] list-decimal list-inside space-y-1.5">
+              <li><strong class="text-[var(--on-background)]">Base models (Level 0)</strong> — train several diverse models on the training data. Diversity matters more than raw strength: pick models with different biases, e.g. a Decision Tree (captures non-linear splits), an SVM (finds margin-based boundaries), and a Linear/Logistic model (captures linear trends). Each one will make different kinds of mistakes.</li>
+              <li><strong class="text-[var(--on-background)]">Meta-model (Level 1)</strong> — instead of averaging or voting on the base models' predictions, train a new model whose <em>inputs are the base models' predictions themselves</em>, and whose target is still the original label. The meta-model learns, from data, how much to trust each base model — and even how to combine them conditionally (e.g. "trust the SVM more when the Decision Tree and Linear model disagree").</li>
+            </ol>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">Voting — fixed combination rule</h4>
+              <p class="text-sm text-[var(--on-surface)]">You decide upfront: "average the three probabilities" or "take the majority label." The combination weights are implicitly equal and never adapt to how good each base model actually is on this dataset.</p>
+            </div>
+            <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">Stacking — learned combination rule</h4>
+              <p class="text-sm text-[var(--on-surface)]">The meta-model's own trainable parameters (e.g. a Logistic/Linear Regression's coefficients on top of the base predictions) figure out the best weighting — automatically, from data, potentially even a non-linear combination if the meta-model itself is more complex than linear.</p>
+            </div>
+          </div>
+
+          <div>
+            <div class="border-l-4 border-[var(--outline)] bg-[var(--surface-container-high)]/40 p-sm rounded-r-lg text-xs text-[var(--on-surface-variant)] mb-3">
+              <strong class="text-[var(--on-background)]">Illustrative aid</strong> — generated for this site.
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-lg flex justify-center">
+              <svg viewBox="0 0 460 260" class="w-full max-w-[520px]" role="img" aria-label="Diagram: raw training data feeds three base models (Decision Tree, SVM, Linear Model), whose out-of-fold predictions become the input features to a meta-model, which outputs the final prediction">
+                <text x="230" y="18" text-anchor="middle" class="font-label-caps" font-size="11" fill="var(--on-surface-variant)">TRAINING DATA (X, y)</text>
+                <line x1="230" y1="26" x2="230" y2="42" stroke="var(--outline-variant)" stroke-width="1.5"/>
+                <line x1="230" y1="42" x2="80" y2="42" stroke="var(--outline-variant)" stroke-width="1.5"/>
+                <line x1="230" y1="42" x2="230" y2="42" stroke="var(--outline-variant)" stroke-width="1.5"/>
+                <line x1="230" y1="42" x2="380" y2="42" stroke="var(--outline-variant)" stroke-width="1.5"/>
+                <line x1="80" y1="42" x2="80" y2="58" stroke="var(--outline-variant)" stroke-width="1.5"/>
+                <line x1="230" y1="42" x2="230" y2="58" stroke="var(--outline-variant)" stroke-width="1.5"/>
+                <line x1="380" y1="42" x2="380" y2="58" stroke="var(--outline-variant)" stroke-width="1.5"/>
+
+                <rect x="20" y="58" width="120" height="46" rx="8" fill="var(--primary-container)" fill-opacity="0.12" stroke="var(--primary)" stroke-width="1.5"/>
+                <text x="80" y="78" text-anchor="middle" font-size="12" fill="var(--on-background)" font-weight="600">Decision Tree</text>
+                <text x="80" y="94" text-anchor="middle" font-size="10" fill="var(--on-surface-variant)">base model</text>
+
+                <rect x="170" y="58" width="120" height="46" rx="8" fill="var(--secondary-container)" fill-opacity="0.14" stroke="var(--secondary)" stroke-width="1.5"/>
+                <text x="230" y="78" text-anchor="middle" font-size="12" fill="var(--on-background)" font-weight="600">SVM</text>
+                <text x="230" y="94" text-anchor="middle" font-size="10" fill="var(--on-surface-variant)">base model</text>
+
+                <rect x="320" y="58" width="120" height="46" rx="8" fill="var(--tertiary-container)" fill-opacity="0.16" stroke="var(--tertiary)" stroke-width="1.5"/>
+                <text x="380" y="78" text-anchor="middle" font-size="12" fill="var(--on-background)" font-weight="600">Linear Model</text>
+                <text x="380" y="94" text-anchor="middle" font-size="10" fill="var(--on-surface-variant)">base model</text>
+
+                <line x1="80" y1="104" x2="80" y2="130" stroke="var(--outline-variant)" stroke-width="1.5"/>
+                <line x1="230" y1="104" x2="230" y2="130" stroke="var(--outline-variant)" stroke-width="1.5"/>
+                <line x1="380" y1="104" x2="380" y2="130" stroke="var(--outline-variant)" stroke-width="1.5"/>
+                <text x="80" y="122" text-anchor="middle" font-size="9" fill="var(--on-surface-variant)">OOF preds</text>
+                <text x="230" y="122" text-anchor="middle" font-size="9" fill="var(--on-surface-variant)">OOF preds</text>
+                <text x="380" y="122" text-anchor="middle" font-size="9" fill="var(--on-surface-variant)">OOF preds</text>
+
+                <line x1="80" y1="130" x2="230" y2="160" stroke="var(--outline)" stroke-width="1.5"/>
+                <line x1="230" y1="130" x2="230" y2="160" stroke="var(--outline)" stroke-width="1.5"/>
+                <line x1="380" y1="130" x2="230" y2="160" stroke="var(--outline)" stroke-width="1.5"/>
+
+                <rect x="150" y="160" width="160" height="52" rx="8" fill="var(--primary)" fill-opacity="0.15" stroke="var(--primary)" stroke-width="2"/>
+                <text x="230" y="182" text-anchor="middle" font-size="13" fill="var(--on-background)" font-weight="700">Meta-Model</text>
+                <text x="230" y="198" text-anchor="middle" font-size="10" fill="var(--on-surface-variant)">learns the combination</text>
+
+                <line x1="230" y1="212" x2="230" y2="230" stroke="var(--primary)" stroke-width="2"/>
+                <text x="230" y="248" text-anchor="middle" font-size="12" fill="var(--primary)" font-weight="600">Final Prediction</text>
+              </svg>
+            </div>
+          </div>
+
+          <div class="border-l-4 border-[var(--error)] bg-[var(--error-container)]/10 p-md rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--on-error-container)] mb-2">Why the meta-model must NOT train on in-sample predictions</h4>
+            <p class="text-sm text-[var(--on-surface)]">Here's the trap. Suppose you fit each base model on the full training set, then immediately generate their predictions on that <em>same</em> training set to feed the meta-model. A base model like a deep Decision Tree can nearly memorize its own training data — its "predictions" there are suspiciously close to the true labels, sometimes exactly equal to them. If the meta-model trains on those in-sample predictions, it learns to trust whichever base model overfit the hardest, because that's the one whose training-set predictions looked most accurate. At prediction time on genuinely new data, that same base model's predictions will be far less accurate — but the meta-model, having learned the wrong lesson, over-relies on it anyway. This is <strong class="text-[var(--on-background)]">information leakage</strong>: the meta-model is implicitly told information about the training labels that it wouldn't have on unseen data, and the whole stack overfits.</p>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-lg text-[var(--secondary)]">The fix — Out-of-Fold (OOF) predictions</h3>
+            <p class="text-sm text-[var(--on-surface)]">The standard fix borrows the same trick as k-fold cross-validation. To generate the training data for the meta-model:</p>
+            <ol class="text-sm text-[var(--on-surface)] list-decimal list-inside space-y-1.5">
+              <li>Split the training set into K folds (e.g. K=5).</li>
+              <li>For each fold i: train each base model on the <em>other</em> K−1 folds, then predict on fold i — the model has never seen fold i during that training run.</li>
+              <li>After looping through all K folds, every training row has exactly one prediction per base model, and crucially, that prediction always came from a model that <strong class="text-[var(--on-background)]">did not see that row while training</strong>.</li>
+              <li>These "out-of-fold" predictions — one honest, held-out-style prediction per row per base model — become the feature matrix the meta-model trains on, paired with the true labels.</li>
+              <li>Finally, refit each base model on the <em>entire</em> training set (no folds) for use at actual prediction time — the fold-splitting was only a device to generate leak-free meta-features.</li>
+            </ol>
+            <p class="text-sm text-[var(--on-surface)]">Because every OOF prediction reflects how well a model generalizes to data it didn't train on, the meta-model learns realistic, well-calibrated trust in each base model — the same reason cross-validation gives you a fairer performance estimate than train-set accuracy.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Code — sklearn StackingClassifier</h3>
+            <p class="text-sm text-[var(--on-surface)] mb-2">sklearn's <code class="text-[var(--primary)]">StackingClassifier</code> / <code class="text-[var(--primary)]">StackingRegressor</code> handle the out-of-fold bookkeeping internally via a <code class="text-[var(--primary)]">cv</code> parameter — you never have to hand-roll the fold loop.</p>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from sklearn.ensemble import StackingClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
+
+base_learners = [
+    ('tree', DecisionTreeClassifier(max_depth=6, random_state=1)),
+    ('svm', SVC(probability=True, random_state=1)),
+    ('linear', LogisticRegression(max_iter=1000))
+]
+
+stack = StackingClassifier(
+    estimators=base_learners,          # Level 0 — the diverse base models
+    final_estimator=LogisticRegression(),  # Level 1 — the meta-model
+    cv=5,                                # generates out-of-fold predictions internally
+    stack_method='predict_proba',        # feed probabilities, not just hard labels, to the meta-model
+    n_jobs=-1
+)
+
+stack.fit(X_train, y_train)
+print("Stacked accuracy:", stack.score(X_test, y_test))</code></pre>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Code — sklearn StackingRegressor</h3>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from sklearn.ensemble import StackingRegressor
+from sklearn.linear_model import Ridge
+from sklearn.svm import SVR
+from sklearn.tree import DecisionTreeRegressor
+
+base_learners = [
+    ('tree', DecisionTreeRegressor(max_depth=6, random_state=1)),
+    ('svm', SVR()),
+    ('ridge', Ridge())
+]
+
+stack_reg = StackingRegressor(
+    estimators=base_learners,
+    final_estimator=Ridge(),   # a simple linear meta-model is a common, robust default
+    cv=5,
+    n_jobs=-1
+)
+
+stack_reg.fit(X_train, y_train)
+print("Stacked R^2:", stack_reg.score(X_test, y_test))</code></pre>
+            </div>
+          </div>
+        </section>
+
+        <!-- BLENDING -->
+        <section id="blending" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Ensemble</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Blending</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Blending is stacking's simpler, faster, and slightly leakier cousin. It solves the same "don't train the meta-model on in-sample predictions" problem, but with a plain holdout split instead of K-fold cross-validation.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-lg text-[var(--primary)]">The blending recipe</h3>
+            <ol class="text-sm text-[var(--on-surface)] list-decimal list-inside space-y-1.5">
+              <li>Split the training set once into a <strong class="text-[var(--on-background)]">training portion</strong> (e.g. 80%) and a small <strong class="text-[var(--on-background)]">holdout/blend set</strong> (e.g. 20%).</li>
+              <li>Train each base model only on the training portion.</li>
+              <li>Generate each base model's predictions on the holdout set — these are "honest" predictions since the base models never saw the holdout rows.</li>
+              <li>Train the meta-model on the holdout set's predictions (as features) against the holdout set's true labels — that's it, one single pass, no folds.</li>
+            </ol>
+          </div>
+
+          <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Aspect</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Stacking (OOF / cross-validation)</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Blending (single holdout)</th></tr></thead>
+              <tbody>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Meta-model training data</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Every training row gets an OOF prediction — uses 100% of the training data</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Only the holdout slice (e.g. 20%) generates meta-model training data</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Compute cost</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Higher — each base model is trained K times (once per fold), plus once more on the full set</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Lower — each base model is trained just once</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Sensitivity to the split</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Robust — averages over K different fold arrangements</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">More fragile — results depend on which particular rows landed in that one holdout slice, especially on small datasets</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Leakage risk</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Very low, by construction</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Slightly higher in practice — easy to accidentally let holdout information leak if not careful, and the meta-model sees fewer effective examples</td></tr>
+                <tr><td class="p-2.5 font-semibold">Implementation complexity</td><td class="p-2.5">Higher — needs the full CV loop (sklearn automates this)</td><td class="p-2.5">Lower — just one extra train_test_split</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p class="text-sm text-[var(--on-surface)]">In short: blending trades robustness for simplicity and speed. It's popular in time-constrained settings (Kaggle competitions with tight deadlines are a classic example) where you want a quick, working combination without setting up a full OOF pipeline — but with more data or more time, stacking's cross-validated approach generalizes more reliably.</p>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Code — Blending from scratch</h3>
+            <p class="text-sm text-[var(--on-surface)] mb-2">sklearn has no dedicated <code class="text-[var(--primary)]">BlendingClassifier</code> — blending is simple enough that it's usually hand-rolled with a couple of <code class="text-[var(--primary)]">train_test_split</code> calls.</p>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
+
+# 1. Carve out a holdout/blend set from the training data
+X_train_full, X_test, y_train_full, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
+X_base_train, X_holdout, y_base_train, y_holdout = train_test_split(
+    X_train_full, y_train_full, test_size=0.25, random_state=1  # holdout = 20% of the original data
+)
+
+# 2. Train base models ONLY on X_base_train
+tree  = DecisionTreeClassifier(max_depth=6, random_state=1).fit(X_base_train, y_base_train)
+svm   = SVC(probability=True, random_state=1).fit(X_base_train, y_base_train)
+linear = LogisticRegression(max_iter=1000).fit(X_base_train, y_base_train)
+
+# 3. Predict on the holdout set (models have never seen these rows)
+holdout_preds = np.column_stack([
+    tree.predict_proba(X_holdout)[:, 1],
+    svm.predict_proba(X_holdout)[:, 1],
+    linear.predict_proba(X_holdout)[:, 1],
+])
+
+# 4. Train the meta-model on holdout predictions -> true holdout labels
+meta_model = LogisticRegression()
+meta_model.fit(holdout_preds, y_holdout)
+
+# 5. At inference time: get base predictions on new data, feed to the meta-model
+test_preds = np.column_stack([
+    tree.predict_proba(X_test)[:, 1],
+    svm.predict_proba(X_test)[:, 1],
+    linear.predict_proba(X_test)[:, 1],
+])
+final_preds = meta_model.predict(test_preds)</code></pre>
+            </div>
+          </div>
+
+          <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-md rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--tertiary)] mb-2">Quick recap — three ways to combine models</h4>
+            <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+              <li><strong class="text-[var(--on-background)]">Voting</strong> — fixed rule (average/majority), no meta-model, no leakage concerns at all.</li>
+              <li><strong class="text-[var(--on-background)]">Blending</strong> — learned combination via a meta-model trained on a single holdout split's predictions. Fast, simple, more variance in the result.</li>
+              <li><strong class="text-[var(--on-background)]">Stacking</strong> — learned combination via a meta-model trained on out-of-fold predictions across the whole training set. Slower, more robust.</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on Stacking &amp; Blending. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-section-37">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. What is the fundamental difference between Voting and Stacking?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Voting requires more base models than Stacking</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Stacking can only be used for regression, Voting only for classification</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Voting combines predictions with a fixed rule (average/majority) decided in advance; Stacking trains a meta-model that learns the combination from data</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. There is no meaningful difference — they are the same technique with different names</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Voting's combination rule is fixed and hand-chosen. Stacking introduces a trainable meta-model whose job is specifically to learn, from data, how to best weight/combine the base models' outputs — a strictly more flexible (and more expensive) approach.</div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. Why must the meta-model in Stacking be trained on out-of-fold predictions rather than each base model's predictions on its own training data?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Out-of-fold predictions are computationally cheaper to generate</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. In-sample predictions can be near-perfect due to overfitting (especially for flexible models), which would leak information and make the meta-model over-trust whichever base model overfit hardest</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. sklearn's API only accepts out-of-fold predictions as input</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Out-of-fold predictions are required so that the base models can be different algorithms</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> A base model can nearly memorize its own training data, making its in-sample predictions artificially close to the true labels. If fed to the meta-model, this leaks information and biases the meta-model toward trusting the most-overfit base model — a mistake that surfaces as poor generalization on new data. OOF predictions come from folds the base model didn't train on, so they reflect genuine generalization ability.</div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. After generating out-of-fold predictions across all K folds to train the meta-model, what should be done with each base model before using the stack to predict on brand-new data?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Refit each base model on the entire training set (the fold-splitting was only used to generate leak-free meta-features)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Keep only the single fold-model that performed best and discard the rest</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Nothing further is needed — the K fold-specific models are used directly at inference</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Retrain only the meta-model; base models never need retraining</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> The K-fold splitting is purely a device for generating honest, leak-free training features for the meta-model. Once that's done, each base model is refit on the full training set so it benefits from all available data when actually deployed — this is exactly what sklearn's StackingClassifier/Regressor does internally.</div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. Which statement best captures the practical tradeoff between Stacking and Blending?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Blending is strictly better in every scenario since it uses less data</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Stacking is strictly worse because cross-validation always overfits more than a holdout split</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Both techniques are mathematically identical and differ only in naming convention</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Blending is simpler and faster (single holdout, base models trained once) but uses less data for the meta-model and is more sensitive to which rows landed in that particular holdout split; Stacking's cross-validated OOF approach is more robust but costs more compute</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Blending trades robustness for speed/simplicity — it uses only the holdout slice to train the meta-model and each base model is trained just once, but results can shift noticeably depending on the luck of that one split, especially on smaller datasets. Stacking's full K-fold OOF process uses all the training data for meta-features and averages over K different fold arrangements, at the cost of training each base model K+1 times.</div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. You're deciding what base models to include in a stacking ensemble. Which set of base models is the best choice, and why?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Five Decision Trees with slightly different max_depth values — more base models is always better regardless of similarity</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Only the single best-performing individual model, duplicated three times</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. A Decision Tree, an SVM, and a Linear model — diverse algorithm types that tend to make different kinds of mistakes</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It doesn't matter what base models are chosen since the meta-model corrects any weakness</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Stacking (like all ensembling) benefits most when base models are diverse — likely to make different, less-correlated errors. Nearly-identical models (many Decision Trees with similar depth, or duplicates of one model) give the meta-model little genuinely new information to combine, since their predictions are highly correlated with each other.</div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--primary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="section-38.html" class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">Next: Clustering: K-Means, Hierarchical &amp; DBSCAN</a>
+        </div>

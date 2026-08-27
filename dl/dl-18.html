@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>18. The Transformer Architecture — Sifat Notes</title>
+
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..800&family=Inter:ital,opsz,wght@0,14..32,400..700;1,14..32,400..700&family=JetBrains+Mono:wght@400..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script src="../assets/tailwind-config.js"></script>
+<link rel="stylesheet" href="../assets/theme.css">
+</head>
+<body class="antialiased min-h-screen font-body-md">
+
+<header class="bg-[var(--surface)] border-b border-[var(--outline-variant)] sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-4 md:px-lg py-2.5 md:py-sm max-w-[1200px] mx-auto">
+<a href="../index.html" class="flex items-center gap-2.5 md:gap-3 group min-w-0" title="Back to home">
+<div class="w-9 h-9 shrink-0 rounded-md bg-[var(--primary)] text-[var(--on-primary)] flex items-center justify-center font-h3 font-bold text-sm group-hover:opacity-85 transition-opacity">SN</div>
+<div class="min-w-0">
+<div class="font-h3 text-base md:text-lg font-semibold text-[var(--on-background)] leading-none truncate">Sifat Notes</div>
+<div class="hidden sm:block text-[11px] text-[var(--on-surface-variant)] mt-0.5 truncate">from CampusX's playlists</div>
+</div>
+</a>
+<nav class="hidden md:flex items-center gap-6 text-sm shrink-0">
+<a class="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors" href="../index.html">Home</a>
+<a class="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors" href="../index.html#courses">Courses</a>
+</nav>
+<div class="flex items-center gap-2 md:gap-3 shrink-0">
+<button id="mobileMenuBtn" class="md:hidden border border-[var(--outline-variant)] rounded-md p-1.5 text-[var(--on-background)] flex items-center justify-center" onclick="toggleSidebar()" aria-label="Toggle navigation">
+<span class="material-symbols-outlined text-[20px]">menu</span>
+</button>
+<button class="flex items-center gap-1.5 bg-[var(--surface-container)] border border-[var(--outline-variant)] text-[var(--on-background)] px-2.5 md:px-3 py-1.5 rounded-full text-xs font-label-caps hover:border-[var(--primary)] transition-colors" onclick="toggleTheme()" data-theme-btn>
+<span class="material-symbols-outlined text-[16px]" data-theme-icon>light_mode</span>
+<span data-theme-label class="hidden sm:inline">Light</span>
+</button>
+</div>
+</div>
+</header>
+
+
+<div class="flex flex-1">
+<div id="sidebarBackdrop" class="hidden fixed inset-0 bg-black/50 z-50 md:hidden" onclick="toggleSidebar()"></div>
+<aside id="sidebarSlot" class="flex flex-col bg-[var(--surface-container-low)] border-r border-[var(--outline-variant)] fixed left-0 top-[65px] h-[calc(100vh-65px)] w-[280px] py-md overflow-y-auto">
+<div class="px-lg mb-md">
+<input id="searchBox" placeholder="Search topics…" class="w-full bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-md px-3 py-2 text-sm text-[var(--on-background)] placeholder:text-[var(--on-surface-variant)] focus:outline-none focus:border-[var(--secondary)]">
+</div>
+
+<nav class="toc flex-1 px-2 space-y-1 text-sm" id="tocNav">
+
+<div class="px-3 pt-3 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Foundations</div>
+
+<details open>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--secondary)] font-semibold bg-[var(--surface-container-high)]/50">1. Introduction to Deep Learning <span class="chev text-[10px]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-01.html#dl-vs-ml" class="flex px-3 py-1.5 rounded-md text-[var(--secondary)] font-semibold bg-[var(--surface-container-high)]/40">Deep Learning vs ML</a>
+<a href="dl-01.html#types-of-neural-networks" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Types of Neural Networks</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">2. The Perceptron <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-02.html#perceptron" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Perceptron</a>
+<a href="dl-02.html#perceptron-trick" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Perceptron Trick</a>
+<a href="dl-02.html#perceptron-loss" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Perceptron Loss Function</a>
+<a href="dl-02.html#problem-with-perceptron" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Problem with Perceptron</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">3. Multi-Layer Perceptron <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-03.html#mlp-notation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">MLP Notation</a>
+<a href="dl-03.html#mlp-intuition" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">MLP Intuition</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">4. Forward Propagation <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-04.html#forward-propagation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Forward Propagation — Worked Example</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">5. Loss Functions <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-05.html#loss-functions-intro" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Loss vs Cost Function</a>
+<a href="dl-05.html#mse" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Mean Squared Error (MSE)</a>
+<a href="dl-05.html#mae" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Mean Absolute Error (MAE)</a>
+<a href="dl-05.html#huber-loss" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Huber Loss</a>
+<a href="dl-05.html#binary-cross-entropy" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Binary Cross-Entropy</a>
+<a href="dl-05.html#categorical-cross-entropy" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Categorical Cross-Entropy</a>
+<a href="dl-05.html#sparse-categorical-cross-entropy" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Sparse Categorical Cross-Entropy</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Training Deep Networks</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">6. Backpropagation <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-06.html#backprop-what" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Backpropagation — What</a>
+<a href="dl-06.html#backprop-how" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Backpropagation — How</a>
+<a href="dl-06.html#backprop-worked-example" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Worked Numeric Example</a>
+<a href="dl-06.html#derivative-vs-gradient" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Derivative vs Gradient</a>
+<a href="dl-06.html#epoch-vs-iteration" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Epoch vs Iteration</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">7. Vanishing &amp; Exploding Gradients <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-07.html#vanishing-gradient-problem" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Vanishing Gradient Problem</a>
+<a href="dl-07.html#detecting-vgp" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Detecting It</a>
+<a href="dl-07.html#solutions-to-vgp" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Solutions</a>
+<a href="dl-07.html#exploding-gradient-problem" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Exploding Gradient Problem</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">8. Training Toolkit <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-08.html#mlp-memoization" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">MLP Memoization</a>
+<a href="dl-08.html#gradient-descent-in-nn" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Gradient Descent in NNs</a>
+<a href="dl-08.html#improving-nn-performance" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Improving NN Performance</a>
+<a href="dl-08.html#early-stopping" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Early Stopping</a>
+<a href="dl-08.html#data-scaling-nn" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Data Scaling</a>
+<a href="dl-08.html#dropout-layer" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Dropout Layer</a>
+<a href="dl-08.html#regularization-dl" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Regularization</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">9. Activation Functions <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-09.html#why-activation-functions" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why Activation Functions</a>
+<a href="dl-09.html#ideal-activation-properties" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Ideal Properties</a>
+<a href="dl-09.html#sigmoid-activation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Sigmoid</a>
+<a href="dl-09.html#tanh-activation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Tanh</a>
+<a href="dl-09.html#relu-activation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">ReLU</a>
+<a href="dl-09.html#relu-variants" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">ReLU Variants</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">10. Optimizers <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-10.html#momentum" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Momentum</a>
+<a href="dl-10.html#nesterov-accelerated-gradient" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Nesterov (NAG)</a>
+<a href="dl-10.html#adagrad" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">AdaGrad</a>
+<a href="dl-10.html#rmsprop" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">RMSProp</a>
+<a href="dl-10.html#adam-optimizer" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Adam</a>
+<a href="dl-10.html#weight-initialization" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Weight Initialization</a>
+<a href="dl-10.html#batch-normalization" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Batch Normalization</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Convolutional Networks</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">11. CNN Fundamentals <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-11.html#cnn-intuition" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">CNN Intuition</a>
+<a href="dl-11.html#why-not-ann" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why Not Plain ANN</a>
+<a href="dl-11.html#convolution-operation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Convolution Operation</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">12. Padding, Strides &amp; Pooling <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-12.html#padding" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Padding</a>
+<a href="dl-12.html#strides" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Strides</a>
+<a href="dl-12.html#pooling" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Pooling</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">13. Architectures &amp; Transfer Learning <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-13.html#classic-cnn-architectures" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Classic CNN Architectures</a>
+<a href="dl-13.html#transfer-learning" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Transfer Learning</a>
+<a href="dl-13.html#feature-extraction" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Feature Extraction</a>
+<a href="dl-13.html#fine-tuning" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Fine-Tuning</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Sequence Models &amp; Attention</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">14. Recurrent Neural Networks <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-14.html#why-feedforward-fails" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why Feedforward Fails</a>
+<a href="dl-14.html#rnn-hidden-state" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Hidden State</a>
+<a href="dl-14.html#rnn-unrolled" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Unrolled Through Time</a>
+<a href="dl-14.html#bptt" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Backpropagation Through Time</a>
+<a href="dl-14.html#rnn-limitations" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">RNN Limitations</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">15. LSTM &amp; GRU <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-15.html#lstm-motivation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why LSTM</a>
+<a href="dl-15.html#lstm-gates" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Three Gates</a>
+<a href="dl-15.html#gru" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">GRU</a>
+<a href="dl-15.html#lstm-vs-gru" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">LSTM vs GRU</a>
+<a href="dl-15.html#bidirectional-rnn" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Bidirectional RNN</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">16. Seq2Seq &amp; Encoder-Decoder <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-16.html#what-is-seq2seq" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">What Is Seq2Seq</a>
+<a href="dl-16.html#encoder-decoder" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Encoder-Decoder Architecture</a>
+<a href="dl-16.html#teacher-forcing" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Teacher Forcing</a>
+<a href="dl-16.html#bottleneck-problem" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Bottleneck Problem</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">17. Attention Mechanism <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-17.html#attention-bottleneck-recap" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Solving the Bottleneck</a>
+<a href="dl-17.html#how-attention-works" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">How Attention Works</a>
+<a href="dl-17.html#calculating-attention-weights" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Calculating Attention Weights</a>
+<a href="dl-17.html#self-attention-vs-cross-attention-preview" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Self vs Cross Attention</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">18. The Transformer Architecture <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-18.html#why-transformers" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why Transformers</a>
+<a href="dl-18.html#self-attention" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Self-Attention</a>
+<a href="dl-18.html#multi-head-attention" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Multi-Head Attention</a>
+<a href="dl-18.html#positional-encoding" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Positional Encoding</a>
+<a href="dl-18.html#transformer-architecture" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Full Architecture</a>
+<a href="dl-18.html#bert" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">BERT</a>
+<a href="dl-18.html#gpt" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">GPT</a>
+<a href="dl-18.html#terminology-hierarchy" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Transformer vs LLM vs GPT</a>
+</div>
+</details>
+
+</nav>
+</aside>
+
+
+  <main class="flex-1 md:ml-[280px] px-4 py-6 md:p-lg max-w-[1200px] mx-auto w-full min-w-0">
+    <nav aria-label="Breadcrumb" class="flex flex-wrap text-sm text-[var(--on-surface-variant)] mb-4"><a href="../index.html" class="hover:text-[var(--secondary)]">Home</a><span class="mx-2">/</span><a href="../index.html#courses" class="hover:text-[var(--secondary)]">DL Track</a><span class="mx-2">/</span><span class="text-[var(--on-background)]">18. Transformers</span></nav>
+
+    <div class="space-y-xl">
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-3 py-1 mb-3">Source: 100 Days of Deep Learning</span>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">18. The Transformer Architecture</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Self-attention · multi-head attention · positional encoding · the encoder-decoder stack · BERT & GPT</p>
+        </div>
+
+        <p class="text-[var(--on-surface)] leading-relaxed">This is the page everything so far has been building toward. Reference: <em>"Attention Is All You Need"</em> (Vaswani et al., 2017). A <strong class="text-[var(--on-background)]">Transformer</strong> is a neural network architecture designed to process sequential data — text, most famously — by learning the relationships between <em>all</em> elements of a sequence simultaneously, rather than one at a time. Its core mechanism is self-attention, which lets every word consider every other word while building its own representation. Feed it "The bank approved the loan" and it figures out, entirely from context, that "bank" means a financial institution; feed it "The fisherman sat on the bank of the river" and — with the exact same mechanism, no special-casing — it figures out "bank" now means the edge of a river. That's the whole engine we're about to open up.</p>
+
+        <!-- WHY TRANSFORMERS -->
+        <section id="why-transformers" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Transformer</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Why Attention Alone Wasn't Enough</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">The last page fixed the "one static context vector" bottleneck — but attention, as covered so far, was still bolted onto an LSTM-based encoder-decoder. That leftover LSTM backbone quietly kept two old problems alive:</p>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">1. Sequential processing</h4>
+              <p class="text-sm text-[var(--on-surface)]">An LSTM must read a sentence word by word, in order — word 2 can't be processed until word 1's hidden state exists. That's inherently a loop, not something you can split across many processors at once. For huge datasets, this made training painfully slow.</p>
+            </div>
+            <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--tertiary)] mb-1">2. No transfer-learning culture</h4>
+              <p class="text-sm text-[var(--on-surface)]">Without a clean, scalable, pretrain-once-reuse-everywhere architecture, most serious NLP work meant training a model from scratch per task — expensive, and it limits who can build good models at all.</p>
+            </div>
+          </div>
+
+          <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">The fix</h4>
+            <p class="text-sm text-[var(--on-surface)]">Drop recurrence entirely. Instead of reading one word at a time, look at the whole sentence at once and let every word relate directly to every other word simultaneously. That's self-attention — the core, and only, sequence-processing engine inside a Transformer. No LSTM/RNN cells anywhere.</p>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed"><strong class="text-[var(--on-background)]">The relay race vs. the group discussion.</strong> An LSTM works like a relay race: Runner 1 reads "The," passes a baton (hidden state) to Runner 2, who reads "animal," updates the baton, and passes it on. Everyone waits their turn — strictly sequential, one runner at a time. Self-attention works like a group discussion: all the words sit in a room together at the same time, and each word simultaneously asks every other word, "how relevant are you to me?" — instantly weighing every relationship in parallel, with nobody waiting in line.</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">This isn't just about speed. Take: <em>"The animal didn't cross the street because it was too tired."</em> To resolve what "it" refers to, the model needs to relate "it" to "animal," not "street." Self-attention computes exactly this — a relevance score between "it" and every other word in the sentence, "it" ↔ "animal" scoring high, "it" ↔ "street" scoring low. Since every word's relationship to every other word is computed independently — nothing waits on some previous word's result finishing first, unlike an LSTM's chain — the entire sentence can be fed in at once and every relationship computed simultaneously on a GPU. This is the single biggest reason Transformers train so much faster than LSTM-based models at scale: it's not a minor optimization, it's a structural removal of the sequential bottleneck.</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">A Transformer is more than just the attention formula — it's several components working together: input embeddings, positional encoding, multi-head self-attention, feed-forward networks, residual connections, and layer normalization. The rest of this page builds each one, then assembles them into the full architecture.</p>
+        </section>
+
+        <!-- SELF ATTENTION -->
+        <section id="self-attention" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Self-Attention</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Self-Attention: From Static to Contextual</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Before any neural network can process text, words have to become numbers. Early approaches — one-hot encoding, then bag-of-words/TF-IDF — captured no real meaning at all: "cat" and "dog" were just as "different" as "cat" and "car." Word embeddings (Word2Vec, GloVe) improved this: each word becomes a dense vector, and semantically similar words end up near each other in vector space ("king" and "queen" sit close together; famously, "king − man + woman ≈ queen"). These models learn meaning purely from a simple training objective — predict a word from its surrounding context, across millions of sentences. Words that tend to appear in similar contexts get pushed toward similar vectors, because the network is forced to represent them similarly to succeed at that task. This is the <strong class="text-[var(--on-background)]">distributional hypothesis</strong>: "a word is characterized by the company it keeps."</p>
+
+          <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">The problem with static embeddings</h4>
+            <p class="text-sm text-[var(--on-surface)]">Word2Vec/GloVe embeddings are <em>static</em> — one word always maps to the exact same vector, no matter the sentence. That vector ends up a blended average of every meaning the word ever had in the training corpus. "I deposited money in the <em>bank</em>" and "we sat by the river <em>bank</em>" get the identical vector — some statistical average of "financial institution" and "riverbank," accurate for neither. What we actually want is a <strong class="text-[var(--on-background)]">contextual embedding</strong>: a representation of "bank" that shifts depending on the words around it.</p>
+          </div>
+
+          <h3 class="font-h3 text-lg text-[var(--on-background)]">Basic self-attention (no learnable parameters)</h3>
+          <p class="text-[var(--on-surface)] leading-relaxed">Core idea: take a sentence's static embeddings and, for each word, produce a new contextual embedding as a weighted blend of every word's static embedding in that sentence, where the weights reflect how relevant each other word is. Worked example — "money bank grows" (a finance-flavored sentence, so "bank" should lean financial):</p>
+
+          <ol class="text-[var(--on-surface)] space-y-2 list-decimal list-inside">
+            <li><strong class="text-[var(--on-background)]">Static embeddings.</strong> \(e_{money}, e_{bank}, e_{grows}\) — one fixed vector per word.</li>
+            <li><strong class="text-[var(--on-background)]">Similarity via dot product.</strong> For "bank": \(s_{21} = e_{bank}\cdot e_{money}\), \(s_{22}=e_{bank}\cdot e_{bank}\), \(s_{23}=e_{bank}\cdot e_{grows}\) — a dot product is a natural similarity measure, larger when two vectors point in a similar direction.</li>
+            <li><strong class="text-[var(--on-background)]">Softmax each row</strong> to turn raw scores into normalized weights summing to 1: \([s_{21},s_{22},s_{23}] \to [w_{21},w_{22},w_{23}]\).</li>
+            <li><strong class="text-[var(--on-background)]">Weighted sum</strong> of the original static embeddings: \(\text{contextual\_bank} = w_{21}e_{money} + w_{22}e_{bank} + w_{23}e_{grows}\).</li>
+          </ol>
+          <p class="text-[var(--on-surface)] leading-relaxed">If "bank" and "money" are semantically closer than "bank" and "grows," \(w_{21}\) ends up larger — pulling <code class="text-[var(--secondary)]">contextual_bank</code> toward \(e_{money}\)'s direction, producing a bank-embedding that now reflects the financial sense, purely from the words around it. This whole process is fully parallel (every word's contextual embedding computed independently and simultaneously) and, at this stage, has <strong class="text-[var(--on-background)]">zero learnable parameters</strong> — it's pure math on top of existing static embeddings.</p>
+
+          <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--tertiary)] mb-1">But it's still generic</h4>
+            <p class="text-sm text-[var(--on-surface)]">This version has no idea what task it's being used for. The English idiom "piece of cake" means "an easy task" — but a generic contextual embedding, with nothing telling it "this phrase is idiomatic," will still lean toward the literal food meaning. Translate that literally into another language and you lose the idiom entirely. Different tasks need different things from an embedding: translation needs idiom-awareness, sentiment analysis needs emotional-tone-awareness. A one-size-fits-all contextual embedding can't specialize for any of it — we need the model to <em>learn</em>, from labeled task data, how words should relate to each other for that specific job.</p>
+          </div>
+
+          <h3 class="font-h3 text-lg text-[var(--on-background)]">Query, Key, Value — making it learnable</h3>
+          <p class="text-[var(--on-surface)] leading-relaxed">The fix: stop feeding the raw embedding into everything, and instead derive three specialized vectors from each word's embedding, each with its own learned linear transformation:</p>
+
+          <div class="grid sm:grid-cols-3 gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--secondary)] mb-1">Query (Q)</h4>
+              <p class="text-sm text-[var(--on-surface)]">"What am I looking for?" — the current word's request for relevant information from the rest of the sentence.</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--tertiary)] mb-1">Key (K)</h4>
+              <p class="text-sm text-[var(--on-surface)]">"What do I have to offer?" — each word represented specifically to be compared against incoming queries.</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--primary)] mb-1">Value (V)</h4>
+              <p class="text-sm text-[var(--on-surface)]">"Here's my actual content." Not the output itself — the raw material that gets weighted-summed to produce the output.</p>
+            </div>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed"><strong class="text-[var(--on-background)]">Why not just reuse one vector for all three roles?</strong> Think of a library search: your search terms are the Query, each book's catalog entry is the Key compared against your search, and the actual book content is the Value you walk away with. You <em>could</em> use one representation for all three — but each job benefits from being optimized for its own purpose. Separating Q, K, V is a classic separation-of-concerns design choice: it lets the network learn a different specialized transformation per role instead of forcing one vector to awkwardly serve three jobs at once, giving it far more flexibility to learn good relationships. Each is built by a linear transformation — multiplying the embedding by a learned weight matrix, shared across every word in the sentence and updated via backpropagation:</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+            $$ Q = X W_Q \qquad K = X W_K \qquad V = X W_V $$
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)] text-center -mt-2">\(X\) = the matrix of all word embeddings in the sentence, stacked as rows.</p>
+
+          <h3 class="font-h3 text-lg text-[var(--on-background)]">Scaled dot-product attention — the full formula</h3>
+          <p class="text-[var(--on-surface)] leading-relaxed">Score each word's Query against every word's Key (dot product), scale, softmax, then use those weights to blend the Value vectors — for every word in the sentence, simultaneously, in one matrix operation:</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+            $$ \text{Attention}(Q,K,V) = \text{softmax}\!\left(\frac{QK^\top}{\sqrt{d_k}}\right)V $$
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed"><strong class="text-[var(--on-background)]">Why divide by \(\sqrt{d_k}\)?</strong> As the dimensionality of Q and K (\(d_k\)) grows, dot products between them tend to grow larger in magnitude too (you're summing more terms). Very large values pushed into softmax saturate it toward extreme near-0/near-1 outputs, and the gradient in that region goes nearly to zero — the model barely learns anything there. Dividing by \(\sqrt{d_k}\) keeps the scores in a healthy range regardless of dimensionality, keeping softmax's gradients well-behaved — hence "<em>scaled</em> dot-product attention."</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Because \(W_Q, W_K, W_V\) are learned from real labeled task data, the model gradually learns, for that specific task, which word relationships actually matter — this is exactly what fixes the "piece of cake" problem: the weights can learn to recognize idiom-like patterns, sentiment-carrying words, or whatever the downstream job needs.</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed"><strong class="text-[var(--on-background)]">Why "self"-attention?</strong> Because Query, Key, and Value all come from the exact same sequence — the model relates each word in a sentence to other words in that <em>same</em> sentence (intra-sequence attention). Compare this to Bahdanau/Luong attention from the last page — that was <em>inter</em>-sequence: the Query came from the decoder, the Key/Value from a different sequence, the encoder. Self-attention drops that split entirely.</p>
+
+          <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs"></th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Bahdanau / Luong Attention</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Self-Attention</th></tr></thead>
+              <tbody>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Sequences involved</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Two different (decoder ↔ encoder)</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">One, related to itself</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">What's compared</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Decoder hidden state vs. encoder states</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Every word's Query vs. every word's Key</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Vectors used</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Raw RNN/LSTM hidden states</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Learned Q, K, V projections</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Needs recurrence?</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Yes — LSTM/RNN backbone</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">No</td></tr>
+                <tr><td class="p-2.5 font-semibold">Parallelizable?</td><td class="p-2.5">No — sequential decoder states</td><td class="p-2.5">Yes — all words at once</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">In short: self-attention is a generalization of the same idea — Luong's dot-product scoring is essentially the direct ancestor of Q·K scoring — but applied within one sequence instead of between two, with explicit Q/K/V separation for more learnable flexibility, and with zero dependency on a recurrent backbone. That last point is precisely what let Transformers replace LSTMs entirely.</p>
+        </section>
+
+        <!-- MULTI-HEAD ATTENTION -->
+        <section id="multi-head-attention" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Transformer</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Multi-Head Attention: Multiple Perspectives at Once</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Basic self-attention builds one similarity "table" per sentence — one single set of \(W_Q, W_K, W_V\). But some sentences genuinely support more than one valid interpretation simultaneously. Classic example: <em>"The man saw the astronomer with the telescope."</em> Either the man is holding the telescope, or the astronomer is. A single self-attention pass produces one similarity table — it can lean toward one interpretation, but it can't hold both relational patterns at once. One head = one perspective, and language is often genuinely multi-perspective.</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed"><strong class="text-[var(--on-background)]">The fix:</strong> instead of one set of \(W_Q, W_K, W_V\), use several independent sets in parallel — each set is a <strong class="text-[var(--on-background)]">head</strong>. Each head has its own learned projections, so each can specialize in a different kind of relationship — one head might lean toward "who's doing the action," another toward "which object is being modified" — the model discovers these specializations on its own through training; they're never manually assigned.</p>
+
+          <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">What actually multiplies, going from 1 head to h heads</h4>
+            <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+              <li>You now have \(h\) separate sets of \(W_Q, W_K, W_V\) (previously 1).</li>
+              <li>Each head independently runs the full scaled dot-product attention process, producing its own contextual output per word.</li>
+              <li>Final step: <strong class="text-[var(--on-background)]">concatenate</strong> all \(h\) heads' output vectors for each word into one longer vector, then pass through one more learned linear layer (\(W_O\)) to blend everything back down to the model's standard working dimension.</li>
+            </ul>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">In practice, if the model's embedding dimension is \(d_{model}\) and you use \(h\) heads, each individual head is sized \(d_{model}/h\) — so after concatenating all heads back together, you land exactly back at \(d_{model}\). No dimension explosion; the same total space is just divided up and processed from \(h\) different "angles" in parallel.</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed"><strong class="text-[var(--on-background)]">Analogy.</strong> Hand the same ambiguous sentence to several different critics — one focused purely on grammar, one on tone, one on literal meaning. Each gives an independent judgment. At the end you don't pick just one critic's opinion — you combine all of their perspectives into one final, richer verdict. That combining step is the concatenation plus the final linear layer.</p>
+
+          <div class="border-l-4 border-[var(--outline)] bg-[var(--surface-container-high)]/40 p-sm rounded-r-lg text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Illustrative aid</strong> — generated for this site to visualize the architecture.</div>
+
+          <div class="overflow-x-auto">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md flex justify-center">
+              <svg viewBox="0 0 680 380" class="w-full min-w-[560px] max-w-[640px]" role="img" aria-label="One input embedding fans out into four parallel attention heads, each producing its own output, then concatenated and passed through a final linear layer">
+                <defs>
+                  <marker id="dl18-mh-arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                    <path d="M0,0 L6,3 L0,6 Z" fill="var(--on-surface-variant)"/>
+                  </marker>
+                </defs>
+                <rect x="250" y="16" width="180" height="44" rx="8" fill="var(--secondary-container)" fill-opacity="0.2" stroke="var(--secondary)" stroke-width="1.5"/>
+                <text x="340" y="43" text-anchor="middle" font-size="12" fill="var(--secondary)">Word embedding (+ position)</text>
+
+                <line x1="340" y1="60" x2="95" y2="108" stroke="var(--on-surface-variant)" stroke-width="1.5" marker-end="url(#dl18-mh-arrow)"/>
+                <line x1="340" y1="60" x2="255" y2="108" stroke="var(--on-surface-variant)" stroke-width="1.5" marker-end="url(#dl18-mh-arrow)"/>
+                <line x1="340" y1="60" x2="415" y2="108" stroke="var(--on-surface-variant)" stroke-width="1.5" marker-end="url(#dl18-mh-arrow)"/>
+                <line x1="340" y1="60" x2="575" y2="108" stroke="var(--on-surface-variant)" stroke-width="1.5" marker-end="url(#dl18-mh-arrow)"/>
+
+                <g>
+                  <rect x="30" y="110" width="130" height="66" rx="8" fill="var(--tertiary-container)" fill-opacity="0.18" stroke="var(--tertiary)" stroke-width="1.5"/>
+                  <text x="95" y="136" text-anchor="middle" font-size="12" fill="var(--tertiary)" class="font-label-caps">Head 1</text>
+                  <text x="95" y="154" text-anchor="middle" font-size="10" fill="var(--on-surface)">own Wq,Wk,Wv</text>
+                  <text x="95" y="168" text-anchor="middle" font-size="9" fill="var(--on-surface-variant)">e.g. syntax</text>
+                </g>
+                <g>
+                  <rect x="190" y="110" width="130" height="66" rx="8" fill="var(--secondary-container)" fill-opacity="0.18" stroke="var(--secondary)" stroke-width="1.5"/>
+                  <text x="255" y="136" text-anchor="middle" font-size="12" fill="var(--secondary)" class="font-label-caps">Head 2</text>
+                  <text x="255" y="154" text-anchor="middle" font-size="10" fill="var(--on-surface)">own Wq,Wk,Wv</text>
+                  <text x="255" y="168" text-anchor="middle" font-size="9" fill="var(--on-surface-variant)">e.g. coreference</text>
+                </g>
+                <g>
+                  <rect x="350" y="110" width="130" height="66" rx="8" fill="var(--primary-container)" fill-opacity="0.18" stroke="var(--primary)" stroke-width="1.5"/>
+                  <text x="415" y="136" text-anchor="middle" font-size="12" fill="var(--primary)" class="font-label-caps">Head 3</text>
+                  <text x="415" y="154" text-anchor="middle" font-size="10" fill="var(--on-surface)">own Wq,Wk,Wv</text>
+                  <text x="415" y="168" text-anchor="middle" font-size="9" fill="var(--on-surface-variant)">e.g. long-range topic</text>
+                </g>
+                <g>
+                  <rect x="510" y="110" width="130" height="66" rx="8" fill="var(--outline)" fill-opacity="0.12" stroke="var(--outline)" stroke-width="1.5"/>
+                  <text x="575" y="136" text-anchor="middle" font-size="12" fill="var(--on-surface)" class="font-label-caps">Head 4</text>
+                  <text x="575" y="154" text-anchor="middle" font-size="10" fill="var(--on-surface)">own Wq,Wk,Wv</text>
+                  <text x="575" y="168" text-anchor="middle" font-size="9" fill="var(--on-surface-variant)">… (h total)</text>
+                </g>
+
+                <line x1="95" y1="176" x2="290" y2="228" stroke="var(--on-surface-variant)" stroke-width="1.5" marker-end="url(#dl18-mh-arrow)"/>
+                <line x1="255" y1="176" x2="320" y2="228" stroke="var(--on-surface-variant)" stroke-width="1.5" marker-end="url(#dl18-mh-arrow)"/>
+                <line x1="415" y1="176" x2="360" y2="228" stroke="var(--on-surface-variant)" stroke-width="1.5" marker-end="url(#dl18-mh-arrow)"/>
+                <line x1="575" y1="176" x2="390" y2="228" stroke="var(--on-surface-variant)" stroke-width="1.5" marker-end="url(#dl18-mh-arrow)"/>
+
+                <rect x="240" y="230" width="200" height="42" rx="8" fill="var(--surface-container-high)" stroke="var(--outline)" stroke-width="1.5"/>
+                <text x="340" y="256" text-anchor="middle" font-size="12" fill="var(--on-surface)" class="font-label-caps">Concatenate</text>
+
+                <line x1="340" y1="272" x2="340" y2="304" stroke="var(--on-surface-variant)" stroke-width="2" marker-end="url(#dl18-mh-arrow)"/>
+
+                <rect x="250" y="306" width="180" height="44" rx="8" fill="var(--secondary-container)" fill-opacity="0.2" stroke="var(--secondary)" stroke-width="1.5"/>
+                <text x="340" y="333" text-anchor="middle" font-size="12" fill="var(--secondary)">Linear (Wₒ) → d_model</text>
+              </svg>
+            </div>
+          </div>
+        </section>
+
+        <!-- POSITIONAL ENCODING -->
+        <section id="positional-encoding" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Transformer</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Positional Encoding: Putting Order Back In</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Self-attention compares every word to every other word via dot products — this process is order-agnostic. Shuffle the words in a sentence, and the math treats it identically; attention has no built-in notion of "this word came before that one." But word order obviously changes meaning ("dog bites man" vs. "man bites dog"). We need to inject order information back in.</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed"><strong class="text-[var(--on-background)]">The fix:</strong> for every word position, compute a positional encoding vector — a set of numbers uniquely representing where that word sits in the sentence — and <strong class="text-[var(--on-background)]">add</strong> it, element-wise, to that word's embedding before it enters self-attention. We add rather than concatenate specifically to keep the vector size unchanged — no extra dimensions, no extra parameters needed downstream. The positional vector's dimensionality matches the embedding's dimensionality exactly, so the two can be added directly.</p>
+
+          <div class="grid sm:grid-cols-3 gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">Bounded</h4>
+              <p class="text-sm text-[var(--on-surface)]">Values can't grow unboundedly large for long sentences — that would destabilize training. Sine/cosine stay within [-1, 1] no matter how large the position number gets.</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">Continuous</h4>
+              <p class="text-sm text-[var(--on-surface)]">Neighboring positions get smoothly related encodings, rather than jumping around erratically.</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">Periodic</h4>
+              <p class="text-sm text-[var(--on-surface)]">A shifted sine/cosine wave can be written as a linear combination of the original — so the model can learn <em>relative</em> distances between positions through simple linear operations, not by memorizing every absolute position independently.</p>
+            </div>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+            $$ PE_{(pos,\,2i)} = \sin\!\left(\frac{pos}{10000^{2i/d_{model}}}\right) \qquad PE_{(pos,\,2i+1)} = \cos\!\left(\frac{pos}{10000^{2i/d_{model}}}\right) $$
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Reading it piece by piece: <code class="text-[var(--secondary)]">pos</code> is the word's position in the sentence (0, 1, 2, …); <code class="text-[var(--secondary)]">i</code> indexes a pair of dimensions within the embedding vector (each pair gets one sine and one cosine); <code class="text-[var(--secondary)]">d_model</code> is the total embedding dimension. The term \(10000^{2i/d_{model}}\) controls each dimension's frequency: early dimensions (small \(i\)) oscillate fast — good for fine-grained, short-range position differences — while later dimensions (large \(i\)) oscillate slowly, capturing coarse, long-range differences. Combining many frequencies across all dimensions gives every position a unique overall signature.</p>
+
+          <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-sm text-sm text-[var(--on-surface)]">
+            <strong class="text-[var(--on-background)]">Tiny worked example</strong> (\(d_{model}=4\), just to see the mechanics). At position 0: every \(\sin(0/\dots)=0\) and every \(\cos(0/\dots)=1\), so \(PE(0) = [0, 1, 0, 1]\). At position 1: \(PE(1,0)=\sin(1)\approx0.841\), \(PE(1,1)=\cos(1)\approx0.540\), \(PE(1,2)=\sin(1/100)\approx0.010\), \(PE(1,3)=\cos(1/100)\approx0.99995\) — so \(PE(1)\approx[0.841, 0.540, 0.010, 0.99995]\), a completely different pattern from \(PE(0)\). Every position gets its own unique combination, generated by a fixed formula — nothing here is learned or trained. The result is added directly: <code class="text-[var(--secondary)]">final_input = word_embedding + positional_encoding</code>.
+          </div>
+        </section>
+
+        <!-- LAYER NORMALIZATION -->
+        <section id="layer-normalization" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Transformer</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Layer Normalization vs. Batch Normalization</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Normalization in deep learning generally exists for a cluster of related reasons: it improves training stability (avoiding vanishing/exploding gradients), speeds up convergence, mitigates "internal covariate shift" (the way each layer's input distribution keeps drifting as earlier layers' weights update, forcing later layers to constantly re-adapt to a moving target), and gives a mild regularization effect. Mechanically, it subtracts the mean and divides by the standard deviation so the result has mean 0 and variance 1, then applies a small learned scale (\(\gamma\)) and shift (\(\beta\)) so the network can still adjust the normalized range if that helps.</p>
+
+          <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs"></th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Batch Normalization</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Layer Normalization</th></tr></thead>
+              <tbody>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Normalizes across</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">All examples in a batch, per feature</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">All features within one example (one token's vector)</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Depends on batch size?</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Yes — needs a stable batch</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">No — works even with batch size 1</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Variable-length sequences?</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Poorly — padding skews batch statistics</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Well — each token normalized independently</td></tr>
+                <tr><td class="p-2.5 font-semibold">Differs at inference?</td><td class="p-2.5">Yes — needs tracked running averages</td><td class="p-2.5">No — identical at training and inference</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed"><strong class="text-[var(--on-background)]">Why Transformers use Layer Norm, not Batch Norm:</strong> text sequences have variable length and are usually padded to align batch shapes — batch statistics computed across a batch of padded, variable-length sequences become unreliable and inconsistent. Layer normalization sidesteps this entirely by normalizing within each individual token's own vector, completely independent of batch size, sequence length, or any other example in the batch — a far more natural fit for sequential, variable-length data.</p>
+
+          <p class="text-sm text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Analogy.</strong> Batch Norm is like comparing everyone's height in the room to figure out a "normal" range — you need the whole room present. Layer Norm is like normalizing one person's own internal body measurements relative to themselves — no one else needs to be in the room at all.</p>
+        </section>
+
+        <!-- FULL TRANSFORMER ARCHITECTURE -->
+        <section id="transformer-architecture" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Transformer</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Assembling the Full Architecture</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Before anything reaches the encoder, an input sentence passes through three preprocessing steps: a <strong class="text-[var(--on-background)]">tokenizer</strong> splits it into tokens (words or sub-words); an <strong class="text-[var(--on-background)]">embedding</strong> layer turns each token into a numeric vector (still <em>static</em> at this point — a plain lookup, no context yet); and <strong class="text-[var(--on-background)]">positional encoding</strong> adds order information, per the last section.</p>
+
+          <h3 class="font-h3 text-lg text-[var(--on-background)]">Inside one encoder block</h3>
+          <p class="text-[var(--on-surface)] leading-relaxed">Multi-Head Self-Attention produces a contextual embedding for every token (exactly as covered above — able to distinguish "river bank" from "money bank"). <strong class="text-[var(--on-background)]">Add & Norm</strong> takes the block's original input and adds it to the sublayer's output — a residual/skip connection — then applies layer normalization to the sum, keeping values in a stable range. The <strong class="text-[var(--on-background)]">Feed-Forward Network</strong> (two linear layers with a ReLU in between, applied independently per token) then adds non-linearity: attention itself is fundamentally a set of linear operations — dot products, weighted sums — and without ReLU's non-linearity, stacking more attention layers alone couldn't model the complex, non-linear relationships language actually has. Then another Add & Norm wraps the FFN's output the same way.</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">The original Transformer stacks <strong class="text-[var(--on-background)]">6</strong> identical encoder blocks — "identical" meaning same architecture, but each block has its own separately learned parameters. Why stack several: language is complex and hierarchical, and stacking blocks lets the model build progressively richer, more abstract representations layer by layer instead of trying to capture everything in one pass. Why residual connections at all — there's no single universally agreed reason, but two commonly cited ones: training stability at depth (the same reasoning behind ResNet in computer vision — gradients get a more direct path backward through a deep stack), and a safety net if a sublayer underperforms on a given token, letting the network effectively skip past a sublayer that isn't helping rather than losing the original information entirely.</p>
+
+          <div class="border-l-4 border-[var(--outline)] bg-[var(--surface-container-high)]/40 p-sm rounded-r-lg text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Illustrative aid</strong> — generated for this site to visualize the architecture.</div>
+
+          <div class="overflow-x-auto">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md flex justify-center">
+              <svg viewBox="0 0 980 900" class="w-full min-w-[860px] max-w-[940px]" role="img" aria-label="Full Transformer architecture: an encoder stack on the left feeding its output as Key and Value into the decoder stack's cross-attention layer on the right, which finally projects to output probabilities">
+                <defs>
+                  <marker id="dl18-tf-main" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto">
+                    <path d="M0,0 L7,3.5 L0,7 Z" fill="var(--on-surface-variant)"/>
+                  </marker>
+                  <marker id="dl18-tf-bridge" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto">
+                    <path d="M0,0 L8,4 L0,8 Z" fill="var(--secondary)"/>
+                  </marker>
+                  <marker id="dl18-tf-res" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+                    <path d="M0,0 L5,2.5 L0,5 Z" fill="var(--outline)"/>
+                  </marker>
+                </defs>
+
+                <!-- column headers -->
+                <text x="250" y="30" text-anchor="middle" font-size="18" font-weight="700" fill="var(--tertiary)" class="font-label-caps">Encoder</text>
+                <text x="740" y="30" text-anchor="middle" font-size="18" font-weight="700" fill="var(--primary)" class="font-label-caps">Decoder</text>
+                <text x="250" y="300" text-anchor="middle" font-size="11" fill="var(--on-surface-variant)">Builds rich contextual</text>
+                <text x="250" y="316" text-anchor="middle" font-size="11" fill="var(--on-surface-variant)">representations of the input —</text>
+                <text x="250" y="332" text-anchor="middle" font-size="11" fill="var(--on-surface-variant)">no output projection of its own.</text>
+                <text x="250" y="348" text-anchor="middle" font-size="11" fill="var(--on-surface-variant)">Identical in training &amp; inference.</text>
+
+                <!-- ================= ENCODER ================= -->
+                <!-- Input embedding -->
+                <rect x="70" y="800" width="360" height="40" rx="8" fill="var(--surface-container-high)" stroke="var(--outline-variant)" stroke-width="1.5"/>
+                <text x="250" y="825" text-anchor="middle" font-size="13" fill="var(--on-surface)">Input Embedding</text>
+                <text x="250" y="858" text-anchor="middle" font-size="10" fill="var(--on-surface-variant)">Input sequence</text>
+
+                <!-- PE merge -->
+                <line x1="250" y1="800" x2="250" y2="783" stroke="var(--on-surface-variant)" stroke-width="2" marker-end="url(#dl18-tf-main)"/>
+                <circle cx="250" cy="768" r="15" fill="var(--surface-container-high)" stroke="var(--outline)" stroke-width="1.5"/>
+                <text x="250" y="773" text-anchor="middle" font-size="14" fill="var(--on-surface)">+</text>
+                <rect x="330" y="756" width="130" height="26" rx="6" fill="none" stroke="var(--outline)" stroke-width="1" stroke-dasharray="3 3"/>
+                <text x="395" y="773" text-anchor="middle" font-size="10" fill="var(--on-surface-variant)">Positional Encoding</text>
+                <line x1="330" y1="768" x2="266" y2="768" stroke="var(--outline)" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#dl18-tf-res)"/>
+                <line x1="250" y1="753" x2="250" y2="737" stroke="var(--on-surface-variant)" stroke-width="2" marker-end="url(#dl18-tf-main)"/>
+
+                <!-- MHSA -->
+                <rect x="70" y="690" width="360" height="46" rx="8" fill="var(--tertiary-container)" fill-opacity="0.16" stroke="var(--tertiary)" stroke-width="1.5"/>
+                <text x="250" y="710" text-anchor="middle" font-size="13" fill="var(--tertiary)" class="font-label-caps">Multi-Head Self-Attention</text>
+                <text x="250" y="726" text-anchor="middle" font-size="9" fill="var(--on-surface-variant)">Q, K, V all from this sequence</text>
+                <line x1="250" y1="690" x2="250" y2="682" stroke="var(--on-surface-variant)" stroke-width="2" marker-end="url(#dl18-tf-main)"/>
+
+                <!-- Add & Norm 1 -->
+                <rect x="140" y="655" width="220" height="26" rx="13" fill="var(--surface-container-high)" stroke="var(--outline)" stroke-width="1.5"/>
+                <text x="250" y="672" text-anchor="middle" font-size="11" fill="var(--on-surface)">Add &amp; Norm</text>
+                <path d="M 70,736 C 20,706 20,672 140,668" fill="none" stroke="var(--outline)" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#dl18-tf-res)"/>
+                <line x1="250" y1="655" x2="250" y2="612" stroke="var(--on-surface-variant)" stroke-width="2" marker-end="url(#dl18-tf-main)"/>
+
+                <!-- FFN -->
+                <rect x="70" y="565" width="360" height="46" rx="8" fill="var(--tertiary-container)" fill-opacity="0.10" stroke="var(--tertiary)" stroke-width="1.5"/>
+                <text x="250" y="585" text-anchor="middle" font-size="13" fill="var(--tertiary)" class="font-label-caps">Feed Forward Network</text>
+                <text x="250" y="601" text-anchor="middle" font-size="9" fill="var(--on-surface-variant)">Linear → ReLU → Linear</text>
+
+                <!-- Add & Norm 2 -->
+                <rect x="140" y="530" width="220" height="26" rx="13" fill="var(--surface-container-high)" stroke="var(--outline)" stroke-width="1.5"/>
+                <text x="250" y="547" text-anchor="middle" font-size="11" fill="var(--on-surface)">Add &amp; Norm</text>
+                <path d="M 70,611 C 20,581 20,547 140,544" fill="none" stroke="var(--outline)" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#dl18-tf-res)"/>
+                <line x1="250" y1="565" x2="250" y2="556" stroke="var(--on-surface-variant)" stroke-width="2" marker-end="url(#dl18-tf-main)"/>
+
+                <!-- Encoder loop bracket -->
+                <path d="M 58,556 L 48,556 L 48,736 L 58,736" fill="none" stroke="var(--tertiary)" stroke-width="1.5"/>
+                <text x="30" y="650" text-anchor="middle" font-size="12" fill="var(--tertiary)" transform="rotate(-90 30 650)">× N</text>
+
+                <!-- Encoder output routed to decoder cross-attention -->
+                <line x1="250" y1="530" x2="250" y2="500" stroke="var(--secondary)" stroke-width="4"/>
+                <line x1="250" y1="500" x2="555" y2="500" stroke="var(--secondary)" stroke-width="4"/>
+                <line x1="560" y1="500" x2="560" y2="580" stroke="var(--secondary)" stroke-width="4" marker-end="url(#dl18-tf-bridge)"/>
+                <text x="410" y="490" text-anchor="middle" font-size="12" font-weight="700" fill="var(--secondary)">Encoder output → K, V</text>
+                <text x="410" y="516" text-anchor="middle" font-size="10" fill="var(--on-surface-variant)">(fed into every decoder block's cross-attention)</text>
+
+                <!-- ================= DECODER ================= -->
+                <!-- Output embedding -->
+                <rect x="560" y="800" width="360" height="40" rx="8" fill="var(--surface-container-high)" stroke="var(--outline-variant)" stroke-width="1.5"/>
+                <text x="740" y="825" text-anchor="middle" font-size="13" fill="var(--on-surface)">Output Embedding</text>
+                <text x="740" y="858" text-anchor="middle" font-size="10" fill="var(--on-surface-variant)">Outputs, shifted right (teacher forcing)</text>
+
+                <!-- PE merge -->
+                <line x1="740" y1="800" x2="740" y2="783" stroke="var(--on-surface-variant)" stroke-width="2" marker-end="url(#dl18-tf-main)"/>
+                <circle cx="740" cy="768" r="15" fill="var(--surface-container-high)" stroke="var(--outline)" stroke-width="1.5"/>
+                <text x="740" y="773" text-anchor="middle" font-size="14" fill="var(--on-surface)">+</text>
+                <rect x="820" y="756" width="130" height="26" rx="6" fill="none" stroke="var(--outline)" stroke-width="1" stroke-dasharray="3 3"/>
+                <text x="885" y="773" text-anchor="middle" font-size="10" fill="var(--on-surface-variant)">Positional Encoding</text>
+                <line x1="820" y1="768" x2="756" y2="768" stroke="var(--outline)" stroke-width="1.5" stroke-dasharray="3 3" marker-end="url(#dl18-tf-res)"/>
+                <line x1="740" y1="753" x2="740" y2="737" stroke="var(--on-surface-variant)" stroke-width="2" marker-end="url(#dl18-tf-main)"/>
+
+                <!-- Masked MHSA -->
+                <rect x="560" y="690" width="360" height="46" rx="8" fill="var(--primary-container)" fill-opacity="0.16" stroke="var(--primary)" stroke-width="1.5"/>
+                <text x="740" y="710" text-anchor="middle" font-size="13" fill="var(--primary)" class="font-label-caps">Masked Multi-Head Self-Attention</text>
+                <text x="740" y="726" text-anchor="middle" font-size="9" fill="var(--on-surface-variant)">future positions blocked (score = -∞ before softmax)</text>
+                <line x1="740" y1="690" x2="740" y2="682" stroke="var(--on-surface-variant)" stroke-width="2" marker-end="url(#dl18-tf-main)"/>
+
+                <!-- Add & Norm 1 -->
+                <rect x="630" y="655" width="220" height="26" rx="13" fill="var(--surface-container-high)" stroke="var(--outline)" stroke-width="1.5"/>
+                <text x="740" y="672" text-anchor="middle" font-size="11" fill="var(--on-surface)">Add &amp; Norm</text>
+                <path d="M 560,736 C 510,706 510,672 630,668" fill="none" stroke="var(--outline)" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#dl18-tf-res)"/>
+                <line x1="740" y1="655" x2="740" y2="612" stroke="var(--on-surface-variant)" stroke-width="2" marker-end="url(#dl18-tf-main)"/>
+
+                <!-- Cross-Attention (bridge box, highlighted) -->
+                <rect x="560" y="565" width="360" height="46" rx="8" fill="var(--secondary-container)" fill-opacity="0.22" stroke="var(--secondary)" stroke-width="2"/>
+                <text x="740" y="585" text-anchor="middle" font-size="13" fill="var(--secondary)" class="font-label-caps">Multi-Head Cross-Attention</text>
+                <text x="740" y="601" text-anchor="middle" font-size="9" fill="var(--on-surface-variant)">Q from decoder · K, V from encoder output</text>
+
+                <!-- Add & Norm 2 -->
+                <rect x="630" y="530" width="220" height="26" rx="13" fill="var(--surface-container-high)" stroke="var(--outline)" stroke-width="1.5"/>
+                <text x="740" y="547" text-anchor="middle" font-size="11" fill="var(--on-surface)">Add &amp; Norm</text>
+                <path d="M 560,611 C 510,581 510,547 630,544" fill="none" stroke="var(--outline)" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#dl18-tf-res)"/>
+                <line x1="740" y1="530" x2="740" y2="487" stroke="var(--on-surface-variant)" stroke-width="2" marker-end="url(#dl18-tf-main)"/>
+
+                <!-- FFN -->
+                <rect x="560" y="440" width="360" height="46" rx="8" fill="var(--primary-container)" fill-opacity="0.10" stroke="var(--primary)" stroke-width="1.5"/>
+                <text x="740" y="460" text-anchor="middle" font-size="13" fill="var(--primary)" class="font-label-caps">Feed Forward Network</text>
+                <text x="740" y="476" text-anchor="middle" font-size="9" fill="var(--on-surface-variant)">Linear → ReLU → Linear</text>
+
+                <!-- Add & Norm 3 -->
+                <rect x="630" y="405" width="220" height="26" rx="13" fill="var(--surface-container-high)" stroke="var(--outline)" stroke-width="1.5"/>
+                <text x="740" y="422" text-anchor="middle" font-size="11" fill="var(--on-surface)">Add &amp; Norm</text>
+                <path d="M 560,486 C 510,456 510,422 630,419" fill="none" stroke="var(--outline)" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#dl18-tf-res)"/>
+                <line x1="740" y1="405" x2="740" y2="370" stroke="var(--on-surface-variant)" stroke-width="2" marker-end="url(#dl18-tf-main)"/>
+
+                <!-- Decoder loop bracket -->
+                <path d="M 932,405 L 942,405 L 942,736 L 932,736" fill="none" stroke="var(--primary)" stroke-width="1.5"/>
+                <text x="960" y="575" text-anchor="middle" font-size="12" fill="var(--primary)" transform="rotate(-90 960 575)">× N</text>
+
+                <!-- Linear -->
+                <rect x="630" y="330" width="220" height="40" rx="8" fill="var(--surface-container-high)" stroke="var(--outline-variant)" stroke-width="1.5"/>
+                <text x="740" y="355" text-anchor="middle" font-size="13" fill="var(--on-surface)">Linear</text>
+                <line x1="740" y1="330" x2="740" y2="310" stroke="var(--on-surface-variant)" stroke-width="2" marker-end="url(#dl18-tf-main)"/>
+
+                <!-- Softmax -->
+                <rect x="630" y="270" width="220" height="40" rx="8" fill="var(--surface-container-high)" stroke="var(--outline-variant)" stroke-width="1.5"/>
+                <text x="740" y="295" text-anchor="middle" font-size="13" fill="var(--on-surface)">Softmax</text>
+                <line x1="740" y1="270" x2="740" y2="250" stroke="var(--on-surface-variant)" stroke-width="2" marker-end="url(#dl18-tf-main)"/>
+                <text x="740" y="235" text-anchor="middle" font-size="12" font-weight="700" fill="var(--on-background)">Output Probabilities</text>
+                <text x="740" y="251" text-anchor="middle" font-size="0" fill="transparent"> </text>
+
+                <!-- legend -->
+                <line x1="60" y1="878" x2="100" y2="878" stroke="var(--on-surface-variant)" stroke-width="2"/>
+                <text x="108" y="882" font-size="10" fill="var(--on-surface-variant)">main data flow</text>
+                <line x1="230" y1="878" x2="270" y2="878" stroke="var(--outline)" stroke-width="1.5" stroke-dasharray="4 3"/>
+                <text x="278" y="882" font-size="10" fill="var(--on-surface-variant)">residual / skip connection</text>
+                <line x1="470" y1="878" x2="510" y2="878" stroke="var(--secondary)" stroke-width="4"/>
+                <text x="518" y="882" font-size="10" fill="var(--on-surface-variant)">encoder → decoder (cross-attention K, V)</text>
+              </svg>
+            </div>
+          </div>
+
+          <h3 class="font-h3 text-lg text-[var(--on-background)] mt-2">Masked self-attention: why the decoder needs a mask</h3>
+          <p class="text-[var(--on-surface)] leading-relaxed">A Transformer decoder is <strong class="text-[var(--on-background)]">autoregressive at inference time</strong> and <strong class="text-[var(--on-background)]">non-autoregressive at training time</strong> — and masked self-attention is exactly the mechanism that makes that difference work. Autoregressive models generate each new data point conditioned on the ones already generated — the same idea used in time-series forecasting (tomorrow's stock price depends on the previous days'; each new value depends only on the ones before it, never on the future). At inference, a decoder genuinely doesn't have access to tokens that don't exist yet: generating token 5, it can only see tokens 1–4.</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Example: ask a GPT-style model "The capital of France is" — at inference, its only job is to predict the next token. It predicts "Paris." No learning happens; it's simply using what it already learned during training. Generation happens one token at a time: predict, append, feed the whole sequence back in, predict again — a fresh forward pass per new token.</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">But at <strong class="text-[var(--on-background)]">training</strong> time, looping token-by-token across millions of examples would be painfully slow — so instead, the entire target sequence is fed in at once, in parallel, and the model predicts every position simultaneously in a single forward pass. The danger: if the whole target sequence is visible at once, the model could "cheat" — when predicting word 3, it could just peek at word 3 sitting right there in the input, instead of learning to predict it from words 1–2. Masked self-attention exists to prevent exactly this.</p>
+
+          <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">How the mask actually works</h4>
+            <p class="text-sm text-[var(--on-surface)]">After computing the raw attention scores \(QK^\top\), a mask is applied before softmax: for every position, scores corresponding to future positions get set to negative infinity. After softmax, \(\exp(-\infty)\approx0\) — the attention weight on any future position becomes exactly zero. Each position can therefore only attend to itself and everything before it, never anything after. Analogy: it's like taking an exam where you're only allowed to look at what you've already written on your own answer sheet — never allowed to peek ahead further down the page.</p>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Net effect: even though training processes the whole sequence in one parallel pass (efficient), masking forces the computation at each position to behave as if it only had access to previous tokens — faithfully simulating the autoregressive constraint during training, without a slow token-by-token loop. Masked multi-head self-attention uses the exact same mechanism as regular multi-head self-attention (multiple heads, each with their own \(W_Q, W_K, W_V\), scaled dot-product attention) — the only difference is that masking step inserted before softmax. Regular self-attention (used in the encoder, and in cross-attention) gives every position full visibility; masked self-attention (used in the decoder's first sublayer) blocks future positions.</p>
+
+          <h3 class="font-h3 text-lg text-[var(--on-background)] mt-2">Cross-attention: where the decoder consults the encoder</h3>
+          <p class="text-[var(--on-surface)] leading-relaxed">Cross-attention lets a model focus on different parts of an input sequence while generating an output sequence. Example: the decoder is generating the French translation of "The cat sat on the mat," and it's currently producing the French word for "cat." Cross-attention lets the decoder, at this exact step, look back at the encoder's representation of the <em>entire</em> input sentence and figure out that "cat" is the most relevant input word right now — pulling in that information to generate the correct output word. At the next step (generating "sat"), cross-attention recomputes and shifts focus to "sat" instead. This is precisely the same goal as Bahdanau/Luong attention from the last page, just now implemented with Query/Key/Value: Query is built from decoder representations, Key and Value from the encoder's final output, computed as \(\text{softmax}(QK^\top/\sqrt{d_k})V\) — and, like self-attention, computed for all decoder positions in parallel during training rather than needing a sequential loop.</p>
+
+          <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs"></th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Self-Attention</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Cross-Attention</th></tr></thead>
+              <tbody>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Intuition</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Similarity within the same sequence</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Relationship between two different sequences</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Query comes from</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Same sequence</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">The decoder (target/output sequence)</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Key &amp; Value come from</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Same sequence</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">The encoder's final output (source sequence)</td></tr>
+                <tr><td class="p-2.5 font-semibold">Output</td><td class="p-2.5">Contextual embedding of a sequence, in terms of itself</td><td class="p-2.5">Contextual embedding of the output, expressed in terms of the input</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">Cross-attention generalizes well beyond text translation: image captioning (a text decoder attending to encoded image patches), text-to-image generation (attending to a text prompt's embeddings to decide what to draw where), and text-to-speech (attending to input text to align generated audio with the correct words/timing).</p>
+
+          <h3 class="font-h3 text-lg text-[var(--on-background)] mt-2">Decoder training walkthrough</h3>
+          <ol class="text-[var(--on-surface)] space-y-1.5 list-decimal list-inside text-sm">
+            <li><strong class="text-[var(--on-background)]">Right-shift</strong> — prepend a <code class="text-[var(--secondary)]">&lt;start&gt;</code> token to the target sequence, so at every position the decoder's input is the previous correct token (teacher forcing).</li>
+            <li><strong class="text-[var(--on-background)]">Tokenize</strong> the shifted target sentence.</li>
+            <li><strong class="text-[var(--on-background)]">Embed</strong> each token (static, no context yet).</li>
+            <li><strong class="text-[var(--on-background)]">Positional encoding</strong>, added to each token's embedding.</li>
+            <li><strong class="text-[var(--on-background)]">Masked multi-head self-attention</strong> — the shifted target attends to itself, future positions blocked.</li>
+            <li><strong class="text-[var(--on-background)]">Add & Norm.</strong></li>
+            <li><strong class="text-[var(--on-background)]">Cross-attention</strong> — decoder Query attends to the encoder's final output (Key, Value) — pulling in the source sentence.</li>
+            <li><strong class="text-[var(--on-background)]">Add & Norm.</strong></li>
+            <li><strong class="text-[var(--on-background)]">Feed forward network</strong> for non-linearity.</li>
+            <li><strong class="text-[var(--on-background)]">Add & Norm</strong> — steps 5–10 repeat N times (6 in the original paper), each block with its own learned parameters.</li>
+          </ol>
+          <p class="text-[var(--on-surface)] leading-relaxed">Finally, <strong class="text-[var(--on-background)]">Linear + Softmax</strong>: the last decoder block's outputs are projected to the size of the vocabulary and passed through softmax, producing a probability distribution over every possible next token — for every position simultaneously, since training processes the whole masked sequence in one parallel pass. Categorical cross-entropy loss compares these predicted distributions against the actual next tokens at every position.</p>
+
+          <h3 class="font-h3 text-lg text-[var(--on-background)] mt-2">Inference: where things turn sequential</h3>
+          <p class="text-[var(--on-surface)] leading-relaxed">The <strong class="text-[var(--on-background)]">encoder</strong> behaves identically in training and inference — the full input is known upfront in both phases, so there's never anything to hide, and no masking is ever needed there. Crucially, the encoder's outputs are computed once and then reused at every single decoder generation step that follows. The <strong class="text-[var(--on-background)]">decoder</strong> differs sharply: at training it processes the whole target sequence in one parallel pass (masking enforces the autoregressive logic without a slow loop); at inference, generation really is sequential — start with just <code class="text-[var(--secondary)]">&lt;start&gt;</code>, run a full forward pass (reusing the encoder's already-computed outputs for cross-attention) to predict the first token, append it, run another forward pass over the now-longer sequence, and repeat until an <code class="text-[var(--secondary)]">&lt;end&gt;</code> token appears or a max length is reached.</p>
+          <p class="text-[var(--on-surface)] leading-relaxed">This is exactly why inference is slower than training, despite each individual forward pass being internally parallel: training processes millions of complete examples with one parallel pass each, while generating a single response at inference requires one entire forward pass per new token, run sequentially, one after another. The repeated, sequential looping — not any lack of internal parallelism — is the real source of inference latency.</p>
+        </section>
+
+        <!-- BERT -->
+        <section id="bert" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">BERT</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">BERT: Encoder-Only, Built to Understand</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Since the encoder and decoder are really two separable halves — an encoder never needs masking and never sees future-vs-past because it always has the full sequence at once — you can take just the encoder stack and use it on its own. That's <strong class="text-[var(--on-background)]">BERT</strong> (Bidirectional Encoder Representations from Transformers): stack encoder blocks only, no decoder at all.</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">"Bidirectional" is the key word. Because BERT is pure encoder — full multi-head self-attention, no mask — every token can attend to every other token in the sentence, both to its left <em>and</em> its right, simultaneously. It's pretrained by randomly hiding ("masking") some percentage of input tokens and having the model predict them using context from <strong class="text-[var(--on-background)]">both directions at once</strong> — a genuinely different training signal than "predict the next word," since the model gets to see words on both sides of the blank. That bidirectional view produces unusually rich contextual embeddings, which is exactly why BERT-style models excel at <strong class="text-[var(--on-background)]">understanding</strong> tasks: text classification, sentiment analysis, named-entity recognition, question answering — anything where you need a deep read of a fixed piece of text, rather than needing to generate new text word by word.</p>
+
+          <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">Why encoder-only fits understanding tasks</h4>
+            <p class="text-sm text-[var(--on-surface)]">An encoder's job, per the architecture above, is only ever to build contextual representations — it never generates new tokens autoregressively. That's a perfect fit for tasks where the output is a label, a span, or a classification over text that's already fully known, rather than a freshly generated sequence.</p>
+          </div>
+        </section>
+
+        <!-- GPT -->
+        <section id="gpt" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">GPT</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">GPT: Decoder-Only, Built to Generate</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Flip it around and keep only the decoder stack (minus its cross-attention sublayer, since there's no separate encoder sequence to attend to) and you get <strong class="text-[var(--on-background)]">GPT</strong> — "Generative Pretrained Transformer." A decoder-only Transformer, trained on one deceptively simple objective: predict the next word, given everything before it. That's exactly the autoregressive, left-to-right constraint from the masked-self-attention section above — a GPT-style decoder can never see future tokens, only past ones, which is precisely why masked self-attention exists in the first place.</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">The "capital of France is" example from earlier is GPT's whole operating mode in miniature: feed in everything generated so far, predict one more token, append it, and repeat. Stack enough of these decoder blocks, train on enough text, and next-word prediction alone turns out to be a remarkably powerful training signal — it forces the model to implicitly learn grammar, facts, reasoning patterns, and style, since predicting the next word well requires understanding all of that. This generative, one-token-at-a-time nature is exactly why decoder-only architectures are the natural fit for generation tasks: writing, summarizing, chatting, coding — anything where the output is new text that doesn't exist yet.</p>
+        </section>
+
+        <!-- TERMINOLOGY -->
+        <section id="terminology-hierarchy" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Terminology</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Transformer vs. LLM vs. GPT vs. ChatGPT vs. BERT</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">This is genuinely one of the most commonly confused areas in the field, so it's worth building a clean mental hierarchy, once, carefully.</p>
+
+          <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md font-code-block text-xs overflow-x-auto leading-relaxed text-[var(--on-surface)]">
+Transformer  (an ARCHITECTURE — a blueprint for a neural network using self-attention)
+    │
+    ├── Encoder-only Transformers   → e.g. BERT   (understanding / classifying text)
+    ├── Decoder-only Transformers   → e.g. GPT    (generating text)
+    └── Encoder-Decoder Transformers → e.g. T5    (sequence-to-sequence tasks)
+
+LLM  ("Large Language Model" — a CATEGORY / description, not a specific architecture)
+    → Any language model that is very large (billions of parameters), trained on
+      huge amounts of text. Nearly all modern LLMs happen to be built using the
+      Transformer architecture — but "LLM" describes the *scale and purpose*,
+      while "Transformer" describes the *underlying architecture*.
+
+GPT  (a SPECIFIC FAMILY of models — "Generative Pretrained Transformer")
+    → A decoder-only Transformer, trained to predict the next word. Released in
+      versions: GPT-2, GPT-3, GPT-4, etc. GPT models ARE Transformers, and
+      (given their size) ARE LLMs — GPT is one specific family within that space.
+
+ChatGPT  (a PRODUCT — an application built on top of a GPT model)
+    → A GPT model further fine-tuned for conversation (instruction tuning,
+      RLHF — reinforcement learning from human feedback) and wrapped in a chat
+      interface. Not a distinct architecture — a fine-tuned, product-ified GPT.</div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Put plainly, one line each: <strong class="text-[var(--on-background)]">Transformer</strong> = the architecture (the engine design). <strong class="text-[var(--on-background)]">LLM</strong> = a description of scale + purpose, not tied to one specific architecture — though virtually all current LLMs happen to be Transformers. <strong class="text-[var(--on-background)]">GPT</strong> = a specific product/model family built using the decoder-only Transformer — one particular kind of LLM. <strong class="text-[var(--on-background)]">ChatGPT</strong> = a specific fine-tuned, chat-oriented application built on top of a GPT model — the thing you actually talk to.</p>
+
+          <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">The engine analogy</h4>
+            <p class="text-sm text-[var(--on-surface)]">Transformer is like "internal combustion engine" — a general engineering design. LLM is like "a large, powerful car" — a category based on scale and capability. GPT is like a specific car model line, say "a Toyota Corolla" — a specific engineered product using that engine design. ChatGPT is like "a Corolla configured and marketed specifically as a taxi, with a driver-assist package added" — a specifically fine-tuned, product-packaged version of that model line for one purpose (conversation).</p>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">A few adjacent confusions worth clearing up while we're here. <strong class="text-[var(--on-background)]">Is BERT an LLM?</strong> Technically, if it's large enough and trained on enough text, yes — but people usually reserve the casual term "LLM" for large generative, decoder-style models (GPT, Claude, Llama) in everyday conversation, even though BERT-style models can technically qualify by the literal definition too — a soft convention, not a hard rule. <strong class="text-[var(--on-background)]">Is every Transformer an LLM?</strong> No — Transformers also power small-scale tasks (a small text classifier, a Vision Transformer for images, a Decision Transformer for reinforcement learning) that aren't "large language models" at all. Transformer is an architecture choice; LLM is a large-scale, language-focused use of that architecture. <strong class="text-[var(--on-background)]">Does the same layering apply to Claude?</strong> Yes — the same pattern holds industry-wide: a company trains a large Transformer-based language model, and what you actually interact with is a fine-tuned, product-packaged version of it, same conceptual layering as GPT → ChatGPT, just a different company and model family.</p>
+
+          <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--tertiary)] mb-1">Transfer learning: how BERT and GPT actually get used</h4>
+            <p class="text-sm text-[var(--on-surface)]">Both BERT and GPT are pretrained once, on massive general-purpose text — an enormous, expensive, one-time investment — and then cheaply <strong class="text-[var(--on-background)]">fine-tuned</strong> on much smaller, task-specific datasets: a few thousand labeled support tickets for a classifier built on BERT, or a modest instruction dataset to turn a base GPT model into something chat-shaped. This pretrain-once-reuse-everywhere pattern is exactly the "transfer learning culture" that vanilla LSTMs never had, and it's a direct consequence of everything on this page: parallel training (from self-attention), small repeatable stacked blocks, and stabilizing design choices (layer norm, residual connections) keep training fast and stable even at huge scale — which is what makes pretraining a giant general-purpose model, once, actually worth doing.</p>
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on the Transformer architecture. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-dl-18">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. "The man saw the astronomer with the telescope" genuinely supports two readings (who's holding the telescope?). Why can't a single self-attention head hold both readings at once, and what fixes it?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. It can't be fixed — ambiguous sentences always fail in Transformers</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. One head produces one similarity table per sentence, so it can only lean one way; multi-head attention runs several independent Q/K/V projections in parallel so different relational "views" can coexist, then concatenates them</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Positional encoding resolves the ambiguity</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Layer normalization resolves the ambiguity</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Multi-head attention exists precisely because one head is mathematically forced into one relational pattern per word — multiple independent heads let the model represent several distinct relationships simultaneously, which no single head (however large) can do alone.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. In scaled dot-product attention, softmax(QKᵀ/√d_k)V, what is the purpose of dividing by √d_k specifically?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. It reduces the number of attention heads needed</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. It adds positional information to the scores</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. It keeps dot-product magnitudes from growing too large as d_k grows, preventing softmax from saturating into near-zero-gradient regions</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It converts the Key vectors into Value vectors</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Larger d_k means dot products sum more terms and grow in magnitude; unscaled, this pushes softmax toward extreme outputs with vanishing gradients. Scaling by √d_k keeps the scores — and the resulting gradients — in a healthy range regardless of dimensionality.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. Why do Transformers use Layer Normalization instead of Batch Normalization?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Batch Norm can't be implemented on GPUs</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Layer Norm has no learnable parameters, so it's cheaper</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Batch Norm produces better accuracy on text, just at higher cost</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Text sequences have variable length and are often padded; Batch Norm's per-feature, across-the-batch statistics become unreliable with padded/variable-length batches, while Layer Norm normalizes within each token's own vector, independent of batch or sequence length</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Batch Norm normalizes across all examples in a batch per feature — a poor fit when sequences are padded to different effective lengths. Layer Norm normalizes each token's own feature vector independently, working identically regardless of batch size or sequence length, including a batch size of 1.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. What specifically does masked self-attention prevent during training, and how does it do it?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. It prevents each position from "cheating" by seeing future tokens, by setting the attention scores for future positions to -∞ before softmax so their weight becomes 0</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. It prevents the encoder from seeing the input sequence all at once</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. It removes the need for positional encoding</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It prevents the decoder from ever attending to the encoder's output</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Training feeds the whole target sequence in parallel for efficiency; without masking, predicting word 3 could simply look at word 3 already sitting in the input. Setting future scores to -∞ before softmax zeroes their attention weight, faithfully simulating the autoregressive, left-to-right constraint that holds at inference.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. Which statement correctly untangles Transformer / LLM / GPT / ChatGPT?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. They're all interchangeable synonyms for the same thing</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. LLM is an architecture; Transformer is a category describing scale</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Transformer is the underlying architecture; LLM describes scale/purpose (usually built as a Transformer); GPT is a specific decoder-only Transformer model family; ChatGPT is a fine-tuned, RLHF'd, product-packaged GPT model</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. ChatGPT is a separate architecture unrelated to GPT</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> The hierarchy runs architecture (Transformer) → scale/purpose description (LLM, usually Transformer-based) → specific model family (GPT, decoder-only) → fine-tuned product (ChatGPT, an instruction-tuned/RLHF'd GPT wrapped in a chat interface) — each term answers a different question, not the same one.
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--primary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex flex-col items-center gap-3 text-center">
+          <p class="text-[var(--on-surface-variant)] text-sm">That's the Deep Learning track — Perceptrons through Transformers. Attention and self-attention are exactly what power modern NLP — continue into the NLP track to see them applied.</p>
+          <a href="../nlp/nlp-01.html" class="bg-[var(--secondary)] text-[var(--on-secondary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">Explore the NLP Track</a>
+          <a href="../index.html" class="text-sm text-[var(--on-surface-variant)] hover:text-[var(--secondary)] transition-colors">or back to Home</a>
+        </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="../assets/app.js"></script>
+
+</body>
+</html>

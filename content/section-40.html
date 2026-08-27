@@ -1,0 +1,305 @@
+        <div>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">40. Hyperparameter Tuning with Optuna</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Why Bayesian optimization beats Grid/Random Search · studies, trials &amp; objectives · a full worked example · pruning bad trials early</p>
+        </div>
+
+        <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm text-sm text-[var(--on-surface-variant)]">
+          <strong class="text-[var(--on-background)]">Extended notes</strong> — this topic isn't covered in the CampusX playlist notes this site is based on. Written from scratch to continue the curriculum, in the same style as the rest of the site.
+        </div>
+
+        <!-- WHY OPTUNA -->
+        <section id="why-optuna" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Concept</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Why Optuna over GridSearchCV / RandomizedSearchCV</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Back on the Random Forest page you met sklearn's two standard search tools. Both have a shared blind spot worth naming directly: <strong class="text-[var(--on-background)]">neither one learns anything from the trials it has already run</strong>. Grid search marches through every combination in a fixed list regardless of how earlier combinations scored. Random search samples blindly from a distribution, also regardless of earlier results. Both treat every trial as if it were the first trial ever run.</p>
+
+          <div class="grid sm:grid-cols-3 gap-3">
+            <div class="border-l-4 border-[var(--outline)] bg-[var(--surface-container-high)]/40 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--on-surface-variant)] mb-1">GridSearchCV</h4>
+              <p class="text-sm text-[var(--on-surface)]">Exhaustive — tries every combination in your grid. Guaranteed to find the best point <em>in the grid</em>, but the number of combinations multiplies with every added parameter or value — combinatorial explosion.</p>
+            </div>
+            <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">RandomizedSearchCV</h4>
+              <p class="text-sm text-[var(--on-surface)]">Samples n_iter random combinations. Cost is capped directly by n_iter regardless of how many parameters you search — a real improvement — but each sample is still drawn blind, ignoring what earlier trials revealed.</p>
+            </div>
+            <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">Optuna</h4>
+              <p class="text-sm text-[var(--on-surface)]">Uses the results of every previous trial to intelligently choose where to sample next — by default via a <strong class="text-[var(--on-background)]">Tree-structured Parzen Estimator (TPE)</strong>, a form of Bayesian optimization. It converges to good hyperparameters in noticeably fewer trials than blind search.</p>
+            </div>
+          </div>
+
+          <p class="text-sm text-[var(--on-surface)]">The practical payoff: for an expensive model (deep neural nets, large gradient-boosted ensembles, anything where a single training run takes minutes to hours), the difference between "100 blind random trials" and "50 trials that each build on what was learned from the last" can be the difference between a tuning run that finishes overnight and one that doesn't finish at all.</p>
+        </section>
+
+        <!-- BAYESIAN OPT INTUITION -->
+        <section id="bayesian-optimization-intuition" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Concept</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Bayesian Optimization — The Intuition</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">You don't need the underlying probability math to use Optuna well — the intuition is what matters, and it's genuinely simple once stated plainly.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--primary)]">Analogy — tasting a new dish by adjusting the recipe</h3>
+            <p class="text-sm text-[var(--on-surface)]">Imagine you're trying to find the best amount of salt and cook time for a recipe, and each attempt costs you an hour of cooking. After a few attempts, you start noticing patterns: "too much salt and short cook time tasted bad," "moderate salt with long cook time tasted great." You wouldn't randomly try amounts on your next attempt — you'd focus near the combination that tasted great, while occasionally trying something a little different in case there's an even better combination you haven't discovered yet. That's Bayesian optimization in one sentence: build a running belief about which regions of the hyperparameter space tend to score well, then use that belief to choose the next point to try.</p>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-lg text-[var(--secondary)]">Exploitation vs. Exploration</h3>
+            <p class="text-sm text-[var(--on-surface)]">Every step, the optimizer balances two competing instincts:</p>
+            <ul class="text-sm text-[var(--on-surface)] list-disc list-inside space-y-1">
+              <li><strong class="text-[var(--on-background)]">Exploitation</strong> — try hyperparameters close to the best ones found so far, since that region has already shown it scores well.</li>
+              <li><strong class="text-[var(--on-background)]">Exploration</strong> — try hyperparameters in a region that hasn't been sampled much yet, since it's still uncertain whether that region might actually be even better.</li>
+            </ul>
+            <p class="text-sm text-[var(--on-surface)]">Pure exploitation risks getting stuck at a locally-good-but-not-globally-best combination (never checking if something wildly different works better). Pure exploration is just random search again, wasting trials in regions already known to be mediocre. TPE (and Bayesian optimization generally) models the trade-off explicitly, weighing "how good do we expect this region to be" against "how uncertain are we about this region" when choosing the next trial.</p>
+          </div>
+
+          <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg">
+            <p class="text-sm text-[var(--on-surface)]">Under the hood, TPE specifically models "the distribution of hyperparameters that led to good scores" separately from "the distribution of hyperparameters that led to bad scores," and picks the next candidate that looks relatively more likely under the good distribution than the bad one. You don't need to implement any of this — Optuna's default sampler handles it — but it's worth knowing that "TPE" isn't a mysterious black box, just a specific, practical way of formalizing the salt-and-cook-time intuition above.</p>
+          </div>
+        </section>
+
+        <!-- CORE CONCEPTS -->
+        <section id="optuna-core-concepts" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Concept</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Core Optuna Concepts</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Optuna's whole API rests on four ideas that fit together tightly. Understanding these four is basically understanding the entire library.</p>
+
+          <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Concept</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">What it is</th></tr></thead>
+              <tbody>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Study</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">An entire optimization run — a collection of trials working toward maximizing or minimizing one objective. Created with <code class="text-[var(--primary)]">optuna.create_study()</code>.</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Trial</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">One single attempt — one specific set of hyperparameter values, trained and scored once. A study runs many trials.</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Objective function</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">A function <em>you</em> write, taking a <code class="text-[var(--primary)]">trial</code> object as its argument. Inside it, you ask the trial to suggest hyperparameter values, train/evaluate a model with them, and <code class="text-[var(--primary)]">return</code> a single score.</td></tr>
+                <tr><td class="p-2.5 font-semibold">trial.suggest_*</td><td class="p-2.5">Calls inside your objective function — <code class="text-[var(--primary)]">trial.suggest_float(...)</code>, <code class="text-[var(--primary)]">trial.suggest_int(...)</code>, <code class="text-[var(--primary)]">trial.suggest_categorical(...)</code> — that ask Optuna's sampler for the next value to try for one hyperparameter, given everything learned from previous trials.</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p class="text-sm text-[var(--on-surface)]">The overall flow: define an objective function → create a study → call <code class="text-[var(--primary)]">study.optimize(objective, n_trials=...)</code> → Optuna repeatedly calls your objective with different trial objects, using its sampler to choose increasingly promising hyperparameters each time → read off <code class="text-[var(--primary)]">study.best_params</code> and <code class="text-[var(--primary)]">study.best_value</code> at the end.</p>
+        </section>
+
+        <!-- WORKED EXAMPLE -->
+        <section id="optuna-code-example" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Classification &amp; Regression</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Full Worked Example — Tuning a RandomForestClassifier</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Same dataset, same model family you tuned with GridSearchCV/RandomizedSearchCV on the Random Forest page — now tuned with Optuna, using cross-validated accuracy as the score to maximize.</p>
+
+          <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+            <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+            <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>import optuna
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score, StratifiedKFold
+
+def objective(trial):
+    # Ask the trial to suggest values for the hyperparameters we're tuning.
+    # Optuna's sampler picks each value using what it has learned from past trials.
+    n_estimators = trial.suggest_int('n_estimators', 50, 500)
+    max_depth = trial.suggest_int('max_depth', 2, 32)
+    max_features = trial.suggest_float('max_features', 0.1, 1.0)
+    min_samples_leaf = trial.suggest_int('min_samples_leaf', 1, 10)
+    criterion = trial.suggest_categorical('criterion', ['gini', 'entropy'])
+
+    model = RandomForestClassifier(
+        n_estimators=n_estimators,
+        max_depth=max_depth,
+        max_features=max_features,
+        min_samples_leaf=min_samples_leaf,
+        criterion=criterion,
+        n_jobs=-1,
+        random_state=1
+    )
+
+    cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=1)
+    scores = cross_val_score(model, X_train, y_train, cv=cv, scoring='accuracy', n_jobs=-1)
+
+    return scores.mean()   # Optuna will try to MAXIMIZE this returned value
+
+# Create a study telling Optuna whether to maximize or minimize the objective
+study = optuna.create_study(direction='maximize')
+
+# Run 50 trials -- each one calls objective() with a new trial object
+study.optimize(objective, n_trials=50)
+
+print("Best hyperparameters:", study.best_params)
+print("Best CV accuracy:", study.best_value)
+
+# Train the final model on the full training set using the best found hyperparameters
+best_model = RandomForestClassifier(**study.best_params, n_jobs=-1, random_state=1)
+best_model.fit(X_train, y_train)
+print("Test accuracy:", best_model.score(X_test, y_test))</code></pre>
+          </div>
+
+          <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-2">Walkthrough</h4>
+            <ol class="text-sm text-[var(--on-surface)] list-decimal list-inside space-y-1">
+              <li><code class="text-[var(--primary)]">objective(trial)</code> is called once per trial. Every <code class="text-[var(--primary)]">trial.suggest_*</code> call asks the sampler for one value, informed by all prior trials' results.</li>
+              <li>A fresh <code class="text-[var(--primary)]">RandomForestClassifier</code> is built with those suggested values and scored with 5-fold cross-validation, exactly as you would when manually tuning.</li>
+              <li>The function <code class="text-[var(--primary)]">return</code>s the mean CV accuracy — this single number is what Optuna is trying to optimize.</li>
+              <li><code class="text-[var(--primary)]">direction='maximize'</code> tells the study that higher returned values are better (use <code class="text-[var(--primary)]">'minimize'</code> for something like RMSE or log-loss).</li>
+              <li><code class="text-[var(--primary)]">study.optimize(objective, n_trials=50)</code> runs the loop 50 times, each time using TPE to choose increasingly promising hyperparameter combinations.</li>
+              <li><code class="text-[var(--primary)]">study.best_params</code> and <code class="text-[var(--primary)]">study.best_value</code> give you the winning hyperparameters and the score they achieved — ready to retrain a final model with.</li>
+            </ol>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-lg text-[var(--secondary)]">The same idea works for XGBoost, or any model at all</h3>
+            <p class="text-sm text-[var(--on-surface)]">Optuna doesn't care what's inside your objective function — it's completely model-agnostic. Swapping the Random Forest for XGBoost just means suggesting different hyperparameters:</p>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group mt-2">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>import xgboost as xgb
+
+def objective(trial):
+    params = {
+        'n_estimators': trial.suggest_int('n_estimators', 100, 1000),
+        'max_depth': trial.suggest_int('max_depth', 2, 10),
+        'learning_rate': trial.suggest_float('learning_rate', 1e-3, 0.3, log=True),
+        'subsample': trial.suggest_float('subsample', 0.5, 1.0),
+        'colsample_bytree': trial.suggest_float('colsample_bytree', 0.5, 1.0),
+    }
+    model = xgb.XGBClassifier(**params, use_label_encoder=False, eval_metric='logloss', random_state=1)
+    scores = cross_val_score(model, X_train, y_train, cv=5, scoring='accuracy', n_jobs=-1)
+    return scores.mean()
+
+study = optuna.create_study(direction='maximize')
+study.optimize(objective, n_trials=50)
+print(study.best_params)</code></pre>
+            </div>
+            <p class="text-sm text-[var(--on-surface-variant)]">Notice <code class="text-[var(--primary)]">log=True</code> on <code class="text-[var(--primary)]">learning_rate</code> — for hyperparameters that naturally span orders of magnitude (0.001 to 0.3), sampling on a log scale explores small and large values more evenly than a plain linear range would.</p>
+          </div>
+        </section>
+
+        <!-- PRUNING -->
+        <section id="pruning" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Concept</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Pruning — Stopping Bad Trials Early</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">For models trained iteratively (neural networks over epochs, gradient boosting over boosting rounds), you often don't need to wait until the very end of training to know a trial is going badly — its intermediate performance already looks clearly worse than other trials at the same point. <strong class="text-[var(--on-background)]">Pruning</strong> lets Optuna kill such trials early, freeing up compute for more promising ones instead of wasting time finishing a run that was never going to be competitive.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-lg text-[var(--primary)]">MedianPruner — the common default</h3>
+            <p class="text-sm text-[var(--on-surface)]">At each intermediate checkpoint (e.g. after every training epoch), a trial reports its current score via <code class="text-[var(--primary)]">trial.report(score, step)</code>. <code class="text-[var(--primary)]">MedianPruner</code> compares that intermediate score against the median of all other trials' scores at the same checkpoint — if this trial is doing worse than the median of its peers at this same point, it gets pruned (stopped) rather than run to completion.</p>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>import optuna
+
+def objective(trial):
+    lr = trial.suggest_float('learning_rate', 1e-4, 1e-1, log=True)
+    model = build_model(lr)   # your model-building code
+
+    for epoch in range(20):
+        train_one_epoch(model)
+        val_score = evaluate(model)
+
+        trial.report(val_score, step=epoch)   # report intermediate progress
+
+        if trial.should_prune():               # ask Optuna: is this trial worth continuing?
+            raise optuna.TrialPruned()          # stop early -- don't waste compute on a losing trial
+
+    return val_score
+
+study = optuna.create_study(
+    direction='maximize',
+    pruner=optuna.pruners.MedianPruner(n_startup_trials=5, n_warmup_steps=3)
+)
+study.optimize(objective, n_trials=50)</code></pre>
+            </div>
+            <p class="text-sm text-[var(--on-surface-variant)]"><code class="text-[var(--primary)]">n_startup_trials</code> lets the first few trials run without pruning (there's no meaningful median yet), and <code class="text-[var(--primary)]">n_warmup_steps</code> gives each individual trial a few checkpoints of grace before it becomes eligible for pruning — avoiding killing a trial that just started slow but would have caught up.</p>
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on Optuna &amp; Hyperparameter Tuning. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-section-40">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. What is the core weakness shared by both GridSearchCV and RandomizedSearchCV that Optuna's default sampler directly addresses?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Neither can be used with cross-validation</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Neither can tune more than one hyperparameter at a time</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Neither uses the results of earlier trials to inform which hyperparameters to try next — each trial (grid point or random sample) is chosen independently of past outcomes</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Neither can tune continuous-valued hyperparameters</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Grid search enumerates a fixed grid and random search samples blindly — neither adapts based on which combinations scored well or poorly. Optuna's default TPE sampler explicitly builds a model of good vs. bad regions from past trial results and uses it to choose the next candidate, converging faster.</div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. In the exploration vs. exploitation tradeoff, what does "exploration" mean in the context of Bayesian hyperparameter optimization?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Always picking the single best-known hyperparameter combination again</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Trying hyperparameter regions that haven't been sampled much yet, since there's genuine uncertainty about whether they might score even better than the current best</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Refusing to try any new hyperparameter values after the first 10 trials</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Running the exact same trial multiple times to reduce variance</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Exploration means sampling in less-certain regions of the hyperparameter space to check whether an even-better combination exists there, balanced against exploitation (focusing near already-known good regions). Pure exploitation risks getting stuck at a local optimum; pure exploration wastes trials and degenerates into random search.</div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. In an Optuna objective function, what must the function return, and what does study.optimize actually do with it?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. It must return the trained model object itself, which Optuna then evaluates internally</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. It must return a dictionary of all suggested hyperparameters</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. It must return None; scores are read from trial.report() calls instead</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It must return a single numeric score; study.optimize uses that value, together with which hyperparameters produced it, to update its sampler and choose the next trial's hyperparameters</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> The objective function's single returned number (e.g. mean cross-validated accuracy) is exactly what the study is trying to maximize or minimize (per the direction argument). Every trial's (hyperparameters, returned score) pair feeds the sampler's model of "which regions tend to score well," which is how later trials get chosen more intelligently.</div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. You're tuning a neural network's learning rate across a range from 0.0001 to 0.5 using trial.suggest_float. Why would you set log=True for this parameter?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Because the range spans several orders of magnitude, sampling on a log scale explores small and large values more evenly instead of oversampling the upper end of a linear range</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. log=True is required by Optuna's API for every float parameter</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. It converts the parameter into an integer automatically</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It disables pruning for that specific parameter</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> With a plain linear range from 0.0001 to 0.5, a uniform sampler would rarely land near the small end (0.0001–0.001), even though small learning rates are often exactly where the interesting behavior is. log=True samples uniformly in log-space instead, giving small and large values comparable coverage — standard practice for learning rates, regularization strengths, and similar parameters that matter across orders of magnitude.</div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. A trial is being trained epoch-by-epoch and calls trial.report(val_score, step=epoch) after every epoch, with a MedianPruner attached to the study. What does should_prune() effectively check?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Whether the total number of trials in the study has exceeded n_trials</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Whether the current hyperparameters exactly match a previously-tried combination</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Whether this trial's intermediate score at the current step is worse than the median of other trials' scores at that same step, which would justify stopping this trial early to save compute</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Whether the objective function raised an exception</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> MedianPruner compares a trial's reported intermediate score, at a given step, against the median of all other trials' reported scores at that same step. If it's falling clearly behind the pack this early, should_prune() returns True and the trial can be stopped (via raising optuna.TrialPruned()) rather than wasting further compute training a run that's very unlikely to end up competitive.</div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--primary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex flex-col items-center gap-3 text-center">
+          <p class="text-[var(--on-surface-variant)] text-sm">That's the full ML Track — Regularization through Hyperparameter Tuning. The Deep Learning track picks up right after this, building neural networks from the perceptron up through Transformers.</p>
+          <a href="../dl/dl-01.html" class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity">Explore the Deep Learning Track</a>
+          <a href="../index.html" class="text-sm text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors">or back to Home</a>
+        </div>

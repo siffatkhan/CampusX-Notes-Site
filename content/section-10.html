@@ -1,0 +1,350 @@
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-3 py-1 mb-3">Source: CampusX — 100 Days of Machine Learning</span>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">10. Column Transformer & Pipelines</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Column Transformer · Pipeline Transformer · Function Transformer</p>
+        </div>
+
+        <!-- DAY 28 -->
+        <section id="day-28" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 28</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Column Transformer</h2>
+          </div>
+          <p class="text-[var(--on-surface)] leading-relaxed">In real datasets, different columns require different preprocessing steps. Numerical columns need imputation or scaling. Categorical columns need encoding. Text or binary columns need separate handling. Applying transformations column by column using <code>X_train[["age"]]</code> creates multiple NumPy arrays which must be merged later. This process becomes messy, error prone, and hard to reproduce.</p>
+          <p class="text-[var(--on-surface)] leading-relaxed"><code>ColumnTransformer</code> from scikit-learn solves this problem by applying different transformations to different columns in a single step and returning one combined output array. It keeps column order consistent and ensures the same transformations apply to training and test data.</p>
+
+          <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">How Column Transformer Works</h4>
+            <p class="text-sm text-[var(--on-surface)]">ColumnTransformer takes a list of transformers. Each transformer specifies a name, a transformation object, and the columns it applies to. Columns not listed can either be dropped or passed unchanged using <code>remainder="passthrough"</code>.</p>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm text-sm text-[var(--on-surface)]">
+            <strong class="text-[var(--on-background)]">Example idea:</strong> Age column gets imputed. Education column gets ordinal encoded. City column gets one hot encoded. Remaining columns pass as is.
+          </div>
+
+          <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+            <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+            <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from sklearn.compose import ColumnTransformer
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder
+
+ct = ColumnTransformer(
+    transformers=[
+        ("num", SimpleImputer(strategy="mean"), ["age"]),
+        ("ord", OrdinalEncoder(), ["education"]),
+        ("cat", OneHotEncoder(handle_unknown="ignore"), ["city"])
+    ],
+    remainder="passthrough")</code></pre>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">ColumnTransformer is often used inside a Pipeline to chain preprocessing and model training into one object. This avoids data leakage and simplifies deployment.</p>
+        </section>
+
+        <!-- DAY 29 -->
+        <section id="day-29" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 29</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Pipeline Transformer</h2>
+          </div>
+          <p class="text-[var(--on-surface)] leading-relaxed">In ML, you usually do these steps: fill missing values, scale numbers, encode categories, train model. You must do the same steps on training data, test data, and new unseen data. If you forget or change the order, the model breaks.</p>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--error)] mb-2">Example WITHOUT Pipeline</h3>
+            <p class="text-sm text-[var(--on-surface)] mb-2">Suppose dataset has: Age has missing values, Salary has large scale difference. Steps done manually:</p>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+
+# 1. Handle missing values
+imputer = SimpleImputer(strategy="mean")
+X_train = imputer.fit_transform(X_train)
+X_test = imputer.transform(X_test)
+
+# 2. Scaling
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+# 3. Train model
+model = LogisticRegression()
+model.fit(X_train, y_train)
+
+# 4. Predict
+y_pred = model.predict(X_test)</code></pre>
+            </div>
+            <div class="border-l-4 border-[var(--error)] bg-[var(--error-container)]/10 p-sm rounded-r-lg mt-2">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--on-error-container)] mb-1">Problems here</h4>
+              <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+                <li>Too much code</li>
+                <li>Easy to forget transform on test data</li>
+                <li>Order must be remembered</li>
+                <li>Hard to reuse and risk of data leakage</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">What is Pipeline</h4>
+            <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+              <li>Pipeline connects steps in sequence. Output of one step becomes input of next step.</li>
+              <li>Fit once. Transform automatically.</li>
+              <li>Same preprocessing for train, test, new data.</li>
+              <li>Pipeline structure = Preprocessing → Preprocessing → Model</li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--tertiary)] mb-2">Example WITH Pipeline</h3>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from sklearn.pipeline import Pipeline
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+
+pipe = Pipeline([
+    ("imputer", SimpleImputer(strategy="mean")),
+    ("scaler", StandardScaler()),
+    ("model", LogisticRegression())
+])
+
+pipe.fit(X_train, y_train)
+y_pred = pipe.predict(X_test)</code></pre>
+            </div>
+            <p class="text-sm text-[var(--on-surface-variant)] mt-2"><strong class="text-[var(--on-background)]">What happened internally:</strong> missing values handled, data got scaled, model trained, correct order guaranteed.</p>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">What is a Transformer</h4>
+              <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+                <li>Learns from data using <code>fit</code></li>
+                <li>Changes data using <code>transform</code></li>
+                <li>Examples: SimpleImputer, StandardScaler, OneHotEncoder</li>
+              </ul>
+              <p class="text-sm text-[var(--on-surface-variant)] mt-2"><strong class="text-[var(--on-background)]">Rule:</strong> all steps except last must be transformers. Last step must be an estimator (model).</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">Why Pipeline is Important</h4>
+              <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+                <li>Prevents data leakage</li>
+                <li>Same logic for train and test</li>
+                <li>Clean and readable code</li>
+                <li>Easy cross-validation</li>
+                <li>Easy deployment</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm text-[var(--on-surface)]">
+            <strong class="text-[var(--on-background)]">Without pipeline:</strong> you repeat steps. <strong class="text-[var(--on-background)]">With pipeline:</strong> one object controls everything.
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Pipeline with Cross Validation</h3>
+            <p class="text-sm text-[var(--on-surface)] mb-2"><strong class="text-[var(--on-background)]">Without pipeline:</strong> preprocessing leaks test data. <strong class="text-[var(--on-background)]">With pipeline:</strong> each fold does preprocessing correctly.</p>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from sklearn.model_selection import cross_val_score
+
+scores = cross_val_score(pipe, X, y, cv=5)</code></pre>
+            </div>
+            <p class="text-sm text-[var(--on-surface-variant)] mt-2">Safe and correct.</p>
+          </div>
+
+          <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">Beginner Mental Model</h4>
+            <p class="text-sm text-[var(--on-surface)]">Think of a pipeline as an assembly line. Raw data enters. Clean data comes out. And the model predicts. You never touch intermediate steps.</p>
+          </div>
+        </section>
+
+        <!-- DAY 30 -->
+        <section id="day-30" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 30</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Function Transformer</h2>
+          </div>
+          <p class="text-[var(--on-surface)] leading-relaxed">A normal distribution of data (Gaussian distribution) is characterized by a symmetric, bell-shaped curve where data clusters around a central mean, with frequency decreasing further from the center. The "opposite" of this is skewed or non-normal data, where the distribution is lopsided, featuring a long tail on one side.</p>
+          <p class="text-[var(--on-surface)] leading-relaxed">Some ML algorithms perform better when features follow a normal distribution. Function Transformer helps convert skewed data into a more normal shape — it applies a mathematical function to a column.</p>
+
+          <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">Why Normal Distribution Matters</h4>
+            <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+              <li>Many models assume normality</li>
+              <li>It improves distance-based models like KNN and SVM</li>
+              <li>It stabilizes variance</li>
+              <li>It makes relationships easier to learn</li>
+            </ul>
+          </div>
+
+          <h3 class="font-h3 text-lg text-[var(--on-background)]">Common Transformations</h3>
+          <div class="space-y-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+              <h4 class="font-h3 text-base text-[var(--secondary)]">1. Log Transform</h4>
+              <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">What it does:</strong> compresses large values, reduces right skew. <strong class="text-[var(--on-background)]">When to use:</strong> right-skewed data; values must be positive.</p>
+              <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-3 overflow-x-auto text-center">$$ y = \log(x) $$</div>
+              <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+                <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+                <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>df["col"] = np.log(df["col"])</code></pre>
+              </div>
+              <p class="text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Note:</strong> cannot apply to zero or negative values. Use <code>log1p(x)</code> for zeros.</p>
+            </div>
+
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+              <h4 class="font-h3 text-base text-[var(--secondary)]">2. Reciprocal Transform</h4>
+              <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">What it does:</strong> large values become small; small values become large. <strong class="text-[var(--on-background)]">When to use:</strong> strong right skew, when large values dominate.</p>
+              <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-3 overflow-x-auto text-center">$$ y = \frac{1}{x} $$</div>
+              <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+                <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+                <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>df["col"] = 1 / df["col"]</code></pre>
+              </div>
+            </div>
+
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+              <h4 class="font-h3 text-base text-[var(--secondary)]">3. Square Transform</h4>
+              <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">What it does:</strong> stretches large values, reduces left skew. <strong class="text-[var(--on-background)]">When to use:</strong> left-skewed data.</p>
+              <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-3 overflow-x-auto text-center">$$ y = x^2 $$</div>
+              <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+                <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+                <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>df["col"] = df["col"] ** 2</code></pre>
+              </div>
+            </div>
+
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+              <h4 class="font-h3 text-base text-[var(--secondary)]">4. Square Root Transform</h4>
+              <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">What it does:</strong> reduces right skew, less aggressive than log. <strong class="text-[var(--on-background)]">When to use:</strong> right-skewed data; works with zero values.</p>
+              <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-3 overflow-x-auto text-center">$$ y = \sqrt{x} $$</div>
+              <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+                <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+                <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>df["col"] = np.sqrt(df["col"])</code></pre>
+              </div>
+            </div>
+
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+              <h4 class="font-h3 text-base text-[var(--secondary)]">5. Custom Transformer</h4>
+              <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">What it does:</strong> applies your own function. <strong class="text-[var(--on-background)]">When to use:</strong> when built-in transforms do not work well.</p>
+              <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+                <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+                <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>df["col"] = df["col"].apply(lambda x: x ** 0.3)</code></pre>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">How to Check if Data is Normal</h3>
+            <div class="space-y-2">
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">1. Histogram</strong>
+                <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group mt-2">
+                  <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+                  <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>sns.displot(df["col"])</code></pre>
+                </div>
+              </div>
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">2. Skewness Value</strong>
+                <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group mt-2">
+                  <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+                  <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>df["col"].skew()</code></pre>
+                </div>
+                <p class="text-[var(--on-surface-variant)] mt-2">0 means normal. Positive means right-skew. Negative means left-skew.</p>
+              </div>
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">3. Q-Q Plot (Most reliable)</strong>
+                <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group mt-2">
+                  <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+                  <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from scipy import stats
+stats.probplot(df["col"], plot=plt)</code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on Day 28–30. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-section-10">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. In a ColumnTransformer, you list transformers for "age", "education", and "city" but the dataset also has a "notes" column you didn't mention, and you set <code>remainder="passthrough"</code>. What happens to "notes"?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. It throws an error</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. It gets one-hot encoded by default</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. It passes through unchanged into the output</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It is silently dropped</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> "Columns not listed can either be dropped or passed unchanged using <code>remainder="passthrough"</code>." With passthrough explicitly set, unlisted columns like "notes" are kept as-is in the combined output.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. In a scikit-learn Pipeline of [imputer, scaler, model], which rule must hold for the pipeline to be valid?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Every step, including the last, must implement <code>transform</code></button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. All steps except the last must be transformers; the last step must be an estimator</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. The model must come first</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. There must be exactly 3 steps</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Rule from the notes: "All steps except last must be transformers. Last step must be estimator (model)." A transformer learns via <code>fit</code> and changes data via <code>transform</code> (e.g. SimpleImputer, StandardScaler, OneHotEncoder).
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. Why does running preprocessing manually (impute + scale, then cross_val_score) risk data leakage compared to running <code>cross_val_score(pipe, X, y, cv=5)</code> with a Pipeline?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Manual preprocessing fits scaler/imputer stats on the whole dataset before splitting into folds, so validation folds leak into training stats</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Manual preprocessing is always slower</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. cross_val_score cannot accept raw estimators, only pipelines</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. There is no difference</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> "Without pipeline: Preprocessing leaks test data. With pipeline: Each fold does preprocessing correctly." Wrapping preprocessing inside the Pipeline means each CV fold's imputer/scaler is refit only on that fold's training portion.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. A "Revenue" column contains some exact zero values alongside a strong right skew. Which Function Transformer is explicitly noted as safe to use directly on zero values, unlike the plain log transform?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Reciprocal Transform (1/x)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Square Transform (x²)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Log Transform (log(x))</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Square Root Transform (√x)</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Square Root Transform is noted to reduce right skew and "works with zero values," while Log Transform's note explicitly warns "cannot apply to zero or negative values. Use log1p(x) for zeros" — so plain log fails directly on zeros but sqrt does not.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. You compute <code>df["col"].skew()</code> and get -1.8. What does this indicate about the distribution?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Perfectly normal distribution</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Right-skewed (long tail toward large values)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Left-skewed (long tail toward small values)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Bimodal distribution</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Per the notes: "0 means normal. Positive means right-skew. Negative means left-skew." A skew of -1.8 is negative, indicating left-skew — the Square Transform (which "reduces left skew") would be the appropriate fix, not log or sqrt.
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--primary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="section-11.html" class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">
+            Next: Power Transformer →
+          </a>
+        </div>

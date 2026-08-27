@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1. Introduction to NLP — Sifat Notes</title>
+
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..800&family=Inter:ital,opsz,wght@0,14..32,400..700;1,14..32,400..700&family=JetBrains+Mono:wght@400..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script src="../assets/tailwind-config.js"></script>
+<link rel="stylesheet" href="../assets/theme.css">
+</head>
+<body class="antialiased min-h-screen font-body-md">
+
+<header class="bg-[var(--surface)] border-b border-[var(--outline-variant)] sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-4 md:px-lg py-2.5 md:py-sm max-w-[1200px] mx-auto">
+<a href="../index.html" class="flex items-center gap-2.5 md:gap-3 group min-w-0" title="Back to home">
+<div class="w-9 h-9 shrink-0 rounded-md bg-[var(--primary)] text-[var(--on-primary)] flex items-center justify-center font-h3 font-bold text-sm group-hover:opacity-85 transition-opacity">SN</div>
+<div class="min-w-0">
+<div class="font-h3 text-base md:text-lg font-semibold text-[var(--on-background)] leading-none truncate">Sifat Notes</div>
+<div class="hidden sm:block text-[11px] text-[var(--on-surface-variant)] mt-0.5 truncate">from CampusX's playlists</div>
+</div>
+</a>
+<nav class="hidden md:flex items-center gap-6 text-sm shrink-0">
+<a class="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors" href="../index.html">Home</a>
+<a class="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors" href="../index.html#courses">Courses</a>
+</nav>
+<div class="flex items-center gap-2 md:gap-3 shrink-0">
+<button id="mobileMenuBtn" class="md:hidden border border-[var(--outline-variant)] rounded-md p-1.5 text-[var(--on-background)] flex items-center justify-center" onclick="toggleSidebar()" aria-label="Toggle navigation">
+<span class="material-symbols-outlined text-[20px]">menu</span>
+</button>
+<button class="flex items-center gap-1.5 bg-[var(--surface-container)] border border-[var(--outline-variant)] text-[var(--on-background)] px-2.5 md:px-3 py-1.5 rounded-full text-xs font-label-caps hover:border-[var(--primary)] transition-colors" onclick="toggleTheme()" data-theme-btn>
+<span class="material-symbols-outlined text-[16px]" data-theme-icon>light_mode</span>
+<span data-theme-label class="hidden sm:inline">Light</span>
+</button>
+</div>
+</div>
+</header>
+
+
+<div class="flex flex-1">
+<div id="sidebarBackdrop" class="hidden fixed inset-0 bg-black/50 z-50 md:hidden" onclick="toggleSidebar()"></div>
+<aside id="sidebarSlot" class="flex flex-col bg-[var(--surface-container-low)] border-r border-[var(--outline-variant)] fixed left-0 top-[65px] h-[calc(100vh-65px)] w-[280px] py-md overflow-y-auto">
+<div class="px-lg mb-md">
+<input id="searchBox" placeholder="Search topics…" class="w-full bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-md px-3 py-2 text-sm text-[var(--on-background)] placeholder:text-[var(--on-surface-variant)] focus:outline-none focus:border-[var(--tertiary)]">
+</div>
+
+<nav class="toc flex-1 px-2 space-y-1 text-sm" id="tocNav">
+
+<div class="px-3 pt-3 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">NLP Fundamentals</div>
+
+<details open>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--tertiary)] font-semibold bg-[var(--surface-container-high)]/50">1. Introduction to NLP <span class="chev text-[10px]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="nlp-01.html#what-is-nlp" class="flex px-3 py-1.5 rounded-md text-[var(--tertiary)] font-semibold bg-[var(--surface-container-high)]/40">What Is NLP</a>
+<a href="nlp-01.html#common-nlp-tasks" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Common NLP Tasks</a>
+<a href="nlp-01.html#nlp-approaches" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Approaches to NLP</a>
+<a href="nlp-01.html#nlp-challenges" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Challenges in NLP</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">2. Pipeline &amp; Preprocessing <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="nlp-02.html#nlp-pipeline" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The NLP Pipeline</a>
+<a href="nlp-02.html#text-cleanup" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Text Cleanup</a>
+<a href="nlp-02.html#tokenization" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Tokenization</a>
+<a href="nlp-02.html#stopwords" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Stop-Word Removal</a>
+<a href="nlp-02.html#stemming-lemmatization" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Stemming vs Lemmatization</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Representing Text</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">3. Text Representation <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="nlp-03.html#one-hot-encoding" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">One-Hot Encoding</a>
+<a href="nlp-03.html#bag-of-words" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Bag of Words</a>
+<a href="nlp-03.html#n-grams" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">N-Grams</a>
+<a href="nlp-03.html#tfidf" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">TF-IDF</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">4. Word2Vec &amp; Classification <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="nlp-04.html#word2vec-intuition" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Word2Vec Intuition</a>
+<a href="nlp-04.html#cbow-skipgram" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">CBOW vs Skip-gram</a>
+<a href="nlp-04.html#text-classification" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Text Classification</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Extraction Tasks</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">5. POS Tagging <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="nlp-05.html#pos-tagging-basics" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">What Is POS Tagging</a>
+<a href="nlp-05.html#pos-tagging-spacy" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Tagging with spaCy</a>
+<a href="nlp-05.html#hmm-pos-tagging" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">HMM-Based Tagging</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">6. Named Entity Recognition <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="nlp-06.html#ner-basics" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">What Is NER</a>
+<a href="nlp-06.html#ner-spacy" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">NER with spaCy</a>
+<a href="nlp-06.html#ner-approaches" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Approaches to NER</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">7. Topic Modeling <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="nlp-07.html#what-is-topic-modeling" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">What Is Topic Modeling</a>
+<a href="nlp-07.html#lda" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Latent Dirichlet Allocation</a>
+</div>
+</details>
+
+</nav>
+</aside>
+
+
+  <main class="flex-1 md:ml-[280px] px-4 py-6 md:p-lg max-w-[1200px] mx-auto w-full min-w-0">
+    <nav aria-label="Breadcrumb" class="flex flex-wrap text-sm text-[var(--on-surface-variant)] mb-4"><a href="../index.html" class="hover:text-[var(--tertiary)]">Home</a><span class="mx-2">/</span><a href="../index.html#courses" class="hover:text-[var(--tertiary)]">NLP Track</a><span class="mx-2">/</span><span class="text-[var(--on-background)]">1. Introduction to NLP</span></nav>
+
+    <div class="space-y-xl">
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--tertiary)] bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/30 rounded-full px-3 py-1 mb-3">Source: 100 Days of Deep Learning — NLP Notes</span>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">1. Introduction to NLP</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">What natural language is · Why NLP matters · Common NLP tasks · Three approaches to NLP · Core challenges</p>
+        </div>
+
+        <!-- WHAT IS NLP -->
+        <section id="what-is-nlp" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--tertiary)] bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/30 rounded-full px-2.5 py-0.5">NLP</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">What Is Natural Language Processing?</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">A <strong class="text-[var(--on-background)]">natural language</strong> is a language that evolved naturally in humans through use and repetition, without conscious planning or premeditation — English, Hindi, Mandarin, Spanish, and every other language people actually speak, as opposed to a designed/constructed language like a programming language or Esperanto. <strong class="text-[var(--on-background)]">Natural Language Processing (NLP)</strong> is the field of AI concerned with giving machines the ability to read, understand, interpret, and generate this kind of language.</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Why is this hard, and why does it matter so much? Because an enormous share of human knowledge and communication — books, conversations, emails, reviews, tickets, social media — exists as unstructured text, not neat rows and columns. Any system that wants to act intelligently in the real world eventually has to deal with language.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-lg text-[var(--tertiary)]">Real-World Applications</h3>
+            <ul class="text-sm text-[var(--on-surface)] space-y-1.5 list-disc list-inside">
+              <li><strong class="text-[var(--on-background)]">Contextual / targeted advertisements</strong> — ads chosen based on the content of a page or a user's language patterns, not just demographics.</li>
+              <li><strong class="text-[var(--on-background)]">Email clients</strong> — spam filtering (classifying incoming mail as spam / not spam) and smart reply (auto-suggesting short responses).</li>
+              <li><strong class="text-[var(--on-background)]">Social media</strong> — removing adult/harmful content (content moderation) and opinion mining on platforms like Twitter (working out what people think about a topic).</li>
+              <li><strong class="text-[var(--on-background)]">Search engines</strong> — modern search (like Google) increasingly summarizes an answer directly in the results page, so the user often doesn't need to click into a website at all.</li>
+              <li><strong class="text-[var(--on-background)]">Chatbots</strong> — conversational systems that understand a user's request and respond appropriately.</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- COMMON TASKS -->
+        <section id="common-nlp-tasks" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--tertiary)] bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/30 rounded-full px-2.5 py-0.5">NLP</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Common NLP Tasks</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">NLP is not one algorithm — it's an umbrella over many distinct tasks, each solved with its own techniques (some reused across tasks, some specialized). The rest of this track walks through the building blocks needed to tackle these:</p>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Text / document classification</strong> — assigning a category to a whole document (spam vs not-spam, topic tags).</div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Sentiment analysis</strong> — determining whether text expresses a positive, negative, or neutral opinion.</div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Information retrieval</strong> — finding the most relevant documents for a query (the core of search engines).</div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Part-of-speech (POS) tagging</strong> — assigning a grammatical category (noun, verb, adjective, …) to each word.</div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Language detection &amp; machine translation</strong> — identifying what language a text is written in, and converting text from one language to another.</div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Conversational agents</strong> — chatbots and voice assistants that hold a dialogue.</div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Knowledge graphs &amp; QA systems</strong> — structuring facts extracted from text and answering questions over them.</div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Text summarization</strong> — condensing a long document into a short summary.</div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Topic modeling</strong> — discovering the abstract topics running through a collection of documents, commonly using the ML model <strong class="text-[var(--on-background)]">LDA</strong> (Latent Dirichlet Allocation) — covered in full in chapter 7.</div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Text generation / autocomplete</strong> — the predictive text you see while typing on a keyboard.</div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Spell checking &amp; grammar correction</strong> — detecting and fixing typos and grammatical errors.</div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Text parsing</strong> — analyzing the grammatical structure of a sentence.</div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Speech-to-text</strong> — transcribing spoken audio into written text.</div>
+          </div>
+        </section>
+
+        <!-- APPROACHES -->
+        <section id="nlp-approaches" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--tertiary)] bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/30 rounded-full px-2.5 py-0.5">NLP</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Three Approaches to NLP</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Just like the rest of AI, NLP problems can be tackled at three increasing levels of sophistication — from hand-written rules, to models that learn patterns from data, to models that learn both patterns <em>and</em> features automatically.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--tertiary)]">1. Heuristic / Rule-Based Methods</h3>
+            <p class="text-sm text-[var(--on-surface)]">These are hand-crafted, hacked-together rules devised directly by a human — essentially applying whatever pragmatic trick gets the job done, rather than learning from data. Typical tools:</p>
+            <ul class="text-sm text-[var(--on-surface)] space-y-1.5 list-disc list-inside">
+              <li><strong class="text-[var(--on-background)]">Regular expressions (regex)</strong> — let you search, parse, modify, and validate text patterns efficiently (e.g. matching dates, emails, phone numbers).</li>
+              <li><strong class="text-[var(--on-background)]">WordNet</strong> — a lexical dictionary that gives the relationship between one word and another (e.g. "running" relates to "shoes").</li>
+              <li><strong class="text-[var(--on-background)]">"Common sense" fact databases</strong> (e.g. Open Mind Common Sense) — stores everyday facts a human would take for granted.</li>
+            </ul>
+            <p class="text-sm text-[var(--on-surface-variant)]">These are quick to build and mostly error-free precisely <em>because</em> a human designed the rules — but they're brittle: they don't generalize to inputs the rule-writer didn't anticipate.</p>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--secondary)]">2. Machine Learning Models</h3>
+            <p class="text-sm text-[var(--on-surface)]">Instead of a human writing the rules directly, an ML model looks at data and finds patterns and relationships in it — the "rules" are learned statistically rather than hand-written. Common algorithms used in classic NLP: <strong class="text-[var(--on-background)]">Naive Bayes, Logistic Regression, SVM, LDA, Hidden Markov Models (HMM)</strong>.</p>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--primary)]">3. Deep Learning Models</h3>
+            <p class="text-sm text-[var(--on-surface)]">DL's big advantage over the previous two approaches: <strong class="text-[var(--on-background)]">automatic feature generation</strong> (no manual feature engineering needed) and, critically, the ability to <strong class="text-[var(--on-background)]">retain sequential information</strong> — the order words appear in, which carries meaning that bag-of-words-style methods throw away.</p>
+            <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Architecture</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Notes</th></tr></thead>
+                <tbody>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">RNN</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Good for time-series / sequential data, but cannot retain context over long sentences or inputs.</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">LSTM</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Retains context and memory much better than a plain RNN.</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">GRU</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Used mostly for text generation.</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Transformers</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">The big leap for the field — models like <strong class="text-[var(--on-background)]">BERT</strong> are Transformer-based.</td></tr>
+                  <tr><td class="p-2.5 font-semibold">Autoencoders</td><td class="p-2.5">Used for representation learning / dimensionality reduction over text.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- CHALLENGES -->
+        <section id="nlp-challenges" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--tertiary)] bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/30 rounded-full px-2.5 py-0.5">NLP</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Challenges in NLP</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Language is hard for machines precisely because of the things that make it flexible and expressive for humans. The core recurring difficulties:</p>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm"><strong class="text-[var(--on-background)]">Ambiguity</strong> — one sentence can have multiple valid readings. "I saw a boy with glasses" could mean the boy was wearing glasses, or that you used glasses (binoculars/spectacles) to see him.</div>
+            <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm"><strong class="text-[var(--on-background)]">Contextual word meaning</strong> — "I ran into the store because we ran out of milk" uses "ran" with two different senses in one sentence.</div>
+            <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm"><strong class="text-[var(--on-background)]">Colloquialisms &amp; slang</strong> — "piece of cake" means "easy" to a human; a machine has no built-in reason to know that.</div>
+            <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm"><strong class="text-[var(--on-background)]">Synonyms</strong> — many different words (car, automobile, vehicle) can mean nearly the same thing, and a system needs to recognize that equivalence.</div>
+            <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm"><strong class="text-[var(--on-background)]">Irony, sarcasm &amp; tone</strong> — "That's just what I needed today" can mean genuine relief or bitter frustration depending entirely on tone/context — the words alone don't disambiguate it.</div>
+            <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm"><strong class="text-[var(--on-background)]">Spelling errors</strong> — typos and misspellings create word forms a model may never have seen.</div>
+            <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm"><strong class="text-[var(--on-background)]">Creativity</strong> — poetry, wordplay, and novel phrasing don't follow predictable statistical patterns.</div>
+            <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm"><strong class="text-[var(--on-background)]">Language diversity</strong> — thousands of languages exist, each with its own grammar, script, and idioms; a technique tuned for English rarely transfers cleanly.</div>
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on Introduction to NLP. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-nlp-01">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. A team builds a spam filter using hand-written regex rules ("contains 'FREE MONEY' → spam") designed entirely by an engineer, with no training data involved. Which approach to NLP is this?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Machine Learning</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Deep Learning</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Heuristic / rule-based</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Reinforcement learning</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Rules designed directly by a human, with no data-driven learning, is exactly the heuristic/rule-based approach — fast to build and mostly error-free since a human designed it, but brittle against inputs the rule-writer didn't foresee.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. Which deep learning architecture is specifically called out as being used mostly for text generation, distinct from its use in general sequence modeling?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. RNN</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. GRU</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Autoencoder</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. WordNet</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Per the notes, RNNs suit general sequential data but struggle with long context, LSTMs retain context/memory better, and GRUs are called out as used mostly for text generation. WordNet is a heuristic lexical dictionary, not a DL architecture.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. "I saw a boy with glasses" having multiple valid readings (the boy wore glasses, vs. you used glasses to see him) illustrates which NLP challenge?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Ambiguity</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Spelling errors</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Language diversity</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Creativity</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> This is the source's own example of ambiguity — a single sentence supporting more than one valid grammatical/semantic reading, distinct from slang (colloquialism), tone (irony/sarcasm), or diversity across languages.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. A search engine that reads a user's query, finds a matching news article, and writes a short summary directly on the results page (so the user never clicks through) is demonstrating which application area?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Spam filtering</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Contextual advertisement</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Content moderation</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Search engine summarization</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> This matches the source's real-world application: "search engines like Google summarize what we ask, so we don't have to go inside the website" — a distinct application from ad targeting, spam filtering, or moderation.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. Which statement correctly distinguishes ML models from DL models in NLP, per the source notes?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. ML models automatically generate features; DL models require manual feature engineering</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. DL models automatically generate features and can retain sequential information; ML models learn rules/patterns from data but don't share DL's edge on sequence</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Both approaches are identical in practice</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. ML models require GPUs; DL models don't</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> The notes are explicit: DL's big advantages are automatic feature generation and retaining sequential information; ML models (Naive Bayes, Logistic Regression, SVM, LDA, HMM) learn rules from data but don't have those two specific DL advantages.
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--tertiary)] text-[var(--on-tertiary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--tertiary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="nlp-02.html" class="bg-[var(--tertiary)] text-[var(--on-tertiary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">Next: The NLP Pipeline &amp; Text Preprocessing</a>
+        </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="../assets/app.js"></script>
+
+</body>
+</html>

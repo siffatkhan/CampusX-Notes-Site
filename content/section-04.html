@@ -1,0 +1,306 @@
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-3 py-1 mb-3">Source: CampusX — 100 Days of Machine Learning</span>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">4. Tensors &amp; Setup</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Tensors · Virtual Environment · Framing the Problem</p>
+        </div>
+
+        <!-- DAY 11 -->
+        <section id="day-11" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 11</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Tensors</h2>
+          </div>
+          <p class="text-[var(--on-surface)] leading-relaxed">A tensor is a container / data structure for numbers. A matrix is a tensor. A NumPy nd-array is a tensor. ML uses mostly 0D to 5D tensors.</p>
+
+          <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container)]/50">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead>
+                <tr class="bg-[var(--surface-container-high)]">
+                  <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Tensor Type</th>
+                  <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Meaning</th>
+                  <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Example</th>
+                  <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Axes / Dimensions</th>
+                  <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Shape</th>
+                  <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Where Used</th>
+                  <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Extra Explanation</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors">
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">0D Tensor (Scalar)</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">Single number. No axis.</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50"><code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">3, 7, 2</code></td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">0 axes</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50"><code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">()</code></td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">Basic arithmetic</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">A scalar is the smallest unit of data. No length, no row, no column.</td>
+                </tr>
+                <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors">
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">1D Tensor (Vector)</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">List of numbers. One axis.</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50"><code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">[1,2,3,4,5]</code></td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">1 axis (length)</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50"><code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">(5)</code></td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">Features, tokens, embeddings</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">A vector has magnitude or direction in math. In ML it stores simple sequences.</td>
+                </tr>
+                <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors">
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">2D Tensor (Matrix)</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">Table of numbers. Rows and columns.</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50"><code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">[[1,2,3],[5,6,7],[8,9,0]]</code></td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">2 axes (rows, columns)</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50"><code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">(3,3)</code></td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">Tabular data, weights, grayscale images</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">Most common tensor in data science. Each row is one sample or feature.</td>
+                </tr>
+                <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors">
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">3D Tensor</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">Stack of multiple 2D matrices.</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">Sentence example: <code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">[[1,0,0,0],[0,1,0,0]]</code></td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">3 axes (num_matrices, rows, columns)</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">—</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">NLP, time-series, embeddings. Think of it as "multiple tables stacked on top of each other." Example: 3 sentences → (3,2,4).</td>
+                </tr>
+                <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors">
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">4D Tensor</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">Stack of 3D tensors.</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">Images: <code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">(N,H,W,C)</code></td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">4 axes (batch, height, width, channels)</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">—</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">CNNs, image processing. Each image has height, width, and color channels. Batch adds one more axis.</td>
+                </tr>
+                <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors">
+                  <td class="p-3 font-semibold">5D Tensor</td>
+                  <td class="p-3">Stack of 4D tensors.</td>
+                  <td class="p-3">Videos: <code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">(N,F,H,W,C)</code></td>
+                  <td class="p-3">5 axes (batch, frames, height, width, channels)</td>
+                  <td class="p-3">—</td>
+                  <td class="p-3">Video models, action recognition. A video is a series of images (frames), so you add a frame axis.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Illustrative diagram -->
+          <div>
+            <div class="border-l-4 border-[var(--outline)] bg-[var(--surface-container-high)]/40 p-sm rounded-r-lg text-xs text-[var(--on-surface-variant)] mb-3">
+              <strong class="text-[var(--on-background)]">Illustrative aid</strong> — generated for this site, not quoted from the source notes.
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-lg flex justify-center overflow-x-auto">
+              <svg viewBox="0 0 1080 200" class="w-full min-w-[820px] max-w-[1080px]" role="img" aria-label="Tensor rank progression from 0D scalar to 5D video tensor">
+                <!-- 0D -->
+                <g transform="translate(90,95)">
+                  <circle r="10" fill="var(--primary)"/>
+                </g>
+                <!-- 1D -->
+                <g transform="translate(270,95)">
+                  <rect x="-42" y="-8" width="16" height="16" fill="var(--primary)" opacity="0.55" rx="2"/>
+                  <rect x="-21" y="-8" width="16" height="16" fill="var(--primary)" opacity="0.7" rx="2"/>
+                  <rect x="0" y="-8" width="16" height="16" fill="var(--primary)" opacity="0.85" rx="2"/>
+                  <rect x="21" y="-8" width="16" height="16" fill="var(--primary)" rx="2"/>
+                  <rect x="42" y="-8" width="16" height="16" fill="var(--primary)" opacity="0.9" rx="2"/>
+                </g>
+                <!-- 2D -->
+                <g transform="translate(450,95)">
+                  <g fill="var(--secondary)">
+                    <rect x="-31" y="-31" width="18" height="18" rx="2"/><rect x="-9" y="-31" width="18" height="18" rx="2"/><rect x="13" y="-31" width="18" height="18" rx="2"/>
+                    <rect x="-31" y="-9" width="18" height="18" rx="2"/><rect x="-9" y="-9" width="18" height="18" rx="2"/><rect x="13" y="-9" width="18" height="18" rx="2"/>
+                    <rect x="-31" y="13" width="18" height="18" rx="2"/><rect x="-9" y="13" width="18" height="18" rx="2"/><rect x="13" y="13" width="18" height="18" rx="2"/>
+                  </g>
+                </g>
+                <!-- 3D -->
+                <g transform="translate(630,95)">
+                  <g opacity="0.4" transform="translate(-20,20)"><rect x="-24" y="-24" width="48" height="48" rx="4" fill="var(--tertiary)"/></g>
+                  <g opacity="0.7" transform="translate(-8,8)"><rect x="-24" y="-24" width="48" height="48" rx="4" fill="var(--tertiary)"/></g>
+                  <g opacity="1" transform="translate(4,-4)"><rect x="-24" y="-24" width="48" height="48" rx="4" fill="var(--tertiary)"/></g>
+                </g>
+                <!-- 4D -->
+                <g transform="translate(810,95)">
+                  <g opacity="0.3" transform="translate(-27,27)"><rect x="-26" y="-26" width="52" height="52" rx="4" fill="var(--primary)"/></g>
+                  <g opacity="0.55" transform="translate(-13,13)"><rect x="-26" y="-26" width="52" height="52" rx="4" fill="var(--primary)"/></g>
+                  <g opacity="0.8" transform="translate(0,0)"><rect x="-26" y="-26" width="52" height="52" rx="4" fill="var(--primary)"/></g>
+                  <g opacity="1" transform="translate(13,-13)"><rect x="-26" y="-26" width="52" height="52" rx="4" fill="var(--primary)"/></g>
+                </g>
+                <!-- 5D -->
+                <g transform="translate(985,95)">
+                  <g opacity="0.25" transform="translate(-30,20)"><rect x="-22" y="-22" width="44" height="44" rx="4" fill="var(--secondary)"/></g>
+                  <g opacity="0.45" transform="translate(-18,10)"><rect x="-22" y="-22" width="44" height="44" rx="4" fill="var(--secondary)"/></g>
+                  <g opacity="0.65" transform="translate(-6,0)"><rect x="-22" y="-22" width="44" height="44" rx="4" fill="var(--secondary)"/></g>
+                  <g opacity="0.85" transform="translate(6,-10)"><rect x="-22" y="-22" width="44" height="44" rx="4" fill="var(--secondary)"/></g>
+                  <g opacity="1" transform="translate(18,-20)"><rect x="-22" y="-22" width="44" height="44" rx="4" fill="var(--secondary)"/></g>
+                </g>
+                <!-- Labels -->
+                <text x="90" y="150" text-anchor="middle" class="font-label-caps" font-size="11" fill="var(--on-background)">0D — Scalar</text>
+                <text x="90" y="166" text-anchor="middle" font-size="10" fill="var(--on-surface-variant)">shape ()</text>
+                <text x="270" y="150" text-anchor="middle" class="font-label-caps" font-size="11" fill="var(--on-background)">1D — Vector</text>
+                <text x="270" y="166" text-anchor="middle" font-size="10" fill="var(--on-surface-variant)">shape (5)</text>
+                <text x="450" y="150" text-anchor="middle" class="font-label-caps" font-size="11" fill="var(--on-background)">2D — Matrix</text>
+                <text x="450" y="166" text-anchor="middle" font-size="10" fill="var(--on-surface-variant)">shape (3,3)</text>
+                <text x="630" y="150" text-anchor="middle" class="font-label-caps" font-size="11" fill="var(--on-background)">3D — Tensor</text>
+                <text x="630" y="166" text-anchor="middle" font-size="10" fill="var(--on-surface-variant)">(matrices, rows, cols)</text>
+                <text x="810" y="150" text-anchor="middle" class="font-label-caps" font-size="11" fill="var(--on-background)">4D — Tensor</text>
+                <text x="810" y="166" text-anchor="middle" font-size="10" fill="var(--on-surface-variant)">(N,H,W,C)</text>
+                <text x="985" y="150" text-anchor="middle" class="font-label-caps" font-size="11" fill="var(--on-background)">5D — Tensor</text>
+                <text x="985" y="166" text-anchor="middle" font-size="10" fill="var(--on-surface-variant)">(N,F,H,W,C)</text>
+              </svg>
+            </div>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-2">Quick Concept Summary</h4>
+              <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+                <li>Higher rank = more axes</li>
+                <li>Shape tells how many elements are stored along each axis</li>
+                <li>Images add the channel dimension</li>
+                <li>Videos add the frame dimension</li>
+                <li>Batches add the batch dimension</li>
+                <li>Rank = number of axes. Scalar 0, vector 1, matrix 2, video batch 5.</li>
+                <li>Shape = elements per axis. Example: (2,3) → 2 rows, 3 columns.</li>
+                <li>Size = multiply shape. (2,3) → 6 items.</li>
+              </ul>
+            </div>
+            <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-2">Quick Practical Summary</h4>
+              <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+                <li>1D → row of values</li>
+                <li>2D → matrix or table</li>
+                <li>3D → sentences, time series batches</li>
+                <li>4D → image batches</li>
+                <li>5D → video batches</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- DAY 12 -->
+        <section id="day-12" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 12</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Virtual Environment</h2>
+          </div>
+          <ul class="text-sm text-[var(--on-surface)] space-y-1.5 list-disc list-inside">
+            <li>Base environment contains global libraries.</li>
+            <li>Virtual environment creates an isolated workspace.</li>
+            <li>Each project has its own versions of libraries.</li>
+            <li>Reduces conflicts, makes deployment stable on servers.</li>
+            <li>Good practice for Django, Flask, ML, and production apps.</li>
+            <li>Deep learning needs GPUs.</li>
+            <li>Use Google Colab to run notebooks with GPU or TPU.</li>
+            <li>Logistic Regression draws the best line that separates two classes.</li>
+          </ul>
+        </section>
+
+        <!-- DAY 14 -->
+        <section id="day-14" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 14</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Framing the Problem</h2>
+          </div>
+          <ol class="text-sm text-[var(--on-surface)] list-decimal list-inside space-y-2">
+            <li>Turn a business question into a prediction or classification task.</li>
+            <li>Decide if labels exist. Supervised = labels present. Unsupervised = no labels.</li>
+            <li>Check if an existing product or model solves the problem.</li>
+            <li>Gather data from internal or external sources.</li>
+            <li>Decide performance metric. Accuracy, F1, RMSE, MAE.</li>
+            <li>Choose training mode. Batch learning trains on full dataset. Online learning updates model with new data continuously.</li>
+            <li>Check assumptions. Data quality, distribution, size, balance, missing values.</li>
+          </ol>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm text-sm text-[var(--on-surface)]">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--on-surface-variant)] mb-2">Churn Rate</h4>
+            <ul class="space-y-1 list-disc list-inside">
+              <li>Number of users leaving in a time period.</li>
+              <li>Growth happens when new users &gt; churned users.</li>
+              <li>Decline happens when churned users &gt; new users.</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on Day 11–14. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-section-04">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. You load a batch of 32 color images, each 64×64 pixels, into a single tensor for a CNN. What is the shape and rank of this tensor?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Shape (64,64,3), rank 3</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Shape (32,64,64), rank 3</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Shape (32,64,64,3), rank 4 — batch, height, width, channels</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Shape (32,64,64,3,1), rank 5</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Images are the canonical 4D tensor example: (N,H,W,C) = (batch, height, width, channels). 32 images of 64×64 with 3 color channels gives shape (32,64,64,3), a rank-4 tensor — no frame axis is added since this isn't video.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. You now batch 10 short video clips, each with 8 frames of 64×64 RGB images. Per the notes' pattern for 5D tensors, what's the shape?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. (10,64,64,3,8)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. (10,8,64,64,3) — (N,F,H,W,C)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. (8,10,64,64,3)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. (64,64,3,8,10)</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> The notes give the exact video-tensor convention: (N,F,H,W,C) — batch, frames, height, width, channels. So 10 clips × 8 frames × 64×64 × 3 channels = (10,8,64,64,3), a 5D tensor (stack of 4D tensors, one per clip).
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. Two developers on the same machine need scikit-learn 1.0 and scikit-learn 1.4 respectively for two different projects, without breaking either. What does the source notes recommend and why?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. A virtual environment per project — isolates library versions and reduces conflicts</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Install both versions globally in the base environment</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Use online learning to switch versions automatically</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. This can't be solved without separate machines</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Per Day 12, the base environment contains global libraries while a virtual environment creates an isolated workspace so each project has its own versions of libraries — precisely to avoid this kind of version conflict.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. A subscription app had 500 users start and 300 users cancel this month. Per the Churn Rate notes, what is happening to the user base, and which "Framing the Problem" step does tracking this most directly support?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Decline; Step 3 (check if existing product solves it)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Growth; Step 2 (deciding if labels exist)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Decline; Step 6 (choosing training mode)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Growth; Step 5 (deciding a performance metric, since churn rate itself functions as a business metric)</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> New users (500) exceed churned users (300), which the notes define as growth. Churn rate is exactly the kind of business-facing metric that Step 5 ("Decide performance metric") of Framing the Problem asks you to define before modeling.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. Which statement correctly distinguishes a 3D tensor from a 2D tensor, per the notes' own NLP example?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. A 3D tensor is just a bigger 2D matrix with more rows</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. A 3D tensor removes the column axis that a 2D tensor has</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. A 3D tensor stacks multiple 2D matrices along a new axis — e.g. 3 sentences each represented as a 2D matrix gives a (3,2,4) tensor</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. A 3D tensor and 2D tensor always have the same shape</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> The notes describe a 3D tensor as a "stack of multiple 2D matrices" — think of it as multiple tables stacked on top of each other. The worked example is 3 sentences → shape (3,2,4), adding a num_matrices axis on top of the (rows, columns) axes a 2D matrix has.
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--primary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="section-05.html" class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">
+            Next: Data Gathering →
+          </a>
+        </div>

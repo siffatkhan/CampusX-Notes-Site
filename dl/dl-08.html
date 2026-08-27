@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>8. Training Deep Networks — Practical Toolkit — Sifat Notes</title>
+
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..800&family=Inter:ital,opsz,wght@0,14..32,400..700;1,14..32,400..700&family=JetBrains+Mono:wght@400..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script src="../assets/tailwind-config.js"></script>
+<link rel="stylesheet" href="../assets/theme.css">
+</head>
+<body class="antialiased min-h-screen font-body-md">
+
+<header class="bg-[var(--surface)] border-b border-[var(--outline-variant)] sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-4 md:px-lg py-2.5 md:py-sm max-w-[1200px] mx-auto">
+<a href="../index.html" class="flex items-center gap-2.5 md:gap-3 group min-w-0" title="Back to home">
+<div class="w-9 h-9 shrink-0 rounded-md bg-[var(--primary)] text-[var(--on-primary)] flex items-center justify-center font-h3 font-bold text-sm group-hover:opacity-85 transition-opacity">SN</div>
+<div class="min-w-0">
+<div class="font-h3 text-base md:text-lg font-semibold text-[var(--on-background)] leading-none truncate">Sifat Notes</div>
+<div class="hidden sm:block text-[11px] text-[var(--on-surface-variant)] mt-0.5 truncate">from CampusX's playlists</div>
+</div>
+</a>
+<nav class="hidden md:flex items-center gap-6 text-sm shrink-0">
+<a class="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors" href="../index.html">Home</a>
+<a class="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors" href="../index.html#courses">Courses</a>
+</nav>
+<div class="flex items-center gap-2 md:gap-3 shrink-0">
+<button id="mobileMenuBtn" class="md:hidden border border-[var(--outline-variant)] rounded-md p-1.5 text-[var(--on-background)] flex items-center justify-center" onclick="toggleSidebar()" aria-label="Toggle navigation">
+<span class="material-symbols-outlined text-[20px]">menu</span>
+</button>
+<button class="flex items-center gap-1.5 bg-[var(--surface-container)] border border-[var(--outline-variant)] text-[var(--on-background)] px-2.5 md:px-3 py-1.5 rounded-full text-xs font-label-caps hover:border-[var(--primary)] transition-colors" onclick="toggleTheme()" data-theme-btn>
+<span class="material-symbols-outlined text-[16px]" data-theme-icon>light_mode</span>
+<span data-theme-label class="hidden sm:inline">Light</span>
+</button>
+</div>
+</div>
+</header>
+
+
+<div class="flex flex-1">
+<div id="sidebarBackdrop" class="hidden fixed inset-0 bg-black/50 z-50 md:hidden" onclick="toggleSidebar()"></div>
+<aside id="sidebarSlot" class="flex flex-col bg-[var(--surface-container-low)] border-r border-[var(--outline-variant)] fixed left-0 top-[65px] h-[calc(100vh-65px)] w-[280px] py-md overflow-y-auto">
+<div class="px-lg mb-md">
+<input id="searchBox" placeholder="Search topics…" class="w-full bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-md px-3 py-2 text-sm text-[var(--on-background)] placeholder:text-[var(--on-surface-variant)] focus:outline-none focus:border-[var(--secondary)]">
+</div>
+
+<nav class="toc flex-1 px-2 space-y-1 text-sm" id="tocNav">
+
+<div class="px-3 pt-3 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Foundations</div>
+
+<details open>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--secondary)] font-semibold bg-[var(--surface-container-high)]/50">1. Introduction to Deep Learning <span class="chev text-[10px]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-01.html#dl-vs-ml" class="flex px-3 py-1.5 rounded-md text-[var(--secondary)] font-semibold bg-[var(--surface-container-high)]/40">Deep Learning vs ML</a>
+<a href="dl-01.html#types-of-neural-networks" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Types of Neural Networks</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">2. The Perceptron <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-02.html#perceptron" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Perceptron</a>
+<a href="dl-02.html#perceptron-trick" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Perceptron Trick</a>
+<a href="dl-02.html#perceptron-loss" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Perceptron Loss Function</a>
+<a href="dl-02.html#problem-with-perceptron" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Problem with Perceptron</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">3. Multi-Layer Perceptron <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-03.html#mlp-notation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">MLP Notation</a>
+<a href="dl-03.html#mlp-intuition" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">MLP Intuition</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">4. Forward Propagation <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-04.html#forward-propagation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Forward Propagation — Worked Example</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">5. Loss Functions <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-05.html#loss-functions-intro" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Loss vs Cost Function</a>
+<a href="dl-05.html#mse" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Mean Squared Error (MSE)</a>
+<a href="dl-05.html#mae" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Mean Absolute Error (MAE)</a>
+<a href="dl-05.html#huber-loss" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Huber Loss</a>
+<a href="dl-05.html#binary-cross-entropy" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Binary Cross-Entropy</a>
+<a href="dl-05.html#categorical-cross-entropy" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Categorical Cross-Entropy</a>
+<a href="dl-05.html#sparse-categorical-cross-entropy" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Sparse Categorical Cross-Entropy</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Training Deep Networks</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">6. Backpropagation <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-06.html#backprop-what" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Backpropagation — What</a>
+<a href="dl-06.html#backprop-how" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Backpropagation — How</a>
+<a href="dl-06.html#backprop-worked-example" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Worked Numeric Example</a>
+<a href="dl-06.html#derivative-vs-gradient" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Derivative vs Gradient</a>
+<a href="dl-06.html#epoch-vs-iteration" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Epoch vs Iteration</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">7. Vanishing &amp; Exploding Gradients <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-07.html#vanishing-gradient-problem" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Vanishing Gradient Problem</a>
+<a href="dl-07.html#detecting-vgp" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Detecting It</a>
+<a href="dl-07.html#solutions-to-vgp" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Solutions</a>
+<a href="dl-07.html#exploding-gradient-problem" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Exploding Gradient Problem</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">8. Training Toolkit <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-08.html#mlp-memoization" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">MLP Memoization</a>
+<a href="dl-08.html#gradient-descent-in-nn" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Gradient Descent in NNs</a>
+<a href="dl-08.html#improving-nn-performance" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Improving NN Performance</a>
+<a href="dl-08.html#early-stopping" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Early Stopping</a>
+<a href="dl-08.html#data-scaling-nn" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Data Scaling</a>
+<a href="dl-08.html#dropout-layer" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Dropout Layer</a>
+<a href="dl-08.html#regularization-dl" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Regularization</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">9. Activation Functions <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-09.html#why-activation-functions" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why Activation Functions</a>
+<a href="dl-09.html#ideal-activation-properties" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Ideal Properties</a>
+<a href="dl-09.html#sigmoid-activation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Sigmoid</a>
+<a href="dl-09.html#tanh-activation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Tanh</a>
+<a href="dl-09.html#relu-activation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">ReLU</a>
+<a href="dl-09.html#relu-variants" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">ReLU Variants</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">10. Optimizers <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-10.html#momentum" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Momentum</a>
+<a href="dl-10.html#nesterov-accelerated-gradient" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Nesterov (NAG)</a>
+<a href="dl-10.html#adagrad" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">AdaGrad</a>
+<a href="dl-10.html#rmsprop" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">RMSProp</a>
+<a href="dl-10.html#adam-optimizer" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Adam</a>
+<a href="dl-10.html#weight-initialization" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Weight Initialization</a>
+<a href="dl-10.html#batch-normalization" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Batch Normalization</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Convolutional Networks</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">11. CNN Fundamentals <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-11.html#cnn-intuition" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">CNN Intuition</a>
+<a href="dl-11.html#why-not-ann" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why Not Plain ANN</a>
+<a href="dl-11.html#convolution-operation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Convolution Operation</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">12. Padding, Strides &amp; Pooling <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-12.html#padding" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Padding</a>
+<a href="dl-12.html#strides" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Strides</a>
+<a href="dl-12.html#pooling" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Pooling</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">13. Architectures &amp; Transfer Learning <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-13.html#classic-cnn-architectures" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Classic CNN Architectures</a>
+<a href="dl-13.html#transfer-learning" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Transfer Learning</a>
+<a href="dl-13.html#feature-extraction" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Feature Extraction</a>
+<a href="dl-13.html#fine-tuning" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Fine-Tuning</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Sequence Models &amp; Attention</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">14. Recurrent Neural Networks <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-14.html#why-feedforward-fails" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why Feedforward Fails</a>
+<a href="dl-14.html#rnn-hidden-state" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Hidden State</a>
+<a href="dl-14.html#rnn-unrolled" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Unrolled Through Time</a>
+<a href="dl-14.html#bptt" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Backpropagation Through Time</a>
+<a href="dl-14.html#rnn-limitations" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">RNN Limitations</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">15. LSTM &amp; GRU <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-15.html#lstm-motivation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why LSTM</a>
+<a href="dl-15.html#lstm-gates" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Three Gates</a>
+<a href="dl-15.html#gru" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">GRU</a>
+<a href="dl-15.html#lstm-vs-gru" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">LSTM vs GRU</a>
+<a href="dl-15.html#bidirectional-rnn" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Bidirectional RNN</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">16. Seq2Seq &amp; Encoder-Decoder <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-16.html#what-is-seq2seq" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">What Is Seq2Seq</a>
+<a href="dl-16.html#encoder-decoder" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Encoder-Decoder Architecture</a>
+<a href="dl-16.html#teacher-forcing" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Teacher Forcing</a>
+<a href="dl-16.html#bottleneck-problem" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Bottleneck Problem</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">17. Attention Mechanism <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-17.html#attention-bottleneck-recap" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Solving the Bottleneck</a>
+<a href="dl-17.html#how-attention-works" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">How Attention Works</a>
+<a href="dl-17.html#calculating-attention-weights" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Calculating Attention Weights</a>
+<a href="dl-17.html#self-attention-vs-cross-attention-preview" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Self vs Cross Attention</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">18. The Transformer Architecture <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-18.html#why-transformers" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why Transformers</a>
+<a href="dl-18.html#self-attention" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Self-Attention</a>
+<a href="dl-18.html#multi-head-attention" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Multi-Head Attention</a>
+<a href="dl-18.html#positional-encoding" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Positional Encoding</a>
+<a href="dl-18.html#transformer-architecture" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Full Architecture</a>
+<a href="dl-18.html#bert" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">BERT</a>
+<a href="dl-18.html#gpt" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">GPT</a>
+<a href="dl-18.html#terminology-hierarchy" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Transformer vs LLM vs GPT</a>
+</div>
+</details>
+
+</nav>
+</aside>
+
+
+  <main class="flex-1 md:ml-[280px] px-4 py-6 md:p-lg max-w-[1200px] mx-auto w-full min-w-0">
+    <nav aria-label="Breadcrumb" class="flex flex-wrap text-sm text-[var(--on-surface-variant)] mb-4"><a href="../index.html" class="hover:text-[var(--secondary)]">Home</a><span class="mx-2">/</span><a href="../index.html#courses" class="hover:text-[var(--secondary)]">DL Track</a><span class="mx-2">/</span><span class="text-[var(--on-background)]">8. Practical Toolkit</span></nav>
+
+    <div class="space-y-xl">
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-3 py-1 mb-3">Source: 100 Days of Deep Learning</span>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">8. Training Deep Networks — Practical Toolkit</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Memoization in the forward pass · gradient descent variants for NNs · a performance checklist · early stopping · data scaling · dropout · regularization</p>
+        </div>
+
+        <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm text-sm text-[var(--on-surface-variant)]">
+          <strong class="text-[var(--on-background)]">Extended notes</strong> — the source left these topics as bare headings with no content. Written from scratch to cover them properly, in the same style as the rest of the site.
+        </div>
+
+        <!-- MLP MEMOIZATION -->
+        <section id="mlp-memoization" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Day 15</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">MLP Memoization</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">"Memoization" is a general programming idea: instead of recomputing an expensive result every time you need it, compute it once and store ("remember") it, then reuse the stored value later. Applied to a multilayer perceptron (MLP), memoization is exactly what makes backpropagation efficient rather than absurdly expensive.</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">During the <strong class="text-[var(--on-background)]">forward pass</strong>, every layer computes two things per neuron: the pre-activation \( z = w \cdot a_{prev} + b \) and the activation \( a = g(z) \). A naive implementation might discard these once it hands the final prediction to the loss function — but chapter 6's worked example showed that the backward pass needs exactly these intermediate values again. Computing \( \partial L/\partial w_1 \) required \( a_h \) (the hidden activation) and reused \( \partial L/\partial z_o \) (computed while finding \( \partial L/\partial w_o \)). Those aren't optional conveniences; without them, computing a single early-layer gradient would mean re-running large chunks of the forward pass from scratch, for every single weight, in every single layer.</p>
+
+          <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg text-sm text-[var(--on-surface)]">
+            <strong class="text-[var(--on-background)]">Why the network "remembers" the forward pass:</strong> every framework (Keras/TensorFlow, PyTorch) caches each layer's inputs, pre-activations (z), and activations (a) as the forward pass runs, and builds a computation graph recording how each value was produced from the last. The backward pass then walks that graph in reverse, and at every node it needs a derivative, it looks up the already-cached forward value instead of recomputing it. This turns what would be an exponential-time computation (re-deriving every intermediate value fresh at every step) into a linear-time one — one forward pass, one backward pass, done.
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Why this matters practically</h3>
+            <ul class="text-sm text-[var(--on-surface)] space-y-1.5 list-disc list-inside bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md">
+              <li><strong class="text-[var(--on-background)]">Speed:</strong> without caching, training a network with L layers could require work that scales quadratically (or worse) with depth instead of linearly.</li>
+              <li><strong class="text-[var(--on-background)]">Memory trade-off:</strong> caching every layer's activations for every training example in a batch is exactly why deep networks are memory-hungry during training (and why techniques like <em>gradient checkpointing</em> exist — deliberately discarding some cached activations and recomputing them on demand to trade compute time for lower memory use).</li>
+              <li><strong class="text-[var(--on-background)]">It's invisible in practice:</strong> in Keras/TensorFlow or PyTorch, this caching happens automatically inside <code class="text-[var(--secondary)]">model.fit()</code> / <code class="text-[var(--secondary)]">loss.backward()</code> — you never manually store activations, but understanding that it's happening explains why forward and backward passes are always paired, and why you can't call <code class="text-[var(--secondary)]">.backward()</code> usefully without having just run a forward pass on the same computation graph.</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- GD IN NN -->
+        <section id="gradient-descent-in-nn" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Day 16</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Gradient Descent in Neural Networks</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">The ML track's Linear Regression chapter introduced Batch, Stochastic, and Mini-batch gradient descent as three ways of deciding how much data to use per weight update. Every one of those ideas carries over directly to neural network training — the only thing that changes is that "the weight" now means potentially millions of weights across many layers, all updated together via backpropagation on every step.</p>
+
+          <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Variant</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Rows per update</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Trade-off in NN training</th></tr></thead>
+              <tbody>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Batch GD</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Entire dataset</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Very stable gradient direction, but one update per epoch and the entire dataset (plus every cached activation) must fit in memory at once — usually infeasible for real datasets.</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">SGD</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">1 row</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Extremely fast, noisy updates that can help escape shallow local minima and saddle points — but the noise also makes convergence erratic, and GPU hardware is wasted processing one row at a time instead of in parallel.</td></tr>
+                <tr><td class="p-2.5 font-semibold">Mini-batch GD</td><td class="p-2.5">A fixed batch size (e.g. 32, 64, 128, 256)</td><td class="p-2.5">The practical default: small enough to fit in memory and keep updates frequent, large enough to give a reasonably stable gradient estimate and let GPUs process the whole batch in parallel via matrix operations.</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="grid sm:grid-cols-3 gap-3">
+            <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">Batch size</h4>
+              <p class="text-sm text-[var(--on-surface)]">A hyperparameter: how many training examples are processed together before one weight update.</p>
+            </div>
+            <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--tertiary)] mb-1">Iteration</h4>
+              <p class="text-sm text-[var(--on-surface)]">One forward pass + backward pass + weight update, using exactly one batch.</p>
+            </div>
+            <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">Epoch</h4>
+              <p class="text-sm text-[var(--on-surface)]">One complete sweep through every batch — i.e. through the whole training set once.</p>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Code — Choosing batch size in Keras</h3>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>history = model.fit(
+    X_train, y_train,
+    batch_size=32,     # mini-batch GD — the practical default
+    epochs=50,         # 50 full passes over the training data
+    validation_split=0.2
+)
+
+# batch_size = len(X_train)  -> Batch GD (1 update per epoch)
+# batch_size = 1             -> SGD (noisy, slow on GPU)
+# batch_size = 32/64/128     -> Mini-batch GD (the usual choice)</code></pre>
+            </div>
+          </div>
+        </section>
+
+        <!-- IMPROVE PERFORMANCE -->
+        <section id="improving-nn-performance" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Day 17</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">How to Improve the Performance of a Neural Network</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">There's no single fix that makes a struggling network perform well — improvement is a checklist, and the right item on it depends on <em>which</em> way the model is currently failing. The first step is always diagnosis before treatment.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-base text-[var(--secondary)]">Step 0 — Diagnose underfitting vs overfitting first</h3>
+            <p class="text-sm text-[var(--on-surface)]">Compare training loss to validation loss. Both high → <strong class="text-[var(--on-background)]">underfitting</strong> (the model isn't capturing the pattern at all — needs more capacity or better features). Training loss low but validation loss high and diverging → <strong class="text-[var(--on-background)]">overfitting</strong> (the model has memorized training data — needs more data or more regularization). Applying an overfitting fix to an underfitting model (or vice versa) makes things worse, not better — always check this first.</p>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">More data / data augmentation</strong> — the single most reliable fix for overfitting. If collecting more labeled data isn't possible, augmentation (random crops/flips/rotations for images, synonym swaps for text, noise injection generally) manufactures more varied training examples from what you already have.
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Better architecture</strong> — the right inductive bias beats brute-force capacity: CNNs for images, RNNs/Transformers for sequences. Also consider width and depth — too few neurons/layers underfits, too many (without regularization) invites overfitting.
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Hyperparameter tuning</strong> — learning rate is usually the single highest-leverage number in the whole setup; also batch size, number of layers/neurons, and activation choice. Search this systematically (grid/random search, or Keras Tuner — see chapter 10) rather than by hand-guessing.
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Regularization</strong> — L1/L2 weight penalties and dropout, both covered later in this chapter, directly target overfitting by constraining what the model is allowed to do with the training data.
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">A better optimizer</strong> — swapping plain SGD for Adam or RMSProp (chapter 10) often gets a model to a better minimum, faster, with less manual learning-rate babysitting.
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Batch normalization</strong> — stabilizes and speeds up training by keeping layer inputs in a consistent range (chapter 10), and often lets you use a higher learning rate safely.
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Transfer learning</strong> — start from a model already trained on a large, related dataset (e.g. ImageNet-pretrained CNNs) and fine-tune it on your smaller dataset, instead of training from random initialization.
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Early stopping</strong> — a nearly free regularizer: stop training the moment validation performance stops improving, covered next.
+            </div>
+          </div>
+        </section>
+
+        <!-- EARLY STOPPING -->
+        <section id="early-stopping" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Day 18</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Early Stopping</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Left to train indefinitely, a neural network's training loss keeps falling — but its validation loss typically falls, bottoms out, and then starts rising again as the model begins memorizing training-set noise instead of learning generalizable patterns. That validation-loss upturn is the visible signature of overfitting starting to take hold, and early stopping is simply the decision to <strong class="text-[var(--on-background)]">stop training right around that turning point</strong>, rather than continuing on to a worse generalizing model.</p>
+
+          <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg text-sm text-[var(--on-surface)]">
+            <strong class="text-[var(--on-background)]">Patience:</strong> validation loss is noisy epoch to epoch, so stopping the instant it ticks up even once would stop training prematurely. The <code class="text-[var(--secondary)]">patience</code> parameter says "wait N epochs without improvement before actually stopping" — giving the model room for a temporary blip while still catching a genuine, sustained upward trend.
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Early stopping is often called a "free" regularizer because, unlike L1/L2 penalties or dropout, it doesn't change the model architecture, the loss function, or add any computation to each training step — it only changes <em>when you stop</em>, using information (the validation curve) you were already computing anyway.</p>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Code — Early Stopping with Keras</h3>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from tensorflow.keras.callbacks import EarlyStopping
+
+early_stop = EarlyStopping(
+    monitor='val_loss',       # watch validation loss
+    patience=5,                # allow 5 epochs of no improvement before stopping
+    restore_best_weights=True  # roll back to the best epoch's weights, not the last
+)
+
+history = model.fit(
+    X_train, y_train,
+    validation_split=0.2,
+    epochs=200,                 # set generously high — early stopping decides the real end
+    callbacks=[early_stop]
+)</code></pre>
+            </div>
+            <p class="text-sm text-[var(--on-surface-variant)] mt-2"><code class="text-[var(--secondary)]">restore_best_weights=True</code> matters: without it, training stops at the patience-triggered epoch, but the model's weights are left at that later, already-worse-than-best point rather than rolled back to the true minimum of the validation curve.</p>
+          </div>
+        </section>
+
+        <!-- DATA SCALING -->
+        <section id="data-scaling-nn" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Day 19</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Data Scaling in Neural Networks</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">The reasoning here is the same one gradient descent for Linear Regression relies on: when input features sit on wildly different scales (say, "age" in single digits next to "salary" in the hundreds of thousands), the loss surface becomes a long, narrow, stretched-out bowl rather than a nicely rounded one. Gradient descent zig-zags inefficiently across such a surface instead of heading straight for the minimum, and a learning rate that's stable for the small-scale feature can be wildly unstable for the large-scale one. Scaling every feature to a comparable range removes that distortion and lets a single learning rate work well for every weight at once.</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">For neural networks specifically, this matters even more than for linear regression, because the effect compounds across layers — an imbalanced input scale doesn't just slow convergence at the first layer, it feeds forward into every subsequent layer's activations too.</p>
+
+          <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Scaler</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">What it does</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Typical use</th></tr></thead>
+              <tbody>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">StandardScaler</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Transforms each feature to zero mean, unit variance</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Default choice for most NN inputs</td></tr>
+                <tr><td class="p-2.5 font-semibold">MinMaxScaler</td><td class="p-2.5">Rescales each feature into a fixed range, usually [0, 1]</td><td class="p-2.5">Image pixel values (0–255 → 0–1), bounded features</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from sklearn.preprocessing import StandardScaler
+
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)   # fit only on training data
+X_test_scaled = scaler.transform(X_test)         # apply the SAME transform to test data
+
+# never fit the scaler on test data — that would leak test-set
+# statistics into training, inflating your evaluation</code></pre>
+            </div>
+          </div>
+
+          <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm text-[var(--on-surface)]">
+            <strong class="text-[var(--on-background)]">Scaling doesn't stop at the input layer.</strong> As data passes deeper into the network, each layer's own weights can re-introduce exactly this same scale problem to the <em>next</em> layer's input — which is precisely the problem <strong class="text-[var(--on-background)]">batch normalization</strong> (chapter 10) solves: it re-standardizes activations <em>inside</em> the network, between layers, the same way a StandardScaler standardizes raw inputs before the network ever sees them.
+          </div>
+        </section>
+
+        <!-- DROPOUT -->
+        <section id="dropout-layer" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Day 20</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Dropout Layer</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Dropout is a regularization technique aimed directly at overfitting: during each training step, a randomly chosen fraction of neurons in a layer are temporarily "dropped" — their output forced to zero, as if they didn't exist for that step. Which neurons get dropped is re-randomized on every batch, so the network can never rely on any particular fixed set of neurons always being available.</p>
+
+          <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg text-sm text-[var(--on-surface)]">
+            <strong class="text-[var(--on-background)]">Why this prevents overfitting — breaking co-adaptation.</strong> Without dropout, neurons can develop brittle, over-specific co-dependencies — neuron A learns to only work correctly in combination with the exact outputs of neurons B and C, memorizing quirks of the training data rather than a generally useful feature. Because dropout can remove B or C at any moment, every neuron is forced to learn something that's independently useful, not just useful in one narrow, memorized combination. The net effect behaves like implicitly training a large ensemble of thinned sub-networks that share weights, and averaging their predictions.
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">The dropout rate</strong> — a hyperparameter (commonly 0.2–0.5) specifying the fraction of neurons zeroed out on each step. Higher rate → stronger regularization, but too high starves the network of enough active neurons to learn effectively.
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Disabled at inference time</strong> — once training is done, every neuron is kept active for predictions (you want the full network's capacity when it actually matters). Frameworks automatically rescale the remaining activations during training to compensate, so the expected output magnitude matches between train and inference time without any manual adjustment.
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Code — Dropout with Keras</h3>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Dropout
+
+model = Sequential([
+    Dense(128, activation='relu', input_shape=(20,)),
+    Dropout(0.3),                      # zero out 30% of this layer's outputs, per batch
+    Dense(64, activation='relu'),
+    Dropout(0.3),
+    Dense(1, activation='sigmoid')
+])
+
+# Dropout is active during model.fit() and automatically
+# switched off during model.predict() / model.evaluate() —
+# no manual toggling needed</code></pre>
+            </div>
+          </div>
+        </section>
+
+        <!-- REGULARIZATION -->
+        <section id="regularization-dl" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Day 21</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Regularization in Deep Learning</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">This is the exact same idea as Ridge (L2) and Lasso (L1) regression from the ML track — add a penalty term to the loss that discourages large weights — just applied to a neural network's (potentially millions of) weights instead of a handful of linear-regression coefficients.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+            $$ L_{total} = L_{original} \;+\; \underbrace{\lambda \sum_{j} w_j^2}_{\text{L2}} \quad\text{or}\quad L_{total} = L_{original} \;+\; \underbrace{\lambda \sum_{j} |w_j|}_{\text{L1}} $$
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">L2 (weight decay)</strong> — like Ridge, shrinks every weight smoothly toward (but not exactly to) zero. The dominant choice for regularizing NN weights, because it keeps every connection, just makes none of them dominant.
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">L1</strong> — like Lasso, can drive individual weights to exactly zero, effectively pruning connections out of the network. Useful when a sparser, more compressed network is desirable.
+            </div>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Just as with Ridge/Lasso, \( \lambda \) controls the strength of the penalty: too small and it barely constrains overfitting; too large and it forces weights so close to zero the network can't learn the signal at all — the same bias-variance dial covered in the ML track's regularization chapter.</p>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Code — L2 Regularization with Keras</h3>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from tensorflow.keras.layers import Dense
+from tensorflow.keras.regularizers import l1, l2, l1_l2
+
+model = Sequential([
+    Dense(128, activation='relu', input_shape=(20,),
+          kernel_regularizer=l2(0.001)),   # L2 penalty, lambda=0.001
+    Dense(64, activation='relu',
+          kernel_regularizer=l1_l2(l1=0.0005, l2=0.0005)),  # elastic-net style mix
+    Dense(1, activation='sigmoid')
+])</code></pre>
+            </div>
+            <p class="text-sm text-[var(--on-surface-variant)] mt-2">In practice, L2 weight decay, dropout, and early stopping are often combined — they attack overfitting through three different mechanisms (penalizing weight size, breaking co-adaptation, and limiting training time) and stack well together.</p>
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on the Deep Network Training Toolkit. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-dl-08">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. Why do frameworks cache activations from the forward pass instead of recomputing them during backpropagation?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Because activations are random and cannot be recomputed</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Backward-pass gradients need those exact forward values (e.g. via the chain rule), and recomputing them from scratch for every weight would be far slower</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Caching activations makes the network more accurate</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Activations are only needed for the loss function, not gradients</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> The chain rule needs quantities like a neuron's activation or pre-activation to compute derivatives with respect to weights feeding into or out of it. Memoizing them during the forward pass avoids re-deriving those same values repeatedly, turning backprop into an efficient linear-time algorithm.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. A dataset has 10,000 rows and batch_size=100. How many iterations occur per epoch, and which GD variant is this?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. 10,000 iterations — Stochastic GD</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. 1 iteration — Batch GD</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. 100 iterations — Mini-batch GD</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. 100 iterations — Batch GD</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> 10,000 ÷ 100 = 100 iterations per epoch. Since the batch size (100) is neither 1 nor the full dataset (10,000), this is Mini-batch Gradient Descent.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. Training loss is high AND validation loss is high, and both are close together. What should you try first?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Increase model capacity / train longer — this looks like underfitting, not overfitting</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Add more dropout immediately</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Add heavier L2 regularization</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Trigger early stopping right away</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Both losses high and close together is the signature of underfitting — the model lacks capacity to fit even the training data well. Options B, C, and D all further restrict the model, which would make underfitting worse, not better.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. Why is dropout disabled at inference (prediction) time?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Dropout only works during data loading, not model computation</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. It would make predictions too slow</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Keras doesn't allow it to be disabled</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. You want the network's full capacity available for the best possible prediction, not a randomly thinned sub-network</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Dropout's randomness is a training-time regularizer that prevents co-adaptation. At prediction time you want the full, fully-trained network making the call — frameworks keep all neurons active and rescale automatically so magnitudes stay consistent with training.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. What is the key structural difference between L1 and L2 regularization on a neural network's weights?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. L2 zeroes weights out; L1 only shrinks them</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. L1 can drive individual weights to exactly zero (pruning connections); L2 shrinks all weights smoothly toward zero without eliminating them</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. L1 and L2 always produce identical results in neural networks</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Neither can be combined with dropout</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> This mirrors Ridge (L2) vs Lasso (L1) from the ML track exactly: L1's absolute-value penalty geometrically favors landing exactly on zero for some weights, while L2's squared penalty smoothly shrinks all weights without ever fully eliminating any of them.
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--primary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="dl-09.html" class="bg-[var(--secondary)] text-[var(--on-secondary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">Next: Activation Functions</a>
+        </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="../assets/app.js"></script>
+
+</body>
+</html>

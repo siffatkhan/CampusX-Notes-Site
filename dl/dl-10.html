@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>10. Optimizers & Weight Initialization — Sifat Notes</title>
+
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..800&family=Inter:ital,opsz,wght@0,14..32,400..700;1,14..32,400..700&family=JetBrains+Mono:wght@400..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script src="../assets/tailwind-config.js"></script>
+<link rel="stylesheet" href="../assets/theme.css">
+</head>
+<body class="antialiased min-h-screen font-body-md">
+
+<header class="bg-[var(--surface)] border-b border-[var(--outline-variant)] sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-4 md:px-lg py-2.5 md:py-sm max-w-[1200px] mx-auto">
+<a href="../index.html" class="flex items-center gap-2.5 md:gap-3 group min-w-0" title="Back to home">
+<div class="w-9 h-9 shrink-0 rounded-md bg-[var(--primary)] text-[var(--on-primary)] flex items-center justify-center font-h3 font-bold text-sm group-hover:opacity-85 transition-opacity">SN</div>
+<div class="min-w-0">
+<div class="font-h3 text-base md:text-lg font-semibold text-[var(--on-background)] leading-none truncate">Sifat Notes</div>
+<div class="hidden sm:block text-[11px] text-[var(--on-surface-variant)] mt-0.5 truncate">from CampusX's playlists</div>
+</div>
+</a>
+<nav class="hidden md:flex items-center gap-6 text-sm shrink-0">
+<a class="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors" href="../index.html">Home</a>
+<a class="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors" href="../index.html#courses">Courses</a>
+</nav>
+<div class="flex items-center gap-2 md:gap-3 shrink-0">
+<button id="mobileMenuBtn" class="md:hidden border border-[var(--outline-variant)] rounded-md p-1.5 text-[var(--on-background)] flex items-center justify-center" onclick="toggleSidebar()" aria-label="Toggle navigation">
+<span class="material-symbols-outlined text-[20px]">menu</span>
+</button>
+<button class="flex items-center gap-1.5 bg-[var(--surface-container)] border border-[var(--outline-variant)] text-[var(--on-background)] px-2.5 md:px-3 py-1.5 rounded-full text-xs font-label-caps hover:border-[var(--primary)] transition-colors" onclick="toggleTheme()" data-theme-btn>
+<span class="material-symbols-outlined text-[16px]" data-theme-icon>light_mode</span>
+<span data-theme-label class="hidden sm:inline">Light</span>
+</button>
+</div>
+</div>
+</header>
+
+
+<div class="flex flex-1">
+<div id="sidebarBackdrop" class="hidden fixed inset-0 bg-black/50 z-50 md:hidden" onclick="toggleSidebar()"></div>
+<aside id="sidebarSlot" class="flex flex-col bg-[var(--surface-container-low)] border-r border-[var(--outline-variant)] fixed left-0 top-[65px] h-[calc(100vh-65px)] w-[280px] py-md overflow-y-auto">
+<div class="px-lg mb-md">
+<input id="searchBox" placeholder="Search topics…" class="w-full bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-md px-3 py-2 text-sm text-[var(--on-background)] placeholder:text-[var(--on-surface-variant)] focus:outline-none focus:border-[var(--secondary)]">
+</div>
+
+<nav class="toc flex-1 px-2 space-y-1 text-sm" id="tocNav">
+
+<div class="px-3 pt-3 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Foundations</div>
+
+<details open>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--secondary)] font-semibold bg-[var(--surface-container-high)]/50">1. Introduction to Deep Learning <span class="chev text-[10px]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-01.html#dl-vs-ml" class="flex px-3 py-1.5 rounded-md text-[var(--secondary)] font-semibold bg-[var(--surface-container-high)]/40">Deep Learning vs ML</a>
+<a href="dl-01.html#types-of-neural-networks" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Types of Neural Networks</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">2. The Perceptron <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-02.html#perceptron" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Perceptron</a>
+<a href="dl-02.html#perceptron-trick" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Perceptron Trick</a>
+<a href="dl-02.html#perceptron-loss" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Perceptron Loss Function</a>
+<a href="dl-02.html#problem-with-perceptron" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Problem with Perceptron</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">3. Multi-Layer Perceptron <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-03.html#mlp-notation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">MLP Notation</a>
+<a href="dl-03.html#mlp-intuition" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">MLP Intuition</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">4. Forward Propagation <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-04.html#forward-propagation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Forward Propagation — Worked Example</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">5. Loss Functions <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-05.html#loss-functions-intro" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Loss vs Cost Function</a>
+<a href="dl-05.html#mse" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Mean Squared Error (MSE)</a>
+<a href="dl-05.html#mae" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Mean Absolute Error (MAE)</a>
+<a href="dl-05.html#huber-loss" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Huber Loss</a>
+<a href="dl-05.html#binary-cross-entropy" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Binary Cross-Entropy</a>
+<a href="dl-05.html#categorical-cross-entropy" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Categorical Cross-Entropy</a>
+<a href="dl-05.html#sparse-categorical-cross-entropy" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Sparse Categorical Cross-Entropy</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Training Deep Networks</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">6. Backpropagation <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-06.html#backprop-what" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Backpropagation — What</a>
+<a href="dl-06.html#backprop-how" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Backpropagation — How</a>
+<a href="dl-06.html#backprop-worked-example" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Worked Numeric Example</a>
+<a href="dl-06.html#derivative-vs-gradient" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Derivative vs Gradient</a>
+<a href="dl-06.html#epoch-vs-iteration" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Epoch vs Iteration</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">7. Vanishing &amp; Exploding Gradients <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-07.html#vanishing-gradient-problem" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Vanishing Gradient Problem</a>
+<a href="dl-07.html#detecting-vgp" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Detecting It</a>
+<a href="dl-07.html#solutions-to-vgp" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Solutions</a>
+<a href="dl-07.html#exploding-gradient-problem" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Exploding Gradient Problem</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">8. Training Toolkit <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-08.html#mlp-memoization" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">MLP Memoization</a>
+<a href="dl-08.html#gradient-descent-in-nn" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Gradient Descent in NNs</a>
+<a href="dl-08.html#improving-nn-performance" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Improving NN Performance</a>
+<a href="dl-08.html#early-stopping" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Early Stopping</a>
+<a href="dl-08.html#data-scaling-nn" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Data Scaling</a>
+<a href="dl-08.html#dropout-layer" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Dropout Layer</a>
+<a href="dl-08.html#regularization-dl" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Regularization</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">9. Activation Functions <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-09.html#why-activation-functions" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why Activation Functions</a>
+<a href="dl-09.html#ideal-activation-properties" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Ideal Properties</a>
+<a href="dl-09.html#sigmoid-activation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Sigmoid</a>
+<a href="dl-09.html#tanh-activation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Tanh</a>
+<a href="dl-09.html#relu-activation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">ReLU</a>
+<a href="dl-09.html#relu-variants" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">ReLU Variants</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">10. Optimizers <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-10.html#momentum" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Momentum</a>
+<a href="dl-10.html#nesterov-accelerated-gradient" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Nesterov (NAG)</a>
+<a href="dl-10.html#adagrad" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">AdaGrad</a>
+<a href="dl-10.html#rmsprop" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">RMSProp</a>
+<a href="dl-10.html#adam-optimizer" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Adam</a>
+<a href="dl-10.html#weight-initialization" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Weight Initialization</a>
+<a href="dl-10.html#batch-normalization" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Batch Normalization</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Convolutional Networks</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">11. CNN Fundamentals <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-11.html#cnn-intuition" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">CNN Intuition</a>
+<a href="dl-11.html#why-not-ann" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why Not Plain ANN</a>
+<a href="dl-11.html#convolution-operation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Convolution Operation</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">12. Padding, Strides &amp; Pooling <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-12.html#padding" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Padding</a>
+<a href="dl-12.html#strides" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Strides</a>
+<a href="dl-12.html#pooling" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Pooling</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">13. Architectures &amp; Transfer Learning <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-13.html#classic-cnn-architectures" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Classic CNN Architectures</a>
+<a href="dl-13.html#transfer-learning" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Transfer Learning</a>
+<a href="dl-13.html#feature-extraction" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Feature Extraction</a>
+<a href="dl-13.html#fine-tuning" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Fine-Tuning</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Sequence Models &amp; Attention</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">14. Recurrent Neural Networks <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-14.html#why-feedforward-fails" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why Feedforward Fails</a>
+<a href="dl-14.html#rnn-hidden-state" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Hidden State</a>
+<a href="dl-14.html#rnn-unrolled" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Unrolled Through Time</a>
+<a href="dl-14.html#bptt" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Backpropagation Through Time</a>
+<a href="dl-14.html#rnn-limitations" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">RNN Limitations</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">15. LSTM &amp; GRU <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-15.html#lstm-motivation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why LSTM</a>
+<a href="dl-15.html#lstm-gates" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Three Gates</a>
+<a href="dl-15.html#gru" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">GRU</a>
+<a href="dl-15.html#lstm-vs-gru" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">LSTM vs GRU</a>
+<a href="dl-15.html#bidirectional-rnn" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Bidirectional RNN</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">16. Seq2Seq &amp; Encoder-Decoder <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-16.html#what-is-seq2seq" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">What Is Seq2Seq</a>
+<a href="dl-16.html#encoder-decoder" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Encoder-Decoder Architecture</a>
+<a href="dl-16.html#teacher-forcing" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Teacher Forcing</a>
+<a href="dl-16.html#bottleneck-problem" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Bottleneck Problem</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">17. Attention Mechanism <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-17.html#attention-bottleneck-recap" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Solving the Bottleneck</a>
+<a href="dl-17.html#how-attention-works" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">How Attention Works</a>
+<a href="dl-17.html#calculating-attention-weights" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Calculating Attention Weights</a>
+<a href="dl-17.html#self-attention-vs-cross-attention-preview" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Self vs Cross Attention</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">18. The Transformer Architecture <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-18.html#why-transformers" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why Transformers</a>
+<a href="dl-18.html#self-attention" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Self-Attention</a>
+<a href="dl-18.html#multi-head-attention" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Multi-Head Attention</a>
+<a href="dl-18.html#positional-encoding" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Positional Encoding</a>
+<a href="dl-18.html#transformer-architecture" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Full Architecture</a>
+<a href="dl-18.html#bert" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">BERT</a>
+<a href="dl-18.html#gpt" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">GPT</a>
+<a href="dl-18.html#terminology-hierarchy" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Transformer vs LLM vs GPT</a>
+</div>
+</details>
+
+</nav>
+</aside>
+
+
+  <main class="flex-1 md:ml-[280px] px-4 py-6 md:p-lg max-w-[1200px] mx-auto w-full min-w-0">
+    <nav aria-label="Breadcrumb" class="flex flex-wrap text-sm text-[var(--on-surface-variant)] mb-4"><a href="../index.html" class="hover:text-[var(--secondary)]">Home</a><span class="mx-2">/</span><a href="../index.html#courses" class="hover:text-[var(--secondary)]">DL Track</a><span class="mx-2">/</span><span class="text-[var(--on-background)]">10. Optimizers</span></nav>
+
+    <div class="space-y-xl">
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-3 py-1 mb-3">Source: 100 Days of Deep Learning</span>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">10. Optimizers &amp; Weight Initialization</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">From Momentum to Adam · why weights can't start equal · Xavier/He initialization · Batch Normalization · the EWMA math underneath it all</p>
+        </div>
+
+        <!-- WHY OPTIMIZERS MATTER -->
+        <section id="why-optimizers-matter" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Optimizers</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Why This Page Exists — Training Is an Optimization Problem</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Deep networks spend most of their training time in the deep layers — that's simply where the bulk of the parameters and computation live. Everything on this page is, in one way or another, about making that training process faster and more reliable. Four levers control that: how the weights are <strong class="text-[var(--on-background)]">initialized</strong>, whether <strong class="text-[var(--on-background)]">batch normalization</strong> keeps each layer's inputs well-behaved, which <strong class="text-[var(--on-background)]">activation function</strong> is used (already covered in the previous chapter), and which <strong class="text-[var(--on-background)]">optimizer</strong> actually performs the weight updates.</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">At its core, training a neural network is nothing more than an <strong class="text-[var(--on-background)]">optimization problem</strong>: minimize the loss between the actual and predicted output. Plain <strong class="text-[var(--on-background)]">Gradient Descent</strong> does this the obvious way — compute the gradient of the loss with respect to every weight, then nudge each weight a small step in the direction that reduces the loss:</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+            $$ w_{t+1} = w_t - \eta \, \nabla L(w_t) $$
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">This works, but plain gradient descent is <strong class="text-[var(--on-background)]">slow to converge</strong> to the global minimum. It only ever looks at the gradient right where it currently stands — it has no sense of "momentum" from where it's been, and it uses the exact same learning rate for every parameter regardless of how frequently or rarely that parameter's gradient shows up. The rest of this page is the historical sequence of optimizers invented to fix these weaknesses, one at a time, ending at Adam — the default almost everyone reaches for today.</p>
+        </section>
+
+        <!-- MOMENTUM -->
+        <section id="momentum" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Optimizer</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Momentum — Accelerating Through Consistent Gradient Directions</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">The idea behind Momentum came directly from that slowness problem: gradient descent is slow to converge because at every single step it starts its direction calculation from scratch, ignoring everything about the steps that came before. If several consecutive gradients all point in roughly the same direction, that's a strong signal the optimizer should be moving faster along that direction — and Momentum is exactly the mechanism that lets it do so.</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">The classic analogy is a <strong class="text-[var(--on-background)]">ball rolling downhill</strong>. A ball doesn't only respond to the slope directly beneath it right now — it carries velocity built up from the slope it has already rolled down. Momentum gives the optimizer that same kind of velocity: instead of updating weights using only the current gradient, it keeps a running, exponentially-weighted average of past gradients (called the "velocity" \(v_t\)) and uses that to drive the update.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+            $$ v_t = \beta v_{t-1} + \eta \, \nabla L(w_t) \qquad\qquad w_{t+1} = w_t - v_t $$
+          </div>
+          <p class="text-xs text-[var(--on-surface-variant)]">\(\beta\) (typically around 0.9) controls how much of the past velocity carries forward. When consecutive gradients agree in direction, they reinforce each other and the effective step size grows — this is precisely why Momentum converges noticeably faster than plain gradient descent along consistent slopes.</p>
+
+          <div class="border-l-4 border-[var(--error)] bg-[var(--error-container)]/10 p-md rounded-r-lg">
+            <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">The problem it introduces: oscillation.</strong> That same accumulated velocity is a double-edged sword. Near a minimum, the loss surface often curves — and a ball with too much built-up speed doesn't stop cleanly at the bottom of a valley; it overshoots, crosses to the other side, gets pulled back, overshoots again, and keeps bouncing back and forth across the minimum rather than settling into it. Momentum genuinely accelerates convergence, but it also introduces this <strong class="text-[var(--on-background)]">oscillation</strong> problem — repeatedly crossing over the minimum and coming back, rather than converging smoothly.</p>
+          </div>
+        </section>
+
+        <!-- NAG -->
+        <section id="nesterov-accelerated-gradient" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Optimizer</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">NAG — Nesterov Accelerated Gradient</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed"><strong class="text-[var(--on-background)]">Nesterov Accelerated Gradient (NAG)</strong> was invented specifically to fix Momentum's oscillation problem, by <strong class="text-[var(--on-background)]">damping</strong> it. The insight is subtle but powerful: rather than computing the gradient at the weights' current position and then applying the accumulated velocity, NAG first takes a "look-ahead" step using the existing velocity, and computes the gradient at that <em>projected future position</em> instead.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+            $$ v_t = \beta v_{t-1} + \eta \, \nabla L(w_t - \beta v_{t-1}) \qquad\qquad w_{t+1} = w_t - v_t $$
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">In effect, NAG asks "if I kept going with my current momentum, roughly where would I end up? What does the slope look like there?" — and reacts to <em>that</em> slope instead of the slope right underfoot. If the ball is about to overshoot past a minimum, this look-ahead gradient will already be pointing backward, correcting the velocity <em>before</em> the overshoot happens rather than after. That anticipatory correction is what damps the oscillation Momentum suffers from, giving NAG a smoother, more controlled path to convergence.</p>
+        </section>
+
+        <!-- ADAGRAD -->
+        <section id="adagrad" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Optimizer</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">AdaGrad — Adaptive Learning Rates for Sparse Data</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Momentum and NAG both still share one limitation: they apply the <em>same</em> learning rate \(\eta\) to every single parameter. That's a poor fit for <strong class="text-[var(--on-background)]">sparse data</strong> — datasets where some features show up constantly and others show up only rarely (a classic example is text data, where common words appear in nearly every example and rare words appear in only a handful). With a single shared learning rate, gradient descent and Momentum both end up moving mostly through the dense, frequently-seen features first, and only slowly, belatedly, through the sparse ones.</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed"><strong class="text-[var(--on-background)]">AdaGrad</strong> (Adaptive Gradient) was built to solve exactly this by giving every parameter its <strong class="text-[var(--on-background)]">own, individually adapted learning rate</strong>. It does this by keeping a running sum of the squares of every past gradient for that parameter, and dividing the learning rate by the square root of that sum:</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+            $$ G_t = G_{t-1} + \big(\nabla L(w_t)\big)^2 \qquad\qquad w_{t+1} = w_t - \frac{\eta}{\sqrt{G_t + \epsilon}} \, \nabla L(w_t) $$
+          </div>
+          <p class="text-xs text-[var(--on-surface-variant)]">\(\epsilon\) is a tiny constant added purely to avoid dividing by zero.</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Parameters that have received large, frequent gradients accumulate a large \(G_t\), which shrinks their effective learning rate — the optimizer takes smaller, more careful steps there since it's already updated that parameter a lot. Parameters tied to rare, sparse features accumulate a small \(G_t\), so their effective learning rate stays relatively large, letting them catch up faster. This is exactly what makes AdaGrad well suited to sparse data.</p>
+
+          <div class="border-l-4 border-[var(--error)] bg-[var(--error-container)]/10 p-md rounded-r-lg">
+            <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">The problem it introduces: the "missing minima" problem.</strong> \(G_t\) is a running <em>sum</em> that only ever grows — it never shrinks or resets. Over the course of long training, \(G_t\) keeps accumulating, which means the effective learning rate \(\eta / \sqrt{G_t+\epsilon}\) keeps <strong class="text-[var(--on-background)]">monotonically decaying</strong> toward zero. Eventually the steps become so microscopically small that the optimizer effectively stops learning altogether, even if it hasn't actually reached the minimum yet — it can get stuck short of the true minimum simply because its learning rate decayed away before it got there.</p>
+          </div>
+        </section>
+
+        <!-- RMSPROP -->
+        <section id="rmsprop" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Optimizer</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">RMSProp — Fixing AdaGrad's Ever-Shrinking Learning Rate</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed"><strong class="text-[var(--on-background)]">RMSProp</strong> (Root Mean Square Propagation) keeps AdaGrad's core idea — a per-parameter adaptive learning rate driven by squared gradients — but fixes the decay-to-zero problem with one small but crucial change: instead of an ever-growing <em>sum</em> of all past squared gradients, it keeps an <strong class="text-[var(--on-background)]">exponentially weighted moving average</strong> of them.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+            $$ S_t = \beta S_{t-1} + (1-\beta)\big(\nabla L(w_t)\big)^2 \qquad\qquad w_{t+1} = w_t - \frac{\eta}{\sqrt{S_t + \epsilon}} \, \nabla L(w_t) $$
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Because \(S_t\) is a moving <em>average</em> rather than a running sum, it doesn't just accumulate forever — old, stale gradient information naturally fades out over time (controlled by \(\beta\), typically ~0.9), while recent gradient behavior keeps dominating. That means the effective learning rate can go back up again if recent gradients shrink, instead of being permanently throttled by ancient history. This directly resolves AdaGrad's missing-minima problem while keeping the part that made AdaGrad useful in the first place — per-parameter adaptivity.</p>
+        </section>
+
+        <!-- ADAM -->
+        <section id="adam-optimizer" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Optimizer</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Adam — Adaptive Moment Estimation</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed"><strong class="text-[var(--on-background)]">Adam</strong> (short for <em>Adaptive Moment Estimation</em>) is, in one sentence, exactly what its name implies: it <strong class="text-[var(--on-background)]">combines the idea of Momentum with the idea of RMSProp</strong>. From Momentum it takes the running, exponentially-weighted average of the gradients themselves (giving it direction and acceleration). From RMSProp it takes the running average of the <em>squared</em> gradients (giving every parameter its own adaptive learning rate). Adam tracks both simultaneously:</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+            $$ m_t = \beta_1 m_{t-1} + (1-\beta_1)\nabla L(w_t) \qquad\qquad S_t = \beta_2 S_{t-1} + (1-\beta_2)\big(\nabla L(w_t)\big)^2 $$
+            $$ w_{t+1} = w_t - \frac{\eta}{\sqrt{S_t+\epsilon}}\, m_t $$
+          </div>
+          <p class="text-xs text-[var(--on-surface-variant)]">\(m_t\) is the Momentum-style running average of the gradient itself (the "first moment"); \(S_t\) is the RMSProp-style running average of the squared gradient (the "second moment") — hence "adaptive <em>moment</em> estimation." In practice, both are also bias-corrected in early training steps, since they start at zero and would otherwise be biased toward zero at the beginning.</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">The result is an optimizer that accelerates smoothly along consistent gradient directions (Momentum's contribution) while automatically adapting each parameter's step size based on how much that parameter's gradient has recently varied (RMSProp's contribution). Adam is by a wide margin the most widely used optimizer across ANNs, CNNs, and RNNs alike — it is genuinely powerful across a huge range of architectures and problems.</p>
+
+          <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-md rounded-r-lg">
+            <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">The practical takeaway.</strong> In most cases, Adam is fine — it's a good default starting point. Unless you have a specific reason to reach for something else, start with Adam and only investigate alternatives if training doesn't behave the way you'd like.</p>
+          </div>
+
+          <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead>
+                <tr class="bg-[var(--surface-container-high)]">
+                  <th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Optimizer</th>
+                  <th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Fixes</th>
+                  <th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">But introduces</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Gradient Descent</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">— (baseline)</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Slow convergence</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Momentum</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Slow convergence, via velocity</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Oscillation near the minimum</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">NAG</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Oscillation, via look-ahead gradient</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Still one shared learning rate for all params</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">AdaGrad</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Sparse-data / shared-learning-rate problem</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Learning rate decays to ~0 ("missing minima")</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">RMSProp</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">AdaGrad's decay-to-zero problem</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">No explicit momentum/acceleration</td></tr>
+                <tr><td class="p-2.5 font-semibold">Adam</td><td class="p-2.5">Combines Momentum + RMSProp</td><td class="p-2.5">— the default go-to today</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- EWMA -->
+        <section id="exponentially-weighted-moving-average" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Foundations</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Exponentially Weighted Moving Average (EWMA) — The Math Underneath It All</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Every optimizer above — Momentum's velocity, AdaGrad and RMSProp's running squared-gradient term, Adam's two moment estimates — is really the same underlying mathematical trick applied to a different quantity: the <strong class="text-[var(--on-background)]">Exponentially Weighted Moving Average</strong>.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+            $$ v_t = \beta \, v_{t-1} + (1-\beta)\,\theta_t $$
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Here \(\theta_t\) is whatever raw, noisy sequence of values you're observing over time (a gradient, a squared gradient, a temperature reading — anything), and \(v_t\) is the smoothed running average of it. At every step, the new average is a blend of the previous average and the newest observation, weighted by \(\beta\). If you unroll the recursion, \(v_t\) turns out to be a weighted sum of <em>every</em> past observation, with the weights decaying exponentially the further back in time you go — the most recent observations count the most, older ones fade out but are never entirely forgotten (hence "exponentially weighted").</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">This is exactly why EWMA is so useful for smoothing a noisy sequence: a single raw observation \(\theta_t\) can be spiky and unreliable, but a running exponential average of many of them is far more stable, while still tracking genuine trends fairly quickly (unlike a plain, unweighted average of the entire history, which would react to new trends far too sluggishly). \(\beta\) controls that trade-off directly — closer to 1 means heavier smoothing and slower reaction to change; closer to 0 means less smoothing and faster reaction. This single idea, applied to gradients (Momentum, Adam's \(m_t\)) and to squared gradients (AdaGrad, RMSProp, Adam's \(S_t\)), is the mathematical backbone of every modern optimizer covered on this page.</p>
+        </section>
+
+        <!-- WEIGHT INITIALIZATION -->
+        <section id="weight-initialization" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Initialization</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Weight Initialization — Why the Starting Point Matters</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Before any optimizer can even begin working, the network's weights need some starting values. It's tempting to think the starting values shouldn't matter much — gradient descent will fix them eventually, right? In practice, a bad starting point can prevent the network from learning at all, or slow it down enormously.</p>
+
+          <div class="border-l-4 border-[var(--error)] bg-[var(--error-container)]/10 p-md rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--error)] mb-1">The symmetry breaking problem</h4>
+            <p class="text-sm text-[var(--on-surface)]">Suppose every weight in a layer is initialized to the exact same value — say, all zeros, or all 0.5. Every neuron in that layer receives the same inputs and computes the exact same weighted sum, so every neuron produces the exact same output. During backpropagation, every one of those neurons then receives the exact same gradient, and gets updated by the exact same amount. No matter how many training steps pass, those neurons stay <em>identical</em> to each other forever — the layer behaves as if it only had a single neuron, no matter how many were actually declared. This is the <strong class="text-[var(--on-background)]">symmetry breaking problem</strong>: identical initial weights create identical neurons that never differentiate, wasting all of the layer's extra capacity. The fix is to initialize weights <strong class="text-[var(--on-background)]">randomly</strong> — different starting values break the symmetry, so different neurons receive different gradients and are free to specialize in learning different patterns.</p>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Random initialization solves symmetry breaking, but it raises a new question: random <em>how</em>? If the initial weights are too large, activations and gradients can explode as they pass through many layers; if too small, they can vanish. The right scale for the randomness turns out to depend on which activation function the layer uses — which is exactly what Xavier/Glorot and He initialization address.</p>
+
+          <div class="grid gap-3">
+            <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-md rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">Xavier / Glorot Initialization — for Sigmoid &amp; Tanh</h4>
+              <p class="text-sm text-[var(--on-surface)]">Designed for layers using <strong class="text-[var(--on-background)]">sigmoid or tanh</strong> activations. The intuition: sigmoid and tanh both saturate for inputs far from zero, so the goal is to keep the variance of activations (and the variance of gradients flowing backward) roughly constant as they pass from layer to layer — neither shrinking toward zero nor blowing up. Xavier initialization achieves this by drawing each weight from a distribution scaled by the number of input and output connections of that layer:</p>
+              <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-3 overflow-x-auto text-center text-sm mt-2">$$ W \sim \mathcal{N}\!\left(0,\ \frac{2}{n_{in} + n_{out}}\right) $$</div>
+              <p class="text-sm text-[var(--on-surface)] mt-1">Larger layers (more input/output connections) get smaller individual weights, which keeps the total variance of the weighted sum stable regardless of layer width — exactly the property sigmoid/tanh need to avoid saturating right from the start of training.</p>
+            </div>
+            <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-md rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">He Initialization — for ReLU</h4>
+              <p class="text-sm text-[var(--on-surface)]">Designed for layers using <strong class="text-[var(--on-background)]">ReLU</strong> (and its variants). ReLU zeroes out roughly half of its inputs (everything negative), which effectively halves the variance passing through the layer compared to a symmetric activation like tanh. He initialization compensates for exactly that by scaling the variance up:</p>
+              <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-3 overflow-x-auto text-center text-sm mt-2">$$ W \sim \mathcal{N}\!\left(0,\ \frac{2}{n_{in}}\right) $$</div>
+              <p class="text-sm text-[var(--on-surface)] mt-1">Using only \(n_{in}\) (rather than the average of \(n_{in}\) and \(n_{out}\)) and doubling the numerator relative to a naive scaling accounts for ReLU zeroing out about half of its activations — without this adjustment, variance would shrink layer after layer in a deep ReLU network, reproducing a milder version of the vanishing gradient problem.</p>
+            </div>
+          </div>
+
+          <p class="text-sm text-[var(--on-surface-variant)]">Both frameworks let you set these directly — e.g. in Keras, <code class="text-[var(--secondary)]">kernel_initializer='glorot_uniform'</code> (Xavier, and Keras's default for Dense layers) or <code class="text-[var(--secondary)]">kernel_initializer='he_normal'</code> for ReLU-activated layers.</p>
+        </section>
+
+        <!-- BATCH NORMALIZATION -->
+        <section id="batch-normalization" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Batch Norm</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Batch Normalization</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Good weight initialization keeps activations well-scaled at the <em>start</em> of training, but as training proceeds and weights update, the distribution of each layer's inputs can still drift — a layer that was receiving nicely-centered, moderate-magnitude inputs early on can end up seeing inputs that are much larger, much smaller, or shifted off-center later. <strong class="text-[var(--on-background)]">Batch Normalization</strong> fixes this by explicitly re-normalizing every layer's inputs, at every mini-batch, throughout training — not just at initialization.</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">For each mini-batch, Batch Norm normalizes a layer's inputs to have <strong class="text-[var(--on-background)]">zero mean and unit variance</strong> across that batch:</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+            $$ \hat{x}_i = \frac{x_i - \mu_{\text{batch}}}{\sqrt{\sigma^2_{\text{batch}} + \epsilon}} \qquad\qquad y_i = \gamma \, \hat{x}_i + \beta $$
+          </div>
+          <p class="text-xs text-[var(--on-surface-variant)]">\(\mu_{\text{batch}}\) and \(\sigma^2_{\text{batch}}\) are the mean and variance computed across the current mini-batch. Critically, normalizing to exactly zero mean/unit variance would be too rigid — it would prevent the network from ever expressing a different, potentially better-suited distribution. So Batch Norm adds two <strong class="text-[var(--on-background)]">learnable</strong> parameters per layer, \(\gamma\) (scale) and \(\beta\) (shift), letting the network learn to undo or adjust the normalization if that turns out to work better — the network isn't stuck at zero mean/unit variance forever, it just starts there and can move if the data calls for it.</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">This speeds up and stabilizes training for a few connected reasons. It keeps every layer's inputs in a consistent, moderate range throughout training, rather than letting that range drift unpredictably as earlier layers update — a phenomenon often called <em>internal covariate shift</em>. That stability directly counters the saturating-activation problem covered on the previous page: sigmoid/tanh neurons are far less likely to sit in their flat, near-zero-gradient regions when their inputs are kept re-centered near zero every batch, which in turn tempers the vanishing gradient problem from chapter 7 rather than needing the network to "get lucky" with its raw activations. In practice, Batch Norm allows noticeably higher learning rates and reduces sensitivity to the exact choice of initialization, since the layer inputs are actively kept well-behaved instead of relying solely on a good starting point.</p>
+        </section>
+
+        <!-- KERAS TUNER -->
+        <section id="keras-tuner" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Tooling</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">A Practical Note — Keras Tuner</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Everything on this page — which optimizer, which \(\beta\) values, which initialization scheme, whether to use Batch Norm, how many layers, how many neurons per layer — is a hyperparameter, and hand-tuning all of them by trial and error doesn't scale well. <strong class="text-[var(--on-background)]">Keras Tuner</strong> is a practical hyperparameter search library that automates this: you describe a range of choices for each hyperparameter (e.g. "try Adam or RMSProp," "try 32 to 512 units," "try a learning rate between 1e-4 and 1e-2"), and it systematically searches that space — via random search, Hyperband, or Bayesian optimization — to find the combination that performs best on a validation set, rather than requiring you to guess and check by hand.</p>
+
+          <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+            <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+            <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>import keras_tuner as kt
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.models import Sequential
+
+def build_model(hp):
+    model = Sequential()
+    model.add(Dense(
+        units=hp.Int('units', min_value=32, max_value=256, step=32),
+        activation='relu',
+        kernel_initializer='he_normal',
+        input_shape=(20,)
+    ))
+    model.add(Dense(1, activation='sigmoid'))
+    model.compile(
+        optimizer=hp.Choice('optimizer', ['adam', 'rmsprop']),
+        loss='binary_crossentropy',
+        metrics=['accuracy']
+    )
+    return model
+
+tuner = kt.RandomSearch(build_model, objective='val_accuracy', max_trials=10)
+tuner.search(X_train, y_train, epochs=10, validation_data=(X_val, y_val))</code></pre>
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on Optimizers &amp; Weight Initialization. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-dl-10">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. What specific problem does Momentum introduce that NAG (Nesterov Accelerated Gradient) is designed to fix?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Momentum is too slow to converge at all</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Momentum can't handle sparse data</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Accumulated velocity causes oscillation — the optimizer overshoots the minimum and bounces back and forth across it</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Momentum's learning rate decays to zero over time</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Momentum's built-up velocity causes it to overshoot near the minimum, oscillating back and forth. NAG fixes this specifically, by computing the gradient at a "look-ahead" position and damping the oscillation before it happens. (D describes AdaGrad's problem, not Momentum's.)
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. Why does AdaGrad eventually stop learning effectively, even before reaching the true minimum (the "missing minima" problem)?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. It uses a single shared learning rate for all parameters</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Its per-parameter denominator is a running sum of squared gradients that only ever grows, so the effective learning rate monotonically decays toward zero</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. It has no mechanism for computing gradients on sparse features</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It oscillates around the minimum like plain Momentum does</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> AdaGrad accumulates the sum of squared gradients (Gt) forever without any decay. As Gt grows, η/√Gt shrinks toward zero, so updates become vanishingly small — RMSProp fixes this by replacing the running sum with an exponentially weighted moving average that lets old gradient information fade out.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. Adam is described as combining two prior ideas. Which two, and what does each contribute?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. AdaGrad (adaptive rate) and NAG (look-ahead gradient)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Xavier initialization and Batch Normalization</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Plain Gradient Descent and AdaGrad only</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Momentum (a running average of gradients, for direction/acceleration) and RMSProp (a running average of squared gradients, for per-parameter adaptive rates)</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Adam = Adaptive Moment Estimation. It tracks mt (Momentum-style EWMA of the gradient) and St (RMSProp-style EWMA of the squared gradient), combining both moments into one update rule.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. A layer's weights are all initialized to exactly 0.5. What goes wrong during training, and why?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Every neuron in the layer computes identical outputs and receives identical gradients, so they stay identical forever — the symmetry breaking problem, wasting the layer's capacity</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Nothing — gradient descent fixes any starting point equally well</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. The learning rate decays to zero</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. The activation function saturates immediately</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Identical weights make every neuron compute the same output and receive the same gradient update, so they never differentiate — the layer effectively behaves as a single neuron no matter how many are declared. Random initialization breaks this symmetry.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. Why does He initialization use a larger variance (2/n_in) than Xavier/Glorot initialization, specifically for ReLU-activated layers?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. ReLU requires larger weights to compute exponentials efficiently</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. It's an arbitrary convention with no mathematical justification</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. ReLU zeroes out roughly half of its inputs (all negative values), which halves the variance passing through — He initialization compensates by scaling variance up to keep it stable across layers</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Xavier initialization cannot be computed for layers with many neurons</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> ReLU's negative-side zeroing effectively halves output variance relative to a symmetric activation like tanh. He initialization scales weight variance up (2/n_in) specifically to offset that halving, keeping variance roughly stable layer to layer in deep ReLU networks.
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--secondary)] text-[var(--on-secondary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--secondary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="dl-11.html" class="bg-[var(--secondary)] text-[var(--on-secondary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">Next: Convolutional Neural Networks — Fundamentals</a>
+        </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="../assets/app.js"></script>
+
+</body>
+</html>

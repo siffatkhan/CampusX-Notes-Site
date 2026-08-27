@@ -1,0 +1,281 @@
+        <div>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">28. Support Vector Machines (SVM)</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Maximum-margin hyperplanes · support vectors · hard vs soft margin · the kernel trick</p>
+        </div>
+
+        <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm text-sm text-[var(--on-surface-variant)]">
+          <strong class="text-[var(--on-background)]">Extended notes</strong> — this topic isn't covered in the CampusX playlist notes this site is based on. Written from scratch to continue the curriculum, in the same style as the rest of the site.
+        </div>
+
+        <p class="text-[var(--on-surface)] leading-relaxed">Logistic regression finds <em>a</em> line that separates two classes. SVM asks a sharper question: among all the lines that separate the classes, which one is <strong class="text-[var(--on-background)]">safest</strong> — the one with the most breathing room on either side? That single idea — maximize the margin, not just achieve separation — is the whole of SVM's geometric intuition, and it turns out to generalize into one of the most powerful classical classifiers ever devised.</p>
+
+        <!-- GEOMETRIC INTUITION -->
+        <section id="svm-geometric-intuition" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Classification</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Geometric Intuition</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Imagine two clusters of points, cleanly separable by a straight line. There are infinitely many lines that would separate them perfectly — a line can wobble quite a bit and still keep every point on the correct side. SVM picks the one specific line that sits <strong class="text-[var(--on-background)]">as far as possible from both classes at once</strong> — maximizing the width of the empty "street" between them. This street is called the <strong class="text-[var(--on-background)]">margin</strong>, and the boundary line running down its middle is the <strong class="text-[var(--on-background)]">maximum-margin hyperplane</strong>.</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">The points that end up sitting exactly on the edges of that street — the ones closest to the boundary, "holding up" the margin on either side — are called <strong class="text-[var(--on-background)]">support vectors</strong>. They are the only points that matter to the final model: if you deleted every other training point and re-fit, the boundary wouldn't move at all, because it was never determined by the bulk of the data — only by the handful of closest, most difficult-to-separate points on each side.</p>
+
+          <div class="border-l-4 border-[var(--outline)] bg-[var(--surface-container-high)]/40 p-sm rounded-r-lg text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Illustrative aid</strong> — generated for this site.</div>
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md flex justify-center">
+            <svg viewBox="0 0 480 340" class="w-full max-w-[480px]" role="img" aria-label="Maximum margin hyperplane with support vectors highlighted, separating two classes">
+              <!-- margin band -->
+              <g transform="rotate(-18 240 170)">
+                <rect x="60" y="130" width="360" height="80" fill="var(--primary-container)" fill-opacity="0.10"/>
+                <line x1="60" y1="130" x2="420" y2="130" stroke="var(--primary)" stroke-width="1.5" stroke-dasharray="5 4"/>
+                <line x1="60" y1="210" x2="420" y2="210" stroke="var(--primary)" stroke-width="1.5" stroke-dasharray="5 4"/>
+                <line x1="60" y1="170" x2="420" y2="170" stroke="var(--primary)" stroke-width="2.5"/>
+                <!-- margin width indicator -->
+                <line x1="90" y1="130" x2="90" y2="210" stroke="var(--on-surface-variant)" stroke-width="1"/>
+                <text x="98" y="174" font-size="10" fill="var(--on-surface-variant)">margin</text>
+              </g>
+              <!-- class A points (circles, above/left) -->
+              <circle cx="110" cy="70" r="7" fill="var(--secondary)"/>
+              <circle cx="160" cy="50" r="7" fill="var(--secondary)"/>
+              <circle cx="90" cy="120" r="7" fill="var(--secondary)"/>
+              <circle cx="200" cy="90" r="7" fill="var(--secondary)"/>
+              <!-- class A support vector (on the margin edge) -->
+              <circle cx="178" cy="122" r="8" fill="var(--secondary)" stroke="var(--on-background)" stroke-width="2"/>
+
+              <!-- class B points (squares, below/right) -->
+              <rect x="298" y="248" width="14" height="14" fill="var(--tertiary)"/>
+              <rect x="350" y="270" width="14" height="14" fill="var(--tertiary)"/>
+              <rect x="240" y="285" width="14" height="14" fill="var(--tertiary)"/>
+              <rect x="390" y="230" width="14" height="14" fill="var(--tertiary)"/>
+              <!-- class B support vectors (on the margin edge) -->
+              <rect x="255" y="212" width="16" height="16" fill="var(--tertiary)" stroke="var(--on-background)" stroke-width="2"/>
+              <rect x="330" y="225" width="16" height="16" fill="var(--tertiary)" stroke="var(--on-background)" stroke-width="2"/>
+
+              <!-- labels -->
+              <text x="60" y="30" font-size="12" fill="var(--secondary)" class="font-label-caps">CLASS A</text>
+              <text x="360" y="320" font-size="12" fill="var(--tertiary)" class="font-label-caps">CLASS B</text>
+              <text x="240" y="20" text-anchor="middle" font-size="11" fill="var(--on-surface-variant)">highlighted points (dark outline) = support vectors — closest points on each side</text>
+            </svg>
+          </div>
+
+          <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">Why maximize the margin at all?</h4>
+            <p class="text-sm text-[var(--on-surface)]">A wide margin means the boundary sits with a comfortable buffer between the two classes — new, slightly-off-distribution test points are less likely to fall on the wrong side. A boundary squeezed right up against the training points has essentially no room for error on new data. This is a generalization argument, not just an aesthetic one.</p>
+          </div>
+        </section>
+
+        <!-- THE MATH -->
+        <section id="svm-math" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Classification</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">The Math — Margin Width and the Optimization Objective</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Write the separating hyperplane as \(w^\top x + b = 0\), same linear form as logistic regression's decision boundary. The two dashed margin lines in the diagram above are \(w^\top x + b = 1\) and \(w^\top x + b = -1\) — offset by exactly 1 in either direction. Some geometry (the perpendicular distance between two parallel hyperplanes) shows the width of the street between them is:</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+            $$ \text{margin width} = \frac{2}{\|w\|} $$
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">This is the key insight that turns "maximize the margin" into a solvable optimization problem: margin width is <em>inversely</em> proportional to \(\|w\|\) (the length of the weight vector). Maximizing \( \frac{2}{\|w\|} \) is the same problem as minimizing \(\|w\|\) — or, for mathematical convenience (it removes an awkward square root during optimization), minimizing \(\|w\|^2\) instead.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+            $$ \min_{w,b} \; \|w\|^2 \quad \text{subject to} \quad y_i(w^\top x_i + b) \geq 1 \;\; \text{for every training point } i $$
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Read the constraint carefully: \(y_i \in \{-1, +1\}\) is the true label, and \(w^\top x_i + b\) is the raw score for point \(i\). If a point is correctly classified with score on the correct side of its margin line, \(y_i(w^\top x_i + b)\) comes out \(\geq 1\). So the constraint says, in plain English: <em>every single training point must be correctly classified, and moreover must sit at or beyond its margin line — nothing is allowed to creep inside the street.</em> Combined with the objective, the full problem reads: <strong class="text-[var(--on-background)]">make the margin as wide as possible, without letting any point violate it.</strong></p>
+
+          <div class="border-l-4 border-[var(--outline)] bg-[var(--surface-container-high)]/40 p-sm rounded-r-lg text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Note.</strong> The full derivation solves this via Lagrange multipliers, producing a "dual" problem expressed entirely in terms of dot products between training points — which is precisely what makes the kernel trick (below) possible. That derivation is out of scope here; what matters is the objective above and what the dual form enables.</div>
+        </section>
+
+        <!-- HARD VS SOFT MARGIN -->
+        <section id="hard-soft-margin" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Classification</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Hard Margin vs Soft Margin</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">The formulation above — every point must sit strictly outside the margin, no exceptions — is called a <strong class="text-[var(--on-background)]">hard margin</strong>. It only works when the data is perfectly linearly separable. Two problems make this fragile in the real world: real data almost never separates perfectly (there's noise, overlap, mislabeled points), and even when it technically does, a single outlier sitting close to the other class can force the margin to shrink dramatically or make the problem unsolvable entirely — one weird point ruins everything.</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">The fix is a <strong class="text-[var(--on-background)]">soft margin</strong>: allow some points to violate the margin (or even end up on the wrong side entirely), but add a penalty for doing so. The optimization becomes a trade-off between two competing goals — wide margin vs. few/small violations — controlled by a hyperparameter, <code class="text-[var(--primary)]">C</code>.</p>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">High C</h4>
+              <p class="text-sm text-[var(--on-surface)]">Misclassifications are heavily penalized. The model tries hard to classify every training point correctly, even if that means a narrower margin that hugs the data tightly. Behaves close to a hard margin. Risk: overfitting to noise/outliers, high variance.</p>
+            </div>
+            <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--tertiary)] mb-1">Low C</h4>
+              <p class="text-sm text-[var(--on-surface)]">Misclassifications are cheap. The model prioritizes a wide, smooth margin and is willing to tolerate several points on the wrong side of it (even a few misclassifications) to get there. Risk: underfitting if C is too small.</p>
+            </div>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">This is, again, exactly the bias-variance dial from Section 21 — C for SVM plays the same role as C did for logistic regression's regularization in Section 25 (unsurprisingly: it's tuned the same way, via cross-validation over a range of values, typically on a log scale like [0.01, 0.1, 1, 10, 100]).</p>
+        </section>
+
+        <!-- KERNEL TRICK -->
+        <section id="kernel-trick" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Classification</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">The Kernel Trick — Geometric Intuition &amp; Code</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Everything above assumes the data is separable by a straight line (or flat hyperplane). Real data frequently isn't — the classic example is one class forming a disc, completely surrounded by a ring of the other class (the same dataset used in Section 25's polynomial features example). No straight line in 2D separates a disc from the ring around it.</p>
+
+          <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">The "lift it into 3D" intuition</h4>
+            <p class="text-sm text-[var(--on-surface)]">Picture the same disc-and-ring data, but now imagine lifting every point upward by an amount proportional to its distance from the center — so the central disc points barely rise, while the ring points (farther from center) rise a lot. Viewed in this new 3D space (x, y, height), the disc points now form a low cluster and the ring points form a raised cluster above them — and a single <strong class="text-[var(--on-background)]">flat plane</strong> slid in between separates them perfectly. Flatten that plane back down into the original 2D view, and it appears as a <strong class="text-[var(--on-background)]">circle</strong> — a decision boundary a straight line could never draw, achieved by a straight (flat) boundary in a higher-dimensional space.</p>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">This is precisely Section 25's polynomial-features move, generalized. The kernel trick's genius is a computational shortcut: recall from "The Math" above that the SVM's dual optimization problem only ever needs the <em>dot products</em> between pairs of points, never the raw coordinates directly. A <strong class="text-[var(--on-background)]">kernel function</strong> \(K(x_i, x_j)\) computes what the dot product <em>would be</em> if you had transformed both points into some higher-dimensional space first — without ever actually performing that transformation or even knowing what that space looks like. You get all the benefit of the higher-dimensional separating hyperplane, at the computational cost of working in the original, low-dimensional space.</p>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Common kernels</h3>
+            <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Kernel</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Boundary shape</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">When to use</th></tr></thead>
+                <tbody>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">linear</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Straight line / flat hyperplane</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Data is already (roughly) linearly separable; also the fastest, and preferred for very high-dimensional data (e.g. text) where extra curvature rarely helps</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">poly</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Polynomial curves</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Moderate, structured non-linearity; degree hyperparameter controls curve flexibility</td></tr>
+                  <tr><td class="p-2.5 font-semibold">rbf (Radial Basis Function / Gaussian)</td><td class="p-2.5">Smooth, arbitrarily flexible closed curves</td><td class="p-2.5">The default general-purpose choice for non-linear data — including the disc-in-a-ring case</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">RBF's <code class="text-[var(--primary)]">gamma</code> hyperparameter</h3>
+            <p class="text-[var(--on-surface)] leading-relaxed">The RBF kernel measures similarity between two points as a function of the distance between them, decaying smoothly to zero as they get farther apart. <code class="text-[var(--primary)]">gamma</code> controls how quickly that similarity decays — equivalently, how much "reach" a single training point has.</p>
+            <div class="grid sm:grid-cols-2 gap-3">
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">Low gamma</strong> — wide-reaching influence per point, smoother/simpler boundary. Too low → underfitting.
+              </div>
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">High gamma</strong> — each point's influence shrinks to a tight neighborhood around itself, letting the boundary wrap tightly around individual points. Too high → overfitting (boundary that memorizes training noise, similar in spirit to KNN with a very small K).
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Code — kernel choice with sklearn's SVC</h3>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from sklearn.svm import SVC
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import make_pipeline
+from sklearn.datasets import make_circles
+
+X, y = make_circles(n_samples=500, noise=0.05, factor=0.4, random_state=42)
+
+# a linear kernel cannot separate a disc from a surrounding ring
+linear_model = make_pipeline(StandardScaler(), SVC(kernel='linear', C=1.0))
+linear_model.fit(X, y)
+print("linear kernel accuracy:", linear_model.score(X, y))   # ~50%, no better than guessing
+
+# RBF kernel implicitly lifts the data into a space where it IS linearly
+# separable, without ever explicitly computing that transformation
+rbf_model = make_pipeline(
+    StandardScaler(),
+    SVC(kernel='rbf', C=1.0, gamma='scale')   # 'scale' = sensible default, 1/(n_features * X.var())
+)
+rbf_model.fit(X, y)
+print("rbf kernel accuracy:", rbf_model.score(X, y))   # near-perfect
+
+# tune both C and gamma jointly — they interact
+from sklearn.model_selection import GridSearchCV
+param_grid = {'svc__C': [0.1, 1, 10, 100], 'svc__gamma': [0.001, 0.01, 0.1, 1]}
+grid = GridSearchCV(rbf_model, param_grid, cv=5)
+grid.fit(X, y)
+print(grid.best_params_)</code></pre>
+            </div>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm text-sm text-[var(--on-surface)]">
+            <strong class="text-[var(--on-background)]">SVM for regression.</strong> The same margin idea flips into <strong class="text-[var(--on-background)]">SVR (Support Vector Regression)</strong>: instead of maximizing a margin that keeps classes apart, SVR fits a "tube" of width \(\epsilon\) around the regression line and only penalizes points that fall <em>outside</em> that tube — points inside are considered "close enough" and cost nothing. Same kernel trick, same C, same underlying machinery — sklearn exposes it as <code class="text-[var(--primary)]">sklearn.svm.SVR</code>.
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on SVM. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-section-28">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. What defines a "support vector"?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Any training point, since all points equally determine the boundary</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. The point furthest from the decision boundary in each class</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. The closest point(s) to the decision boundary on each side — the ones that sit exactly on (or violate) the margin and effectively "hold it up"</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Any misclassified point</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Support vectors are the points closest to the boundary — the hardest to classify — and are the only points that actually determine where the maximum-margin hyperplane sits. Removing any non-support-vector point and re-fitting leaves the boundary unchanged.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. Margin width is 2/||w||. If training pushes ||w|| to be larger, what happens to the margin, and what is the SVM objective doing about it?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. The margin widens; the objective tries to maximize ||w||</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. The margin narrows; the objective minimizes ||w||^2, i.e. actively avoids large ||w|| in order to keep the margin as wide as possible</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. ||w|| has no relationship to margin width</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. The margin narrows, but this has no effect on the optimization</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Margin width is inversely proportional to ||w||, so a bigger ||w|| means a narrower margin. That's exactly why the objective minimizes ||w||^2 subject to the classification constraints — minimizing ||w|| is mathematically identical to maximizing the margin 2/||w||.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. Your training data has one clear outlier sitting deep inside the opposite class's cluster. With a hard margin SVM, what happens?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. The outlier is automatically ignored</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Nothing changes, hard margin SVMs are robust to outliers by design</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Gamma automatically adjusts to compensate</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. No feasible separating hyperplane may exist at all (or the margin becomes absurdly narrow), since a hard margin requires perfect separability with zero tolerance for violations</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Hard margin requires every point to satisfy the margin constraint with zero exceptions. A single deeply-embedded outlier can make the constraints infeasible, or force an extremely narrow margin around it — exactly the fragility that motivates the soft margin's tolerance for some violations.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. What computational shortcut does the kernel trick actually exploit?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. The SVM's dual optimization only requires dot products between points; a kernel function computes the dot product as if points had been transformed into a higher-dimensional space, without ever performing that transformation explicitly</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. It reduces the number of training points needed</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. It converts the classification problem into a regression problem</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It removes the need for a margin entirely</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> The dual SVM formulation depends on the data only through pairwise dot products. Kernel functions substitute in the dot product that would result from an implicit, often much higher-dimensional, feature transformation — getting the benefit of that transformation at the cost of computing in the original space.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. You set gamma extremely high on an RBF-kernel SVC and observe near-perfect training accuracy but poor test accuracy. What's the most likely explanation?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Gamma has no effect on model complexity</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. The kernel choice must be wrong, not the gamma value</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. High gamma makes each point's influence very localized, letting the boundary wrap tightly around individual training points — classic overfitting/high variance</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. This indicates underfitting and gamma should be increased further</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> High gamma shrinks each point's zone of influence in the RBF kernel, allowing the decision boundary to curve tightly around individual points — memorizing the training set (high variance) rather than learning a generalizable shape. Lowering gamma (or C) would counteract this.
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--primary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="section-29.html" class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">Next: Decision Trees</a>
+        </div>

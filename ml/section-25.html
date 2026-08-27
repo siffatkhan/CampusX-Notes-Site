@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>25. Logistic Regression — Advanced — Sifat Notes</title>
+
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..800&family=Inter:ital,opsz,wght@0,14..32,400..700;1,14..32,400..700&family=JetBrains+Mono:wght@400..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script src="../assets/tailwind-config.js"></script>
+<link rel="stylesheet" href="../assets/theme.css">
+</head>
+<body class="antialiased min-h-screen font-body-md">
+
+<header class="bg-[var(--surface)] border-b border-[var(--outline-variant)] sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-4 md:px-lg py-2.5 md:py-sm max-w-[1200px] mx-auto">
+<a href="../index.html" class="flex items-center gap-2.5 md:gap-3 group min-w-0" title="Back to home">
+<div class="w-9 h-9 shrink-0 rounded-md bg-[var(--primary)] text-[var(--on-primary)] flex items-center justify-center font-h3 font-bold text-sm group-hover:opacity-85 transition-opacity">SN</div>
+<div class="min-w-0">
+<div class="font-h3 text-base md:text-lg font-semibold text-[var(--on-background)] leading-none truncate">Sifat Notes</div>
+<div class="hidden sm:block text-[11px] text-[var(--on-surface-variant)] mt-0.5 truncate">from CampusX's playlists</div>
+</div>
+</a>
+<nav class="hidden md:flex items-center gap-6 text-sm shrink-0">
+<a class="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors" href="../index.html">Home</a>
+<a class="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors" href="../index.html#courses">Courses</a>
+</nav>
+<div class="flex items-center gap-2 md:gap-3 shrink-0">
+<button id="mobileMenuBtn" class="md:hidden border border-[var(--outline-variant)] rounded-md p-1.5 text-[var(--on-background)] flex items-center justify-center" onclick="toggleSidebar()" aria-label="Toggle navigation">
+<span class="material-symbols-outlined text-[20px]">menu</span>
+</button>
+<button class="flex items-center gap-1.5 bg-[var(--surface-container)] border border-[var(--outline-variant)] text-[var(--on-background)] px-2.5 md:px-3 py-1.5 rounded-full text-xs font-label-caps hover:border-[var(--primary)] transition-colors" onclick="toggleTheme()" data-theme-btn>
+<span class="material-symbols-outlined text-[16px]" data-theme-icon>light_mode</span>
+<span data-theme-label class="hidden sm:inline">Light</span>
+</button>
+</div>
+</div>
+</header>
+
+
+<div class="flex flex-1">
+<div id="sidebarBackdrop" class="hidden fixed inset-0 bg-black/50 z-50 md:hidden" onclick="toggleSidebar()"></div>
+<aside id="sidebarSlot" class="flex flex-col bg-[var(--surface-container-low)] border-r border-[var(--outline-variant)] fixed left-0 top-[65px] h-[calc(100vh-65px)] w-[280px] py-md overflow-y-auto">
+<div class="px-lg mb-md">
+<input id="searchBox" placeholder="Search topics…" class="w-full bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-md px-3 py-2 text-sm text-[var(--on-background)] placeholder:text-[var(--on-surface-variant)] focus:outline-none focus:border-[var(--primary)]">
+</div>
+
+<nav class="toc flex-1 px-2 space-y-1 text-sm" id="tocNav">
+
+<div class="px-3 pt-3 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Foundations</div>
+
+<details open>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--primary)] font-semibold bg-[var(--surface-container-high)]/50">1. Introduction to ML <span class="chev text-[10px]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-01.html#day-1" class="flex px-3 py-1.5 rounded-md text-[var(--primary)] font-semibold bg-[var(--surface-container-high)]/40">Day 1: Definition</a>
+<a href="section-01.html#day-2" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 2: AI vs ML vs Deep Learning</a>
+<a href="section-01.html#day-3" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 3: Types of Machine Learning</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">2. Learning Styles <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-02.html#day-4" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 4: Batch Learning vs Online Learning (Machine Learning Training Styles)</a>
+<a href="section-02.html#day-5" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 5: Batch Learning vs Online Learning</a>
+<a href="section-02.html#day-6" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 6: Instance-Based Learning vs Model-Based Learning</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">3. ML Landscape <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-03.html#day-7" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 7: Challenges in Machine Learning (ML)</a>
+<a href="section-03.html#day-8" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 8: Applications of Machine Learning</a>
+<a href="section-03.html#day-9" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 9: ML Development Life Cycle (ML DLC)</a>
+<a href="section-03.html#day-10" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 10: Data-Related Job Roles</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">4. Tensors &amp; Setup <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-04.html#day-11" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 11: Tensors</a>
+<a href="section-04.html#day-12" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 12: Virtual Environment</a>
+<a href="section-04.html#day-14" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 14: Framing the Problem</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Data Handling</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">5. Data Gathering <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-05.html#day-15" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 15: Data Gathering</a>
+<a href="section-05.html#day-16" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 16: Working with JSON / SQL</a>
+<a href="section-05.html#day-17" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 17: Fetching Data from APIs</a>
+<a href="section-05.html#day-18" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 18: Web Scraping</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">6. Exploratory Data Analysis <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-06.html#day-19" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 19: Understanding Gathered Data — Asking Basic Questions</a>
+<a href="section-06.html#day-20" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 20: Understanding Gathered Data — EDA (Univariate Analysis)</a>
+<a href="section-06.html#day-21" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 21: Understanding Gathered Data — EDA (Bivariate Analysis)</a>
+<a href="section-06.html#day-22" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 22: Pandas Profiling Tool</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">7. Feature Engineering <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-07.html#day-23" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 23: Feature Engineering (IMP)</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">8. Feature Scaling <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-08.html#day-24" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 24: Feature Scaling — Standardization</a>
+<a href="section-08.html#day-25" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 25: Feature Scaling — Normalization</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">9. Encoding Categorical Vars <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-09.html#day-26" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 26: Encoding Categorical Variables — Ordinal / Label Encoding</a>
+<a href="section-09.html#day-27" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 27: Encoding Categorical Variables — One Hot Encoding</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">10. Column Transformer &amp; Pipelines <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-10.html#day-28" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 28: Column Transformer</a>
+<a href="section-10.html#day-29" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 29: Pipeline Transformer</a>
+<a href="section-10.html#day-30" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 30: Function Transformer</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">11. Power Transformer <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-11.html#day-31" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 31: Power Transformer</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">12. Binning &amp; Binarization <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-12.html#day-32" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 32: Binning and Binarization</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">13. Mixed / Date-Time Data <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-13.html#day-33" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 33: Handling Mixed Data</a>
+<a href="section-13.html#day-34" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 34: Handling Date and Time Variables</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">14. Missing Values <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-14.html#day-35" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 35: Handling Missing Value — Removing Values</a>
+<a href="section-14.html#day-36" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 36: Handling Numerical Missing Value (Imputing)</a>
+<a href="section-14.html#day-37" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 37: Handling Categorical Missing Value</a>
+<a href="section-14.html#day-38" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 38: Handling Missing Value — Random Sample / Missing Indicator</a>
+<a href="section-14.html#day-39" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 39: Handling Missing Value (Multivariate) — KNN Imputer</a>
+<a href="section-14.html#day-40" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 40: Handling Missing Value (Multivariate) — Iterative Imputer (MICE)</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">15. Outliers <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-15.html#day-41" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 41: Handling Outliers</a>
+<a href="section-15.html#day-42" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 42: Handling Outliers — Z-Score Method</a>
+<a href="section-15.html#day-43" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 43: Handling Outliers — IQR Method</a>
+<a href="section-15.html#day-44" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 44: Handling Outliers — Winsorization</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">16. Feature Construction <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-16.html#day-45" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 45: Feature Construction | Feature Splitting</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">17. Curse of Dimensionality <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-17.html#day-46" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 46: Curse of Dimensionality</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">18. PCA <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-18.html#day-47" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 47: Principal Component Analysis (PCA) — Geometric Intuition</a>
+<a href="section-18.html#day-48" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 48: Principal Component Analysis (PCA) — Problem Formulation &amp; Code</a>
+<a href="section-18.html#day-49" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 49: Principal Component Analysis (PCA) — MNIST Example</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Algorithms</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">19. Linear Regression <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-19.html#day-50" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 50: Simple Linear Regression</a>
+<a href="section-19.html#day-51" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 51: Simple Linear Regression (Mathematical Intuition)</a>
+<a href="section-19.html#day-52" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 52: Regression Metrics</a>
+<a href="section-19.html#day-53" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 53: Multiple Linear Regression (Geometric Intuition)</a>
+<a href="section-19.html#day-54" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 54: Multiple Linear Regression (Mathematical Formulation)</a>
+<a href="section-19.html#day-55" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 55: Multiple Linear Regression (Code)</a>
+<a href="section-19.html#day-56" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 56: Assumptions of Linear Regression</a>
+<a href="section-19.html#day-57" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 57: Gradient Descent from Scratch</a>
+<a href="section-19.html#day-58" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 58: Batch Gradient Descent</a>
+<a href="section-19.html#day-59" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 59: Stochastic Gradient Descent</a>
+<a href="section-19.html#day-60" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 60: Mini Batch Gradient Descent</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">20. Polynomial Regression <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-20.html#day-61" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 61: Polynomial Linear Regression</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">21. Bias-Variance Tradeoff <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-21.html#day-62" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 62: Bias Variance Trade Off</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">22. Regularization <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-22.html#ridge-geometric" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Ridge Regression — Geometric Intuition &amp; Code</a>
+<a href="section-22.html#ridge-gradient-descent" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Ridge Regression — Gradient Descent</a>
+<a href="section-22.html#lasso-cost" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Lasso Regression</a>
+<a href="section-22.html#lasso-sparsity" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why Lasso Creates Sparsity</a>
+<a href="section-22.html#elastic-net" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Elastic Net Regression</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">23. Logistic Regression <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-23.html#day-70" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 70: Logistic Regression (Perceptron Trick)</a>
+<a href="section-23.html#day-71" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 71: Logistic Regression (Perceptron Trick Code)</a>
+<a href="section-23.html#day-72" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Day 72: Logistic Regression (Sigmoid Function)</a>
+<a href="section-23.html#logistic-gradient-descent" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Gradient Descent for Logistic Regression</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">24. Classification Metrics <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-24.html#confusion-matrix" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Accuracy, Confusion Matrix &amp; Type I/II Errors</a>
+<a href="section-24.html#precision-recall-f1" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Precision, Recall &amp; F1 Score</a>
+<a href="section-24.html#roc-auc" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">ROC Curve &amp; AUC</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">25. Logistic Regression — Advanced <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-25.html#softmax-regression" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Softmax Regression (Multinomial)</a>
+<a href="section-25.html#polynomial-logistic-regression" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Polynomial Features (Non-Linear Boundaries)</a>
+<a href="section-25.html#logistic-regression-hyperparameters" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Hyperparameters</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Classification Algorithms</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">26. Naive Bayes Classifier <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-26.html#conditional-probability" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Conditional Probability</a>
+<a href="section-26.html#independent-events" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Independent Events</a>
+<a href="section-26.html#mutually-exclusive-events" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Mutually Exclusive Events</a>
+<a href="section-26.html#bayes-theorem" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Bayes' Theorem</a>
+<a href="section-26.html#bayes-worked-example" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">A Problem Worked with Bayes' Theorem</a>
+<a href="section-26.html#naive-bayes-classifier" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Naive Bayes — Intuition, Math &amp; Code</a>
+<a href="section-26.html#gaussian-naive-bayes" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Handling Numerical Data (Gaussian NB)</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">27. K-Nearest Neighbors (KNN) <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-27.html#knn-overview" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">What is KNN — Full Overview</a>
+<a href="section-27.html#how-knn-works" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">How It Works</a>
+<a href="section-27.html#effect-of-k" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Effect of K</a>
+<a href="section-27.html#knn-curse-of-dimensionality" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Curse of Dimensionality &amp; KNN</a>
+<a href="section-27.html#knn-when-to-use" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">When to Use vs Avoid</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">28. Support Vector Machines (SVM) <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-28.html#svm-geometric-intuition" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Geometric Intuition</a>
+<a href="section-28.html#svm-math" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Math</a>
+<a href="section-28.html#hard-soft-margin" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Hard Margin vs Soft Margin</a>
+<a href="section-28.html#kernel-trick" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Kernel Trick — Intuition &amp; Code</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">29. Decision Trees <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-29.html#tree-geometric-intuition" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Geometric Intuition</a>
+<a href="section-29.html#entropy-gini" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Entropy, Gini Impurity &amp; Information Gain</a>
+<a href="section-29.html#tree-hyperparameters" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Hyperparameters &amp; Overfitting/Underfitting</a>
+<a href="section-29.html#regression-trees" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Regression Trees</a>
+<a href="section-29.html#dtreeviz-visualization" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Visualization with dtreeviz</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Ensemble Learning</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">30. Ensemble Learning: Voting <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-30.html#ensemble-intro" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Introduction to Ensemble Learning</a>
+<a href="section-30.html#voting-ensemble" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Hard &amp; Soft Voting</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">31. Bagging <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-31.html#bagging-intro" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Introduction</a>
+<a href="section-31.html#bagging-classifiers" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Bagging Classifiers</a>
+<a href="section-31.html#bagging-regressors" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Bagging Regressors</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">32. Random Forest <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-32.html#rf-intro" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Intro &amp; Intuition</a>
+<a href="section-32.html#rf-bias-variance" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Bias-Variance Tradeoff in RF</a>
+<a href="section-32.html#bagging-vs-rf" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Bagging vs Random Forest</a>
+<a href="section-32.html#rf-hyperparameters" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Hyperparameters</a>
+<a href="section-32.html#rf-hyperparameter-tuning" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Tuning — GridSearchCV &amp; RandomizedSearchCV</a>
+<a href="section-32.html#oob-score" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">OOB Score</a>
+<a href="section-32.html#rf-feature-importance" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Feature Importance</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">33. AdaBoost <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-33.html#adaboost-intuition" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Geometric Intuition</a>
+<a href="section-33.html#adaboost-steps" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Step-by-Step Explanation</a>
+<a href="section-33.html#adaboost-code" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Code</a>
+<a href="section-33.html#adaboost-hyperparameters" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Hyperparameters &amp; GridSearchCV</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">34. Bagging vs Boosting <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-34.html#bvb-structural-difference" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Structural Difference</a>
+<a href="section-34.html#bvb-strengths-weaknesses" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">What Each Is Best At</a>
+<a href="section-34.html#bvb-comparison-table" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Comparison Table</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">35. Gradient Boosting <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-35.html#gb-explained" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Explained</a>
+<a href="section-35.html#gb-regression" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">For Regression</a>
+<a href="section-35.html#gb-classification" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">For Classification</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">36. XGBoost <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-36.html#xgboost-intro" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Intro to XGBoost</a>
+<a href="section-36.html#xgboost-regression" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">For Regression</a>
+<a href="section-36.html#xgboost-classification" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">For Classification</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">37. Stacking &amp; Blending <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-37.html#stacking" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Stacking</a>
+<a href="section-37.html#blending" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Blending</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Unsupervised &amp; Practical</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">38. Clustering <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-38.html#k-means" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">K-Means Clustering</a>
+<a href="section-38.html#hierarchical-clustering" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Agglomerative Hierarchical Clustering</a>
+<a href="section-38.html#dbscan" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">DBSCAN</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">39. Handling Imbalanced Data <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-39.html#the-problem" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Problem</a>
+<a href="section-39.html#undersampling" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Undersampling</a>
+<a href="section-39.html#oversampling" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Oversampling</a>
+<a href="section-39.html#smote" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">SMOTE</a>
+<a href="section-39.html#practical-guidance" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Practical Guidance</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">40. Hyperparameter Tuning (Optuna) <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="section-40.html#why-optuna" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why Optuna</a>
+<a href="section-40.html#bayesian-optimization-intuition" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Bayesian Optimization Intuition</a>
+<a href="section-40.html#optuna-core-concepts" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Core Concepts</a>
+<a href="section-40.html#optuna-code-example" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Code Example</a>
+<a href="section-40.html#pruning" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Pruning</a>
+</div>
+</details>
+
+</nav>
+</aside>
+
+
+  <main class="flex-1 md:ml-[280px] px-4 py-6 md:p-lg max-w-[1200px] mx-auto w-full min-w-0">
+    <nav aria-label="Breadcrumb" class="flex flex-wrap text-sm text-[var(--on-surface-variant)] mb-4"><a href="../index.html" class="hover:text-[var(--primary)]">Home</a><span class="mx-2">/</span><a href="../index.html#courses" class="hover:text-[var(--primary)]">ML Track</a><span class="mx-2">/</span><span class="text-[var(--on-background)]">25. Logistic Regression — Advanced</span></nav>
+
+    <div class="space-y-xl">
+        <div>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">25. Logistic Regression — Advanced</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Softmax Regression for multi-class problems · Polynomial features for curved boundaries · the hyperparameters that actually matter in practice</p>
+        </div>
+
+        <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm text-sm text-[var(--on-surface-variant)]">
+          <strong class="text-[var(--on-background)]">Extended notes</strong> — this topic isn't covered in the CampusX playlist notes this site is based on. Written from scratch to continue the curriculum, in the same style as the rest of the site.
+        </div>
+
+        <p class="text-[var(--on-surface)] leading-relaxed">Section 23 covered binary logistic regression — one sigmoid, one decision boundary, two classes. This page pushes that same model in three directions you'll hit immediately in real projects: predicting more than two classes, fitting boundaries that aren't straight lines, and actually tuning the thing instead of leaving every setting at its default.</p>
+
+        <!-- SOFTMAX REGRESSION -->
+        <section id="softmax-regression" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Classification</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Softmax Regression (Multinomial Logistic Regression)</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Binary logistic regression answers a yes/no question: it computes one linear score \(z = w^\top x + b\), squashes it through the sigmoid, and reads the result as "probability of the positive class." That trick only works for two classes because a single number \(z\) only has one axis to move along — toward class 1 or toward class 0. What happens when you have K classes — say, classifying an email as <em>work</em>, <em>personal</em>, or <em>spam</em>?</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">The fix: instead of one linear score, compute <strong class="text-[var(--on-background)]">one linear score per class</strong>. Each class \(k\) gets its own weight vector \(w_k\) and bias \(b_k\), producing its own raw score \(z_k = w_k^\top x + b_k\). Now you have K numbers — one "how much does this look like class k" score per class — and you need a way to turn K arbitrary real numbers into K probabilities that sum to 1. That's exactly what the <strong class="text-[var(--on-background)]">softmax function</strong> does.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+            $$ \text{softmax}(z_i) = \frac{e^{z_i}}{\sum_{j=1}^{K} e^{z_j}} $$
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Read this piece by piece: exponentiating every score \(e^{z_i}\) makes everything positive (no negative probabilities) and amplifies differences (a score that's a bit higher than the rest becomes disproportionately larger after exponentiating — this is what makes softmax "winner-take-most" rather than a flat average). Dividing by the sum of all the exponentials normalizes the whole vector so it sums to exactly 1, turning it into a valid probability distribution over the K classes.</p>
+
+          <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">Sigmoid is softmax's special case</h4>
+            <p class="text-sm text-[var(--on-surface)]">With exactly K=2 classes, softmax reduces algebraically to the sigmoid function applied to the difference of the two scores, \(z_1 - z_0\). Binary logistic regression isn't a different algorithm from softmax regression — it's the K=2 case, parameterized more efficiently (one score instead of two, since the two scores' difference is all that matters).</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">One-hot encoding the targets</h3>
+            <p class="text-[var(--on-surface)] leading-relaxed">Binary logistic regression's targets are single numbers, 0 or 1. Softmax regression's targets need to be vectors, because the model's output is a vector of K probabilities. A label like "class 2 out of 3" is <strong class="text-[var(--on-background)]">one-hot encoded</strong> into \([0, 0, 1]\) — a vector of zeros with a single 1 in the position of the true class. This lets you compare the model's predicted probability vector directly against the true "probability" vector (which is 1.0 on the correct class and 0.0 everywhere else) using the same subtraction/comparison machinery throughout training.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Categorical cross-entropy — the loss function</h3>
+            <p class="text-[var(--on-surface)] leading-relaxed">Binary logistic regression trains by minimizing binary cross-entropy (log loss). Softmax regression's loss is the direct multi-class generalization, <strong class="text-[var(--on-background)]">categorical cross-entropy</strong>:</p>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ J(w) = -\sum_{i=1}^{n} \sum_{k=1}^{K} y_{i,k} \, \log(\hat{p}_{i,k}) $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)]">\(y_{i,k}\) is 1 if sample \(i\)'s true class is \(k\) and 0 otherwise (the one-hot vector), and \(\hat{p}_{i,k}\) is the model's predicted softmax probability that sample \(i\) belongs to class \(k\). Because \(y_{i,k}\) zeroes out every term except the true class, this sum collapses per-sample to just \(-\log(\hat{p}_{i,\text{true class}})\) — in plain English: <em>penalize the model by how far its predicted probability on the correct class was from 1.0</em>. Confidently correct (\(\hat{p}\) near 1) → loss near 0. Confidently wrong (\(\hat{p}\) near 0 on the true class) → loss shoots toward infinity.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Code — multinomial logistic regression with scikit-learn</h3>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import make_pipeline
+
+# multi_class='multinomial' trains one true softmax model —
+# all K score functions are learned jointly against categorical
+# cross-entropy, rather than the older "one-vs-rest" workaround
+# (train K separate binary classifiers, each asking "is it class k or not?")
+model = make_pipeline(
+    StandardScaler(),
+    LogisticRegression(
+        multi_class='multinomial',
+        solver='lbfgs',     # required for true multinomial loss
+        max_iter=1000
+    )
+)
+
+model.fit(X_train, y_train)
+
+probs = model.predict_proba(X_test)   # shape (n_samples, n_classes), rows sum to 1
+preds = model.predict(X_test)         # argmax of probs, per row
+
+print(probs[0])   # e.g. [0.05, 0.90, 0.05] -> predicted class 1</code></pre>
+            </div>
+          </div>
+
+          <div class="border-l-4 border-[var(--outline)] bg-[var(--surface-container-high)]/40 p-sm rounded-r-lg text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Note.</strong> Recent scikit-learn versions infer multinomial vs one-vs-rest automatically based on the solver and data, and have deprecated the explicit <code class="text-[var(--primary)]">multi_class</code> argument in favor of always using softmax when the solver supports it. The concept — one joint softmax over K classes — is what matters; check your installed version's docs for the exact current API.</div>
+        </section>
+
+        <!-- POLYNOMIAL FEATURES -->
+        <section id="polynomial-logistic-regression" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Classification</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Polynomial Features in Logistic Regression (Non-Linear Decision Boundaries)</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Logistic regression is called a "linear model" because its decision boundary — the set of points where \(P(y=1)=0.5\) — is always a straight line (or flat hyperplane) <em>in the space of the features you feed it</em>. Feed it just \(x_1\) and \(x_2\) and it can only ever draw a straight dividing line between classes. That sounds like a hard limitation, but section 20 already showed the workaround for linear regression: engineer new, non-linear features from the ones you have, and let the "linear" model draw a straight line through the <em>transformed</em> feature space — which corresponds to a curved boundary back in the original space.</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Concretely, <code class="text-[var(--primary)]">PolynomialFeatures</code> turns \([x_1, x_2]\) into something like \([x_1, x_2, x_1^2, x_1 x_2, x_2^2]\). Logistic regression then learns a decision boundary that's linear in <em>these five features</em> — but a line equation like \(w_1 x_1 + w_2 x_2 + w_3 x_1^2 + w_4 x_1 x_2 + w_5 x_2^2 + b = 0\), when plotted back in the original \((x_1, x_2)\) plane, is a conic section: it can be a circle, an ellipse, a parabola, or a hyperbola. That's enough to separate the classic case where one class forms a blob surrounded by a ring of the other class — something no straight line could ever do.</p>
+
+          <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm text-[var(--on-surface)]">
+            <strong class="text-[var(--on-background)]">The same trick, twice.</strong> This is precisely the same move Section 28's kernel trick makes for SVMs and Section 20 made for linear regression: don't change the algorithm, change the features it sees. "Linear model" always means linear <em>in its inputs</em> — and you control what those inputs are.
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Code — circular decision boundary with a Pipeline</h3>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from sklearn.preprocessing import PolynomialFeatures, StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import make_pipeline
+from sklearn.datasets import make_circles
+
+# classic "impossible for a straight line" dataset:
+# one class is a disc, the other is a ring around it
+X, y = make_circles(n_samples=500, noise=0.05, factor=0.4, random_state=42)
+
+model = make_pipeline(
+    PolynomialFeatures(degree=2, include_bias=False),  # adds x1^2, x1*x2, x2^2
+    StandardScaler(),
+    LogisticRegression()
+)
+
+model.fit(X, y)
+print(model.score(X, y))   # near-perfect accuracy — the ring is now separable
+
+# plain LogisticRegression() with no polynomial features would cap out
+# around 50% accuracy here, since no straight line separates a disc from a ring</code></pre>
+            </div>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm text-sm text-[var(--on-surface)]">
+            <strong class="text-[var(--on-background)]">Trade-off to watch:</strong> higher <code class="text-[var(--primary)]">degree</code> values let the boundary get arbitrarily wiggly — and arbitrarily overfit, exactly as in Section 20's polynomial regression and Section 21's bias-variance tradeoff. Degree 2 or 3 handles most real curved boundaries; combine with regularization (the <code class="text-[var(--primary)]">C</code> parameter, next section) to keep it in check.
+          </div>
+        </section>
+
+        <!-- HYPERPARAMETERS -->
+        <section id="logistic-regression-hyperparameters" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Classification</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Logistic Regression Hyperparameters</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Scikit-learn's <code class="text-[var(--primary)]">LogisticRegression</code> has more knobs than it looks like at first — it bundles regularization, the choice of penalty, and the optimizer itself into one constructor. Here's what actually matters in practice.</p>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2"><code class="text-[var(--primary)]">C</code> — inverse regularization strength</h3>
+            <p class="text-[var(--on-surface)] leading-relaxed">Section 22 wrote regularized cost functions as "loss + \(\lambda \times\) penalty," where bigger \(\lambda\) means stronger regularization. Scikit-learn's logistic regression flips this convention: it uses \(C = 1/\lambda\). That means:</p>
+            <div class="grid sm:grid-cols-2 gap-3">
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">Small C</strong> (e.g. 0.01) → large effective \(\lambda\) → <strong class="text-[var(--on-background)]">strong</strong> regularization → coefficients pushed hard toward zero → simpler, smoother boundary, higher bias.
+              </div>
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">Large C</strong> (e.g. 100) → small effective \(\lambda\) → <strong class="text-[var(--on-background)]">weak</strong> regularization → the model is freer to fit training data closely → higher variance, risk of overfitting.
+              </div>
+            </div>
+            <p class="text-sm text-[var(--on-surface-variant)] mt-2">Mnemonic: C is a <em>confidence</em> knob — high C tells the optimizer "I trust the training data, fit it tightly"; low C tells it "be skeptical, stay conservative."</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2"><code class="text-[var(--primary)]">penalty</code> — which regularizer</h3>
+            <p class="text-[var(--on-surface)] leading-relaxed">Same three options as Section 22's Ridge/Lasso/Elastic Net, applied to the log-loss instead of squared error: <code class="text-[var(--primary)]">'l2'</code> (ridge-style, shrinks smoothly, default), <code class="text-[var(--primary)]">'l1'</code> (lasso-style, can zero out coefficients — useful with many features, some irrelevant), <code class="text-[var(--primary)]">'elasticnet'</code> (blend, needs an <code class="text-[var(--primary)]">l1_ratio</code>), and <code class="text-[var(--primary)]">None</code> (no regularization at all).</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2"><code class="text-[var(--primary)]">solver</code> — the optimization algorithm, and which penalties it supports</h3>
+            <p class="text-[var(--on-surface)] leading-relaxed">Unlike linear regression's OLS, logistic regression's log-loss has no closed-form solution — it's always solved iteratively. Not every solver supports every penalty, which is the single most common source of a confusing sklearn error message here.</p>
+            <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Solver</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Supports</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">When to use</th></tr></thead>
+                <tbody>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">lbfgs</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">l2, None</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Good general-purpose default; handles multinomial softmax natively; fast on small/medium datasets</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">liblinear</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">l1, l2</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Small datasets, especially with l1; does <em>not</em> support true multinomial softmax (falls back to one-vs-rest)</td></tr>
+                  <tr><td class="p-2.5 font-semibold">saga</td><td class="p-2.5">l1, l2, elasticnet, None</td><td class="p-2.5">Large datasets, and the only solver that supports elasticnet; converges slower per-step but scales well</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2"><code class="text-[var(--primary)]">max_iter</code> — give the optimizer room to converge</h3>
+            <p class="text-[var(--on-surface)] leading-relaxed">Since there's no closed form, sklearn iterates until the loss stops improving meaningfully or it hits <code class="text-[var(--primary)]">max_iter</code> steps (default 100). A "ConvergenceWarning" means it hit the cap before converging — the fix is usually to raise <code class="text-[var(--primary)]">max_iter</code> (e.g. to 1000+), scale your features (unscaled features slow convergence dramatically), or both.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2"><code class="text-[var(--primary)]">class_weight='balanced'</code> — for imbalanced classes</h3>
+            <p class="text-[var(--on-surface)] leading-relaxed">By default, every training example contributes equally to the loss. If 99% of your data is class 0 and 1% is class 1, the optimizer can get a very low average loss just by leaning heavily toward predicting class 0 always — it barely "notices" the minority class. Setting <code class="text-[var(--primary)]">class_weight='balanced'</code> automatically reweights each class's contribution to the loss inversely proportional to its frequency, so mistakes on the rare class cost proportionally more. This doesn't change the data, only how much each misclassification is penalized during training — pairs naturally with the precision/recall/F1 tools from Section 24, since accuracy alone is exactly the metric imbalance fools.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Code — a realistic, tuned setup</h3>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import GridSearchCV
+
+param_grid = {
+    'C': [0.01, 0.1, 1, 10, 100],
+    'penalty': ['l1', 'l2'],
+}
+
+grid = GridSearchCV(
+    LogisticRegression(
+        solver='saga',            # supports both l1 and l2
+        max_iter=5000,            # give it room to converge
+        class_weight='balanced'   # dataset has a rare positive class
+    ),
+    param_grid,
+    scoring='f1',                 # imbalanced data -> don't optimize plain accuracy
+    cv=5
+)
+grid.fit(X_train, y_train)
+
+print(grid.best_params_)
+best_model = grid.best_estimator_</code></pre>
+            </div>
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on Softmax Regression, polynomial features, and hyperparameters. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-section-25">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. Why does softmax exponentiate the raw class scores before normalizing, instead of just normalizing the raw scores directly (dividing each by their sum)?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Exponentiating is computationally cheaper than division</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. It guarantees the scores are integers</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Raw scores can be negative, so direct normalization could produce negative or undefined "probabilities"; exponentiating guarantees positivity and also amplifies the largest score relative to the rest</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It has no effect on the output, it's purely a historical convention</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Raw linear scores \(z_k\) can be any real number, including negative — dividing negative or mixed-sign numbers by their sum doesn't yield a valid probability distribution. \(e^{z}\) is always positive for any real z, and because exponential growth is convex, a score that's modestly higher than its rivals becomes disproportionately larger after exponentiating, giving softmax its "winner-take-most" character.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. With exactly K=2 classes, how does softmax regression relate to standard binary logistic regression?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. They are unrelated algorithms that happen to solve similar problems</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Softmax with K=2 reduces algebraically to the sigmoid applied to the difference of the two class scores — binary logistic regression is the K=2 special case</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Binary logistic regression is strictly more powerful than softmax with K=2</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Softmax cannot be used for exactly two classes</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> softmax(z_1)/softmax(z_0) algebra reduces to a sigmoid function of (z_1 - z_0). Binary logistic regression is a more compact parameterization (one score instead of two) of exactly the same underlying model.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. A dataset has one class forming a tight cluster completely surrounded by a ring of the other class. Plain logistic regression on the raw 2D features fits terribly. What's the most direct fix that keeps logistic regression as the model?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Add polynomial features (e.g. degree 2) so the boundary, linear in the transformed space, becomes a curve (like a circle) back in the original 2D space</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Increase max_iter until it converges</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Switch the solver from lbfgs to liblinear</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Set class_weight='balanced'</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> This is the concentric-rings problem — no straight line separates a disc from a surrounding ring. Neither more iterations, a different solver, nor class weighting change the shape of the achievable boundary; only feeding the model non-linear features (like x1^2, x2^2) lets its linear boundary in the transformed space correspond to a circular boundary in the original space.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. You set C=0.001 on a LogisticRegression model. What should you expect?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Very weak regularization, likely to overfit</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. No effect on regularization at all, C only affects convergence speed</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. The model will fail to train entirely</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Very strong regularization (since C = 1/lambda, small C means large lambda), coefficients pushed hard toward zero, higher bias / lower variance</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> sklearn's C is the inverse of the regularization strength lambda. A tiny C like 0.001 corresponds to a huge effective lambda — strong regularization, coefficients squeezed toward zero, a simpler and higher-bias but lower-variance model.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. You want L1 regularization combined with an elastic-net-style blend on a large dataset. Which solver must you use?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. lbfgs</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. liblinear</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. saga</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Any solver works identically for elasticnet</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Of sklearn's solvers, only saga supports the elasticnet penalty (a blend of l1 and l2). lbfgs only supports l2/None, and liblinear only supports l1/l2 — neither can do the elasticnet blend.
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--primary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="section-26.html" class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">Next: Naive Bayes Classifier</a>
+        </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="../assets/app.js"></script>
+
+</body>
+</html>

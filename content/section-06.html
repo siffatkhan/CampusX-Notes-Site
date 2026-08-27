@@ -1,0 +1,458 @@
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-3 py-1 mb-3">Source: CampusX — 100 Days of Machine Learning</span>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">6. Exploratory Data Analysis</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Asking Basic Questions · Univariate Analysis · Bivariate Analysis · Pandas Profiling</p>
+        </div>
+
+        <!-- DAY 19 -->
+        <section id="day-19" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 19</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Understanding Gathered Data — Asking Basic Questions</h2>
+          </div>
+
+          <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+            <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+            <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>import pandas as pd
+df = pd.read_csv("train.csv")</code></pre>
+          </div>
+
+          <p class="text-sm text-[var(--on-surface-variant)]">Once loaded, a fixed set of questions helps you get oriented in a new dataset fast:</p>
+
+          <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container)]/50">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead>
+                <tr class="bg-[var(--surface-container-high)]">
+                  <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">#</th>
+                  <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Question</th>
+                  <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Method</th>
+                  <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">What it does</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors">
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">1</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">How big is the data?</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50"><code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">df.shape</code></td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">→ tells us the size of the data</td>
+                </tr>
+                <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors">
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">2</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">How does the data look like?</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50"><code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">df.head()</code><br><code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">df.sample(5)</code></td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">→ head() previews first 5 rows; sample(5) gives 5 random rows to avoid biasedness that lies somewhere in the data (much better approach)</td>
+                </tr>
+                <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors">
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">3</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">What is the data type of columns?</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50"><code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">df.info()</code></td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">→ tells us about datatypes</td>
+                </tr>
+                <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors">
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">4</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">Are there any missing values?</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50"><code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">df.isnull().sum()</code><br><code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">(df.isnull().mean()*100)</code></td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">→ gives total missing values per column; the second line gives percentage — helps decide drop or fill</td>
+                </tr>
+                <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors">
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">5</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">How does the data look mathematically?</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50"><code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">df.describe()</code></td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">→ gives mathematical summary of all numerical columns: mean, std, min, max</td>
+                </tr>
+                <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors">
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">6</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">Are there any duplicate values?</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50"><code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">df.duplicated().sum()</code><br><code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">df.drop_duplicates(inplace=True)</code></td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">→ gives total duplicate rows; second line removes duplicates</td>
+                </tr>
+                <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors">
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">7</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">How is the correlation between columns?</td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50"><code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">df.corr()</code></td>
+                  <td class="p-3 border-b border-[var(--outline-variant)]/50">→ Pearson correlation for numerical columns. Positive means direct relation, negative means inverse relation</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div>
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--on-surface-variant)] mb-2">Additional Useful Checks <span class="normal-case text-[var(--on-surface-variant)]/70">(added to improve clarity and completeness)</span></h4>
+            <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container)]/50">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead>
+                  <tr class="bg-[var(--surface-container-high)]">
+                    <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">#</th>
+                    <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Check</th>
+                    <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Method</th>
+                    <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Why</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">8</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Unique Values</td><td class="p-3 border-b border-[var(--outline-variant)]/50"><code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">df.nunique()</code></td><td class="p-3 border-b border-[var(--outline-variant)]/50">Helps detect categorical columns</td></tr>
+                  <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">9</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Value Distribution</td><td class="p-3 border-b border-[var(--outline-variant)]/50"><code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">df['col'].value_counts()</code></td><td class="p-3 border-b border-[var(--outline-variant)]/50">Good for class imbalance check</td></tr>
+                  <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">10</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Outliers Check</td><td class="p-3 border-b border-[var(--outline-variant)]/50"><code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">df.describe()</code> min vs max</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Large gaps hint outliers</td></tr>
+                  <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">11</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Memory Usage</td><td class="p-3 border-b border-[var(--outline-variant)]/50"><code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">df.memory_usage(deep=True)</code></td><td class="p-3 border-b border-[var(--outline-variant)]/50">Useful for large datasets</td></tr>
+                  <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 font-semibold">12</td><td class="p-3">Column Names</td><td class="p-3"><code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">df.columns</code></td><td class="p-3">Helps detect spaces or inconsistent naming</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">Data Types</h4>
+              <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+                <li><strong class="text-[var(--on-background)]">Numerical:</strong> age, salary, marks, height, weight</li>
+                <li><strong class="text-[var(--on-background)]">Categorical:</strong> gender, country, state, caste, department</li>
+              </ul>
+            </div>
+            <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">Purpose of EDA</h4>
+              <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+                <li>Understand structure, patterns, and problems in the data</li>
+                <li>Detect missing values, outliers, imbalance, skewness</li>
+                <li>Guide feature engineering and model choice</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- DAY 20 -->
+        <section id="day-20" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 20</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Understanding Gathered Data — EDA (Univariate Analysis)</h2>
+          </div>
+          <p class="text-sm text-[var(--on-surface)]">Univariate Analysis looks at a single variable (column) at a time. Used to find frequency, distribution, outliers, skewness.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--primary)]">A. Categorical Data</h3>
+            <p class="text-sm text-[var(--on-surface)]">Check frequency of categories.</p>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code># 1. Countplot
+import seaborn as sns
+sns.countplot(x='Survived', data=df)
+
+# 2. Value counts
+df['Survived'].value_counts()
+
+# 3. Bar chart
+df['Survived'].value_counts().plot(kind='bar')
+
+# 4. Pie chart (percentage)
+df['Survived'].value_counts().plot(kind='pie', autopct='%.2f')</code></pre>
+            </div>
+            <div class="border-l-4 border-[var(--outline)] bg-[var(--surface-container-high)]/40 p-sm rounded-r-lg text-sm text-[var(--on-surface)]">
+              <strong class="text-[var(--on-background)]">Notes:</strong> Use countplots for comparison. Pie charts are useful only when categories are few.
+            </div>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--secondary)]">B. Numerical Data</h3>
+            <p class="text-sm text-[var(--on-surface)]">Continuous values like Age, Height, Salary.</p>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code># 1. Histogram — turns continuous data into ranges (bins)
+plt.hist(df['Age'], bins=5)
+
+# 2. Displot — improved histogram with probability density
+sns.displot(df['Age'])
+
+# 3. Boxplot — 5-number summary (Min, Q1, Median, Q3, Max)
+sns.boxplot(y=df['Age'])</code></pre>
+            </div>
+            <div class="grid sm:grid-cols-3 gap-3 text-sm">
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3"><strong class="text-[var(--on-background)]">Histogram</strong> — good for distribution shape.</div>
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3"><strong class="text-[var(--on-background)]">Displot</strong> — shows peaks, spread, skew.</div>
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3"><strong class="text-[var(--on-background)]">Boxplot</strong> — detects outliers (points outside 1.5 × IQR). Use for outlier removal.</div>
+            </div>
+            <p class="text-sm text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Other plots:</strong> <code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">violinplot</code> — shows distribution + density (rarely used); <code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">rugplot</code> — shows raw data points (rarely used).</p>
+            <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Basic Stats:</strong>
+              <div class="mt-1 space-y-0.5 font-code-block text-xs text-[var(--on-surface-variant)]">
+                <div><code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded">df['Age'].min()</code></div>
+                <div><code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded">df['Age'].max()</code></div>
+                <div><code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded">df['Age'].mean()</code></div>
+                <div><code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded">df['Age'].skew()</code> <span class="text-[var(--on-surface-variant)]">(positive skew = tail to right, negative = tail to left)</span></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- DAY 21 -->
+        <section id="day-21" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 21</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Understanding Gathered Data — EDA (Bivariate Analysis)</h2>
+          </div>
+          <p class="text-sm text-[var(--on-surface)]">Bivariate Analysis looks at two variables at a time. EDA plots depend on the data type interaction:</p>
+          <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+            <li>Categorical vs Categorical → countplot, heatmap</li>
+            <li>Numerical vs Numerical → scatterplot, line plot</li>
+            <li>Categorical vs Numerical → bar plot, box plot, violin plot</li>
+          </ul>
+          <p class="text-sm text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Goal:</strong> check relationships, detect patterns, measure impact of one variable on another.</p>
+
+          <div class="grid md:grid-cols-2 gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm space-y-2">
+              <h4 class="font-h3 text-base text-[var(--on-background)]">1. Scatter Plot <span class="text-xs text-[var(--on-surface-variant)] font-normal">(Numerical vs Numerical)</span></h4>
+              <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+                <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+                <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block text-xs"><code>sns.scatterplot(x=total_bill, y=tip, hue=sex, style=smoker, size=size)</code></pre>
+              </div>
+              <p class="text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Use when</strong> — both variables are continuous; relationship strength matters.</p>
+              <p class="text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Why use</strong> — shows correlation trend, detects clusters, detects outliers; hue and style show category impact.</p>
+              <p class="text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Special case</strong> — use line plot instead when x-axis is time.</p>
+            </div>
+
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm space-y-2">
+              <h4 class="font-h3 text-base text-[var(--on-background)]">2. Bar Plot <span class="text-xs text-[var(--on-surface-variant)] font-normal">(Numerical vs Categorical)</span></h4>
+              <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+                <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+                <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block text-xs"><code>sns.barplot(x=Pclass, y=Fare, hue=Sex)</code></pre>
+              </div>
+              <p class="text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Use when</strong> — numerical value depends on categories; comparison between groups.</p>
+              <p class="text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Why use</strong> — shows average or aggregate value, easy comparison across categories.</p>
+              <p class="text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Note</strong> — bars represent mean by default; not suitable for distribution shape.</p>
+            </div>
+
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm space-y-2">
+              <h4 class="font-h3 text-base text-[var(--on-background)]">3. Box Plot <span class="text-xs text-[var(--on-surface-variant)] font-normal">(Numerical vs Categorical)</span></h4>
+              <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+                <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+                <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block text-xs"><code>sns.boxplot(x=Sex, y=Age)</code></pre>
+              </div>
+              <p class="text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Use when</strong> — distribution matters; outliers matter.</p>
+              <p class="text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Why use</strong> — shows median and spread, detects outliers, compares distributions across groups.</p>
+              <p class="text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Best for</strong> — age, income, price comparisons.</p>
+            </div>
+
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm space-y-2">
+              <h4 class="font-h3 text-base text-[var(--on-background)]">4. Distplot <span class="text-xs text-[var(--on-surface-variant)] font-normal">(Numerical)</span></h4>
+              <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+                <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+                <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block text-xs"><code>sns.distplot(df['Age'])</code></pre>
+              </div>
+              <p class="text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Use when</strong> — distribution shape matters.</p>
+              <p class="text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Why use</strong> — shows skewness, shows peaks, shows spread.</p>
+              <p class="text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Note</strong> — histogram + density curve; use before transformation.</p>
+            </div>
+
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm space-y-2">
+              <h4 class="font-h3 text-base text-[var(--on-background)]">5. Heatmap <span class="text-xs text-[var(--on-surface-variant)] font-normal">(Categorical vs Categorical)</span></h4>
+              <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+                <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+                <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block text-xs"><code>sns.heatmap(pd.crosstab(sex, survived))</code></pre>
+              </div>
+              <p class="text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Use when</strong> — comparing two categorical variables; pattern visibility matters.</p>
+              <p class="text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Why use</strong> — shows intensity pattern, faster comparison than tables.</p>
+              <p class="text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Limitation</strong> — percentages not shown directly.</p>
+              <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+                <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+                <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block text-xs"><code># Fix — show percentages instead
+titanic.groupby('sex').mean()['Survived'] * 100</code></pre>
+              </div>
+            </div>
+
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm space-y-2">
+              <h4 class="font-h3 text-base text-[var(--on-background)]">6. Clustermap <span class="text-xs text-[var(--on-surface-variant)] font-normal">(Categorical vs Categorical)</span></h4>
+              <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+                <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+                <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block text-xs"><code>sns.clustermap(pd.crosstab(SibSp, Survived))</code></pre>
+              </div>
+              <p class="text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Use when</strong> — behavior similarity matters.</p>
+              <p class="text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Why use</strong> — groups similar rows and columns, shows hidden structure.</p>
+              <p class="text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Best for</strong> — behavioral analysis, pattern grouping.</p>
+            </div>
+
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm space-y-2">
+              <h4 class="font-h3 text-base text-[var(--on-background)]">7. Pairplot <span class="text-xs text-[var(--on-surface-variant)] font-normal">(Multiple Numerical values)</span></h4>
+              <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+                <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+                <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block text-xs"><code>sns.pairplot(df)</code></pre>
+              </div>
+              <p class="text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Use when</strong> — many numerical variables exist; quick overview needed.</p>
+              <p class="text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Why use</strong> — scatter of every numeric pair, diagonal shows distribution, best bird-eye view.</p>
+              <p class="text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Limitation</strong> — slow for large datasets.</p>
+            </div>
+
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm space-y-2">
+              <h4 class="font-h3 text-base text-[var(--on-background)]">8. Line Plot <span class="text-xs text-[var(--on-surface-variant)] font-normal">(Numerical vs Numerical)</span></h4>
+              <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+                <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+                <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block text-xs"><code>sns.lineplot(x=date, y=sales)</code></pre>
+              </div>
+              <p class="text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Use when</strong> — x-axis represents time; trend over time matters.</p>
+              <p class="text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Why use</strong> — shows trend, shows seasonality; better than scatter for time data.</p>
+            </div>
+          </div>
+
+          <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-2">Quick Decision Rule</h4>
+            <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+              <li>Relationship strength → Scatter</li>
+              <li>Time trend → Line</li>
+              <li>Group comparison → Bar</li>
+              <li>Distribution + outliers → Box</li>
+              <li>Category frequency → Countplot</li>
+              <li>Many numerics → Pairplot</li>
+              <li>Category interaction → Heatmap</li>
+              <li>Similar behavior → Clustermap</li>
+            </ul>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm text-sm text-[var(--on-surface)]">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--on-surface-variant)] mb-2">Extra Important Points <span class="normal-case text-[var(--on-surface-variant)]/70">(added for better understanding)</span></h4>
+            <ul class="space-y-1 list-disc list-inside">
+              <li>Numerical data has distribution shape (normal, skewed)</li>
+              <li>Skewed data may need log/box-cox transformation</li>
+              <li>Outliers can distort mean, correlation, and model accuracy</li>
+              <li>Always check value imbalance in categorical columns</li>
+              <li>Use <code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">describe(include='all')</code> to summarize both numeric and categorical data</li>
+              <li>Matplotlib is the older library for visualization, while seaborn is the modern one built on top of matplotlib</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- DAY 22 -->
+        <section id="day-22" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 22</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Pandas Profiling Tool</h2>
+          </div>
+          <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">Purpose</h4>
+            <p class="text-sm text-[var(--on-surface)]">Automates Exploratory Data Analysis. Generates a full HTML report from a DataFrame. Saves time compared to manual EDA.</p>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">What the report shows</h4>
+              <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+                <li>Dataset overview</li>
+                <li>Number of rows and columns</li>
+                <li>Data types</li>
+                <li>Missing values count and percentage</li>
+                <li>Duplicates</li>
+                <li>Descriptive statistics</li>
+                <li>Correlation matrix</li>
+                <li>Distribution of each column</li>
+                <li>Warnings about data quality issues</li>
+              </ul>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">Used when</h4>
+              <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+                <li>Quick understanding of a new dataset</li>
+                <li>Initial EDA before modeling</li>
+                <li>Checking data quality problems early</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+            <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+            <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>import pandas as pd
+df = pd.read_csv("train.csv")
+
+!pip install ydata_profiling
+from ydata_profiling import ProfileReport
+prof = ProfileReport(df)
+prof.to_file(output_file="output.html")</code></pre>
+          </div>
+
+          <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--tertiary)] mb-1">Best Practice</h4>
+            <p class="text-sm text-[var(--on-surface)]">Profiling saves time. Manual EDA builds intuition. Use profiling first, then do manual EDA — combine both for best results.</p>
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on Day 19–22. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-section-06">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. You want a quick look at rows from a dataset but suspect the file was sorted by date, so df.head() would only show the earliest records. What should you use instead, and why?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. df.shape, since it reveals row order</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. df.sample(5), since it gives random rows and avoids the biasedness of only looking at the top</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. df.info(), since it previews rows</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. df.corr(), since it shows a broader view</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> The notes explicitly call out df.sample(5) as the "much better approach" over df.head() precisely because it gives random rows and avoids biasedness that lies somewhere in the data — exactly the sorted-file scenario described.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. A column "Fare" has min=0 and max=512, while its median is around 14. Which Day 19/20 tool combination would surface and then visually confirm this as a potential outlier issue?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. df.nunique() then a countplot</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. df.columns then a pie chart</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. df.describe() (large min-vs-max gap hints outliers) then sns.boxplot(y=df['Fare']) to detect points beyond 1.5×IQR</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. df.memory_usage(deep=True) then a heatmap</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> The "Outliers Check" additional check (#10) explicitly says: use df.describe() min vs max — large gaps hint outliers. Day 20 then names boxplot as the numerical univariate plot that detects outliers via the 1.5×IQR rule, making this the correct pairing.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. You want to know whether survival rate differs meaningfully between passenger sex and class simultaneously (both categorical). A plain heatmap of the crosstab shows counts but the team wants percentages. Per Day 21, what's the fix?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Compute titanic.groupby('sex').mean()['Survived'] * 100 to get percentages directly, since the heatmap's limitation is that percentages aren't shown directly</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Switch to a pairplot instead</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Use a line plot since it shows trend better</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. This limitation cannot be fixed</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Day 21 names the heatmap's limitation directly — "percentages not shown directly" — and gives the exact fix: titanic.groupby('sex').mean()['Survived'] * 100 to get percentage figures instead of raw counts.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. Given a dataset with 40 numerical columns, a data scientist runs sns.pairplot(df) and the notebook hangs for several minutes. What does the source material warn about this exact scenario, and what's a better first move for many numerics per the Quick Decision Rule?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Pairplot has no known limitations; this is unexpected</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Use a clustermap instead, since it's faster for numerics</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Use countplot since category frequency is the rule for many numerics</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. The notes state pairplot's limitation is that it's "slow for large datasets" — pairplot is still the named tool for "many numerics" in the Quick Decision Rule, so the fix is more about scale/sampling than switching plot type entirely</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Day 21 explicitly lists pairplot's limitation as "slow for large datasets," while the Quick Decision Rule still maps "Many numerics → Pairplot." This is a case where the notes themselves flag the tradeoff rather than recommending you abandon the tool for something like clustermap (used for categorical behavior similarity) or countplot (for categorical frequency).
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. Per Day 22's Best Practice, what is the recommended sequencing of pandas profiling versus manual EDA, and why?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Manual EDA only — profiling is unreliable</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Use profiling first (saves time, quick overview), then manual EDA (builds intuition) — combine both for best results</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Profiling replaces manual EDA entirely once run</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Order doesn't matter per the notes</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> The Best Practice is explicit: "Profiling saves time. Manual EDA builds intuition. Use profiling first. Then do manual EDA. Combine both for best results" — profiling is a fast first pass, not a replacement for hands-on analysis.
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--primary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="section-07.html" class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">
+            Next: Feature Engineering →
+          </a>
+        </div>

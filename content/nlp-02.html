@@ -1,0 +1,358 @@
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--tertiary)] bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/30 rounded-full px-3 py-1 mb-3">Source: 100 Days of Deep Learning — NLP Notes</span>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">2. The NLP Pipeline &amp; Text Preprocessing</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Data acquisition → text preparation → feature engineering → modeling → deployment · Tokenization, stop words, stemming vs lemmatization, spaCy</p>
+        </div>
+
+        <!-- PIPELINE -->
+        <section id="nlp-pipeline" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--tertiary)] bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/30 rounded-full px-2.5 py-0.5">NLP</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">The End-to-End NLP Pipeline</h2>
+          </div>
+
+          <div class="border-l-4 border-[var(--outline)] bg-[var(--surface-container-high)]/40 p-sm rounded-r-lg text-sm text-[var(--on-surface)]">This pipeline is <strong class="text-[var(--on-background)]">not universal</strong> — every real project bends it — and it is <strong class="text-[var(--on-background)]">non-linear</strong> in practice (you loop back to earlier steps as you learn more). Deep learning pipelines look slightly different, mainly because feature engineering is largely automatic rather than a manual step.</div>
+
+          <div class="space-y-0 max-w-2xl mx-auto">
+            <div class="bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/40 rounded-lg px-4 py-2.5 text-sm text-center font-semibold">1. Data Acquisition</div>
+            <div class="text-center text-[var(--outline)]">↓</div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2.5 text-sm text-center">2. Text Preparation <span class="text-[var(--on-surface-variant)]">(cleanup → basic preprocessing → advanced preprocessing)</span></div>
+            <div class="text-center text-[var(--outline)]">↓</div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2.5 text-sm text-center">3. Feature Engineering <span class="text-[var(--on-surface-variant)]">(BoW, TF-IDF, Word2Vec, …)</span></div>
+            <div class="text-center text-[var(--outline)]">↓</div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2.5 text-sm text-center">4. Modeling <span class="text-[var(--on-surface-variant)]">(model building → evaluation)</span></div>
+            <div class="text-center text-[var(--outline)]">↓</div>
+            <div class="bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/40 rounded-lg px-4 py-2.5 text-sm text-center font-semibold">5. Deployment <span class="text-[var(--on-surface-variant)] font-normal">(deploy → monitoring → model update)</span></div>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">1. Data Acquisition</h4>
+              <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+                <li>If data is available: from a database, a CSV/table, or via API / web scraping / PDF / images / audio.</li>
+                <li>If data is limited: apply <strong class="text-[var(--on-background)]">data augmentation</strong> — e.g. bigram-based augmentation, back-translation, or adding noise/synonym replacement.</li>
+                <li>If no data exists at all: gather it directly via surveys, forms, or questionnaires.</li>
+              </ul>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">2. Text Preparation</h4>
+              <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+                <li><strong class="text-[var(--on-background)]">Text cleanup</strong> — removing HTML tags, encoding/removing emojis, spell checking.</li>
+                <li><strong class="text-[var(--on-background)]">Basic preprocessing</strong> — tokenization, stop-word removal, lower/upper-casing, stemming/lemmatization.</li>
+                <li><strong class="text-[var(--on-background)]">Advanced preprocessing</strong> — POS tagging, parsing (understanding sentence structure), coreference resolution.</li>
+              </ul>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">3. Feature Engineering</h4>
+              <p class="text-sm text-[var(--on-surface)]">Converting cleaned text into numbers: Bag of Words, TF-IDF, One-Hot Encoding, Word2Vec (chapters 3–4). Which technique to use depends on the problem. In classic ML this is done manually using domain knowledge; in deep learning, feature engineering happens automatically inside the network.</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">4. Modeling</h4>
+              <p class="text-sm text-[var(--on-surface)]">Model building can follow the heuristic approach, a classic ML algorithm, deep learning (often via <strong class="text-[var(--on-background)]">transfer learning</strong> — e.g. taking a BERT model already trained on huge data and applying it to your problem), or a cloud API. Which technique to use depends on data size and the nature of the problem. Evaluation is then split into: <strong class="text-[var(--on-background)]">intrinsic evaluation</strong> (accuracy, confusion matrix — measured offline) and <strong class="text-[var(--on-background)]">extrinsic evaluation</strong> (how the model performs after deployment, in an actual business setting).</p>
+            </div>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+            <h4 class="font-semibold text-[var(--on-background)] mb-1">5. Deployment</h4>
+            <p class="text-sm text-[var(--on-surface)]">Deploy the model into production, then <strong class="text-[var(--on-background)]">monitor</strong> it — checking from time to time how it's performing in the real world — and <strong class="text-[var(--on-background)]">update</strong> it as needed (product changes, new data, drift, etc. — there are many possible reasons a model needs updating over time).</p>
+          </div>
+
+          <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Perplexity</strong> is a metric that tells us how "confused" an NLP language model is at a given point — lower perplexity generally means the model is more confident/accurate about what word should come next.</div>
+        </section>
+
+        <!-- TEXT CLEANUP -->
+        <section id="text-cleanup" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--tertiary)] bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/30 rounded-full px-2.5 py-0.5">NLP</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Text Cleanup &amp; Basic Preprocessing</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Raw text is messy — inconsistent casing, HTML tags, URLs, punctuation, slang, typos, emojis. Before any text representation technique (BoW, TF-IDF, Word2Vec — chapters 3–4) can work well, we clean the text so the model focuses on meaningful words instead of noise.</p>
+
+          <div class="grid gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">Lowercasing</h4>
+              <p class="text-sm text-[var(--on-surface)]">Convert all text to lowercase so "Pizza" and "pizza" aren't treated as two different words — without this, the vocabulary double-counts the same word in different cases, which wastes space and hurts pattern matching.</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">Removing HTML Tags &amp; URLs</h4>
+              <p class="text-sm text-[var(--on-surface)]">Text scraped from web pages or reviews often carries leftover markup (<code class="text-[var(--tertiary)]">&lt;br&gt;</code>, <code class="text-[var(--tertiary)]">&lt;p&gt;</code>) or URLs — neither carries semantic value for most NLP tasks, so both are stripped with regex. <span class="text-[var(--on-surface-variant)]">Tip: regex101.com is a handy tool for testing patterns interactively before using them in code.</span></p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">Removing Punctuation</h4>
+              <p class="text-sm text-[var(--on-surface)]">Punctuation (!, ,, .) usually adds no useful signal for classic text-representation techniques, so it's stripped out.</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">Chat-Word Treatment</h4>
+              <p class="text-sm text-[var(--on-surface)]">Internet slang/abbreviations (lol → laughing out loud, lmao → laughing my ass off, wth → what the hell) are converted into their full form via a lookup dictionary, so the model can actually understand them.</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">Removing Short Words</h4>
+              <p class="text-sm text-[var(--on-surface)]">Very short words (i, am, a) often carry little standalone meaning and are sometimes filtered out to reduce noise — similar reasoning to removing stopwords.</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">Spell Correction</h4>
+              <p class="text-sm text-[var(--on-surface)]">Fixes typos ("pizzza" → "pizza") so misspelled variants aren't treated as unique, unrelated words. Commonly done with the <strong class="text-[var(--on-background)]">TextBlob</strong> library.</p>
+              <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group mt-2">
+                <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+                <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from textblob import TextBlob
+
+corrected = TextBlob("pizzza is amazingg").correct()</code></pre>
+              </div>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">Handling Emojis</h4>
+              <p class="text-sm text-[var(--on-surface)]">Two approaches: remove emojis entirely, or replace them with their textual meaning (preserves sentiment/information). <strong class="text-[var(--on-background)]">Replacing is usually better than removing when sentiment matters</strong> — a 🔥 emoji carries real emotional signal that shouldn't just be thrown away.</p>
+              <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group mt-2">
+                <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+                <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>import re
+
+def remove_emoji(text):
+    emoji_pattern = re.compile("["
+        u"\U0001F600-\U0001F64F"  # emoticons
+        u"\U0001F300-\U0001F5FF"  # symbols & pictographs
+        u"\U0001F680-\U0001F6FF"  # transport & map symbols
+        u"\U0001F1E0-\U0001F1FF"  # flags
+        u"\U00002702-\U000027B0"
+        u"\U000024C2-\U0001F251"
+        "]+", flags=re.UNICODE)
+    return emoji_pattern.sub(r'', text)
+
+# Replacing emoji with meaning (better — preserves sentiment info)
+import emoji
+print(emoji.demojize('Python is 🔥'))
+# Output: "Python is :fire:"</code></pre>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TOKENIZATION -->
+        <section id="tokenization" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--tertiary)] bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/30 rounded-full px-2.5 py-0.5">NLP</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Tokenization</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed"><strong class="text-[var(--on-background)]">What it is:</strong> breaking text into smaller units — sentences into words, or words into characters — because models process language piece by piece, not as one giant blob of text. <strong class="text-[var(--on-background)]">Why we do it:</strong> every text representation technique (BoW, TF-IDF, Word2Vec — chapters 3–4) operates on individual tokens, not whole sentences; tokenization is the mandatory first step that produces those units.</p>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="border-l-4 border-[var(--error)] bg-[var(--error-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--error)] mb-1">Naive ways</h4>
+              <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+                <li><code class="text-[var(--tertiary)]">split()</code> — splits on whitespace only; breaks on edge cases (e.g. "Mr. Smith" incorrectly splits at the period).</li>
+                <li>Splitting via regex — more control, but still limited.</li>
+              </ul>
+            </div>
+            <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--tertiary)] mb-1">Proper way</h4>
+              <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">NLTK / spaCy</strong> — real NLP libraries that correctly handle punctuation, abbreviations, contractions, and other edge cases. <strong class="text-[var(--on-background)]">spaCy is the most preferred library</strong> — faster, more robust, production-grade.</p>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Efficiency tip: <code class="text-[var(--tertiary)]">nlp.pipe()</code></h3>
+            <p class="text-sm text-[var(--on-surface)] mb-2">Calling <code class="text-[var(--tertiary)]">nlp()</code> once per row (one document at a time) is slow. spaCy provides <code class="text-[var(--tertiary)]">nlp.pipe()</code>, which processes many texts in a batched, optimized way — much faster for large datasets.</p>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>import spacy
+nlp = spacy.load("en_core_web_sm")
+
+# Slow way — one call per document
+docs = [nlp(text) for text in texts]
+
+# Fast way — batched, optimized processing
+docs = list(nlp.pipe(texts))</code></pre>
+            </div>
+          </div>
+        </section>
+
+        <!-- STOPWORDS -->
+        <section id="stopwords" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--tertiary)] bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/30 rounded-full px-2.5 py-0.5">NLP</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Removing Stop Words</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed"><strong class="text-[var(--on-background)]">Stopwords</strong> are extremely common words (the, is, my, a, and) that appear everywhere and carry little distinctive meaning. Removing them reduces vocabulary size and lets the model focus on meaningful/content words — commonly handled via NLTK's built-in stopword list.</p>
+
+          <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Analogy:</strong> stopwords are like "um," "uh," "so" in spoken conversation — grammatically necessary for humans, but if you're trying to figure out what a conversation is about, you can safely ignore them.</div>
+
+          <div class="border-l-4 border-[var(--error)] bg-[var(--error-container)]/10 p-sm rounded-r-lg text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">When NOT to remove them:</strong> POS tagging needs the full sentence structure intact, including stop words — removing "is," "the," or "not" can destroy grammatical context a POS tagger relies on. Similarly, tasks where word order and function words carry meaning (parsing, some sentiment cases where "not" flips polarity, or any sequence model like an LSTM/Transformer that already handles frequency imbalance internally) often perform worse with stopwords stripped out. The rule of thumb: for frequency-based bag-style features (BoW/TF-IDF) feeding classic ML models, remove them; for tasks that depend on grammatical structure, keep them.</div>
+        </section>
+
+        <!-- STEMMING / LEMMATIZATION -->
+        <section id="stemming-lemmatization" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--tertiary)] bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/30 rounded-full px-2.5 py-0.5">NLP</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Stemming vs. Lemmatization</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed"><strong class="text-[var(--on-background)]">The problem both solve:</strong> words like "playing," "played," "plays," "player" all share the same root idea — "play" — but to a machine these are completely different strings, unnecessarily inflating vocabulary size.</p>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+              <h3 class="font-h3 text-base text-[var(--secondary)]">Stemming</h3>
+              <p class="text-sm text-[var(--on-surface)]">Chops off word endings using fixed rules to reduce a word to its stem — no grammar or dictionary knowledge involved, just pattern-based suffix removal. "Running" → "runn". Fast, but can produce non-words. Mostly used in information retrieval systems (search engines), where exact grammatical correctness doesn't matter, just matching similar words.</p>
+              <p class="text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Analogy:</strong> a lawnmower — chops off anything sticking up past a certain length, without caring whether what's left still looks grammatically correct.</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+              <h3 class="font-h3 text-base text-[var(--tertiary)]">Lemmatization</h3>
+              <p class="text-sm text-[var(--on-surface)]">Converts a word to its actual dictionary/base form — its <strong class="text-[var(--on-background)]">lemma</strong> — using real vocabulary and grammar knowledge. "Running" → "run" (always a real English word). Internally it looks up words in <strong class="text-[var(--on-background)]">WordNet</strong>, a lexical dictionary of relationships between English words, and you must specify the part of speech for accurate results (e.g. "better" as adjective → "good"). Slower, but accurate.</p>
+              <p class="text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Analogy:</strong> a skilled gardener who knows exactly what each plant should look like and prunes it back to its proper natural form.</p>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs"></th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Stemming</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Lemmatization</th></tr></thead>
+              <tbody>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Method</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Rule-based suffix cutting</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Vocabulary + grammar-based lookup</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Speed</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Faster</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Slower</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Output</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Can be non-words (e.g. "studi")</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Always real words</td></tr>
+                <tr><td class="p-2.5 font-semibold">Accuracy</td><td class="p-2.5">Less accurate</td><td class="p-2.5">More accurate</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <details class="deepdive">
+            <summary class="font-h3 text-lg text-[var(--on-background)]">Types of Stemmers — Side-by-Side Comparison</summary>
+            <div class="space-y-3 mt-3 text-sm text-[var(--on-surface)]">
+              <p><strong class="text-[var(--on-background)]">Porter Stemmer</strong> (most common, English-only) — removes common suffixes: ing, ed, ly, es, s. "playing" → "play" ✅. "study" → "studi" — not a real word, but that's fine; Porter only cares that similar words map to the same stem, not that the output is valid English.</p>
+              <p><strong class="text-[var(--on-background)]">Lancaster Stemmer</strong> — "Porter's aggressive cousin," cuts much more. maximum → maxim, happiness → happy, running → run, organization → org, general → gen (loses meaningful information — too aggressive).</p>
+              <p><strong class="text-[var(--on-background)]">Snowball Stemmer (Porter2)</strong> — an improved, more refined Porter. studies → studi, playing → play, happiness → happi. Better linguistic rules, supports multiple languages, generally produces slightly better stems than Porter. Most practitioners prefer Snowball.</p>
+              <p><strong class="text-[var(--on-background)]">Regexp Stemmer</strong> — no linguistic intelligence at all; you manually define the rule, e.g. <code class="text-[var(--tertiary)]">RegexpStemmer("ing$")</code> removes "ing" only if it's at the end. playing → play, swimming → swimm, singer → singer (unchanged — doesn't end in "ing").</p>
+              <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)] mt-2">
+                <table class="w-full text-left border-collapse text-sm">
+                  <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2 border-b border-[var(--outline-variant)] font-label-caps text-xs">Stemmer</th><th class="p-2 border-b border-[var(--outline-variant)] font-label-caps text-xs">Output on "The players were playing happily in the playground."</th></tr></thead>
+                  <tbody>
+                    <tr><td class="p-2 border-b border-[var(--outline-variant)]/50 font-semibold">Porter</td><td class="p-2 border-b border-[var(--outline-variant)]/50">the player were play happili in the playground</td></tr>
+                    <tr><td class="p-2 border-b border-[var(--outline-variant)]/50 font-semibold">Lancaster</td><td class="p-2 border-b border-[var(--outline-variant)]/50">the play wer play happy in the playground (very aggressive — "were" → "wer")</td></tr>
+                    <tr><td class="p-2 border-b border-[var(--outline-variant)]/50 font-semibold">Snowball</td><td class="p-2 border-b border-[var(--outline-variant)]/50">the player were play happili in the playground (similar to Porter, improved rules)</td></tr>
+                    <tr><td class="p-2 font-semibold">Regexp (remove ing,ed,s)</td><td class="p-2">the player were play happily in the playground (only specified endings removed)</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </details>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Worked example</strong> — "The children were running better than the adults."<br>
+              <strong class="text-[var(--tertiary)]">Stemming:</strong> the children were run better than the adult (often can't handle irregular forms like "children" or "better").<br>
+              <strong class="text-[var(--tertiary)]">Lemmatization:</strong> the child be run good than the adult — notice children → child, were → be, better → good. A stemmer typically cannot make these grammar-aware transformations.
+            </div>
+            <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">When to use which:</strong><br>
+              No output shown to the user (internal processing, e.g. feeding a classifier's TF-IDF) → <strong class="text-[var(--on-background)]">stemming</strong> — fast, and classic ML models (Naive Bayes, Logistic Regression, SVM) perform nearly as well on stemmed text.<br>
+              Output IS shown to the user (chatbot replies, summaries, search snippets) → <strong class="text-[var(--on-background)]">lemmatization</strong> — produces grammatically correct, readable real words.
+            </div>
+          </div>
+
+          <div class="border-l-4 border-[var(--error)] bg-[var(--error-container)]/10 p-sm rounded-r-lg text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Never chain them.</strong> You pick one, never both — each is already a complete transformation of the word. Stemming after lemmatization (or vice versa) can distort the text further and adds no benefit.</div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Typical Preprocessing Pipeline</h3>
+            <div class="space-y-0 max-w-md mx-auto">
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2 text-sm text-center">Lowercase</div>
+              <div class="text-center text-[var(--outline)]">↓</div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2 text-sm text-center">Remove punctuation</div>
+              <div class="text-center text-[var(--outline)]">↓</div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2 text-sm text-center">Remove stopwords</div>
+              <div class="text-center text-[var(--outline)]">↓</div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2 text-sm text-center">Tokenize</div>
+              <div class="text-center text-[var(--outline)]">↓</div>
+              <div class="bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/40 rounded-lg px-4 py-2 text-sm text-center">Stemming <em>OR</em> Lemmatization — choose one</div>
+              <div class="text-center text-[var(--outline)]">↓</div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2 text-sm text-center">TF-IDF (or other vectorization)</div>
+              <div class="text-center text-[var(--outline)]">↓</div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2 text-sm text-center font-semibold">Model</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on the NLP Pipeline &amp; Text Preprocessing. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-nlp-02">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. A team building a chatbot needs to know each word's grammatical role, so they run POS tagging as a preprocessing step. Should they remove stop words first?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Yes, always remove stop words before any preprocessing step</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. No — POS tagging needs full sentence structure, and stop words are part of that grammatical context</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. It makes no difference either way</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Only remove stop words after POS tagging is finished</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Stop-word removal is a task-dependent choice, not a universal step. For POS tagging, the full grammatical structure — including "is," "the," "not" — is needed, so stop words are kept, unlike for BoW/TF-IDF feature pipelines feeding classic ML models where removing them helps.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. Which pair of outputs correctly matches "running" processed by (a) a stemmer and (b) a lemmatizer?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. (a) run, (b) runn</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. (a) running, (b) running</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. (a) runn, (b) run</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. (a) runner, (b) run</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Stemming crudely chops the ending using fixed rules and can produce a non-word like "runn." Lemmatization uses dictionary/grammar knowledge and always returns a real word — the actual lemma "run."
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. A search engine needs to match "studies," "studying," and "study" together quickly across millions of documents, with no need to show grammatically correct output to any user. What's the better choice, and why?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Stemming — faster, and internal matching doesn't need real dictionary words</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Lemmatization — always more accurate regardless of use case</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Apply both together for best results</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Neither — use raw tokens unmodified</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> The rule from the notes: when output isn't shown to a user (internal processing like information retrieval matching), use stemming — it's fast, and real-word correctness doesn't matter for matching similar terms.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. Why does spaCy's <code>nlp.pipe()</code> outperform calling <code>nlp()</code> in a per-row loop over a large dataset?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. It skips tokenization entirely</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. It processes many texts in a batched, optimized way instead of one document at a time</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. It removes the need for a loaded language model</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It only works on already-lemmatized text</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Calling <code>nlp()</code> once per row is slow; <code>nlp.pipe()</code> processes many texts in a batched, optimized way, which is much faster for large datasets — it still runs the full pipeline (tokenizer, tagger, etc.), just more efficiently.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. In the end-to-end NLP pipeline, where does "coreference resolution" belong, and what category of preprocessing is it?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Data acquisition</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Feature engineering</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Basic preprocessing, alongside tokenization</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Advanced preprocessing, alongside POS tagging and parsing</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> The pipeline groups text preparation into basic preprocessing (tokenization, stop words) and advanced preprocessing (POS tagging, chunking, coreference resolution) — coreference resolution sits in the advanced tier since it requires deeper structural/semantic understanding.
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--tertiary)] text-[var(--on-tertiary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--tertiary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="nlp-03.html" class="bg-[var(--tertiary)] text-[var(--on-tertiary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">Next: Text Representation</a>
+        </div>

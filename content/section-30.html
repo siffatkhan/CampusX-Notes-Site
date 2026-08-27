@@ -1,0 +1,246 @@
+        <div>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">30. Ensemble Learning: Voting</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Wisdom of crowds · the ensemble family (voting, bagging, boosting, stacking) · Hard vs Soft Voting · VotingClassifier &amp; VotingRegressor</p>
+        </div>
+
+        <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm text-sm text-[var(--on-surface-variant)]">
+          <strong class="text-[var(--on-background)]">Extended notes</strong> — this topic isn't covered in the CampusX playlist notes this site is based on. Written from scratch to continue the curriculum, in the same style as the rest of the site.
+        </div>
+
+        <!-- INTRO -->
+        <section id="ensemble-intro" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Concept</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Introduction to Ensemble Learning</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Every algorithm you've studied so far — Linear Regression, Decision Trees, KNN, SVM, Logistic Regression — trains <strong class="text-[var(--on-background)]">one</strong> model and asks it to make every prediction alone. Ensemble Learning asks a different question: what if, instead of trusting one model, you trained <strong class="text-[var(--on-background)]">several</strong> models and combined their opinions? In practice, the combination is very often better than the single best model in the group.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-lg text-[var(--primary)]">The "Wisdom of Crowds" Analogy</h3>
+            <p class="text-sm text-[var(--on-surface)]">Ask one random person to guess the weight of an ox at a county fair, and their guess could be wildly off. Ask 800 random people — farmers, butchers, tourists who've never seen livestock — and average their guesses, and the average lands astonishingly close to the true weight. This is the famous 1907 story that gave the idea its name. It works because individual errors are <strong class="text-[var(--on-background)]">mostly random and uncorrelated</strong> — one person overestimates, another underestimates, and when you average across many independent guesses, the errors cancel out and what's left is closer to the truth.</p>
+            <p class="text-sm text-[var(--on-surface)]">The same logic applies to ML models. A single Decision Tree might overfit to quirks in the training data. A single KNN might be thrown off by noisy neighbors. But if you train many different models and combine their predictions, the individual mistakes — as long as they aren't all making the <em>same</em> mistake — tend to average out, leaving a combined prediction that is more stable and often more accurate than any single member.</p>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">Why combine weak/diverse models?</h4>
+              <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+                <li>A single strong model can still have blind spots — regions of the input space it consistently gets wrong.</li>
+                <li>Several diverse models rarely share the exact same blind spots, so combining them covers more ground.</li>
+                <li>Diversity matters more than raw individual strength — three models that are 60% accurate but wrong in <em>different</em> places can outperform one model that's 70% accurate on its own.</li>
+                <li>Averaging/voting reduces the variance contributed by any single model's quirks (formalized in the Bagging and Random Forest pages next).</li>
+              </ul>
+            </div>
+            <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">What "ensemble" is — and isn't</h4>
+              <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+                <li>Ensemble is a <strong class="text-[var(--on-background)]">meta-technique</strong> — a strategy for combining models, not an algorithm that learns patterns from raw features itself.</li>
+                <li>It sits orthogonal to the Supervised / Unsupervised / Reinforcement split from Day 1 — an ensemble is usually built <em>out of</em> supervised base learners, but "ensemble" itself is not a fourth learning paradigm.</li>
+                <li>It's also orthogonal to Classification vs Regression — the same ensemble ideas apply to both, just with a different way of aggregating (vote vs average).</li>
+              </ul>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Overview — The Ensemble Family</h3>
+            <p class="text-sm text-[var(--on-surface)] mb-3">There isn't just one way to combine models. Over the next several pages of this course you'll meet four major families, each combining models in a structurally different way:</p>
+            <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Family</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Core idea</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Training</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Coming up</th></tr></thead>
+                <tbody>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Voting</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Train several <em>different algorithms</em> on the <em>same</em> data, combine their predictions by vote/average.</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Parallel, independent</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">This page</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Bagging</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Train the <em>same</em> algorithm on many random bootstrapped samples of the data, aggregate.</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Parallel, independent</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Next page (31)</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Random Forest</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Bagging of Decision Trees + random feature subsampling at each split.</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Parallel, independent</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Page 32</td></tr>
+                  <tr><td class="p-2.5 font-semibold">Boosting (e.g. AdaBoost)</td><td class="p-2.5">Train weak learners <em>sequentially</em>, each one focusing on the previous one's mistakes.</td><td class="p-2.5">Sequential, dependent</td><td class="p-2.5">Page 33</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-xs text-[var(--on-surface-variant)] mt-2">A fifth family, <strong class="text-[var(--on-background)]">Stacking</strong>, trains a "meta-model" to learn how to best combine the outputs of several base models rather than using a fixed rule like a vote or average — a more advanced variant not covered in depth here.</p>
+          </div>
+        </section>
+
+        <!-- VOTING -->
+        <section id="voting-ensemble" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Classification &amp; Regression</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Voting Ensemble</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">A Voting Ensemble is the simplest possible ensemble: pick a handful of <strong class="text-[var(--on-background)]">different</strong> algorithms — say a Logistic Regression, a KNN, and a Decision Tree — train each one on the <strong class="text-[var(--on-background)]">same</strong> training data, and combine their predictions with a fixed rule. No sequencing, no resampling — just "ask several different experts and combine their answers."</p>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+              <h3 class="font-h3 text-base text-[var(--primary)]">Hard Voting (Classification)</h3>
+              <p class="text-sm text-[var(--on-surface)]">Each classifier outputs a class label. The ensemble's prediction is simply the <strong class="text-[var(--on-background)]">majority class</strong> — whichever label the most models voted for.</p>
+              <p class="text-sm text-[var(--on-surface)]">Example: 3 classifiers predicting spam / not-spam for one email vote <em>Spam, Spam, Not-Spam</em>. Majority is Spam (2 out of 3) → the ensemble predicts Spam. Ties are typically broken by class order or by falling back to predicted probabilities.</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+              <h3 class="font-h3 text-base text-[var(--secondary)]">Soft Voting (Classification)</h3>
+              <p class="text-sm text-[var(--on-surface)]">Each classifier outputs <strong class="text-[var(--on-background)]">predicted probabilities</strong> per class (e.g. via <code class="text-[var(--primary)]">predict_proba</code>), not just a hard label. The ensemble <strong class="text-[var(--on-background)]">averages the probabilities</strong> across models, then picks the class with the highest average probability.</p>
+              <p class="text-sm text-[var(--on-surface)]">Example: Model A says [0.55, 0.45], Model B says [0.51, 0.49], Model C says [0.20, 0.80] for classes [Not-Spam, Spam]. Averaged: [0.42, 0.58] → predicts Spam. Notice hard voting would have said Not-Spam, Not-Spam, Spam → majority Not-Spam — a <em>different</em> answer. Soft voting used the strength of each model's conviction, not just its final label.</p>
+            </div>
+          </div>
+
+          <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-md rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--tertiary)] mb-2">When is Soft Voting better?</h4>
+            <p class="text-sm text-[var(--on-surface)]">Soft voting usually outperforms hard voting <em>if</em> the individual classifiers' probability estimates are reasonably <strong class="text-[var(--on-background)]">calibrated</strong> — meaning a predicted probability of 0.8 really does correspond to being right about 80% of the time. It lets confidently-correct models outweigh barely-confident ones instead of treating every vote as equal. The catch: some models (e.g. SVMs without extra calibration) produce probability-like scores that aren't well calibrated, in which case soft voting can be misled by an overconfident-but-wrong model. Hard voting is more robust when you don't trust the probability estimates.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Code — VotingClassifier</h3>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from sklearn.ensemble import VotingClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import train_test_split, cross_val_score
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
+
+clf1 = LogisticRegression()
+clf2 = KNeighborsClassifier(n_neighbors=5)
+clf3 = DecisionTreeClassifier(max_depth=5)
+
+# HARD VOTING — majority class wins
+voting_hard = VotingClassifier(
+    estimators=[('lr', clf1), ('knn', clf2), ('dt', clf3)],
+    voting='hard'
+)
+voting_hard.fit(X_train, y_train)
+print("Hard voting accuracy:", voting_hard.score(X_test, y_test))
+
+# SOFT VOTING — average predicted probabilities, then argmax
+# every base estimator MUST support predict_proba
+voting_soft = VotingClassifier(
+    estimators=[('lr', clf1), ('knn', clf2), ('dt', clf3)],
+    voting='soft',
+    weights=[2, 1, 1]   # optional — trust lr twice as much as the others
+)
+voting_soft.fit(X_train, y_train)
+print("Soft voting accuracy:", voting_soft.score(X_test, y_test))
+
+# sanity check — compare against each individual model
+for name, clf in voting_hard.named_estimators_.items():
+    score = cross_val_score(clf, X_train, y_train, cv=5).mean()
+    print(name, "standalone CV accuracy:", round(score, 3))</code></pre>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">VotingRegressor — the Regression Counterpart</h3>
+            <p class="text-sm text-[var(--on-surface)] mb-2">Regression has no "majority class" to vote on, so there's only one aggregation rule: <strong class="text-[var(--on-background)]">average the numeric predictions</strong> from each base regressor (optionally weighted).</p>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from sklearn.ensemble import VotingRegressor
+from sklearn.linear_model import LinearRegression
+from sklearn.svm import SVR
+from sklearn.tree import DecisionTreeRegressor
+
+reg1 = LinearRegression()
+reg2 = SVR(kernel='rbf')
+reg3 = DecisionTreeRegressor(max_depth=5)
+
+voting_reg = VotingRegressor(
+    estimators=[('lin', reg1), ('svr', reg2), ('dt', reg3)]
+)
+voting_reg.fit(X_train, y_train)
+
+y_pred = voting_reg.predict(X_test)   # = simple/weighted average of reg1, reg2, reg3 predictions</code></pre>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Aspect</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Voting</th></tr></thead>
+              <tbody>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Base learners</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Usually <em>different</em> algorithm types, trained on the same data</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Training</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Fully independent / parallel — no resampling, no sequencing</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Classification rule</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Majority label (hard) or averaged probabilities (soft)</td></tr>
+                <tr><td class="p-2.5 font-semibold">Regression rule</td><td class="p-2.5">Average (optionally weighted) of predicted values</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on Voting Ensembles. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-section-30">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. Three classifiers vote on a binary label. Hard voting gives labels [1, 0, 0] → majority 0. Their probabilities for class 1 are [0.49, 0.48, 0.02]. What does soft voting predict, and why does it differ from hard voting here?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Class 1 — soft voting always agrees with the most confident model</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Class 0 — same as hard voting, soft voting never changes the outcome</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Class 0 — average probability for class 1 is (0.49+0.48+0.02)/3 ≈ 0.33, below 0.5, so both methods happen to agree here</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Undefined — soft voting requires exactly 2 models</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Averaging [0.49, 0.48, 0.02] gives ≈0.33 for class 1, well under 0.5, so soft voting predicts class 0 — the same as hard voting in this particular case. This is a good trick question: soft and hard voting frequently agree; they only diverge when the probability mass shifts the average across the 0.5 threshold despite the label-count majority pointing the other way (as in the page's spam example, where 2 weak "Not-Spam" votes were outweighed by one strongly-confident "Spam" probability).</div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. You build a VotingClassifier with voting='soft' using Logistic Regression, KNN, and an SVC. The SVC was created with default settings (no probability=True). What happens?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. It works fine — SVC always exposes predict_proba</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. It raises an error — soft voting requires every base estimator to support predict_proba, and SVC only does with probability=True set</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. It silently falls back to hard voting for that estimator</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It ignores the SVC entirely and votes with the remaining two models</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Soft voting needs probability estimates from every member. sklearn's SVC does not expose predict_proba unless you construct it with probability=True (which fits an extra internal calibration via cross-validation). Without it, a soft-voting ensemble containing that SVC raises an AttributeError.</div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. Which statement about ensemble learning as a category is correct?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Ensemble is a fourth learning paradigm alongside Supervised, Unsupervised, and Reinforcement Learning</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Ensembles can only be used for Classification, never Regression</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. All ensemble methods train their base models sequentially</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Ensemble is a meta-technique for combining models, applicable to both classification and regression, orthogonal to the supervised/unsupervised split</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Ensembling is a strategy for combining models (usually supervised base learners), not a learning paradigm of its own, and it applies to both task types. Only boosting methods train sequentially — voting and bagging train their members independently/in parallel.</div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. Why does the "wisdom of crowds" effect break down if all the base models in your voting ensemble are near-identical (e.g. three Decision Trees trained with the same hyperparameters on the same data)?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Their errors are highly correlated, so averaging/voting can't cancel out mistakes that all models make together</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. sklearn's VotingClassifier rejects identical estimators at fit time</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Identical models always produce a tie, which crashes hard voting</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It doesn't break down — identical models are actually ideal for voting</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> The crowd-wisdom effect relies on errors being roughly independent so they cancel out when combined. Identical/near-identical models trained the same way make the same mistakes on the same inputs — their errors are correlated, not independent — so combining them adds almost nothing over using just one of them. Diversity between base learners is what makes voting (and bagging, and random forests) work.</div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. For a VotingRegressor combining a Linear Regression, an SVR, and a Decision Tree Regressor, how is the final prediction computed for a single test point?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. The median of the three predictions is used</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. A majority vote is taken among the three numeric outputs</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. The (optionally weighted) average of the three regressors' predicted values is taken</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Only the best-performing regressor on the training set is used</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Regression has no discrete classes to vote on, so VotingRegressor's only rule is to average the numeric predictions from each base regressor — a straight mean by default, or a weighted mean if `weights` is supplied.</div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--primary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="section-31.html" class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">Next: Bagging</a>
+        </div>

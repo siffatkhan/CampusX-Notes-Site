@@ -1,0 +1,190 @@
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-3 py-1 mb-3">Source: CampusX — 100 Days of Machine Learning</span>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">21. Bias-Variance Tradeoff</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Bias vs variance · overfitting vs underfitting · regularization, bagging &amp; boosting</p>
+        </div>
+
+        <!-- DAY 62 -->
+        <section id="day-62" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 62</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Bias Variance Trade Off</h2>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">Bias</h4>
+              <p class="text-sm text-[var(--on-surface)] mb-2">The inability of an ML model to truly capture the relationship in the training data — such a model has <strong class="text-[var(--on-background)]">high bias</strong>. Bias = error due to wrong assumptions in the model.</p>
+              <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+                <li>Model is too simple</li>
+                <li>Misses the real pattern in the training data</li>
+                <li>Makes the same mistake on most datasets</li>
+              </ul>
+              <p class="text-sm text-[var(--on-surface)] mt-2"><strong class="text-[var(--on-background)]">Example:</strong> you fit a straight line to curved data — the model cannot follow the shape. Result: high training error <em>and</em> high test error.</p>
+            </div>
+            <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">Variance</h4>
+              <p class="text-sm text-[var(--on-surface)] mb-2">The difference in fit across different datasets. Example: training error = 10, test error = 100 → gap = 90 → variance is high.</p>
+              <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+                <li>Model is too sensitive</li>
+                <li>Learns noise</li>
+                <li>Changes a lot if the data changes</li>
+              </ul>
+              <p class="text-sm text-[var(--on-surface)] mt-2"><strong class="text-[var(--on-background)]">Result:</strong> low training error, high test error.</p>
+            </div>
+          </div>
+
+          <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm text-[var(--on-surface)]">
+            <strong class="text-[var(--on-background)]">Intuition:</strong> high bias → model too rigid. High variance → model too flexible. Goal: balance both.
+          </div>
+
+          <h3 class="font-h3 text-lg text-[var(--primary)]">Overfitting vs Underfitting</h3>
+          <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Regime</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Definition</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Symptoms</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Cause</th></tr></thead>
+              <tbody>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Overfitting</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Works best on training data, not well on test data — model memorizes training data</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Very low training error, poor performance on new data</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">High model complexity; too many features or high polynomial degree</td></tr>
+                <tr><td class="p-2.5 font-semibold">Underfitting</td><td class="p-2.5">Model fails to capture the relationship in the training data</td><td class="p-2.5">High training error, high test error</td><td class="p-2.5">Model too simple; not enough features</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">Variance, plainly: performance on one dataset vs different performance on a different dataset.</p>
+
+          <!-- WIDGET: bias-variance tradeoff -->
+          <div class="border-l-4 border-[var(--outline)] bg-[var(--surface-container-high)]/40 p-sm rounded-r-lg text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Illustrative aid</strong> — generated for this site, not quoted from the source notes.</div>
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <canvas id="biasVarianceChart" height="220"></canvas>
+            <div class="flex items-center gap-3">
+              <label for="complexitySlider" class="text-sm text-[var(--on-surface)] whitespace-nowrap">Model complexity</label>
+              <input id="complexitySlider" type="range" min="1" max="10" step="1" value="5" oninput="updateBiasVariance()" class="w-full accent-[var(--primary)]">
+              <span id="complexityVal" class="text-sm font-semibold text-[var(--primary)] w-6 text-right">5</span>
+            </div>
+            <div class="grid sm:grid-cols-3 gap-2 text-xs">
+              <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full inline-block" style="background:var(--secondary)"></span><span class="text-[var(--on-surface-variant)]">Bias²</span></div>
+              <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full inline-block" style="background:var(--tertiary)"></span><span class="text-[var(--on-surface-variant)]">Variance</span></div>
+              <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full inline-block" style="background:var(--primary)"></span><span class="text-[var(--on-surface-variant)]">Total error</span></div>
+            </div>
+            <p class="text-xs text-[var(--on-surface-variant)]">Drag the slider: low complexity → underfitting zone (bias dominates); high complexity → overfitting zone (variance dominates). The sweet spot minimizes total error in the middle.</p>
+          </div>
+
+          <h3 class="font-h3 text-lg text-[var(--primary)]">Techniques to Handle the Tradeoff</h3>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h4 class="font-h3 text-base text-[var(--on-background)]">1. Regularization</h4>
+            <p class="text-sm text-[var(--on-surface)]">Penalize large coefficients. Effect: reduces model complexity and controls overfitting — the model is forced to stay smooth. Used in both linear regression and logistic regression.</p>
+            <p class="text-sm text-[var(--on-surface)]">There are 3 kinds of regularization technique: <strong class="text-[var(--on-background)]">Ridge (L2)</strong>, <strong class="text-[var(--on-background)]">Lasso (L1)</strong>, and <strong class="text-[var(--on-background)]">Elastic Net</strong> (a combination of both).</p>
+            <p class="text-sm text-[var(--on-surface)]">In an overfit model, the slope (m) value would be extremely high; a lower m value represents underfitting. A lesser slope means x plays less of a role in determining output y; a high slope m means x plays a greater role. To reduce overfitting, we have to reduce the slope m — so we add a regularization term to the loss function that penalizes large coefficients, and our goal becomes minimizing that combined magnitude.</p>
+            <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm text-[var(--on-surface)]">
+              <strong class="text-[var(--on-background)]">Lambda (λ)</strong> is a hyperparameter controlling how strongly coefficients are penalized — it can be tuned lower (less regularization, closer to the unregularized model) or higher (more regularization, more shrinkage toward zero).
+            </div>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h4 class="font-h3 text-base text-[var(--on-background)]">2. Bagging (Bootstrap Aggregating)</h4>
+            <p class="text-sm text-[var(--on-surface)]">Train many models on different random samples of the data and average their predictions. Effect: reduces <strong class="text-[var(--on-background)]">variance</strong>. Example: Random Forest.</p>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h4 class="font-h3 text-base text-[var(--on-background)]">3. Boosting</h4>
+            <p class="text-sm text-[var(--on-surface)]">Train models sequentially, where each new model focuses on the previous models' mistakes. Effect: reduces <strong class="text-[var(--on-background)]">bias</strong> and improves overall accuracy. Examples: AdaBoost, Gradient Boosting.</p>
+          </div>
+
+          <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Technique</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Primarily reduces</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Examples</th></tr></thead>
+              <tbody>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Regularization</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Overfitting / complexity (variance-leaning)</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Ridge, Lasso, Elastic Net</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Bagging</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Variance</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Random Forest</td></tr>
+                <tr><td class="p-2.5 font-semibold">Boosting</td><td class="p-2.5">Bias</td><td class="p-2.5">AdaBoost, Gradient Boosting</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on Day 62. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-section-21">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. A model shows training error = 8 and test error = 9 (a small gap), but both are high. Which problem does this indicate?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. High variance / overfitting</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Perfect fit, no action needed</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. High bias / underfitting</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Data leakage</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> A small train/test gap rules out high variance (which needs a large gap, e.g. 10 vs 100). Both errors being high — with the model making the same mistake consistently — is the signature of high bias / underfitting.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. Which technique reduces variance by training many models on different random samples and averaging their predictions?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Boosting</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Bagging</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Gradient descent</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. One-hot encoding</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Bagging (Bootstrap Aggregating) trains many models on random samples and averages predictions, reducing variance — Random Forest is the canonical example. Boosting trains sequentially to reduce bias instead.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. You increase λ (lambda) sharply in a Ridge Regression. What happens to the coefficient magnitudes and where does the model move on the bias-variance spectrum?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Coefficients shrink toward zero; model becomes simpler, moving toward higher bias / lower variance</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Coefficients grow larger; model becomes more complex, moving toward overfitting</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Coefficients are unaffected; only the intercept changes</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. The model converts from regression to classification</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Per the notes: an overfit model has extremely high m (slope); lower m represents underfitting/simplicity. Regularization's job is to reduce slope m — so as λ increases, coefficients shrink, complexity drops, and the model trades variance for bias.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. Using the slider widget on this page: at the far-left (complexity = 1) position, which curve is highest and what regime does that represent?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Variance is highest — overfitting</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Total error is at its minimum</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Bias and variance are equal</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Bias² is highest — underfitting</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> At minimum complexity the model is too simple to capture the pattern — bias² is high while variance is low, which is the underfitting end of the tradeoff curve.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. Why does Boosting reduce bias rather than variance, unlike Bagging?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. It trains identical models on random samples and averages them</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. It applies L2 regularization internally</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. It trains models sequentially, each one specifically targeting the previous models' mistakes</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It increases the polynomial degree of the base learner</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Boosting's defining mechanic is sequential training where each model focuses on what previous ones got wrong — directly attacking systematic error (bias), unlike bagging's parallel averaging, which smooths out variance instead.
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--primary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="section-22.html" class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">
+            Next: Regularization →
+          </a>
+        </div>

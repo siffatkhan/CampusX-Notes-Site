@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2. The Perceptron — Sifat Notes</title>
+
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..800&family=Inter:ital,opsz,wght@0,14..32,400..700;1,14..32,400..700&family=JetBrains+Mono:wght@400..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script src="../assets/tailwind-config.js"></script>
+<link rel="stylesheet" href="../assets/theme.css">
+</head>
+<body class="antialiased min-h-screen font-body-md">
+
+<header class="bg-[var(--surface)] border-b border-[var(--outline-variant)] sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-4 md:px-lg py-2.5 md:py-sm max-w-[1200px] mx-auto">
+<a href="../index.html" class="flex items-center gap-2.5 md:gap-3 group min-w-0" title="Back to home">
+<div class="w-9 h-9 shrink-0 rounded-md bg-[var(--primary)] text-[var(--on-primary)] flex items-center justify-center font-h3 font-bold text-sm group-hover:opacity-85 transition-opacity">SN</div>
+<div class="min-w-0">
+<div class="font-h3 text-base md:text-lg font-semibold text-[var(--on-background)] leading-none truncate">Sifat Notes</div>
+<div class="hidden sm:block text-[11px] text-[var(--on-surface-variant)] mt-0.5 truncate">from CampusX's playlists</div>
+</div>
+</a>
+<nav class="hidden md:flex items-center gap-6 text-sm shrink-0">
+<a class="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors" href="../index.html">Home</a>
+<a class="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors" href="../index.html#courses">Courses</a>
+</nav>
+<div class="flex items-center gap-2 md:gap-3 shrink-0">
+<button id="mobileMenuBtn" class="md:hidden border border-[var(--outline-variant)] rounded-md p-1.5 text-[var(--on-background)] flex items-center justify-center" onclick="toggleSidebar()" aria-label="Toggle navigation">
+<span class="material-symbols-outlined text-[20px]">menu</span>
+</button>
+<button class="flex items-center gap-1.5 bg-[var(--surface-container)] border border-[var(--outline-variant)] text-[var(--on-background)] px-2.5 md:px-3 py-1.5 rounded-full text-xs font-label-caps hover:border-[var(--primary)] transition-colors" onclick="toggleTheme()" data-theme-btn>
+<span class="material-symbols-outlined text-[16px]" data-theme-icon>light_mode</span>
+<span data-theme-label class="hidden sm:inline">Light</span>
+</button>
+</div>
+</div>
+</header>
+
+
+<div class="flex flex-1">
+<div id="sidebarBackdrop" class="hidden fixed inset-0 bg-black/50 z-50 md:hidden" onclick="toggleSidebar()"></div>
+<aside id="sidebarSlot" class="flex flex-col bg-[var(--surface-container-low)] border-r border-[var(--outline-variant)] fixed left-0 top-[65px] h-[calc(100vh-65px)] w-[280px] py-md overflow-y-auto">
+<div class="px-lg mb-md">
+<input id="searchBox" placeholder="Search topics…" class="w-full bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-md px-3 py-2 text-sm text-[var(--on-background)] placeholder:text-[var(--on-surface-variant)] focus:outline-none focus:border-[var(--secondary)]">
+</div>
+
+<nav class="toc flex-1 px-2 space-y-1 text-sm" id="tocNav">
+
+<div class="px-3 pt-3 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Foundations</div>
+
+<details open>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--secondary)] font-semibold bg-[var(--surface-container-high)]/50">1. Introduction to Deep Learning <span class="chev text-[10px]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-01.html#dl-vs-ml" class="flex px-3 py-1.5 rounded-md text-[var(--secondary)] font-semibold bg-[var(--surface-container-high)]/40">Deep Learning vs ML</a>
+<a href="dl-01.html#types-of-neural-networks" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Types of Neural Networks</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">2. The Perceptron <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-02.html#perceptron" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Perceptron</a>
+<a href="dl-02.html#perceptron-trick" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Perceptron Trick</a>
+<a href="dl-02.html#perceptron-loss" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Perceptron Loss Function</a>
+<a href="dl-02.html#problem-with-perceptron" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Problem with Perceptron</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">3. Multi-Layer Perceptron <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-03.html#mlp-notation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">MLP Notation</a>
+<a href="dl-03.html#mlp-intuition" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">MLP Intuition</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">4. Forward Propagation <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-04.html#forward-propagation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Forward Propagation — Worked Example</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">5. Loss Functions <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-05.html#loss-functions-intro" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Loss vs Cost Function</a>
+<a href="dl-05.html#mse" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Mean Squared Error (MSE)</a>
+<a href="dl-05.html#mae" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Mean Absolute Error (MAE)</a>
+<a href="dl-05.html#huber-loss" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Huber Loss</a>
+<a href="dl-05.html#binary-cross-entropy" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Binary Cross-Entropy</a>
+<a href="dl-05.html#categorical-cross-entropy" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Categorical Cross-Entropy</a>
+<a href="dl-05.html#sparse-categorical-cross-entropy" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Sparse Categorical Cross-Entropy</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Training Deep Networks</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">6. Backpropagation <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-06.html#backprop-what" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Backpropagation — What</a>
+<a href="dl-06.html#backprop-how" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Backpropagation — How</a>
+<a href="dl-06.html#backprop-worked-example" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Worked Numeric Example</a>
+<a href="dl-06.html#derivative-vs-gradient" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Derivative vs Gradient</a>
+<a href="dl-06.html#epoch-vs-iteration" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Epoch vs Iteration</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">7. Vanishing &amp; Exploding Gradients <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-07.html#vanishing-gradient-problem" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Vanishing Gradient Problem</a>
+<a href="dl-07.html#detecting-vgp" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Detecting It</a>
+<a href="dl-07.html#solutions-to-vgp" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Solutions</a>
+<a href="dl-07.html#exploding-gradient-problem" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Exploding Gradient Problem</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">8. Training Toolkit <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-08.html#mlp-memoization" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">MLP Memoization</a>
+<a href="dl-08.html#gradient-descent-in-nn" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Gradient Descent in NNs</a>
+<a href="dl-08.html#improving-nn-performance" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Improving NN Performance</a>
+<a href="dl-08.html#early-stopping" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Early Stopping</a>
+<a href="dl-08.html#data-scaling-nn" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Data Scaling</a>
+<a href="dl-08.html#dropout-layer" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Dropout Layer</a>
+<a href="dl-08.html#regularization-dl" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Regularization</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">9. Activation Functions <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-09.html#why-activation-functions" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why Activation Functions</a>
+<a href="dl-09.html#ideal-activation-properties" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Ideal Properties</a>
+<a href="dl-09.html#sigmoid-activation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Sigmoid</a>
+<a href="dl-09.html#tanh-activation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Tanh</a>
+<a href="dl-09.html#relu-activation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">ReLU</a>
+<a href="dl-09.html#relu-variants" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">ReLU Variants</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">10. Optimizers <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-10.html#momentum" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Momentum</a>
+<a href="dl-10.html#nesterov-accelerated-gradient" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Nesterov (NAG)</a>
+<a href="dl-10.html#adagrad" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">AdaGrad</a>
+<a href="dl-10.html#rmsprop" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">RMSProp</a>
+<a href="dl-10.html#adam-optimizer" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Adam</a>
+<a href="dl-10.html#weight-initialization" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Weight Initialization</a>
+<a href="dl-10.html#batch-normalization" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Batch Normalization</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Convolutional Networks</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">11. CNN Fundamentals <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-11.html#cnn-intuition" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">CNN Intuition</a>
+<a href="dl-11.html#why-not-ann" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why Not Plain ANN</a>
+<a href="dl-11.html#convolution-operation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Convolution Operation</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">12. Padding, Strides &amp; Pooling <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-12.html#padding" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Padding</a>
+<a href="dl-12.html#strides" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Strides</a>
+<a href="dl-12.html#pooling" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Pooling</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">13. Architectures &amp; Transfer Learning <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-13.html#classic-cnn-architectures" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Classic CNN Architectures</a>
+<a href="dl-13.html#transfer-learning" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Transfer Learning</a>
+<a href="dl-13.html#feature-extraction" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Feature Extraction</a>
+<a href="dl-13.html#fine-tuning" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Fine-Tuning</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Sequence Models &amp; Attention</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">14. Recurrent Neural Networks <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-14.html#why-feedforward-fails" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why Feedforward Fails</a>
+<a href="dl-14.html#rnn-hidden-state" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Hidden State</a>
+<a href="dl-14.html#rnn-unrolled" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Unrolled Through Time</a>
+<a href="dl-14.html#bptt" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Backpropagation Through Time</a>
+<a href="dl-14.html#rnn-limitations" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">RNN Limitations</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">15. LSTM &amp; GRU <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-15.html#lstm-motivation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why LSTM</a>
+<a href="dl-15.html#lstm-gates" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Three Gates</a>
+<a href="dl-15.html#gru" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">GRU</a>
+<a href="dl-15.html#lstm-vs-gru" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">LSTM vs GRU</a>
+<a href="dl-15.html#bidirectional-rnn" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Bidirectional RNN</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">16. Seq2Seq &amp; Encoder-Decoder <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-16.html#what-is-seq2seq" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">What Is Seq2Seq</a>
+<a href="dl-16.html#encoder-decoder" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Encoder-Decoder Architecture</a>
+<a href="dl-16.html#teacher-forcing" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Teacher Forcing</a>
+<a href="dl-16.html#bottleneck-problem" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Bottleneck Problem</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">17. Attention Mechanism <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-17.html#attention-bottleneck-recap" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Solving the Bottleneck</a>
+<a href="dl-17.html#how-attention-works" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">How Attention Works</a>
+<a href="dl-17.html#calculating-attention-weights" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Calculating Attention Weights</a>
+<a href="dl-17.html#self-attention-vs-cross-attention-preview" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Self vs Cross Attention</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">18. The Transformer Architecture <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-18.html#why-transformers" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why Transformers</a>
+<a href="dl-18.html#self-attention" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Self-Attention</a>
+<a href="dl-18.html#multi-head-attention" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Multi-Head Attention</a>
+<a href="dl-18.html#positional-encoding" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Positional Encoding</a>
+<a href="dl-18.html#transformer-architecture" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Full Architecture</a>
+<a href="dl-18.html#bert" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">BERT</a>
+<a href="dl-18.html#gpt" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">GPT</a>
+<a href="dl-18.html#terminology-hierarchy" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Transformer vs LLM vs GPT</a>
+</div>
+</details>
+
+</nav>
+</aside>
+
+
+  <main class="flex-1 md:ml-[280px] px-4 py-6 md:p-lg max-w-[1200px] mx-auto w-full min-w-0">
+    <nav aria-label="Breadcrumb" class="flex flex-wrap text-sm text-[var(--on-surface-variant)] mb-4"><a href="../index.html" class="hover:text-[var(--secondary)]">Home</a><span class="mx-2">/</span><a href="../index.html#courses" class="hover:text-[var(--secondary)]">DL Track</a><span class="mx-2">/</span><span class="text-[var(--on-background)]">2. The Perceptron</span></nav>
+
+    <div class="space-y-xl">
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-3 py-1 mb-3">Source: 100 Days of Deep Learning</span>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">2. The Perceptron</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">What a Perceptron Is · The Perceptron Trick · The Perceptron Loss Function · Why It Fails on Nonlinear Data</p>
+        </div>
+
+        <!-- DAY 4 -->
+        <section id="perceptron" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Day 4</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">The Perceptron</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">The perceptron is the single most important building block in deep learning — it is a mathematical function/model originally designed for supervised machine learning, and because of the way it is structured, it turned out to also be the foundational unit that every larger neural network is built from. Understanding it fully pays off for everything that follows.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-lg text-[var(--secondary)]">The Math</h3>
+            <p class="text-sm text-[var(--on-surface)]">Given inputs \(x_1, x_2, \dots\), each input has an associated <strong class="text-[var(--on-background)]">weight</strong> \(w_1, w_2, \dots\) that represents the strength of that feature — how much that particular input matters for the decision being made. All the weighted inputs are summed together along with a <strong class="text-[var(--on-background)]">bias</strong> term \(b\) to produce a single number \(z\):</p>
+            <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ z = w_1x_1 + w_2x_2 + b $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)]">That \(z\) is then passed through an <strong class="text-[var(--on-background)]">activation function</strong> \(f\), producing the final output:</p>
+            <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ y = f(z) $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)]">The activation function's job is to squash \(z\) — which can be any real number — into a constrained, useful range, such as \([0, 1]\) or \([-1, 1]\). So the target/prediction \(y\) is a function of \(z\), and \(z\) itself is a function of the weighted inputs and the bias.</p>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">Neuron vs. Perceptron</h4>
+              <p class="text-sm text-[var(--on-surface)]">A biological neuron is enormously complex — it can receive billions of inputs, and we still don't fully understand everything that happens inside its nucleus as it processes them. A perceptron is a deliberate simplification: we know exactly what happens — multiply each input by a weight, sum them with a bias, and pass the result through an activation function. The perceptron is <strong class="text-[var(--on-background)]">inspired by</strong> the neuron, but it is not a true copy of it. One concrete difference is <strong class="text-[var(--on-background)]">neuroplasticity</strong>: a biological neuron's input connections can physically strengthen or weaken over time as the brain adapts, whereas a perceptron's weights only change when an external training algorithm updates them — they don't self-organize.</p>
+            </div>
+            <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--tertiary)] mb-1">"A perceptron is nothing but a line"</h4>
+              <p class="text-sm text-[var(--on-surface)]">Because \(z = w_1x_1 + w_2x_2 + b\) is a linear equation, the decision boundary a perceptron draws between two classes is always a straight line (or, in higher dimensions, a flat hyperplane). This is both its power and its fundamental limitation: it can only separate data that is linearly separable — data that can be split cleanly by a straight line. Give it nonlinear data, and the perceptron simply fails, no matter how it's trained.</p>
+            </div>
+          </div>
+
+          <div class="border-l-4 border-[var(--error)] bg-[var(--error-container)]/10 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--error)] mb-1">Why a perceptron cannot learn XOR</h4>
+            <p class="text-sm text-[var(--on-surface)]">XOR (exclusive OR) outputs 1 when its two binary inputs differ (0,1 → 1 and 1,0 → 1) and 0 when they match (0,0 → 0 and 1,1 → 0). Plot these four points on a 2D plane and there is no single straight line that separates the "1" outputs from the "0" outputs — the true points sit on opposite corners from each other. Since a perceptron can only draw a straight-line decision boundary, and XOR is fundamentally a nonlinear function, a single perceptron can never learn it. This single failure is historically significant — it's the reason the field moved toward stacking multiple perceptrons into <strong class="text-[var(--on-background)]">multi-layer</strong> networks, which can bend and combine multiple lines into a nonlinear boundary.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">What Happens Inside a Single Neuron</h3>
+            <p class="text-sm text-[var(--on-surface)] mb-2">In a standard neural network, essentially every neuron except the input neurons carries an activation function. The general rule:</p>
+            <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md">
+              <li><strong class="text-[var(--on-background)]">Hidden neurons</strong> — each has an activation function.</li>
+              <li><strong class="text-[var(--on-background)]">Output neurons</strong> — each has an activation function appropriate for the task (or linear, for regression).</li>
+              <li><strong class="text-[var(--on-background)]">Input neurons</strong> — typically have no activation function; they simply pass the raw input features forward.</li>
+            </ul>
+            <ol class="text-sm text-[var(--on-surface)] list-decimal list-inside space-y-1 mt-3">
+              <li>Receive inputs from the previous layer.</li>
+              <li>Multiply each input by its corresponding weight.</li>
+              <li>Add all the weighted inputs together.</li>
+              <li>Add a bias.</li>
+              <li>Apply the activation function.</li>
+              <li>Output the result to the next layer.</li>
+            </ol>
+            <p class="text-sm text-[var(--on-surface)] mt-3">Written generally, for any number of inputs:</p>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ z = w_1x_1 + w_2x_2 + \cdots + w_nx_n + b, \qquad a = f(z) $$
+            </div>
+            <p class="text-xs text-[var(--on-surface-variant)] mt-2">where \(x_i\) = inputs, \(w_i\) = weights, \(b\) = bias, \(z\) = weighted sum (pre-activation), \(f\) = activation function, \(a\) = the neuron's output.</p>
+          </div>
+        </section>
+
+        <!-- DAY 5 -->
+        <section id="perceptron-trick" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Day 5</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">The Perceptron Trick</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Before loss functions and gradient descent, the original perceptron algorithm learned its weights through a simple, geometric, iterative rule known as the <strong class="text-[var(--on-background)]">perceptron trick</strong>. A tool like <a href="https://www.desmos.com" target="_blank" rel="noopener" class="text-[var(--secondary)] underline">Desmos</a> is useful here — it lets you visualize a line in the 2D plane and watch it move as you change its coefficients, which builds real intuition for what the trick is doing.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--secondary)]">Step 1 — Which side of the line is a point on?</h3>
+            <p class="text-sm text-[var(--on-surface)]">Take the line's equation and simply substitute the point's coordinates into it. If the resulting value is less than 0, the point lies in the <strong class="text-[var(--on-background)]">negative region</strong>; if it is greater than 0, the point lies in the <strong class="text-[var(--on-background)]">positive region</strong>. This one check is the entire basis of the algorithm: for every misclassified point, we know exactly which side of the line it incorrectly falls on.</p>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--secondary)]">Step 2 — Move the line toward the misclassified point</h3>
+            <p class="text-sm text-[var(--on-surface)]">Once we know a point is on the wrong side, we nudge the line's weights and bias using that point's own coordinates:</p>
+            <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+              <li>If a point that should be positive is sitting in the <strong class="text-[var(--on-background)]">negative</strong> region, we <strong class="text-[var(--on-background)]">add</strong> the point's coordinate values to the line's weights (and bias) — this pulls the line toward the negative region, bringing that point onto the correct side.</li>
+              <li>If a point that should be negative is sitting in the <strong class="text-[var(--on-background)]">positive</strong> region, we <strong class="text-[var(--on-background)]">subtract</strong> the point's coordinate values — this pushes the line toward the positive region instead.</li>
+            </ul>
+            <p class="text-sm text-[var(--on-surface)]">The reason this works is geometric: adding a point's own coordinates to a line's coefficients shifts and rotates the line in the direction of that point, effectively "pulling" the boundary across it. Repeating this update, one misclassified point at a time, over many iterations is literally how the classical perceptron algorithm finds its weights.</p>
+          </div>
+
+          <div class="border-l-4 border-[var(--error)] bg-[var(--error-container)]/10 p-md rounded-r-lg space-y-2">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--error)] mb-1">Three problems with the perceptron trick</h4>
+            <ol class="text-sm text-[var(--on-surface)] list-decimal list-inside space-y-2">
+              <li><strong class="text-[var(--on-background)]">No guarantee of the best line.</strong> The trick only reacts to whichever point is currently misclassified. If a badly-placed point (say, an outlier) forces an update, the line can shift toward accommodating that one point — there's nothing in the algorithm ensuring the resulting line is actually the best possible separator overall.</li>
+              <li><strong class="text-[var(--on-background)]">No way to quantify quality.</strong> The trick tells you "move the line" but gives you no numeric score for how good or bad the current line is. You can't compare two candidate lines, or track whether the model is actually improving — there's no measurement, only a reactive nudge.</li>
+              <li><strong class="text-[var(--on-background)]">Convergence problems.</strong> Sometimes the line simply refuses to settle — it keeps oscillating between updates and never converges to a stable solution, particularly if the data isn't cleanly linearly separable.</li>
+            </ol>
+            <p class="text-sm text-[var(--on-surface)] mt-2">All three problems point to the same underlying gap: there is no formal, differentiable measure of error to optimize. That gap is exactly what a <strong class="text-[var(--on-background)]">loss function</strong> fills.</p>
+          </div>
+        </section>
+
+        <!-- DAY 6 -->
+        <section id="perceptron-loss" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Day 6</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">The Perceptron Loss Function</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">A loss function is a function that tells us numerically how good or bad our model is currently performing — exactly the missing piece from the perceptron trick. Perceptron error is calculated differently from how logistic regression or linear regression calculate theirs: instead of a distance-based or probability-based error, the perceptron uses <strong class="text-[var(--on-background)]">hinge loss</strong>:</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+            $$ L = \frac{1}{n}\sum_{i=1}^{n} \max\big(0,\, -y_i \cdot f(x_i)\big) $$
+          </div>
+
+          <p class="text-sm text-[var(--on-surface)]">Here \(n\) is the number of rows (samples), \(y_i\) is the true label (+1 or −1), and \(f(x_i)\) is the model's raw prediction for that row. The term \(-y \cdot f(x)\) is the key to reading this formula: when the prediction has the <strong class="text-[var(--on-background)]">same sign</strong> as the true label (a correct classification), \(y \cdot f(x)\) is positive, so \(-y \cdot f(x)\) is negative, and \(\max(0, \text{negative number})\) evaluates to 0 — a correctly classified point contributes <strong class="text-[var(--on-background)]">zero</strong> loss. When the prediction has the <strong class="text-[var(--on-background)]">opposite sign</strong> from the true label (a misclassification), \(y \cdot f(x)\) is negative, so \(-y \cdot f(x)\) is positive, and that positive value becomes the penalty added to the loss. In short: correct points cost nothing, wrong points cost something proportional to how wrong they are, and the total loss is the average of those penalties across all \(n\) rows.</p>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Activation + Loss pairings by task</h3>
+            <p class="text-sm text-[var(--on-surface)] mb-2">Different tasks pair a specific activation function on the output layer with a specific loss function suited to measuring error for that task:</p>
+            <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead>
+                  <tr class="bg-[var(--surface-container-high)]">
+                    <th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Loss Function</th>
+                    <th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Activation</th>
+                    <th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Task</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Hinge Loss</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Step</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Perceptron</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Log Loss (Binary Cross-Entropy)</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Sigmoid</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Logistic Regression</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Categorical Cross-Entropy</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Softmax</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Multiclass Classification</td></tr>
+                  <tr><td class="p-2.5 font-semibold">MSE</td><td class="p-2.5">Linear</td><td class="p-2.5">Regression (Linear Regression)</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-xs text-[var(--on-surface-variant)] mt-2">This table is worth memorizing — it recurs throughout deep learning any time you're choosing an output layer and loss function for a new model.</p>
+          </div>
+        </section>
+
+        <!-- DAY 7 -->
+        <section id="problem-with-perceptron" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Day 7</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">The Problem With the Perceptron</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Even with a proper loss function to guide it, a single perceptron has a hard ceiling: it can only work on <strong class="text-[var(--on-background)]">linearly separable data</strong>. Give it data that requires a curved or complex boundary and it simply cannot converge to a correct solution, no matter how the loss function or trick are tuned — the model's own structure (one straight-line boundary) is the bottleneck, not the training method.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md text-sm text-[var(--on-surface)]">
+            <strong class="text-[var(--on-background)]">Hands-on tool:</strong> <a href="https://playground.tensorflow.org/#activation=tanh&batchSize=10&dataset=circle&regDataset=reg-plane&learningRate=0.03&regularizationRate=0&noise=0&networkShape=4,2,2&seed=0.30539&showTestData=false&discretize=false&percTrainData=50&x=true&y=true&xTimesY=true&xSquared=true&ySquared=true&cosX=false&sinX=false&cosY=false&sinY=false&collectStats=false&problem=regression&initZero=false&hideText=false" target="_blank" rel="noopener" class="text-[var(--secondary)] underline">playground.tensorflow.org</a> is a great tool for interactively experimenting with neural networks — you can watch, in real time, how adding layers and neurons lets a network bend a straight decision boundary into a curved one that separates nonlinear data like the "circle" dataset.</p>
+          </div>
+
+          <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-md rounded-r-lg space-y-2">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">The fix: Multi-Layer Perceptron (MLP)</h4>
+            <p class="text-sm text-[var(--on-surface)]">The solution to the single perceptron's linear-only limitation is to stack multiple perceptrons together into layers — an <strong class="text-[var(--on-background)]">MLP</strong>. Instead of one straight-line boundary, a network of many perceptrons can combine several lines into a boundary of arbitrary complexity. The genuinely hard part of making this work is not the architecture itself, but <strong class="text-[var(--on-background)]">training</strong> it — specifically, the algorithm called <strong class="text-[var(--on-background)]">backpropagation</strong>, which figures out how to adjust every weight in every layer of a multi-layer network based on the final output error. That is the subject of the next few pages.</p>
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on Day 4–7. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-dl-02">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. Why can a single perceptron never learn the XOR function?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. XOR has too many inputs for a perceptron</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. XOR outputs are not binary</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. XOR's true points cannot be separated by any single straight line, but a perceptron can only draw straight-line boundaries</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. XOR requires a bias term and perceptrons don't support bias</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> A perceptron is "nothing but a line" — its decision boundary is always linear. XOR is a nonlinear function (its 1-outputs sit on opposite corners from its 0-outputs), so no straight line can separate them.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. In the perceptron trick, a positive-class point is currently misclassified into the negative region. What update is applied?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Add the point's coordinates to the line's weights/bias</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Subtract the point's coordinates from the line's weights/bias</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Multiply the weights by the point's coordinates</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. No update — the trick can't fix this case</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> If we need to move the line toward the negative region (to correctly capture a positive point stuck there), we add the point's values to the weights and bias — this pulls the line toward it.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. A point is correctly classified by the perceptron (prediction and true label share the same sign). What is its hinge loss contribution?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. A large positive value</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Zero</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. A negative value</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Undefined</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> For a correct prediction, \(y \cdot f(x)\) is positive, so \(-y \cdot f(x)\) is negative, and \(\max(0, \text{negative})=0\). Correctly classified points contribute zero loss.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. Which activation/loss pairing is used for multiclass classification?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Step + Hinge Loss</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Sigmoid + Log Loss</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Linear + MSE</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Softmax + Categorical Cross-Entropy</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Per the activation/loss table: Softmax activation is paired with Categorical Cross-Entropy loss specifically for multiclass classification.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. What is the real bottleneck that a single perceptron cannot overcome even with a good loss function?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. It cannot use a bias term</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. It cannot use gradient descent</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Its structure only allows a single linear (straight-line) decision boundary</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It cannot process more than 2 inputs</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> The loss function only improves how well the single line is fit — it can't change the fact that the model's structure is one straight-line boundary. Fixing this requires a structural change: stacking perceptrons into an MLP.
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--primary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="dl-03.html" class="bg-[var(--secondary)] text-[var(--on-secondary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">Next: Multi-Layer Perceptron</a>
+        </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="../assets/app.js"></script>
+
+</body>
+</html>

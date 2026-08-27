@@ -1,0 +1,343 @@
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-3 py-1 mb-3">Source: 100 Days of Deep Learning</span>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">6. Backpropagation</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">What backpropagation is · the chain-rule math behind it · a full worked numeric example · epochs vs iterations vs batch size</p>
+        </div>
+
+        <!-- DAY 12 -->
+        <section id="backprop-what" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Day 12</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Backpropagation — What It Is</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Backpropagation is the algorithm used to train neural networks with <strong class="text-[var(--on-background)]">gradient descent</strong>. A neural network only has two kinds of learnable numbers — its weights and biases — and backpropagation is simply the procedure that figures out, for every single one of them, "should this number go up or down, and by how much, so that the network's predictions get a little better?" It does this by pushing the prediction error backward through the network, layer by layer, from the output toward the input — hence the name.</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Backpropagation follows a fixed series of steps that repeat over and over during training:</p>
+
+          <ol class="text-sm text-[var(--on-surface)] space-y-1.5 list-decimal list-inside bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md">
+            <li><strong class="text-[var(--on-background)]">Step 0 — Initialize:</strong> set the weights <code class="text-[var(--secondary)]">w</code> and bias <code class="text-[var(--secondary)]">b</code>, either randomly or to simple starting values (e.g. <code class="text-[var(--secondary)]">w = 1</code>, <code class="text-[var(--secondary)]">b = 0</code>). They have to start somewhere before anything can be learned.</li>
+            <li><strong class="text-[var(--on-background)]">Step 1 — Select a point:</strong> pick one row (one training example) from the dataset.</li>
+            <li><strong class="text-[var(--on-background)]">Step 2 — Forward propagation:</strong> push that row through the network — a series of dot products and activations — to produce a prediction \( \hat{y} \).</li>
+            <li><strong class="text-[var(--on-background)]">Step 3 — Choose a loss function:</strong> measure how wrong the prediction was, e.g. \( (y-\hat{y})^2 \).</li>
+            <li><strong class="text-[var(--on-background)]">Step 4 — Update:</strong> adjust every weight and bias using gradient descent so that, next time, the loss would be a little smaller.</li>
+          </ol>
+
+          <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg text-sm text-[var(--on-surface)]">
+            <strong class="text-[var(--on-background)]">The one distinction to hold onto for this whole page:</strong> the derivative used in gradient descent does <em>not</em> tell you how much the prediction changes when you nudge a weight. It tells you how much the <strong class="text-[var(--on-background)]">loss</strong> changes when you nudge that weight. Gradient descent then moves the weight in whichever direction makes the loss smaller. The source material is explicit and repeated about this point precisely because it's the thing people misunderstand first — it feels intuitive to think "changing w changes ŷ," which is true, but the quantity backprop actually computes and acts on is "changing w changes L."
+          </div>
+        </section>
+
+        <!-- DAY 13 -->
+        <section id="backprop-how" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Day 13</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Backpropagation — The How</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Take the simplest possible model — a single neuron with one input, doing something equivalent to linear regression — and walk through exactly what "update the weight" means mathematically.</p>
+
+          <ol class="text-sm text-[var(--on-surface)] space-y-3 list-decimal list-inside bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md">
+            <li>
+              <strong class="text-[var(--on-background)]">Make a prediction.</strong>
+              <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center mt-2">$$ \hat{y} = wx + b $$</div>
+            </li>
+            <li>
+              <strong class="text-[var(--on-background)]">Calculate the loss.</strong>
+              <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center mt-2">$$ L = (\hat{y} - y)^2 $$</div>
+            </li>
+            <li>
+              <strong class="text-[var(--on-background)]">Compute the derivative of the loss with respect to the weight.</strong>
+              <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center mt-2">$$ \frac{\partial L}{\partial w} $$</div>
+              <p class="mt-2">This answers exactly one question: <em>"If I change the weight w by a tiny amount, how much will the loss L change?"</em> — nothing about how much ŷ itself moves, only how the final loss reacts.</p>
+            </li>
+            <li>
+              <strong class="text-[var(--on-background)]">Update the weight using gradient descent.</strong>
+              <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center mt-2">$$ w_{new} = w_{old} - \alpha \frac{\partial L}{\partial w} $$</div>
+              <p class="mt-2">where \( \alpha \) is the learning rate — a hyperparameter controlling how big a step is taken in the direction that reduces the loss. The same update rule applies to the bias <code class="text-[var(--secondary)]">b</code>, using \( \partial L / \partial b \) instead.</p>
+            </li>
+          </ol>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">The Full Backpropagation Algorithm</h3>
+            <p class="text-sm text-[var(--on-surface)] mb-2">Stitching the steps into one training loop over many epochs:</p>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>for epoch in range(epochs):
+    epoch_losses = []
+
+    for i in range(len(training_data)):
+        # 1. select one row (stochastic-style update)
+        x, y = random_row(training_data)
+
+        # 2. forward propagation — predict
+        y_hat = forward_pass(x, weights, biases)
+
+        # 3. compute loss for this row
+        loss = (y_hat - y) ** 2
+        epoch_losses.append(loss)
+
+        # 4. update every weight and bias via gradient descent
+        gradients = backward_pass(loss, weights, biases)
+        weights, biases = gradient_descent_update(weights, biases, gradients, lr=alpha)
+
+    # track how the model is doing this epoch
+    avg_epoch_loss = sum(epoch_losses) / len(epoch_losses)
+    print(f"epoch {epoch}: avg loss = {avg_epoch_loss}")</code></pre>
+            </div>
+            <p class="text-sm text-[var(--on-surface-variant)] mt-2">Watching the average epoch loss fall (and eventually flatten out) across epochs is the single most direct way to see backpropagation working.</p>
+          </div>
+        </section>
+
+        <!-- WORKED EXAMPLE (extended) -->
+        <section id="backprop-worked-example" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Extended notes</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">A Full Worked Numeric Example</h2>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm text-sm text-[var(--on-surface-variant)]">
+            <strong class="text-[var(--on-background)]">Extended notes</strong> — the source explicitly asks, in its own words, "make me understand how we back propagate with some example, take some dataset and show everything happen in back propagation," and never follows through with one. This worked example is written from scratch to actually answer that question, using a tiny two-layer network with concrete numbers all the way through.
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Take the smallest network that still has something to "propagate back" through: one hidden neuron and one output neuron, both using the sigmoid activation \( \sigma(z) = \frac{1}{1+e^{-z}} \), which has the convenient derivative \( \sigma'(z) = \sigma(z)\big(1-\sigma(z)\big) \).</p>
+
+          <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Symbol</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Meaning</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Value</th></tr></thead>
+              <tbody>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50">x₁, x₂</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">two input features for one training row</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">1.0, 0.5</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50">y</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">true label for this row</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">1</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50">w₁, w₂, bₕ</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">input → hidden neuron weights &amp; bias</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">0.3, −0.2, 0.1</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50">wₒ, bₒ</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">hidden → output weight &amp; bias</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">0.5, −0.1</td></tr>
+                <tr><td class="p-2.5">α</td><td class="p-2.5">learning rate</td><td class="p-2.5">0.1</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--secondary)] mb-2">Step 1 — Forward Propagation</h3>
+            <p class="text-sm text-[var(--on-surface)]">Hidden neuron pre-activation and activation:</p>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ z_h = w_1 x_1 + w_2 x_2 + b_h = (0.3)(1.0) + (-0.2)(0.5) + 0.1 = 0.30 $$
+              $$ a_h = \sigma(z_h) = \sigma(0.30) \approx 0.5744 $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)]">Output neuron pre-activation and activation (the network's prediction):</p>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ z_o = w_o a_h + b_o = (0.5)(0.5744) + (-0.1) \approx 0.1872 $$
+              $$ \hat{y} = \sigma(z_o) = \sigma(0.1872) \approx 0.5467 $$
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--secondary)] mb-2">Step 2 — Compute the Loss</h3>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ L = (\hat{y}-y)^2 = (0.5467 - 1)^2 \approx 0.2055 $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)]">The network predicted 0.5467 for a row whose true label is 1 — a real but moderate mistake, and this is the number backpropagation is trying to shrink.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--secondary)] mb-2">Step 3 — Backward Pass: Output-Layer Gradient</h3>
+            <p class="text-sm text-[var(--on-surface)]">To update <code class="text-[var(--secondary)]">wₒ</code>, the chain rule breaks \( \partial L / \partial w_o \) into three easier pieces — "how loss depends on ŷ," "how ŷ depends on zₒ," and "how zₒ depends on wₒ":</p>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ \frac{\partial L}{\partial w_o} = \frac{\partial L}{\partial \hat{y}} \cdot \frac{\partial \hat{y}}{\partial z_o} \cdot \frac{\partial z_o}{\partial w_o} $$
+            </div>
+            <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Piece</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Formula</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Value</th></tr></thead>
+                <tbody>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50">∂L/∂ŷ</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">2(ŷ − y)</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">2(0.5467−1) ≈ −0.9066</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50">∂ŷ/∂zₒ</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">ŷ(1−ŷ)</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">0.5467×0.4533 ≈ 0.2478</td></tr>
+                  <tr><td class="p-2.5">∂zₒ/∂wₒ</td><td class="p-2.5">aₕ</td><td class="p-2.5">0.5744</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ \frac{\partial L}{\partial w_o} \approx (-0.9066)(0.2478)(0.5744) \approx -0.1291 $$
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--secondary)] mb-2">Step 4 — Backward Pass: Hidden-Layer Gradient (the actual "back-propagating")</h3>
+            <p class="text-sm text-[var(--on-surface)]">To update <code class="text-[var(--secondary)]">w₁</code>, the error signal has to travel one layer further back — through <code class="text-[var(--secondary)]">aₕ</code> and <code class="text-[var(--secondary)]">zₕ</code> — before it reaches w₁. This extra hop, chaining derivatives across two layers instead of one, is exactly what makes this "backpropagation" rather than a single derivative:</p>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ \frac{\partial L}{\partial w_1} = \underbrace{\frac{\partial L}{\partial z_o}}_{\text{reused from step 3}} \cdot \frac{\partial z_o}{\partial a_h} \cdot \frac{\partial a_h}{\partial z_h} \cdot \frac{\partial z_h}{\partial w_1} $$
+            </div>
+            <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Piece</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Formula</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Value</th></tr></thead>
+                <tbody>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50">∂L/∂zₒ</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">(∂L/∂ŷ)(∂ŷ/∂zₒ), already computed in step 3</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">(−0.9066)(0.2478) ≈ −0.2247</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50">∂zₒ/∂aₕ</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">wₒ</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">0.5</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50">∂aₕ/∂zₕ</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">aₕ(1−aₕ)</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">0.5744×0.4256 ≈ 0.2445</td></tr>
+                  <tr><td class="p-2.5">∂zₕ/∂w₁</td><td class="p-2.5">x₁</td><td class="p-2.5">1.0</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ \frac{\partial L}{\partial w_1} \approx (-0.2247)(0.5)(0.2445)(1.0) \approx -0.0275 $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)]">Notice that \( \partial L/\partial z_o \) — computed once in step 3 — is reused rather than recomputed here. This reuse of already-computed pieces, flowing backward through the layers, is the entire efficiency trick behind backpropagation (and is exactly what the "MLP Memoization" topic in the next chapter is about).</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--secondary)] mb-2">Step 5 — Update the Weights</h3>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ w_o^{new} = 0.5 - (0.1)(-0.1291) \approx 0.5129 $$
+              $$ w_1^{new} = 0.3 - (0.1)(-0.0275) \approx 0.3027 $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)]">Both gradients were negative, so both weights moved slightly <em>up</em> — which makes sense: the prediction (0.5467) was too low relative to the target (1), so gradient descent nudges the weights in whatever direction increases ŷ, which in turn shrinks the loss. Every other weight and both biases would update the same way, in parallel, using their own chain-rule paths back through the network. Repeat this whole cycle — forward pass, loss, backward pass, update — for every row, for many epochs, and the average loss steadily falls. That full repeated cycle is backpropagation.</p>
+          </div>
+        </section>
+
+        <!-- DAY 14 (the why) -->
+        <section id="derivative-vs-gradient" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Day 14</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Backpropagation — The Why</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">When a function depends on just one parameter, its rate of change is called a <strong class="text-[var(--on-background)]">derivative</strong>, written \( d/dx \). When a function depends on several parameters at once, the individual per-parameter rates of change are called <strong class="text-[var(--on-background)]">partial derivatives</strong>, and the collection of all of them together is called the <strong class="text-[var(--on-background)]">gradient</strong> — written \( \partial z/\partial x \), \( \partial z/\partial y \), and so on for every parameter z depends on.</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">A neural network's loss function is exactly this multi-parameter case, stacked several layers deep: the loss depends on \( \hat{y} \), which depends on \( z \) (the neuron's pre-activation), which depends on the activation output of the previous layer, which in turn depends on <em>that</em> layer's own weights. Because the loss is a function of many weights and biases chained through many intermediate steps, computing "how does the loss change if I nudge this one weight" always means taking a partial derivative and applying the chain rule through every intermediate step in between — exactly what the worked example above did explicitly for w₁ and wₒ.</p>
+
+          <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg text-sm text-[var(--on-surface)]">
+            This is also why the algorithm is called back<em>propagation</em> and not "the derivative algorithm": a single derivative would suffice for one parameter, but a deep network's loss is a nested function of hundreds, thousands, or billions of weights, so the error signal has to be propagated backward, layer by layer, computing the gradient with respect to every one of them.
+          </div>
+
+          <p class="text-sm text-[var(--on-surface-variant)]">For a visual, interactive walkthrough of forward propagation, backward propagation and activation functions animated step by step, see Google's <a href="https://developers-dot-devsite-v2-prod.appspot.com/machine-learning/crash-course/backprop-scroll" target="_blank" rel="noopener" class="text-[var(--secondary)] underline">Machine Learning Crash Course backprop scroll tool</a> (linked directly in the source notes).</p>
+        </section>
+
+        <!-- EPOCH VS ITERATION -->
+        <section id="epoch-vs-iteration" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Day 14</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Epochs, Iterations, Batch Size &amp; Convergence</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">The training loop from the algorithm above raises a natural question: how many times does the weight actually get updated? That depends on three related but distinct ideas.</p>
+
+          <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Feature</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Epoch</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Iteration</th></tr></thead>
+              <tbody>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Definition</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">One full pass through the entire training dataset.</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">One weight-update step, using one batch of data.</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Scope</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">The outer loop of training.</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">The inner loop of training.</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Weight updates</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Happens multiple times per epoch.</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Happens exactly once per iteration.</td></tr>
+                <tr><td class="p-2.5 font-semibold">Impact of count</td><td class="p-2.5">Too many epochs can lead to overfitting.</td><td class="p-2.5">More iterations directly increase training time.</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-lg text-[var(--secondary)]">Concrete Example</h3>
+            <p class="text-sm text-[var(--on-surface)]">A dataset has 1,000 images, and the batch size is set to 200.</p>
+            <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+              <li>1 batch = 200 images.</li>
+              <li>1 iteration = the model processes 1 batch (200 images) and updates its weights once.</li>
+              <li>1 epoch = the model must see all 1,000 images, which takes 1,000 ÷ 200 = <strong class="text-[var(--on-background)]">5 iterations</strong>.</li>
+            </ul>
+            <p class="text-sm text-[var(--on-surface)]">Training for 10 epochs at this batch size therefore runs a total of 10 × 5 = <strong class="text-[var(--on-background)]">50 iterations</strong>, i.e. 50 separate weight-update steps.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">The Role of Batch Size</h3>
+            <p class="text-sm text-[var(--on-surface)] mb-2">Batch size is the dial that determines how many iterations make up one epoch, and it defines the three flavors of gradient descent:</p>
+            <ul class="text-sm text-[var(--on-surface)] space-y-1.5 list-disc list-inside">
+              <li><strong class="text-[var(--on-background)]">Batch Gradient Descent:</strong> batch size equals the entire dataset — 1 iteration = 1 epoch. Every weight update uses the full dataset's gradient, which is stable but slow and memory-heavy.</li>
+              <li><strong class="text-[var(--on-background)]">Stochastic Gradient Descent (SGD):</strong> batch size = 1 — one iteration per individual row, so as many iterations per epoch as there are rows. Noisy updates, but very fast per step and can escape shallow local minima.</li>
+              <li><strong class="text-[var(--on-background)]">Mini-batch Gradient Descent:</strong> the dataset is split into reasonably sized blocks (e.g. 32, 64, 128 rows), giving multiple iterations per epoch. This is the practical middle ground used almost everywhere in real training.</li>
+            </ul>
+          </div>
+
+          <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg text-sm text-[var(--on-surface)]">
+            <strong class="text-[var(--on-background)]">Convergence</strong> is the point where the model stops meaningfully learning because it has found weights that minimize the loss function well — a stable local or global minimum. Early in training, error drops quickly; as training continues, the drop flattens out. Once the change in loss between epochs becomes tiny or zero, the model has converged.
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on Backpropagation. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-dl-06">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. What does ∂L/∂w actually measure in gradient descent?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. How much the prediction ŷ changes when w changes</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. How much the input x changes when w changes</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. How much the loss L changes when w changes</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. The exact value of the optimal weight</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> The source emphasizes this repeatedly — the derivative in gradient descent measures how the loss changes for a small change in the weight, not how the prediction changes. Gradient descent uses that information to move the weight in the loss-reducing direction.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. In the worked example, ∂L/∂w₁ required reusing ∂L/∂zₒ, which had already been computed while finding ∂L/∂wₒ. What does this illustrate?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Neural networks cannot have more than two layers</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Backpropagation reuses already-computed downstream gradients as it moves backward through layers, rather than recomputing everything from scratch</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. The hidden layer's weights don't need updating</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. The learning rate must double for hidden layers</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> This reuse of intermediate gradient terms while propagating error backward is the core efficiency mechanism of backpropagation — it's also exactly the idea behind caching forward-pass activations, covered as "MLP Memoization" in the next chapter.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. A dataset has 2,000 rows and batch size is set to 500. How many iterations make up one epoch, and how many total iterations occur over 8 epochs?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. 2 iterations/epoch, 16 total</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. 500 iterations/epoch, 4000 total</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. 8 iterations/epoch, 64 total</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. 4 iterations/epoch, 32 total</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> 2000 ÷ 500 = 4 iterations per epoch (matching the 1000-image/200-batch example's logic: total rows ÷ batch size). Over 8 epochs: 8 × 4 = 32 total iterations.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. Which gradient descent variant makes exactly one weight update using the entire dataset per iteration?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Batch Gradient Descent</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Stochastic Gradient Descent</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Mini-batch Gradient Descent with batch size 32</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. None of these</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> When batch size equals the full dataset size, 1 iteration processes the whole dataset and updates weights once — so 1 iteration = 1 epoch. That's the definition of Batch Gradient Descent.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. A model's average epoch loss goes 0.80 → 0.42 → 0.19 → 0.18 → 0.179 → 0.1789 over six epochs. What does this pattern indicate?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. The model is exploding and diverging</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. The learning rate is too high</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. The model is converging — the loss dropped fast at first, then flattened out as it approached a minimum</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Backpropagation has failed</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Fast initial error drop followed by flattening, where epoch-to-epoch change becomes tiny, is precisely the definition of convergence given in this chapter — the model has settled near a minimum of the loss.
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--primary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="dl-07.html" class="bg-[var(--secondary)] text-[var(--on-secondary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">Next: Vanishing &amp; Exploding Gradients</a>
+        </div>

@@ -1,0 +1,112 @@
+/* Sifat Notes — theme tokens (Slate Research Logic design system).
+   Dark palette below is the stitch reference exactly. Light palette is a
+   derived counterpart using the same primary/secondary/tertiary hues. */
+
+:root{
+  --surface:#081425;
+  --surface-dim:#081425;
+  --surface-bright:#2f3a4c;
+  --surface-container-lowest:#040e1f;
+  --surface-container-low:#111c2d;
+  --surface-container:#152031;
+  --surface-container-high:#1f2a3c;
+  --surface-container-highest:#2a3548;
+  --on-surface:#d8e3fb;
+  --on-surface-variant:#bbcac5;
+  --outline:#859490;
+  --outline-variant:#3c4946;
+  --primary:#b5fff0;
+  --on-primary:#003730;
+  --primary-container:#5eead4;
+  --on-primary-container:#00675b;
+  --inverse-primary:#006b5e;
+  --secondary:#bdc2ff;
+  --on-secondary:#131e8c;
+  --secondary-container:#2f3aa3;
+  --on-secondary-container:#a8afff;
+  --tertiary:#bcffdc;
+  --on-tertiary:#003825;
+  --tertiary-container:#57edb1;
+  --on-tertiary-container:#006948;
+  --error:#ffb4ab;
+  --on-error:#690005;
+  --error-container:#93000a;
+  --on-error-container:#ffdad6;
+  --background:#081425;
+  --on-background:#d8e3fb;
+}
+
+/* Light counterpart — same brand hues (teal / indigo / emerald), bright warm surfaces */
+:root[data-theme="light"]{
+  --surface:#f7f6f2;
+  --surface-dim:#eeece3;
+  --surface-bright:#ffffff;
+  --surface-container-lowest:#ffffff;
+  --surface-container-low:#f1efe6;
+  --surface-container:#ebe8dc;
+  --surface-container-high:#e2ded0;
+  --surface-container-highest:#d8d3c4;
+  --on-surface:#1c2420;
+  --on-surface-variant:#4d564f;
+  --outline:#7c8780;
+  --outline-variant:#c7cec7;
+  --primary:#0d7a76;
+  --on-primary:#ffffff;
+  --primary-container:#bdf0e8;
+  --on-primary-container:#003e3a;
+  --inverse-primary:#b5fff0;
+  --secondary:#3a44b8;
+  --on-secondary:#ffffff;
+  --secondary-container:#dfe0ff;
+  --on-secondary-container:#1c2380;
+  --tertiary:#1c7a4e;
+  --on-tertiary:#ffffff;
+  --tertiary-container:#c3f3d7;
+  --on-tertiary-container:#00391e;
+  --error:#b3261e;
+  --on-error:#ffffff;
+  --error-container:#f9dedc;
+  --on-error-container:#410e0b;
+  --background:#f7f6f2;
+  --on-background:#1c2420;
+}
+
+html{background-color:var(--background);}
+body{background-color:var(--background); color:var(--on-background); font-family:"Inter",-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+
+::-webkit-scrollbar{width:8px; height:8px;}
+::-webkit-scrollbar-track{background:var(--surface-container-low);}
+::-webkit-scrollbar-thumb{background:var(--surface-container-highest); border-radius:4px;}
+::-webkit-scrollbar-thumb:hover{background:var(--outline);}
+
+/* KaTeX inherits body color instead of pure black */
+.katex{color:var(--on-surface);}
+
+/* Deep-dive <details> marker */
+details.deepdive summary{list-style:none; cursor:pointer;}
+details.deepdive summary::-webkit-details-marker{display:none;}
+details.deepdive summary::before{content:"▶"; display:inline-block; margin-right:8px; font-size:.7em; color:var(--primary); transition:transform .15s;}
+details.deepdive[open] summary::before{transform:rotate(90deg);}
+
+/* Sidebar — desktop: static fixed left column. Mobile: off-canvas drawer. */
+#sidebarSlot{z-index:40;}
+@media (max-width:767px){
+  #sidebarSlot{
+    top:0; height:100vh; width:82%; max-width:300px;
+    transform:translateX(-100%); transition:transform .2s ease;
+    z-index:60; box-shadow:0 0 32px rgba(0,0,0,.45);
+  }
+  #sidebarSlot.mobile-open{transform:translateX(0);}
+  main{margin-left:0 !important;}
+}
+
+/* Sidebar nav tree */
+nav.toc details summary{list-style:none; cursor:pointer;}
+nav.toc details summary::-webkit-details-marker{display:none;}
+nav.toc details summary .chev{transition:transform .15s; display:inline-block;}
+nav.toc details[open] summary .chev{transform:rotate(90deg);}
+
+/* Quiz option states */
+.quiz-option{transition:background-color .15s, border-color .15s;}
+.quiz-option.correct{background-color:var(--tertiary-container); border-color:var(--tertiary); color:var(--on-tertiary-container);}
+.quiz-option.incorrect{background-color:var(--error-container); border-color:var(--error); color:var(--on-error-container);}

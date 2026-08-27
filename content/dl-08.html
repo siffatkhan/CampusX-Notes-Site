@@ -1,0 +1,380 @@
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-3 py-1 mb-3">Source: 100 Days of Deep Learning</span>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">8. Training Deep Networks — Practical Toolkit</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Memoization in the forward pass · gradient descent variants for NNs · a performance checklist · early stopping · data scaling · dropout · regularization</p>
+        </div>
+
+        <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm text-sm text-[var(--on-surface-variant)]">
+          <strong class="text-[var(--on-background)]">Extended notes</strong> — the source left these topics as bare headings with no content. Written from scratch to cover them properly, in the same style as the rest of the site.
+        </div>
+
+        <!-- MLP MEMOIZATION -->
+        <section id="mlp-memoization" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Day 15</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">MLP Memoization</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">"Memoization" is a general programming idea: instead of recomputing an expensive result every time you need it, compute it once and store ("remember") it, then reuse the stored value later. Applied to a multilayer perceptron (MLP), memoization is exactly what makes backpropagation efficient rather than absurdly expensive.</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">During the <strong class="text-[var(--on-background)]">forward pass</strong>, every layer computes two things per neuron: the pre-activation \( z = w \cdot a_{prev} + b \) and the activation \( a = g(z) \). A naive implementation might discard these once it hands the final prediction to the loss function — but chapter 6's worked example showed that the backward pass needs exactly these intermediate values again. Computing \( \partial L/\partial w_1 \) required \( a_h \) (the hidden activation) and reused \( \partial L/\partial z_o \) (computed while finding \( \partial L/\partial w_o \)). Those aren't optional conveniences; without them, computing a single early-layer gradient would mean re-running large chunks of the forward pass from scratch, for every single weight, in every single layer.</p>
+
+          <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg text-sm text-[var(--on-surface)]">
+            <strong class="text-[var(--on-background)]">Why the network "remembers" the forward pass:</strong> every framework (Keras/TensorFlow, PyTorch) caches each layer's inputs, pre-activations (z), and activations (a) as the forward pass runs, and builds a computation graph recording how each value was produced from the last. The backward pass then walks that graph in reverse, and at every node it needs a derivative, it looks up the already-cached forward value instead of recomputing it. This turns what would be an exponential-time computation (re-deriving every intermediate value fresh at every step) into a linear-time one — one forward pass, one backward pass, done.
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Why this matters practically</h3>
+            <ul class="text-sm text-[var(--on-surface)] space-y-1.5 list-disc list-inside bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md">
+              <li><strong class="text-[var(--on-background)]">Speed:</strong> without caching, training a network with L layers could require work that scales quadratically (or worse) with depth instead of linearly.</li>
+              <li><strong class="text-[var(--on-background)]">Memory trade-off:</strong> caching every layer's activations for every training example in a batch is exactly why deep networks are memory-hungry during training (and why techniques like <em>gradient checkpointing</em> exist — deliberately discarding some cached activations and recomputing them on demand to trade compute time for lower memory use).</li>
+              <li><strong class="text-[var(--on-background)]">It's invisible in practice:</strong> in Keras/TensorFlow or PyTorch, this caching happens automatically inside <code class="text-[var(--secondary)]">model.fit()</code> / <code class="text-[var(--secondary)]">loss.backward()</code> — you never manually store activations, but understanding that it's happening explains why forward and backward passes are always paired, and why you can't call <code class="text-[var(--secondary)]">.backward()</code> usefully without having just run a forward pass on the same computation graph.</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- GD IN NN -->
+        <section id="gradient-descent-in-nn" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Day 16</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Gradient Descent in Neural Networks</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">The ML track's Linear Regression chapter introduced Batch, Stochastic, and Mini-batch gradient descent as three ways of deciding how much data to use per weight update. Every one of those ideas carries over directly to neural network training — the only thing that changes is that "the weight" now means potentially millions of weights across many layers, all updated together via backpropagation on every step.</p>
+
+          <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Variant</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Rows per update</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Trade-off in NN training</th></tr></thead>
+              <tbody>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Batch GD</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Entire dataset</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Very stable gradient direction, but one update per epoch and the entire dataset (plus every cached activation) must fit in memory at once — usually infeasible for real datasets.</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">SGD</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">1 row</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Extremely fast, noisy updates that can help escape shallow local minima and saddle points — but the noise also makes convergence erratic, and GPU hardware is wasted processing one row at a time instead of in parallel.</td></tr>
+                <tr><td class="p-2.5 font-semibold">Mini-batch GD</td><td class="p-2.5">A fixed batch size (e.g. 32, 64, 128, 256)</td><td class="p-2.5">The practical default: small enough to fit in memory and keep updates frequent, large enough to give a reasonably stable gradient estimate and let GPUs process the whole batch in parallel via matrix operations.</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="grid sm:grid-cols-3 gap-3">
+            <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">Batch size</h4>
+              <p class="text-sm text-[var(--on-surface)]">A hyperparameter: how many training examples are processed together before one weight update.</p>
+            </div>
+            <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--tertiary)] mb-1">Iteration</h4>
+              <p class="text-sm text-[var(--on-surface)]">One forward pass + backward pass + weight update, using exactly one batch.</p>
+            </div>
+            <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">Epoch</h4>
+              <p class="text-sm text-[var(--on-surface)]">One complete sweep through every batch — i.e. through the whole training set once.</p>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Code — Choosing batch size in Keras</h3>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>history = model.fit(
+    X_train, y_train,
+    batch_size=32,     # mini-batch GD — the practical default
+    epochs=50,         # 50 full passes over the training data
+    validation_split=0.2
+)
+
+# batch_size = len(X_train)  -> Batch GD (1 update per epoch)
+# batch_size = 1             -> SGD (noisy, slow on GPU)
+# batch_size = 32/64/128     -> Mini-batch GD (the usual choice)</code></pre>
+            </div>
+          </div>
+        </section>
+
+        <!-- IMPROVE PERFORMANCE -->
+        <section id="improving-nn-performance" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Day 17</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">How to Improve the Performance of a Neural Network</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">There's no single fix that makes a struggling network perform well — improvement is a checklist, and the right item on it depends on <em>which</em> way the model is currently failing. The first step is always diagnosis before treatment.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-base text-[var(--secondary)]">Step 0 — Diagnose underfitting vs overfitting first</h3>
+            <p class="text-sm text-[var(--on-surface)]">Compare training loss to validation loss. Both high → <strong class="text-[var(--on-background)]">underfitting</strong> (the model isn't capturing the pattern at all — needs more capacity or better features). Training loss low but validation loss high and diverging → <strong class="text-[var(--on-background)]">overfitting</strong> (the model has memorized training data — needs more data or more regularization). Applying an overfitting fix to an underfitting model (or vice versa) makes things worse, not better — always check this first.</p>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">More data / data augmentation</strong> — the single most reliable fix for overfitting. If collecting more labeled data isn't possible, augmentation (random crops/flips/rotations for images, synonym swaps for text, noise injection generally) manufactures more varied training examples from what you already have.
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Better architecture</strong> — the right inductive bias beats brute-force capacity: CNNs for images, RNNs/Transformers for sequences. Also consider width and depth — too few neurons/layers underfits, too many (without regularization) invites overfitting.
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Hyperparameter tuning</strong> — learning rate is usually the single highest-leverage number in the whole setup; also batch size, number of layers/neurons, and activation choice. Search this systematically (grid/random search, or Keras Tuner — see chapter 10) rather than by hand-guessing.
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Regularization</strong> — L1/L2 weight penalties and dropout, both covered later in this chapter, directly target overfitting by constraining what the model is allowed to do with the training data.
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">A better optimizer</strong> — swapping plain SGD for Adam or RMSProp (chapter 10) often gets a model to a better minimum, faster, with less manual learning-rate babysitting.
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Batch normalization</strong> — stabilizes and speeds up training by keeping layer inputs in a consistent range (chapter 10), and often lets you use a higher learning rate safely.
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Transfer learning</strong> — start from a model already trained on a large, related dataset (e.g. ImageNet-pretrained CNNs) and fine-tune it on your smaller dataset, instead of training from random initialization.
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Early stopping</strong> — a nearly free regularizer: stop training the moment validation performance stops improving, covered next.
+            </div>
+          </div>
+        </section>
+
+        <!-- EARLY STOPPING -->
+        <section id="early-stopping" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Day 18</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Early Stopping</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Left to train indefinitely, a neural network's training loss keeps falling — but its validation loss typically falls, bottoms out, and then starts rising again as the model begins memorizing training-set noise instead of learning generalizable patterns. That validation-loss upturn is the visible signature of overfitting starting to take hold, and early stopping is simply the decision to <strong class="text-[var(--on-background)]">stop training right around that turning point</strong>, rather than continuing on to a worse generalizing model.</p>
+
+          <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg text-sm text-[var(--on-surface)]">
+            <strong class="text-[var(--on-background)]">Patience:</strong> validation loss is noisy epoch to epoch, so stopping the instant it ticks up even once would stop training prematurely. The <code class="text-[var(--secondary)]">patience</code> parameter says "wait N epochs without improvement before actually stopping" — giving the model room for a temporary blip while still catching a genuine, sustained upward trend.
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Early stopping is often called a "free" regularizer because, unlike L1/L2 penalties or dropout, it doesn't change the model architecture, the loss function, or add any computation to each training step — it only changes <em>when you stop</em>, using information (the validation curve) you were already computing anyway.</p>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Code — Early Stopping with Keras</h3>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from tensorflow.keras.callbacks import EarlyStopping
+
+early_stop = EarlyStopping(
+    monitor='val_loss',       # watch validation loss
+    patience=5,                # allow 5 epochs of no improvement before stopping
+    restore_best_weights=True  # roll back to the best epoch's weights, not the last
+)
+
+history = model.fit(
+    X_train, y_train,
+    validation_split=0.2,
+    epochs=200,                 # set generously high — early stopping decides the real end
+    callbacks=[early_stop]
+)</code></pre>
+            </div>
+            <p class="text-sm text-[var(--on-surface-variant)] mt-2"><code class="text-[var(--secondary)]">restore_best_weights=True</code> matters: without it, training stops at the patience-triggered epoch, but the model's weights are left at that later, already-worse-than-best point rather than rolled back to the true minimum of the validation curve.</p>
+          </div>
+        </section>
+
+        <!-- DATA SCALING -->
+        <section id="data-scaling-nn" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Day 19</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Data Scaling in Neural Networks</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">The reasoning here is the same one gradient descent for Linear Regression relies on: when input features sit on wildly different scales (say, "age" in single digits next to "salary" in the hundreds of thousands), the loss surface becomes a long, narrow, stretched-out bowl rather than a nicely rounded one. Gradient descent zig-zags inefficiently across such a surface instead of heading straight for the minimum, and a learning rate that's stable for the small-scale feature can be wildly unstable for the large-scale one. Scaling every feature to a comparable range removes that distortion and lets a single learning rate work well for every weight at once.</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">For neural networks specifically, this matters even more than for linear regression, because the effect compounds across layers — an imbalanced input scale doesn't just slow convergence at the first layer, it feeds forward into every subsequent layer's activations too.</p>
+
+          <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Scaler</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">What it does</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Typical use</th></tr></thead>
+              <tbody>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">StandardScaler</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Transforms each feature to zero mean, unit variance</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Default choice for most NN inputs</td></tr>
+                <tr><td class="p-2.5 font-semibold">MinMaxScaler</td><td class="p-2.5">Rescales each feature into a fixed range, usually [0, 1]</td><td class="p-2.5">Image pixel values (0–255 → 0–1), bounded features</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from sklearn.preprocessing import StandardScaler
+
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)   # fit only on training data
+X_test_scaled = scaler.transform(X_test)         # apply the SAME transform to test data
+
+# never fit the scaler on test data — that would leak test-set
+# statistics into training, inflating your evaluation</code></pre>
+            </div>
+          </div>
+
+          <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm text-[var(--on-surface)]">
+            <strong class="text-[var(--on-background)]">Scaling doesn't stop at the input layer.</strong> As data passes deeper into the network, each layer's own weights can re-introduce exactly this same scale problem to the <em>next</em> layer's input — which is precisely the problem <strong class="text-[var(--on-background)]">batch normalization</strong> (chapter 10) solves: it re-standardizes activations <em>inside</em> the network, between layers, the same way a StandardScaler standardizes raw inputs before the network ever sees them.
+          </div>
+        </section>
+
+        <!-- DROPOUT -->
+        <section id="dropout-layer" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Day 20</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Dropout Layer</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Dropout is a regularization technique aimed directly at overfitting: during each training step, a randomly chosen fraction of neurons in a layer are temporarily "dropped" — their output forced to zero, as if they didn't exist for that step. Which neurons get dropped is re-randomized on every batch, so the network can never rely on any particular fixed set of neurons always being available.</p>
+
+          <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg text-sm text-[var(--on-surface)]">
+            <strong class="text-[var(--on-background)]">Why this prevents overfitting — breaking co-adaptation.</strong> Without dropout, neurons can develop brittle, over-specific co-dependencies — neuron A learns to only work correctly in combination with the exact outputs of neurons B and C, memorizing quirks of the training data rather than a generally useful feature. Because dropout can remove B or C at any moment, every neuron is forced to learn something that's independently useful, not just useful in one narrow, memorized combination. The net effect behaves like implicitly training a large ensemble of thinned sub-networks that share weights, and averaging their predictions.
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">The dropout rate</strong> — a hyperparameter (commonly 0.2–0.5) specifying the fraction of neurons zeroed out on each step. Higher rate → stronger regularization, but too high starves the network of enough active neurons to learn effectively.
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Disabled at inference time</strong> — once training is done, every neuron is kept active for predictions (you want the full network's capacity when it actually matters). Frameworks automatically rescale the remaining activations during training to compensate, so the expected output magnitude matches between train and inference time without any manual adjustment.
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Code — Dropout with Keras</h3>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Dropout
+
+model = Sequential([
+    Dense(128, activation='relu', input_shape=(20,)),
+    Dropout(0.3),                      # zero out 30% of this layer's outputs, per batch
+    Dense(64, activation='relu'),
+    Dropout(0.3),
+    Dense(1, activation='sigmoid')
+])
+
+# Dropout is active during model.fit() and automatically
+# switched off during model.predict() / model.evaluate() —
+# no manual toggling needed</code></pre>
+            </div>
+          </div>
+        </section>
+
+        <!-- REGULARIZATION -->
+        <section id="regularization-dl" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Day 21</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Regularization in Deep Learning</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">This is the exact same idea as Ridge (L2) and Lasso (L1) regression from the ML track — add a penalty term to the loss that discourages large weights — just applied to a neural network's (potentially millions of) weights instead of a handful of linear-regression coefficients.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+            $$ L_{total} = L_{original} \;+\; \underbrace{\lambda \sum_{j} w_j^2}_{\text{L2}} \quad\text{or}\quad L_{total} = L_{original} \;+\; \underbrace{\lambda \sum_{j} |w_j|}_{\text{L1}} $$
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">L2 (weight decay)</strong> — like Ridge, shrinks every weight smoothly toward (but not exactly to) zero. The dominant choice for regularizing NN weights, because it keeps every connection, just makes none of them dominant.
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">L1</strong> — like Lasso, can drive individual weights to exactly zero, effectively pruning connections out of the network. Useful when a sparser, more compressed network is desirable.
+            </div>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Just as with Ridge/Lasso, \( \lambda \) controls the strength of the penalty: too small and it barely constrains overfitting; too large and it forces weights so close to zero the network can't learn the signal at all — the same bias-variance dial covered in the ML track's regularization chapter.</p>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Code — L2 Regularization with Keras</h3>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from tensorflow.keras.layers import Dense
+from tensorflow.keras.regularizers import l1, l2, l1_l2
+
+model = Sequential([
+    Dense(128, activation='relu', input_shape=(20,),
+          kernel_regularizer=l2(0.001)),   # L2 penalty, lambda=0.001
+    Dense(64, activation='relu',
+          kernel_regularizer=l1_l2(l1=0.0005, l2=0.0005)),  # elastic-net style mix
+    Dense(1, activation='sigmoid')
+])</code></pre>
+            </div>
+            <p class="text-sm text-[var(--on-surface-variant)] mt-2">In practice, L2 weight decay, dropout, and early stopping are often combined — they attack overfitting through three different mechanisms (penalizing weight size, breaking co-adaptation, and limiting training time) and stack well together.</p>
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on the Deep Network Training Toolkit. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-dl-08">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. Why do frameworks cache activations from the forward pass instead of recomputing them during backpropagation?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Because activations are random and cannot be recomputed</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Backward-pass gradients need those exact forward values (e.g. via the chain rule), and recomputing them from scratch for every weight would be far slower</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Caching activations makes the network more accurate</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Activations are only needed for the loss function, not gradients</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> The chain rule needs quantities like a neuron's activation or pre-activation to compute derivatives with respect to weights feeding into or out of it. Memoizing them during the forward pass avoids re-deriving those same values repeatedly, turning backprop into an efficient linear-time algorithm.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. A dataset has 10,000 rows and batch_size=100. How many iterations occur per epoch, and which GD variant is this?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. 10,000 iterations — Stochastic GD</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. 1 iteration — Batch GD</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. 100 iterations — Mini-batch GD</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. 100 iterations — Batch GD</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> 10,000 ÷ 100 = 100 iterations per epoch. Since the batch size (100) is neither 1 nor the full dataset (10,000), this is Mini-batch Gradient Descent.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. Training loss is high AND validation loss is high, and both are close together. What should you try first?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Increase model capacity / train longer — this looks like underfitting, not overfitting</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Add more dropout immediately</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Add heavier L2 regularization</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Trigger early stopping right away</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Both losses high and close together is the signature of underfitting — the model lacks capacity to fit even the training data well. Options B, C, and D all further restrict the model, which would make underfitting worse, not better.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. Why is dropout disabled at inference (prediction) time?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Dropout only works during data loading, not model computation</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. It would make predictions too slow</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Keras doesn't allow it to be disabled</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. You want the network's full capacity available for the best possible prediction, not a randomly thinned sub-network</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Dropout's randomness is a training-time regularizer that prevents co-adaptation. At prediction time you want the full, fully-trained network making the call — frameworks keep all neurons active and rescale automatically so magnitudes stay consistent with training.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. What is the key structural difference between L1 and L2 regularization on a neural network's weights?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. L2 zeroes weights out; L1 only shrinks them</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. L1 can drive individual weights to exactly zero (pruning connections); L2 shrinks all weights smoothly toward zero without eliminating them</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. L1 and L2 always produce identical results in neural networks</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Neither can be combined with dropout</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> This mirrors Ridge (L2) vs Lasso (L1) from the ML track exactly: L1's absolute-value penalty geometrically favors landing exactly on zero for some weights, while L2's squared penalty smoothly shrinks all weights without ever fully eliminating any of them.
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--primary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="dl-09.html" class="bg-[var(--secondary)] text-[var(--on-secondary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">Next: Activation Functions</a>
+        </div>

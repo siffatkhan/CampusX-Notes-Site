@@ -1,0 +1,366 @@
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-3 py-1 mb-3">Source: CampusX — 100 Days of Machine Learning</span>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">8. Feature Scaling</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Why Scaling Matters · Standardization · Normalization</p>
+        </div>
+
+        <!-- DAY 24 -->
+        <section id="day-24" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 24</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Feature Scaling (Feature Transformation)</h2>
+          </div>
+          <p class="text-[var(--on-surface)] leading-relaxed">Feature scaling is a technique used before training ML models to bring all independent features to a similar scale or range.</p>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">Why feature scaling is needed</h4>
+              <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+                <li>Some features have large values and dominate others</li>
+                <li>Distance based algorithms get biased</li>
+                <li>Gradient descent becomes slow or unstable</li>
+                <li>Model accuracy drops without scaling</li>
+              </ul>
+            </div>
+            <div class="grid grid-rows-2 gap-3">
+              <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg">
+                <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--tertiary)] mb-1">Required for</h4>
+                <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+                  <li>Distance based algorithms</li>
+                  <li>Gradient descent based algorithms</li>
+                </ul>
+              </div>
+              <div class="border-l-4 border-[var(--error)] bg-[var(--error-container)]/10 p-sm rounded-r-lg">
+                <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--on-error-container)] mb-1">Not required for</h4>
+                <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+                  <li>Tree based models</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Algorithms That Require Feature Scaling</h3>
+            <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead>
+                  <tr class="bg-[var(--surface-container-high)]">
+                    <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Scaling required</th>
+                    <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Scaling not required</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td class="p-3 border-b border-[var(--outline-variant)]/50">K Means Clustering</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Decision Tree</td></tr>
+                  <tr><td class="p-3 border-b border-[var(--outline-variant)]/50">K Nearest Neighbors</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Random Forest</td></tr>
+                  <tr><td class="p-3 border-b border-[var(--outline-variant)]/50">Principal Component Analysis (PCA)</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Gradient Boosting</td></tr>
+                  <tr><td class="p-3 border-b border-[var(--outline-variant)]/50">Artificial Neural Networks</td><td class="p-3 border-b border-[var(--outline-variant)]/50">XGBoost</td></tr>
+                  <tr><td class="p-3 border-b border-[var(--outline-variant)]/50">Linear Regression with Gradient Descent</td><td class="p-3 border-b border-[var(--outline-variant)]/50"></td></tr>
+                  <tr><td class="p-3 border-b border-[var(--outline-variant)]/50">Logistic Regression</td><td class="p-3 border-b border-[var(--outline-variant)]/50"></td></tr>
+                  <tr><td class="p-3">Support Vector Machine</td><td class="p-3"></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-sm text-[var(--on-surface-variant)] mt-2"><strong class="text-[var(--on-background)]">Reason:</strong> Tree models split data based on conditions, not distance.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Types of Feature Scaling</h3>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+              <h4 class="font-h3 text-base text-[var(--primary)]">1. Standardization (Default Choice)</h4>
+              <p class="text-sm text-[var(--on-surface)]">Also called Z-Score Normalization. Transforms data so mean becomes 0 and standard deviation becomes 1.</p>
+              <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+                $$ z = \frac{x - \mu}{\sigma} $$
+              </div>
+              <div class="grid sm:grid-cols-2 gap-3">
+                <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                  <strong class="text-[var(--on-background)]">Properties</strong>
+                  <ul class="list-disc list-inside mt-1 space-y-0.5 text-[var(--on-surface)]">
+                    <li>No fixed range and handles negative values</li>
+                    <li>Suitable when min and max values are unknown</li>
+                  </ul>
+                </div>
+                <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                  <strong class="text-[var(--on-background)]">When to use</strong>
+                  <ul class="list-disc list-inside mt-1 space-y-0.5 text-[var(--on-surface)]">
+                    <li>Data follows normal distribution</li>
+                    <li>Outliers exist but are not extreme</li>
+                    <li>Most ML models use this one</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- DAY 25 -->
+        <section id="day-25" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 25</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Feature Scaling — Normalization</h2>
+          </div>
+          <p class="text-[var(--on-surface)] leading-relaxed">2. <strong class="text-[var(--on-background)]">Normalization</strong> scales data into a fixed range. Use when min and max values are known. General range: 0 to 1, or −1 to 1.</p>
+
+          <div class="space-y-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+              <h3 class="font-h3 text-lg text-[var(--secondary)]">a. Min-Max Scaling <span class="text-xs font-normal text-[var(--on-surface-variant)]">(use when bounds are known — most commonly used)</span></h3>
+              <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+                $$ x' = \frac{x - x_{min}}{x_{max} - x_{min}} $$
+              </div>
+              <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Properties:</strong> values fall between 0 and 1; sensitive to outliers.</p>
+            </div>
+
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+              <h3 class="font-h3 text-lg text-[var(--secondary)]">b. Mean Normalization</h3>
+              <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+                $$ x' = \frac{x - \mu}{x_{max} - x_{min}} $$
+              </div>
+              <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Properties:</strong> data centered around 0; rarely used in practice. <strong class="text-[var(--on-background)]">Reason:</strong> standardization performs better in most cases.</p>
+            </div>
+
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+              <h3 class="font-h3 text-lg text-[var(--secondary)]">c. Max Absolute Scaling</h3>
+              <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+                $$ x' = \frac{x}{\max(|x|)} $$
+              </div>
+              <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Properties:</strong> range −1 to 1; preserves zeros. <strong class="text-[var(--on-background)]">When to use:</strong> sparse data (having more zero values).</p>
+            </div>
+
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+              <h3 class="font-h3 text-lg text-[var(--secondary)]">d. Robust Scaling</h3>
+              <p class="text-sm text-[var(--on-surface)]">Uses median and Interquartile Range (IQR).</p>
+              <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+                $$ x' = \frac{x - \text{median}}{IQR} $$
+              </div>
+              <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">When to use:</strong> data contains many outliers; outliers are important and cannot be removed.</p>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Normalization vs Standardization</h3>
+            <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead>
+                  <tr class="bg-[var(--surface-container-high)]">
+                    <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Standardization</th>
+                    <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Normalization</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td class="p-3 border-b border-[var(--outline-variant)]/50">Mean becomes 0 and standard deviation becomes 1</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Fixed range</td></tr>
+                  <tr><td class="p-3 border-b border-[var(--outline-variant)]/50">No fixed range</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Requires min and max</td></tr>
+                  <tr><td class="p-3 border-b border-[var(--outline-variant)]/50">Works when min and max are unknown</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Sensitive to outliers</td></tr>
+                  <tr><td class="p-3">Performs best in most ML models</td><td class="p-3"></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Which to Use</h3>
+            <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead>
+                  <tr class="bg-[var(--surface-container-high)]">
+                    <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Situation</th>
+                    <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Choice</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">Default choice</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Standardization</td></tr>
+                  <tr><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">Known bounds</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Min-Max</td></tr>
+                  <tr><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">Many outliers</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Robust</td></tr>
+                  <tr><td class="p-3 font-semibold">Sparse data</td><td class="p-3">Max Absolute</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Illustrative aid -->
+          <div>
+            <div class="border-l-4 border-[var(--outline)] bg-[var(--surface-container-high)]/40 p-sm rounded-r-lg text-xs text-[var(--on-surface-variant)] mb-3">
+              <strong class="text-[var(--on-background)]">Illustrative aid</strong> — generated for this site, not quoted from the source notes.
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-lg overflow-x-auto">
+              <svg viewBox="0 0 560 190" class="w-full min-w-[480px]" role="img" aria-label="Before and after standardization: Age and Salary axes">
+                <text x="10" y="20" class="font-label-caps" font-size="11" fill="var(--on-surface-variant)">BEFORE SCALING (raw values)</text>
+                <text x="10" y="45" font-size="11" fill="var(--primary)">Age</text>
+                <line x1="60" y1="42" x2="540" y2="42" stroke="var(--outline-variant)" stroke-width="1"/>
+                <circle cx="80" cy="42" r="4" fill="var(--primary)"/><circle cx="95" cy="42" r="4" fill="var(--primary)"/><circle cx="110" cy="42" r="4" fill="var(--primary)"/><circle cx="130" cy="42" r="4" fill="var(--primary)"/>
+                <text x="10" y="75" font-size="11" fill="var(--secondary)">Salary</text>
+                <line x1="60" y1="72" x2="540" y2="72" stroke="var(--outline-variant)" stroke-width="1"/>
+                <circle cx="90" cy="72" r="4" fill="var(--secondary)"/><circle cx="250" cy="72" r="4" fill="var(--secondary)"/><circle cx="400" cy="72" r="4" fill="var(--secondary)"/><circle cx="520" cy="72" r="4" fill="var(--secondary)"/>
+                <text x="10" y="100" font-size="10" fill="var(--on-surface-variant)">Salary's much wider range dominates distance/gradient calculations.</text>
+
+                <line x1="0" y1="118" x2="560" y2="118" stroke="var(--outline-variant)" stroke-width="1" stroke-dasharray="3,3"/>
+
+                <text x="10" y="138" class="font-label-caps" font-size="11" fill="var(--on-surface-variant)">AFTER STANDARDIZATION (z-score)</text>
+                <text x="10" y="163" font-size="11" fill="var(--primary)">Age</text>
+                <line x1="60" y1="160" x2="540" y2="160" stroke="var(--outline-variant)" stroke-width="1"/>
+                <circle cx="260" cy="160" r="4" fill="var(--primary)"/><circle cx="290" cy="160" r="4" fill="var(--primary)"/><circle cx="310" cy="160" r="4" fill="var(--primary)"/><circle cx="340" cy="160" r="4" fill="var(--primary)"/>
+                <text x="10" y="185" font-size="11" fill="var(--secondary)">Salary</text>
+                <line x1="60" y1="182" x2="540" y2="182" stroke="var(--outline-variant)" stroke-width="1"/>
+                <circle cx="255" cy="182" r="4" fill="var(--secondary)"/><circle cx="285" cy="182" r="4" fill="var(--secondary)"/><circle cx="315" cy="182" r="4" fill="var(--secondary)"/><circle cx="345" cy="182" r="4" fill="var(--secondary)"/>
+              </svg>
+            </div>
+          </div>
+
+          <details class="deepdive bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md">
+            <summary class="font-h3 text-base text-[var(--on-background)]">Deep dive: StandardScaler and fit_transform Explained</summary>
+            <div class="mt-3 space-y-3 text-sm text-[var(--on-surface)]">
+              <div>
+                <strong class="text-[var(--on-background)]">Purpose</strong>
+                <ul class="list-disc list-inside mt-1 space-y-0.5">
+                  <li>Standardize numeric features so they have mean = 0 and std = 1.</li>
+                  <li>Makes all features comparable for ML models (Logistic Regression, SVM, etc.).</li>
+                </ul>
+              </div>
+              <div>
+                <strong class="text-[var(--on-background)]">Line we are studying</strong>
+                <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group mt-2">
+                  <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+                  <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>X_train_scaled = scaler.fit_transform(X_train)</code></pre>
+                </div>
+              </div>
+              <div>
+                <strong class="text-[var(--on-background)]">Step-by-step working</strong>
+                <p class="mt-1"><strong class="text-[var(--on-background)]">1. Fit (compute mean and std)</strong> — <code>fit</code> calculates mean and standard deviation of each numeric column in training data, and saves internally in the scaler: <code>scaler.mean_</code> → column-wise mean, <code>scaler.scale_</code> → column-wise std.</p>
+                <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group mt-2">
+                  <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+                  <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code># Column Age = [20, 30, 40]
+mean = (20+30+40)/3 = 30
+std = sqrt(((20-30)**2 + (30-30)**2 + (40-30)**2)/3) ~= 8.165</code></pre>
+                </div>
+                <p class="mt-2"><strong class="text-[var(--on-background)]">2. Transform (scale data)</strong> — for each value: <code>X_scaled = (X - mean) / std</code>. Using the example above: 20 → (20-30)/8.165 ≈ -1.224, 30 → 0, 40 → 1.224. Result: a new array where each column has mean=0, std=1.</p>
+                <p class="mt-2"><strong class="text-[var(--on-background)]">3. fit_transform</strong> — shortcut that does fit + transform together on training data, and saves mean/std internally for later use on test data.</p>
+                <p class="mt-2"><strong class="text-[var(--on-background)]">4. Transform test data</strong></p>
+                <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group mt-2">
+                  <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+                  <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>X_test_scaled = scaler.transform(X_test)</code></pre>
+                </div>
+                <p class="mt-2">Do not fit again on test — use mean/std from train to scale test data. This prevents data leakage (ensures consistency).</p>
+              </div>
+              <div>
+                <strong class="text-[var(--on-background)]">Why this is important</strong>
+                <ul class="list-disc list-inside mt-1 space-y-0.5">
+                  <li>Without scaling, features like Fare (0–500) would dominate smaller features like SibSp (0–8).</li>
+                  <li>Standardization helps the model treat all features equally.</li>
+                </ul>
+              </div>
+              <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+                <strong class="text-[var(--on-background)] block mb-1">Summary</strong>
+                <ul class="list-disc list-inside space-y-0.5">
+                  <li><code>fit_transform</code> → compute mean/std from train, scale train data</li>
+                  <li><code>transform</code> → scale test data using train statistics</li>
+                  <li>Keeps train/test on the same scale, avoids data leakage</li>
+                </ul>
+              </div>
+            </div>
+          </details>
+
+          <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--tertiary)] mb-2">Extra — Decimal Scaling Normalization</h4>
+            <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Purpose:</strong> to move the decimal point of values until they fall within a small range, typically (-1, 1).</p>
+            <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center my-2">
+              $$ x' = \frac{x}{10^{j}} $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)]">Where j is the number of digits in the largest absolute value.</p>
+            <p class="text-sm text-[var(--on-surface)] mt-1"><strong class="text-[var(--on-background)]">Example:</strong> Data: [12, 100, 500]. Largest value = 500 → 3 digits → j = 3. x' = 12/1000 = 0.012, 100/1000 = 0.1, 500/1000 = 0.5. Normalized data → [0.012, 0.1, 0.5]</p>
+            <p class="text-sm text-[var(--on-surface-variant)] mt-1"><strong class="text-[var(--on-background)]">When to use:</strong> when you want a quick, simple normalization and your data has consistent scale (no huge outliers).</p>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-lg text-[var(--on-background)]">Discretization (Preview)</h3>
+            <p class="text-sm text-[var(--on-surface)]">Discretization converts continuous numerical data into discrete categories or bins.</p>
+            <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Examples:</strong> Age → 0–10, 11–20, 21–30; or Age → young, adult, old.</p>
+            <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Why used:</strong> simplify data, improve interpretability, useful for rule based models.</p>
+            <p class="text-sm text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Types:</strong> equal width binning, equal frequency binning. <span class="italic">(Covered in full on Day 32 — Binning &amp; Binarization.)</span></p>
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on Day 24–25. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-section-08">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. A dataset has a column that is extremely sparse (95% zeros) with a few large positive and negative values. Which scaler best preserves the sparsity structure?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. StandardScaler (Z-score)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Min-Max Scaling</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Max Absolute Scaling</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Mean Normalization</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Max Absolute Scaling (x / max|x|) preserves zeros exactly and is specifically noted for sparse data. Min-Max and mean normalization shift values by min/mean, which destroys zero-sparsity; StandardScaler also shifts by the mean.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. Why do tree-based models like Random Forest and XGBoost not require feature scaling?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. They split data based on conditions/thresholds, not distance</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. They automatically standardize internally</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. They only work on categorical data</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. They use gradient descent instead</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Per the notes: "Tree models split data based on conditions, not distance." A split like age &lt; 30 is invariant to the scale of the feature, so scaling changes nothing about the resulting splits.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. Your income column has a handful of extreme millionaire outliers that you cannot remove because they carry real signal. Which scaler is designed for exactly this case?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Min-Max Scaling</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Max Absolute Scaling</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Mean Normalization</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Robust Scaling</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Robust Scaling uses median and IQR instead of mean/std/min/max, so it is not pulled around by extreme values — the notes list its "when to use" as exactly "data contains many outliers, outliers are important and cannot be removed."
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. You call <code>scaler.fit_transform(X_test)</code> instead of <code>scaler.transform(X_test)</code> on your test set. What specifically goes wrong?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Nothing — both are equivalent for test data</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. A new mean/std gets computed from test data itself, causing data leakage and train/test inconsistency</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. The test data gets deleted</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It throws a runtime error</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Per the deep-dive: "Do not fit again on test — use mean/std from train to scale test data. Prevents data leakage (ensures consistency)." Fitting on test recomputes statistics from data the model should never see during preprocessing setup, and train/test end up scaled on different bases.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. A column has values [40, 400, 4000]. Using Decimal Scaling Normalization, what is the largest value's transformed result?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. 4.0</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. 0.04</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. 0.4</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. 400</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Largest absolute value is 4000, which has 4 digits, so j = 4 and x' = x / 10^4 = x / 10000. For x = 4000: 4000/10000 = 0.4. (Compare to the source example: [12, 100, 500] with j=3, 500 → 0.5.)
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--primary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="section-09.html" class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">
+            Next: Encoding Categorical Vars →
+          </a>
+        </div>

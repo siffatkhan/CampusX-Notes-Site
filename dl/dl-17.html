@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>17. Attention Mechanism — Sifat Notes</title>
+
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..800&family=Inter:ital,opsz,wght@0,14..32,400..700;1,14..32,400..700&family=JetBrains+Mono:wght@400..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script src="../assets/tailwind-config.js"></script>
+<link rel="stylesheet" href="../assets/theme.css">
+</head>
+<body class="antialiased min-h-screen font-body-md">
+
+<header class="bg-[var(--surface)] border-b border-[var(--outline-variant)] sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-4 md:px-lg py-2.5 md:py-sm max-w-[1200px] mx-auto">
+<a href="../index.html" class="flex items-center gap-2.5 md:gap-3 group min-w-0" title="Back to home">
+<div class="w-9 h-9 shrink-0 rounded-md bg-[var(--primary)] text-[var(--on-primary)] flex items-center justify-center font-h3 font-bold text-sm group-hover:opacity-85 transition-opacity">SN</div>
+<div class="min-w-0">
+<div class="font-h3 text-base md:text-lg font-semibold text-[var(--on-background)] leading-none truncate">Sifat Notes</div>
+<div class="hidden sm:block text-[11px] text-[var(--on-surface-variant)] mt-0.5 truncate">from CampusX's playlists</div>
+</div>
+</a>
+<nav class="hidden md:flex items-center gap-6 text-sm shrink-0">
+<a class="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors" href="../index.html">Home</a>
+<a class="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors" href="../index.html#courses">Courses</a>
+</nav>
+<div class="flex items-center gap-2 md:gap-3 shrink-0">
+<button id="mobileMenuBtn" class="md:hidden border border-[var(--outline-variant)] rounded-md p-1.5 text-[var(--on-background)] flex items-center justify-center" onclick="toggleSidebar()" aria-label="Toggle navigation">
+<span class="material-symbols-outlined text-[20px]">menu</span>
+</button>
+<button class="flex items-center gap-1.5 bg-[var(--surface-container)] border border-[var(--outline-variant)] text-[var(--on-background)] px-2.5 md:px-3 py-1.5 rounded-full text-xs font-label-caps hover:border-[var(--primary)] transition-colors" onclick="toggleTheme()" data-theme-btn>
+<span class="material-symbols-outlined text-[16px]" data-theme-icon>light_mode</span>
+<span data-theme-label class="hidden sm:inline">Light</span>
+</button>
+</div>
+</div>
+</header>
+
+
+<div class="flex flex-1">
+<div id="sidebarBackdrop" class="hidden fixed inset-0 bg-black/50 z-50 md:hidden" onclick="toggleSidebar()"></div>
+<aside id="sidebarSlot" class="flex flex-col bg-[var(--surface-container-low)] border-r border-[var(--outline-variant)] fixed left-0 top-[65px] h-[calc(100vh-65px)] w-[280px] py-md overflow-y-auto">
+<div class="px-lg mb-md">
+<input id="searchBox" placeholder="Search topics…" class="w-full bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-md px-3 py-2 text-sm text-[var(--on-background)] placeholder:text-[var(--on-surface-variant)] focus:outline-none focus:border-[var(--secondary)]">
+</div>
+
+<nav class="toc flex-1 px-2 space-y-1 text-sm" id="tocNav">
+
+<div class="px-3 pt-3 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Foundations</div>
+
+<details open>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--secondary)] font-semibold bg-[var(--surface-container-high)]/50">1. Introduction to Deep Learning <span class="chev text-[10px]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-01.html#dl-vs-ml" class="flex px-3 py-1.5 rounded-md text-[var(--secondary)] font-semibold bg-[var(--surface-container-high)]/40">Deep Learning vs ML</a>
+<a href="dl-01.html#types-of-neural-networks" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Types of Neural Networks</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">2. The Perceptron <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-02.html#perceptron" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Perceptron</a>
+<a href="dl-02.html#perceptron-trick" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Perceptron Trick</a>
+<a href="dl-02.html#perceptron-loss" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Perceptron Loss Function</a>
+<a href="dl-02.html#problem-with-perceptron" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Problem with Perceptron</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">3. Multi-Layer Perceptron <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-03.html#mlp-notation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">MLP Notation</a>
+<a href="dl-03.html#mlp-intuition" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">MLP Intuition</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">4. Forward Propagation <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-04.html#forward-propagation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Forward Propagation — Worked Example</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">5. Loss Functions <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-05.html#loss-functions-intro" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Loss vs Cost Function</a>
+<a href="dl-05.html#mse" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Mean Squared Error (MSE)</a>
+<a href="dl-05.html#mae" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Mean Absolute Error (MAE)</a>
+<a href="dl-05.html#huber-loss" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Huber Loss</a>
+<a href="dl-05.html#binary-cross-entropy" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Binary Cross-Entropy</a>
+<a href="dl-05.html#categorical-cross-entropy" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Categorical Cross-Entropy</a>
+<a href="dl-05.html#sparse-categorical-cross-entropy" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Sparse Categorical Cross-Entropy</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Training Deep Networks</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">6. Backpropagation <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-06.html#backprop-what" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Backpropagation — What</a>
+<a href="dl-06.html#backprop-how" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Backpropagation — How</a>
+<a href="dl-06.html#backprop-worked-example" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Worked Numeric Example</a>
+<a href="dl-06.html#derivative-vs-gradient" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Derivative vs Gradient</a>
+<a href="dl-06.html#epoch-vs-iteration" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Epoch vs Iteration</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">7. Vanishing &amp; Exploding Gradients <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-07.html#vanishing-gradient-problem" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Vanishing Gradient Problem</a>
+<a href="dl-07.html#detecting-vgp" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Detecting It</a>
+<a href="dl-07.html#solutions-to-vgp" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Solutions</a>
+<a href="dl-07.html#exploding-gradient-problem" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Exploding Gradient Problem</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">8. Training Toolkit <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-08.html#mlp-memoization" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">MLP Memoization</a>
+<a href="dl-08.html#gradient-descent-in-nn" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Gradient Descent in NNs</a>
+<a href="dl-08.html#improving-nn-performance" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Improving NN Performance</a>
+<a href="dl-08.html#early-stopping" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Early Stopping</a>
+<a href="dl-08.html#data-scaling-nn" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Data Scaling</a>
+<a href="dl-08.html#dropout-layer" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Dropout Layer</a>
+<a href="dl-08.html#regularization-dl" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Regularization</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">9. Activation Functions <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-09.html#why-activation-functions" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why Activation Functions</a>
+<a href="dl-09.html#ideal-activation-properties" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Ideal Properties</a>
+<a href="dl-09.html#sigmoid-activation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Sigmoid</a>
+<a href="dl-09.html#tanh-activation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Tanh</a>
+<a href="dl-09.html#relu-activation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">ReLU</a>
+<a href="dl-09.html#relu-variants" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">ReLU Variants</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">10. Optimizers <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-10.html#momentum" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Momentum</a>
+<a href="dl-10.html#nesterov-accelerated-gradient" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Nesterov (NAG)</a>
+<a href="dl-10.html#adagrad" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">AdaGrad</a>
+<a href="dl-10.html#rmsprop" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">RMSProp</a>
+<a href="dl-10.html#adam-optimizer" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Adam</a>
+<a href="dl-10.html#weight-initialization" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Weight Initialization</a>
+<a href="dl-10.html#batch-normalization" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Batch Normalization</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Convolutional Networks</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">11. CNN Fundamentals <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-11.html#cnn-intuition" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">CNN Intuition</a>
+<a href="dl-11.html#why-not-ann" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why Not Plain ANN</a>
+<a href="dl-11.html#convolution-operation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Convolution Operation</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">12. Padding, Strides &amp; Pooling <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-12.html#padding" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Padding</a>
+<a href="dl-12.html#strides" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Strides</a>
+<a href="dl-12.html#pooling" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Pooling</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">13. Architectures &amp; Transfer Learning <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-13.html#classic-cnn-architectures" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Classic CNN Architectures</a>
+<a href="dl-13.html#transfer-learning" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Transfer Learning</a>
+<a href="dl-13.html#feature-extraction" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Feature Extraction</a>
+<a href="dl-13.html#fine-tuning" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Fine-Tuning</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Sequence Models &amp; Attention</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">14. Recurrent Neural Networks <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-14.html#why-feedforward-fails" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why Feedforward Fails</a>
+<a href="dl-14.html#rnn-hidden-state" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Hidden State</a>
+<a href="dl-14.html#rnn-unrolled" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Unrolled Through Time</a>
+<a href="dl-14.html#bptt" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Backpropagation Through Time</a>
+<a href="dl-14.html#rnn-limitations" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">RNN Limitations</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">15. LSTM &amp; GRU <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-15.html#lstm-motivation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why LSTM</a>
+<a href="dl-15.html#lstm-gates" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Three Gates</a>
+<a href="dl-15.html#gru" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">GRU</a>
+<a href="dl-15.html#lstm-vs-gru" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">LSTM vs GRU</a>
+<a href="dl-15.html#bidirectional-rnn" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Bidirectional RNN</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">16. Seq2Seq &amp; Encoder-Decoder <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-16.html#what-is-seq2seq" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">What Is Seq2Seq</a>
+<a href="dl-16.html#encoder-decoder" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Encoder-Decoder Architecture</a>
+<a href="dl-16.html#teacher-forcing" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Teacher Forcing</a>
+<a href="dl-16.html#bottleneck-problem" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Bottleneck Problem</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">17. Attention Mechanism <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-17.html#attention-bottleneck-recap" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Solving the Bottleneck</a>
+<a href="dl-17.html#how-attention-works" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">How Attention Works</a>
+<a href="dl-17.html#calculating-attention-weights" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Calculating Attention Weights</a>
+<a href="dl-17.html#self-attention-vs-cross-attention-preview" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Self vs Cross Attention</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">18. The Transformer Architecture <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-18.html#why-transformers" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why Transformers</a>
+<a href="dl-18.html#self-attention" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Self-Attention</a>
+<a href="dl-18.html#multi-head-attention" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Multi-Head Attention</a>
+<a href="dl-18.html#positional-encoding" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Positional Encoding</a>
+<a href="dl-18.html#transformer-architecture" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Full Architecture</a>
+<a href="dl-18.html#bert" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">BERT</a>
+<a href="dl-18.html#gpt" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">GPT</a>
+<a href="dl-18.html#terminology-hierarchy" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Transformer vs LLM vs GPT</a>
+</div>
+</details>
+
+</nav>
+</aside>
+
+
+  <main class="flex-1 md:ml-[280px] px-4 py-6 md:p-lg max-w-[1200px] mx-auto w-full min-w-0">
+    <nav aria-label="Breadcrumb" class="flex flex-wrap text-sm text-[var(--on-surface-variant)] mb-4"><a href="../index.html" class="hover:text-[var(--secondary)]">Home</a><span class="mx-2">/</span><a href="../index.html#courses" class="hover:text-[var(--secondary)]">DL Track</a><span class="mx-2">/</span><span class="text-[var(--on-background)]">17. Attention Mechanism</span></nav>
+
+    <div class="space-y-xl">
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-3 py-1 mb-3">Source: 100 Days of Deep Learning</span>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">17. Attention Mechanism</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Alignment scores · softmax weights · a fresh context vector at every decoder step · additive vs multiplicative attention</p>
+        </div>
+
+        <p class="text-[var(--on-surface)] leading-relaxed">The previous page ended on a hard limit: a vanilla Seq2Seq encoder-decoder squeezes an entire input sentence — however long, however rich — into a <em>single</em> fixed-size context vector, and the decoder has to generate the whole output using only that one vector. Attention exists to remove exactly that limit. This page builds it up from the problem, through the exact math, to the two competing ways of scoring "relevance" that researchers converged on before Transformers arrived.</p>
+
+        <!-- THE BOTTLENECK, REVISITED -->
+        <section id="attention-bottleneck-recap" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Attention</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">The Problem, One More Time</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">A long sentence carries a lot of information — many words, many clauses, many relationships between them. Squeezing all of that into one fixed-size vector means detail gets lost or diluted, the same way trying to summarize an entire book chapter in one sentence, and then writing a full book report from only that sentence, throws away almost everything that mattered. Worse, the vanilla architecture puts unfair pressure on both halves of the network at once:</p>
+
+          <ul class="text-[var(--on-surface)] space-y-2 list-disc list-inside">
+            <li>The <strong class="text-[var(--on-background)]">encoder</strong> has to anticipate and pack in everything the decoder might ever need — all at once, before the decoder has even started generating anything.</li>
+            <li>The <strong class="text-[var(--on-background)]">decoder</strong> is then stuck reusing that same static summary at <em>every</em> output timestep, even though different output words logically depend on different parts of the input.</li>
+          </ul>
+
+          <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">Key insight</h4>
+            <p class="text-sm text-[var(--on-surface)]">At any given decoder timestep, you don't need the meaning of the <em>whole</em> input sentence — you need just the relevant subset of words for the specific word you're generating right now.</p>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed"><strong class="text-[var(--on-background)]">Example</strong> — translating "turn off the lights" into Urdu ("لائٹ بند کرو"). When generating "لائٹ" (lights), the decoder mainly needs "lights." When generating "بند" (off), it mainly needs "off." When generating "کرو" (do/turn), it mainly needs "turn." Forcing the decoder to make all three of those decisions from one single blended summary wastes information and hurts translation quality, especially as sentences get longer. It would be far better if the decoder could dynamically shift its focus across the input at each output step — that's exactly what attention does.</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed"><strong class="text-[var(--on-background)]">The reading analogy.</strong> Think about how you actually read a book: even though the whole page sits in front of your eyes, your attention is only ever on one word or phrase at a time — you don't process the entire page with equal weight simultaneously. You focus on a small relevant chunk, extract its meaning, then move on. Attention gives the decoder exactly this ability: instead of being handed one static summary of the entire input up front, it can look back at the <em>whole</em> input at every single output step and decide, freshly each time, how much weight to give each part of it.</p>
+        </section>
+
+        <!-- HOW ATTENTION WORKS -->
+        <section id="how-attention-works" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Attention</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">What Attention Actually Builds</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Every encoder timestep produces its own hidden state — h1, h2, h3, h4… one per input word. The vanilla architecture throws away h1, h2, h3 and keeps only the final one. Attention keeps <em>all</em> of them available to the decoder, for the entire decoding process. At each decoder timestep, it computes a weight (usually written α, "alpha") for every encoder hidden state, answering "how relevant is this input word right now?" The context vector for that timestep is then the weighted sum of all the encoder hidden states, dominated by whichever ones got the largest weight:</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+            $$ c_i = \sum_j \alpha_{ij} \, h_j $$
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Notice the context vector \(c_i\) has the same dimensionality as a single encoder hidden state \(h_j\) — because it's built purely as a weighted sum of vectors that all share that shape. If \(\alpha_{i2}\) (the weight on encoder state \(h_2\)) is much larger than the rest, \(c_i\) will be dominated by \(h_2\)'s information — meaning the decoder is effectively "looking at" input word 2 right now.</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">This changes what the decoder receives at each timestep. In the vanilla architecture it got two inputs: its own previous hidden/cell state, and the previous output word. Attention adds a <strong class="text-[var(--on-background)]">third input</strong> — the freshly-computed context vector \(c_i\), different at every single decoder timestep, built specifically to highlight whichever encoder states matter most for generating <em>this particular</em> output word. The decoder is no longer relying on one generic, blended summary for the entire sentence; it gets a fresh, targeted summary every step.</p>
+        </section>
+
+        <!-- CALCULATING ALPHA -->
+        <section id="calculating-attention-weights" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Attention</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Calculating the Weights, Step by Step</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Alpha depends on two things: the encoder's hidden state at a given input position (\(h_j\) — "what that input word means") and the decoder's <em>previous</em> hidden state (\(s_{i-1}\) — "what the decoder has generated/understood so far"). Why does it need \(s_{i-1}\) at all? Because relevance isn't fixed — which input words matter changes at every output step. At decoder step 1, "lights" matters most; at step 2, "off" matters most. The only way the model can know "where the decoder currently is" in generation is by looking at the decoder's own current state. Without \(s_{i-1}\) feeding into the scoring, the attention weights would have no way to shift across timesteps at all — they'd be static, which defeats the entire purpose.</p>
+
+          <div class="grid gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">Step 1 — Alignment score (raw, un-normalized relevance)</h4>
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center my-2">
+                $$ e_{ij} = a(s_{i-1}, h_j) = V^\top \tanh(W_s s_{i-1} + W_h h_j) $$
+              </div>
+              <p class="text-sm text-[var(--on-surface)]">Here \(a\) is <em>not</em> a fixed formula like a plain dot product — in the original Bahdanau design, \(a\) is itself a small feedforward neural network (a Dense/fully-connected layer) that takes \(s_{i-1}\) and \(h_j\) as input and outputs a single scalar score. \(W_s\), \(W_h\), and \(V\) are all learned weight matrices/vectors, trained jointly with the rest of the network via backpropagation, exactly like every other weight in the model. The model <em>learns</em> what "relevance" should look like, rather than us hand-defining it.</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">Step 2 — Normalize with softmax</h4>
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center my-2">
+                $$ \alpha_{ij} = \frac{\exp(e_{ij})}{\sum_k \exp(e_{ik})} $$
+              </div>
+              <p class="text-sm text-[var(--on-surface)]">This ensures every \(\alpha_{ij}\) for a given decoder timestep \(i\) sums to 1 across the whole input sentence — turning raw scores into a clean "how much attention to pay to each input word" distribution.</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">Step 3 — Weighted sum → the context vector</h4>
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center my-2">
+                $$ c_i = \sum_j \alpha_{ij} \, h_j $$
+              </div>
+              <p class="text-sm text-[var(--on-surface)]">In plain words: alpha is an alignment (similarity) score telling you how strongly a specific encoder timestep matters for the output at a specific decoder timestep — scored by a small trainable network that looks at both "what this input word meant" and "what the decoder currently understands," then normalized so the weights are comparable and sum to 1.</p>
+            </div>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">This entire three-step process repeats fresh at <em>every</em> decoder timestep — a new \(c_i\), built from a new set of alphas, computed from that timestep's decoder state. For the "turn off the lights" example: at decoder step 2 (generating "بند" / "off"), the model computes one alignment score per encoder position — how relevant is "turn," "off," "the," "lights" respectively — passes those four scores through softmax, and since "off" is the most relevant word for this specific output, \(\alpha_{22}\) dominates, meaning \(c_2\) ends up built almost entirely from \(h_2\) ("off")'s hidden state.</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">The context vector doesn't get used alone, either — it's typically <strong class="text-[var(--on-background)]">concatenated</strong> with the decoder's own hidden state, and a learned Dense layer figures out how to combine both pieces before a final softmax over the vocabulary predicts the next word. Concatenation is used rather than blending because \(c_i\) and \(s_i\) represent two genuinely different kinds of information — "what's relevant from the input right now" vs. "what the decoder itself has understood/generated so far" — and concatenation keeps both intact rather than forcing a fixed mix ourselves.</p>
+        </section>
+
+        <!-- DIAGRAM -->
+        <section id="attention-diagram" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Attention</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Visualizing One Decoder Timestep</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Below is one full decoder timestep's worth of attention, using the "turn off the lights" example, at the moment the decoder is generating "بند" (off). Four encoder hidden states sit at the bottom; each is scored against the decoder's previous state \(s_1\); the scores are normalized into weights (thick arrow = high weight, thin/faint arrows = low weight); and the weighted sum becomes the context vector \(c_2\) fed into the decoder.</p>
+
+          <div class="border-l-4 border-[var(--outline)] bg-[var(--surface-container-high)]/40 p-sm rounded-r-lg text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Illustrative aid</strong> — generated for this site to visualize the architecture.</div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md flex justify-center">
+            <svg viewBox="0 0 680 420" class="w-full max-w-[640px]" role="img" aria-label="Decoder timestep drawing weighted attention arrows back to four encoder hidden states, one arrow much thicker than the others">
+              <defs>
+                <marker id="dl17-arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                  <path d="M0,0 L6,3 L0,6 Z" fill="var(--secondary)"/>
+                </marker>
+                <marker id="dl17-arrow-faint" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                  <path d="M0,0 L6,3 L0,6 Z" fill="var(--outline)"/>
+                </marker>
+              </defs>
+
+              <!-- encoder boxes -->
+              <g>
+                <rect x="20" y="330" width="120" height="55" rx="8" fill="var(--tertiary-container)" fill-opacity="0.18" stroke="var(--tertiary)" stroke-width="1.5"/>
+                <text x="80" y="353" text-anchor="middle" font-size="12" fill="var(--tertiary)" class="font-label-caps">h1</text>
+                <text x="80" y="371" text-anchor="middle" font-size="12" fill="var(--on-surface)">"turn"</text>
+
+                <rect x="187" y="330" width="120" height="55" rx="8" fill="var(--tertiary-container)" fill-opacity="0.18" stroke="var(--tertiary)" stroke-width="1.5"/>
+                <text x="247" y="353" text-anchor="middle" font-size="12" fill="var(--tertiary)" class="font-label-caps">h2</text>
+                <text x="247" y="371" text-anchor="middle" font-size="12" fill="var(--on-surface)">"off"</text>
+
+                <rect x="354" y="330" width="120" height="55" rx="8" fill="var(--tertiary-container)" fill-opacity="0.18" stroke="var(--tertiary)" stroke-width="1.5"/>
+                <text x="414" y="353" text-anchor="middle" font-size="12" fill="var(--tertiary)" class="font-label-caps">h3</text>
+                <text x="414" y="371" text-anchor="middle" font-size="12" fill="var(--on-surface)">"the"</text>
+
+                <rect x="521" y="330" width="120" height="55" rx="8" fill="var(--tertiary-container)" fill-opacity="0.18" stroke="var(--tertiary)" stroke-width="1.5"/>
+                <text x="581" y="353" text-anchor="middle" font-size="12" fill="var(--tertiary)" class="font-label-caps">h4</text>
+                <text x="581" y="371" text-anchor="middle" font-size="12" fill="var(--on-surface)">"lights"</text>
+              </g>
+              <text x="330" y="410" text-anchor="middle" font-size="11" fill="var(--on-surface-variant)">Encoder hidden states (all four kept — none discarded)</text>
+
+              <!-- attention weight arrows into context vector circle -->
+              <line x1="80" y1="330" x2="290" y2="240" stroke="var(--outline)" stroke-width="1.5" stroke-opacity="0.5" marker-end="url(#dl17-arrow-faint)"/>
+              <line x1="247" y1="330" x2="315" y2="235" stroke="var(--secondary)" stroke-width="7" marker-end="url(#dl17-arrow)"/>
+              <line x1="414" y1="330" x2="345" y2="235" stroke="var(--outline)" stroke-width="1.5" stroke-opacity="0.5" marker-end="url(#dl17-arrow-faint)"/>
+              <line x1="581" y1="330" x2="370" y2="240" stroke="var(--outline)" stroke-width="1.5" stroke-opacity="0.5" marker-end="url(#dl17-arrow-faint)"/>
+
+              <text x="80" y="300" text-anchor="middle" font-size="11" fill="var(--on-surface-variant)">α₂₁=0.05</text>
+              <text x="255" y="290" text-anchor="middle" font-size="12" font-weight="700" fill="var(--secondary)">α₂₂=0.78</text>
+              <text x="420" y="300" text-anchor="middle" font-size="11" fill="var(--on-surface-variant)">α₂₃=0.10</text>
+              <text x="581" y="300" text-anchor="middle" font-size="11" fill="var(--on-surface-variant)">α₂₄=0.07</text>
+
+              <!-- context vector circle -->
+              <circle cx="330" cy="205" r="42" fill="var(--secondary-container)" fill-opacity="0.25" stroke="var(--secondary)" stroke-width="2"/>
+              <text x="330" y="200" text-anchor="middle" font-size="12" font-weight="700" fill="var(--secondary)">C₂</text>
+              <text x="330" y="216" text-anchor="middle" font-size="9" fill="var(--on-surface-variant)">Σ α₂ⱼhⱼ</text>
+
+              <!-- arrow up into decoder -->
+              <line x1="330" y1="163" x2="330" y2="120" stroke="var(--secondary)" stroke-width="4" marker-end="url(#dl17-arrow)"/>
+
+              <!-- decoder box -->
+              <rect x="200" y="40" width="260" height="70" rx="8" fill="var(--primary-container)" fill-opacity="0.15" stroke="var(--primary)" stroke-width="1.5"/>
+              <text x="330" y="65" text-anchor="middle" font-size="12" fill="var(--primary)" class="font-label-caps">Decoder, timestep 2</text>
+              <text x="330" y="85" text-anchor="middle" font-size="12" fill="var(--on-surface)">state s₁ → generates "بند" (off)</text>
+              <text x="330" y="101" text-anchor="middle" font-size="10" fill="var(--on-surface-variant)">inputs: s₁, prev. output, C₂</text>
+
+              <!-- dashed feedback: s1 also feeds scoring -->
+              <path d="M 205 95 Q 100 200 260 220" fill="none" stroke="var(--outline)" stroke-width="1.5" stroke-dasharray="4 4" marker-end="url(#dl17-arrow-faint)"/>
+              <text x="110" y="175" font-size="10" fill="var(--on-surface-variant)">s₁ also feeds the scoring function</text>
+            </svg>
+          </div>
+
+          <p class="text-sm text-[var(--on-surface-variant)]">At the <em>next</em> decoder timestep (generating "کرو" / turn), this entire diagram is recomputed from scratch — a new set of alphas, now dominated by \(h_1\) ("turn") instead — letting the model re-focus on a different part of the input every time.</p>
+        </section>
+
+        <!-- ADDITIVE VS MULTIPLICATIVE -->
+        <section id="additive-vs-multiplicative-attention" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Attention</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Two Ways to Score Relevance</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Everything above establishes the skeleton — score, softmax, weighted sum — but leaves open exactly <em>how</em> the alignment score \(e_{ij}\) gets computed. Two named variants answer this differently.</p>
+
+          <div class="grid gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+              <h3 class="font-h3 text-lg text-[var(--secondary)]">Additive Attention (Bahdanau, 2014)</h3>
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+                $$ e_{ij} = V^\top \tanh(W_s s_{i-1} + W_h h_j) $$
+              </div>
+              <p class="text-sm text-[var(--on-surface)]">The decoder's previous state \(s_{i-1}\) and each encoder state \(h_j\) are passed through learned weight matrices, added together, squashed with tanh, and projected to a scalar via a learned vector \(V\). This whole scoring function has its own trainable parameters, separate from the encoder/decoder — hence "additive," since the two inputs are combined by addition inside the network before scoring. Uses \(s_{i-1}\) — the decoder's state <em>before</em> the current word is generated.</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+              <h3 class="font-h3 text-lg text-[var(--tertiary)]">Multiplicative Attention (Luong, 2015)</h3>
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+                $$ e_{ij} = s_i \cdot h_j $$
+              </div>
+              <p class="text-sm text-[var(--on-surface)]">Instead of a neural network, Luong attention takes the direct dot product of the decoder's hidden state and each encoder hidden state. Geometrically, a dot product is large when two vectors point in a similar direction — exactly what a similarity score should capture — and it needs zero extra learnable parameters. Uses \(s_i\) — the decoder's <em>current</em> state, the freshest information available, rather than the previous one.</p>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs"></th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Additive (Bahdanau)</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Multiplicative (Luong)</th></tr></thead>
+              <tbody>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Decoder state used</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Previous, \(s_{i-1}\)</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Current, \(s_i\)</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Scoring mechanism</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Small feedforward network</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Direct dot product</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Extra trainable params</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Yes (\(W_s, W_h, V\))</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">No (basic "dot" version)</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Compute cost / speed</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Higher / slower</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Lower / faster</td></tr>
+                <tr><td class="p-2.5 font-semibold">Practical performance</td><td class="p-2.5">Good, but generally outperformed</td><td class="p-2.5">Generally better in practice</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Why is the simpler option usually the better one? Two reinforcing reasons: fewer parameters to learn means less overfitting risk and faster, more stable convergence — the model isn't spending capacity learning a whole extra scoring network when a dot product already captures similarity well. And using the decoder's <em>current</em> state means the relevance scoring reflects the freshest information available, rather than the state before the current word was generated.</p>
+
+          <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">Looking ahead</h4>
+            <p class="text-sm text-[var(--on-surface)]">The Transformer's "Scaled Dot-Product Attention" is a direct descendant of multiplicative (Luong) attention — same dot-product scoring idea, extended into Query/Key/Value matrices and scaled by the square root of the key dimension for numerical stability. That's exactly where the next page picks up.</p>
+          </div>
+        </section>
+
+        <!-- SELF VS CROSS PREVIEW -->
+        <section id="self-attention-vs-cross-attention-preview" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Attention</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">One Distinction Worth Naming Early</h2>
+          </div>
+          <p class="text-[var(--on-surface)] leading-relaxed">Everything on this page is technically an <strong class="text-[var(--on-background)]">inter-sequence</strong> form of attention: the Query side comes from the decoder (one sequence), while the Key/Value side comes from the encoder (a <em>different</em> sequence). Once Transformers formalize this same idea with learned Query/Key/Value projections, this pattern gets a name — <strong class="text-[var(--on-background)]">cross-attention</strong>. The next page introduces its counterpart, <strong class="text-[var(--on-background)]">self-attention</strong> — where Query, Key, and Value all come from the <em>same</em> sequence, a word relating to every other word in its own sentence. That single shift — from "two sequences talking to each other" to "one sequence talking to itself" — is the seed that grows into the entire Transformer architecture.</p>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on the Attention Mechanism. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-dl-17">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. In the vanilla (no-attention) encoder-decoder, what exactly gets passed to the decoder from the encoder?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Every encoder hidden state, unweighted</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. A different context vector per decoder timestep</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. One single fixed-size context vector (the encoder's final hidden + cell state), reused at every decoder timestep</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. The raw input words, unencoded</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> The vanilla bottleneck is precisely this: one static vector, computed once, reused for every output word — which is what attention is built to fix.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. Why does the alignment score e_ij depend on the decoder's own state (s_{i-1} or s_i), and not just on the encoder hidden state h_j alone?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. It doesn't really need to — it's included only for symmetry</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Relevance isn't fixed — which input words matter changes at every output step, and the decoder's own state is the only signal for "where generation currently is"</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Because h_j alone is too large to score directly</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. To make the softmax step unnecessary</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Without the decoder's own state in the scoring function, attention weights would be static across timesteps — unable to shift focus as generation progresses, which defeats the entire point of attention.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. Generating the Urdu word for "off" in "turn off the lights," you'd expect alpha_22 (the weight on h2, "off") to be:</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. The dominant weight among alpha_21..alpha_24, since "off" is most relevant right now</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Always exactly 0.25, since there are 4 input words</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Irrelevant, since alpha only matters at the final decoder timestep</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Identical to alpha_12 from the previous timestep</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Attention is recomputed fresh every timestep; since "off" is what's being generated, its encoder hidden state should dominate the weighted sum forming c2 — exactly what the diagram on this page shows (alpha_22 = 0.78).
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. What's the core structural difference between additive (Bahdanau) and multiplicative (Luong) attention?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Additive uses softmax, multiplicative doesn't</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Additive is only usable for translation</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Multiplicative attention requires an LSTM decoder; additive doesn't</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Additive scores via a small trainable feedforward network (extra parameters); multiplicative scores via a direct dot product (no extra parameters)</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> They share the same score → softmax → weighted sum skeleton, differing only in how the alignment score itself is computed — a learned FFN vs. a plain dot product.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. Which later architecture's core scoring mechanism descends directly from Luong's dot-product attention?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Convolutional Neural Networks</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. The Transformer's Scaled Dot-Product Attention</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. K-Means clustering</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Batch normalization</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Transformers extend Luong's dot-product idea into learned Query/Key/Value matrices, scaled by the square root of the key dimension — the exact topic of the next page.
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--primary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="dl-18.html" class="bg-[var(--secondary)] text-[var(--on-secondary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">Next: The Transformer Architecture</a>
+        </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="../assets/app.js"></script>
+
+</body>
+</html>

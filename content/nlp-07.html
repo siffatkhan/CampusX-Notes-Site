@@ -1,0 +1,294 @@
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--tertiary)] bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/30 rounded-full px-3 py-1 mb-3">Source: 100 Days of Deep Learning — NLP Notes</span>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">7. Topic Modeling</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Discovering hidden themes across a document collection · Latent Dirichlet Allocation (LDA) · Unsupervised, no labels required</p>
+        </div>
+
+        <!-- WHAT IS TOPIC MODELING -->
+        <section id="what-is-topic-modeling" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--tertiary)] bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/30 rounded-full px-2.5 py-0.5">NLP</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">What Is Topic Modeling?</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed"><strong class="text-[var(--on-background)]">Topic Modeling</strong> is an <strong class="text-[var(--on-background)]">unsupervised</strong> learning technique that automatically discovers the abstract "topics" running through a collection of documents — without any labeled data, and without being told in advance what the topics even are.</p>
+
+          <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-sm font-mono">
+Feed in thousands of news articles → topic modeling might automatically discover:
+
+Topic 1: election, government, president, vote     → "Politics"
+Topic 2: goal, match, team, player                  → "Sports"
+Topic 3: stock, market, economy, inflation           → "Finance"
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">The algorithm never explicitly labels these clusters "Politics" or "Sports" — it only groups statistically co-occurring words into clusters. A human looks at each cluster's top words afterward and assigns the human-readable label.</p>
+
+          <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Analogy:</strong> imagine dumping thousands of unsorted newspaper clippings on a table with no headings or categories. Topic modeling is an assistant who reads through all of them and starts making piles based on which clippings tend to use similar vocabulary — one pile naturally becomes "sports" clippings, another "politics," without ever being told those category names in advance. You only look at each pile afterward and name it based on what's in it.</div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Why Topic Modeling? — Use Cases</h3>
+            <div class="grid gap-3">
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+                <h4 class="font-semibold text-[var(--on-background)] mb-1">Organizing Large Document Collections</h4>
+                <p class="text-sm text-[var(--on-surface)]">Automatically categorize thousands of articles, support tickets, or reviews into themes without manual tagging — useful the moment a collection is too large for a human to sort by hand.</p>
+              </div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+                <h4 class="font-semibold text-[var(--on-background)] mb-1">Trend Discovery</h4>
+                <p class="text-sm text-[var(--on-surface)]">See what themes are emerging across large volumes of text — e.g. social media posts — as they shift over time, without reading every post.</p>
+              </div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+                <h4 class="font-semibold text-[var(--on-background)] mb-1">Content Recommendation</h4>
+                <p class="text-sm text-[var(--on-surface)]">Group articles or products by discovered topic so a recommendation system can suggest similar content, beyond just keyword or category matching.</p>
+              </div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+                <h4 class="font-semibold text-[var(--on-background)] mb-1">Summarizing Large Corpora</h4>
+                <p class="text-sm text-[var(--on-surface)]">Quickly understand "what is this huge pile of documents mostly about" — e.g. discovering the recurring themes in a mountain of customer feedback or product reviews — without reading everything.</p>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Key Difference From Everything Covered So Far</h3>
+            <p class="text-[var(--on-surface)] leading-relaxed">This is fundamentally different from POS tagging (chapter 5) and NER (chapter 6):</p>
+            <ul class="list-disc list-inside space-y-1 text-sm text-[var(--on-surface)] mt-2">
+              <li><strong class="text-[var(--on-background)]">POS tagging / NER = supervised</strong> — trained on labeled examples where humans already tagged the correct answer.</li>
+              <li><strong class="text-[var(--on-background)]">Topic Modeling = unsupervised</strong> — no labels at all; the algorithm discovers structure purely from patterns of word co-occurrence across documents.</li>
+            </ul>
+            <div class="border-l-4 border-[var(--outline)] bg-[var(--surface-container-high)]/40 p-sm rounded-r-lg text-sm text-[var(--on-surface-variant)] mt-3"><strong class="text-[var(--on-background)]">Analogy:</strong> POS tagging / NER is a student learning from an answer key (supervised). Topic modeling is a student left alone with a huge stack of books and asked to group them by theme purely by noticing which books share similar vocabulary — no answer key provided at all (unsupervised).</div>
+          </div>
+        </section>
+
+        <!-- CORE INTUITION -->
+        <section id="core-intuition" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--tertiary)] bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/30 rounded-full px-2.5 py-0.5">NLP</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Core Intuition: How Does It Work?</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">The foundational assumption behind topic modeling: <strong class="text-[var(--on-background)]">each document is a mixture of multiple topics, and each topic is a distribution over words.</strong></p>
+
+          <ul class="list-disc list-inside space-y-1 text-sm text-[var(--on-surface)]">
+            <li>A single document isn't purely "100% about sports" — it might be 70% Sports, 20% Business (e.g. an article about a player's contract negotiation), 10% something else.</li>
+            <li>A "topic" itself isn't one fixed keyword — it's a probability distribution over the entire vocabulary, where certain words are much more likely to appear under that topic than others.</li>
+          </ul>
+
+          <div class="grid gap-3 md:grid-cols-2">
+            <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-sm font-mono">
+Topic "Sports" as a word distribution:
+
+goal      → 0.08
+match     → 0.07
+team      → 0.06
+player    → 0.05
+election  → 0.0001  (extremely unlikely)
+            </div>
+            <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-sm font-mono">
+Document: "The player negotiated a new
+contract worth millions before the match."
+
+Topic mixture:
+60% Sports, 35% Business/Finance, 5% Other
+            </div>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">The algorithm's job is to work <strong class="text-[var(--on-background)]">backward</strong>: given only the raw text of many documents, figure out (a) what the underlying topics (word distributions) probably are, and (b) what mixture of those topics each document is made of — purely from statistical word co-occurrence patterns.</p>
+        </section>
+
+        <!-- LDA -->
+        <section id="lda" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--tertiary)] bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/30 rounded-full px-2.5 py-0.5">NLP</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Latent Dirichlet Allocation (LDA)</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed"><strong class="text-[var(--on-background)]">LDA</strong> is the most widely used topic modeling algorithm. Its name breaks down exactly what it does:</p>
+
+          <div class="grid gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-1">
+              <h3 class="font-h3 text-base text-[var(--tertiary)]">"Latent"</h3>
+              <p class="text-sm text-[var(--on-surface)]">The topics are hidden / not directly observed — we only ever see the words, and must infer the topics that likely generated them.</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-1">
+              <h3 class="font-h3 text-base text-[var(--tertiary)]">"Dirichlet"</h3>
+              <p class="text-sm text-[var(--on-surface)]">The type of probability distribution used to model "how topics mix within documents" and "how words mix within topics." A Dirichlet distribution is well-suited for modeling proportions that must sum to 1, like topic mixture percentages (70% Sports + 30% Business = 100%).</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-1">
+              <h3 class="font-h3 text-base text-[var(--tertiary)]">"Allocation"</h3>
+              <p class="text-sm text-[var(--on-surface)]">The process of assigning/allocating words to topics.</p>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Simplified Intuition — the Generative Story</h3>
+            <p class="text-[var(--on-surface)] leading-relaxed">LDA assumes documents were "generated" through this imagined process (in reality documents are already written — this is only the mental model behind the math):</p>
+            <ol class="list-decimal list-inside space-y-1 text-sm text-[var(--on-surface)] mt-2">
+              <li>For each document, first randomly decide a topic mixture (e.g. "this document will be 70% Sports, 30% Business").</li>
+              <li>Then, to generate each word in the document, first pick a topic according to that mixture (roll a die weighted 70/30 toward Sports), then pick a word from that topic's word distribution (from the Sports topic, "match" is likely to be picked).</li>
+            </ol>
+            <p class="text-[var(--on-surface)] leading-relaxed mt-2">LDA then works <strong class="text-[var(--on-background)]">backward</strong> from real documents to infer the most probable topic distributions and word distributions that would have generated the text we actually observe.</p>
+          </div>
+
+          <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Analogy:</strong> each document is a smoothie made by blending different fruit purees (topics) in different proportions. LDA is a food scientist who, given only the finished smoothie (the document), tries to figure out which fruits (topics) were blended and in what proportions — purely by analyzing the flavor profile (word patterns), without ever seeing the blending process directly.</div>
+        </section>
+
+        <!-- CODE / PRACTICAL STEPS -->
+        <section id="topic-modeling-code" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--tertiary)] bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/30 rounded-full px-2.5 py-0.5">NLP</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Practical Steps (with sklearn / Gensim)</h2>
+          </div>
+
+          <ol class="list-decimal list-inside space-y-2 text-sm text-[var(--on-surface)]">
+            <li><strong class="text-[var(--on-background)]">Preprocess text</strong> — lowercase, remove stopwords, remove punctuation, lemmatize. All the preprocessing steps from earlier chapters apply here too; clean text matters a lot for good topics.</li>
+            <li><strong class="text-[var(--on-background)]">Convert to a numeric representation</strong> — typically Bag of Words or TF-IDF is used as input to LDA. LDA itself works on raw word counts/frequencies, not embeddings like Word2Vec.</li>
+            <li><strong class="text-[var(--on-background)]">Choose the number of topics (k)</strong> — a key hyperparameter you must decide in advance (e.g. k=5). Too few topics merges distinct themes together; too many splits a single theme into overly narrow fragments.</li>
+            <li><strong class="text-[var(--on-background)]">Train LDA</strong> — the algorithm iteratively refines its guess of topic-word distributions and document-topic distributions until it converges on a stable solution.</li>
+            <li><strong class="text-[var(--on-background)]">Interpret topics manually</strong> — look at the top-weighted words in each discovered topic and assign a human-readable label (e.g. top words goal/match/team/player → label it "Sports").</li>
+          </ol>
+
+          <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+            <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+            <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.decomposition import LatentDirichletAllocation
+
+cv = CountVectorizer(stop_words='english', max_df=0.9, min_df=2)
+X = cv.fit_transform(documents)   # documents = list of preprocessed texts
+
+lda = LatentDirichletAllocation(n_components=5, random_state=42)  # 5 topics
+lda.fit(X)
+
+# print top words for each discovered topic
+words = cv.get_feature_names_out()
+for idx, topic in enumerate(lda.components_):
+    top_words = [words[i] for i in topic.argsort()[-10:]]
+    print(f"Topic {idx}: {top_words}")</code></pre>
+          </div>
+
+          <p class="text-sm text-[var(--on-surface)]"><code class="text-[var(--tertiary)]">lda.components_</code> holds one row per topic, giving each vocabulary word's weight under that topic; sorting a row and taking the highest-weighted indices gives that topic's most representative words — the same words a human then reads to decide what to call the topic.</p>
+        </section>
+
+        <!-- OTHER TECHNIQUES + SUMMARY -->
+        <section id="other-techniques" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--tertiary)] bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/30 rounded-full px-2.5 py-0.5">NLP</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Other Topic Modeling Techniques (Good to Know)</h2>
+          </div>
+
+          <div class="grid gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+              <h3 class="font-h3 text-base text-[var(--secondary)]">LSA (Latent Semantic Analysis)</h3>
+              <p class="text-sm text-[var(--on-surface)]">An older technique using matrix factorization (SVD) on the TF-IDF matrix — conceptually similar to GloVe's approach for word embeddings, but applied at the document-topic level instead. Generally considered less interpretable and lower quality than LDA.</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+              <h3 class="font-h3 text-base text-[var(--secondary)]">NMF (Non-negative Matrix Factorization)</h3>
+              <p class="text-sm text-[var(--on-surface)]">Another matrix-factorization-based alternative to LDA — often produces more interpretable topics on smaller datasets, and doesn't rely on the probabilistic Dirichlet assumptions LDA uses.</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+              <h3 class="font-h3 text-base text-[var(--primary)]">BERTopic</h3>
+              <p class="text-sm text-[var(--on-surface)]">A modern approach that uses BERT-based embeddings (contextual, semantic) combined with clustering, instead of relying purely on word co-occurrence counts like LDA. Generally produces higher-quality, more coherent topics on modern text (social media, complex documents), because it leverages the deep semantic understanding of transformer embeddings rather than just statistical word-frequency patterns.</p>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Summary Comparison: NER vs. Topic Modeling</h3>
+            <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Aspect</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">NER</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Topic Modeling</th></tr></thead>
+                <tbody>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Learning type</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Supervised (needs labeled entities)</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Unsupervised (no labels needed)</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Output</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Specific entity type per word/phrase (PERSON, ORG, DATE)</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Broad thematic clusters across a document collection</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Granularity</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Word/phrase level</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Document/corpus level</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Common tools</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">spaCy, CRF, BERT-NER</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">LDA, NMF, LSA, BERTopic</td></tr>
+                  <tr><td class="p-2.5 font-semibold">Example use</td><td class="p-2.5">Extracting "Elon Musk" as PERSON from one sentence</td><td class="p-2.5">Discovering that 1000 articles cluster into Politics/Sports/Finance themes</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on Topic Modeling. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-nlp-07">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. Why is topic modeling classified as unsupervised, unlike POS tagging or NER?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. It only works on very small datasets</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. It uses neural networks instead of statistics</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. It discovers topics purely from word co-occurrence patterns, with no labeled training examples telling it the correct topics in advance</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It requires a human to pre-label every document with its topic before training</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> POS tagging and NER are supervised — trained on examples humans already tagged. Topic modeling has no labels at all; it discovers structure purely from statistical patterns of word co-occurrence across documents, which a human only interprets afterward.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. Under the topic modeling assumption, which statement best describes a "topic"?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. A single fixed keyword chosen to represent a document</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. A probability distribution over the entire vocabulary, where some words are far more likely to appear under it than others</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. A hand-written list of synonyms provided before training</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. A single document that best represents the whole collection</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> A topic is a distribution over words — e.g. under the "Sports" topic, "goal" might have weight 0.08 while "election" has weight 0.0001. It is not one fixed keyword.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. In LDA's generative story, what happens right after a document's topic mixture (e.g. 70% Sports / 30% Business) is decided?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. For each word, a topic is picked according to that mixture, then a word is picked from that topic's word distribution</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. The document is immediately assigned a single, final topic label</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. The document is translated into embeddings using Word2Vec</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. The mixture is discarded and words are chosen uniformly at random from the whole vocabulary</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> In LDA's imagined generative process, once a document's topic mixture is decided, each word is generated by first picking a topic according to that mixture (like a weighted dice roll), then picking a word from that topic's word distribution.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. What does LDA take as input, and what does it explicitly NOT use?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Word2Vec embeddings; it never uses raw word counts</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Labeled topic tags for each document; it never uses raw text</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Images of documents; it never uses text at all</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. A Bag of Words or TF-IDF representation of raw word counts/frequencies; it does not take embeddings like Word2Vec as input</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> LDA works on Bag of Words / TF-IDF style raw word counts or frequencies. It does not take embeddings like Word2Vec as input — that's a different representation used elsewhere in the NLP pipeline.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. In the sklearn snippet <code>lda.fit(X)</code> followed by <code>lda.components_</code>, what does sorting a row of <code>lda.components_</code> and taking the highest-weighted indices give you?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. The documents most representative of that topic</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. The number of topics k that should have been chosen</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. The vocabulary words most strongly associated with that topic — used to manually interpret and label the topic</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. The stopwords that should have been removed during preprocessing</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Each row of <code>lda.components_</code> gives a topic's weight over every vocabulary word. Sorting and taking the top indices yields that topic's most representative words — exactly what a human reads to decide the topic's label, e.g. goal/match/team/player → "Sports".
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--tertiary)] text-[var(--on-tertiary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--tertiary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex flex-col items-center gap-3 text-center">
+          <p class="text-[var(--on-surface-variant)] text-sm">That's the NLP track — from raw text to topic modeling. The Deep Learning track's Attention and Transformer pages show how modern NLP systems like BERT and GPT actually work under the hood.</p>
+          <a href="../index.html" class="bg-[var(--tertiary)] text-[var(--on-tertiary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity">Back to Home</a>
+        </div>

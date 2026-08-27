@@ -1,0 +1,221 @@
+        <div>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">31. Bagging</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Bootstrap AGGregatING · why bagging reduces variance · BaggingClassifier &amp; BaggingRegressor</p>
+        </div>
+
+        <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm text-sm text-[var(--on-surface-variant)]">
+          <strong class="text-[var(--on-background)]">Extended notes</strong> — this topic isn't covered in the CampusX playlist notes this site is based on. Written from scratch to continue the curriculum, in the same style as the rest of the site.
+        </div>
+
+        <!-- INTRO -->
+        <section id="bagging-intro" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Ensemble</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Introduction — Bootstrap AGGregatING</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Voting (previous page) combines <em>different algorithms</em> trained on the <em>same</em> data. Bagging flips that: it trains the <strong class="text-[var(--on-background)]">same algorithm</strong>, over and over, on <strong class="text-[var(--on-background)]">different random samples</strong> of the training data — then aggregates. "Bagging" is short for <strong class="text-[var(--on-background)]">B</strong>ootstrap <strong class="text-[var(--on-background)]">AGG</strong>regat<strong class="text-[var(--on-background)]">ING</strong>.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-lg text-[var(--primary)]">What is Bootstrap Sampling?</h3>
+            <p class="text-sm text-[var(--on-surface)]">"Bootstrap sample" means: from your training set of N rows, randomly draw N rows <strong class="text-[var(--on-background)]">with replacement</strong>. "With replacement" means after picking a row, you put it back in the pool before picking the next one — so the same row can be picked multiple times, and some rows won't be picked at all.</p>
+            <p class="text-sm text-[var(--on-surface)]">Example: dataset rows [A, B, C, D, E] (N=5). One bootstrap sample might be [A, A, C, D, D] — A and D each appear twice, B and E don't appear at all. Draw another bootstrap sample from the same original 5 rows and you might get [B, C, C, C, E] — a completely different mix. Each bootstrap sample is a slightly different "view" of the same underlying dataset.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">The Bagging Procedure</h3>
+            <ol class="text-sm text-[var(--on-surface)] space-y-1.5 list-decimal list-inside bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md">
+              <li><strong class="text-[var(--on-background)]">Step 1:</strong> From the original training set, draw a bootstrap sample (N rows, with replacement).</li>
+              <li><strong class="text-[var(--on-background)]">Step 2:</strong> Train a base model (e.g. a Decision Tree) on that bootstrap sample.</li>
+              <li><strong class="text-[var(--on-background)]">Step 3:</strong> Repeat steps 1–2 many times (e.g. 100 or 500 times) — each round draws a fresh bootstrap sample and trains a fresh model on it.</li>
+              <li><strong class="text-[var(--on-background)]">Step 4 — Aggregate:</strong> for a new input, ask every trained model for its prediction, then combine them — majority vote for classification, average for regression.</li>
+            </ol>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-lg text-[var(--secondary)]">The "Ask Many Slightly-Different Experts" Analogy</h3>
+            <p class="text-sm text-[var(--on-surface)]">Imagine diagnosing a patient by asking 100 doctors — but instead of showing all 100 doctors the patient's <em>entire</em> medical history, you show each doctor a random subset of the patient's past test results (with some results repeated, some left out). Each doctor forms their own opinion from their own partial view. No single doctor sees the exact same data as another, so no single doctor's blind spot is shared by all the others. Averaging their diagnoses smooths out any one doctor's overreaction to a particular quirky test result. That's exactly what bagging does with models instead of doctors, and bootstrapped samples instead of partial test results.</p>
+          </div>
+
+          <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-md rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--tertiary)] mb-2">Why Bagging Specifically Reduces Variance</h4>
+            <p class="text-sm text-[var(--on-surface)]">Recall the <a href="section-21.html" class="text-[var(--primary)] underline hover:opacity-80">Bias-Variance Tradeoff</a>: a model's total expected error breaks into bias (error from wrong assumptions — underfitting) and variance (error from being overly sensitive to the specific training sample it happened to see — overfitting). A single unpruned Decision Tree has <strong class="text-[var(--on-background)]">low bias</strong> (it can represent almost any decision boundary) but <strong class="text-[var(--on-background)]">high variance</strong> — swap a handful of training rows and the tree it learns can look completely different.</p>
+            <p class="text-sm text-[var(--on-surface)] mt-2">Averaging (or voting among) many independently-trained high-variance models cancels out their individual, uncorrelated fluctuations — much like averaging many noisy thermometer readings gets you closer to the true temperature than trusting one reading. Mathematically, if you average \(m\) models each with variance \(\sigma^2\) and their errors were <em>fully</em> independent, the variance of the average would shrink to \(\sigma^2/m\). Bootstrapped training sets aren't fully independent (they're drawn from the same original data, so they overlap), so the reduction isn't quite that dramatic in practice — but the direction is real and strong: <strong class="text-[var(--on-background)]">bagging trades a little bit of correlation-limited variance reduction for a lot of stability, while barely touching bias.</strong> That's why bagging shines specifically with high-variance, low-bias base learners.</p>
+          </div>
+        </section>
+
+        <!-- BAGGING CLASSIFIERS -->
+        <section id="bagging-classifiers" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Classification</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Bagging Classifiers</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">For classification, each bootstrapped model casts one vote for a class label, and the ensemble's prediction is the <strong class="text-[var(--on-background)]">majority vote</strong> across all models — the same aggregation rule as hard voting, except here every "voter" is the same algorithm trained on a different resample, rather than different algorithms trained on the same data.</p>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Code — BaggingClassifier</h3>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from sklearn.ensemble import BaggingClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
+
+bag_clf = BaggingClassifier(
+    estimator=DecisionTreeClassifier(),  # base learner — unpruned tree, high variance
+    n_estimators=500,       # how many bootstrapped models to train
+    max_samples=1.0,        # fraction (or count) of rows drawn per bootstrap sample — 1.0 = N rows
+    bootstrap=True,         # sample rows WITH replacement (this is what makes it "bagging")
+    n_jobs=-1,               # train the 500 trees in parallel across CPU cores
+    random_state=1
+)
+bag_clf.fit(X_train, y_train)
+print("Bagged accuracy:", bag_clf.score(X_test, y_test))
+
+# compare against a single tree to see the variance-reduction effect
+single_tree = DecisionTreeClassifier()
+single_tree.fit(X_train, y_train)
+print("Single tree accuracy:", single_tree.score(X_test, y_test))</code></pre>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Parameter</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Meaning</th></tr></thead>
+              <tbody>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">n_estimators</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">How many base models to train and aggregate. More estimators → smoother, more stable ensemble, but diminishing returns and more compute. Bagging does not overfit as you increase this — it just plateaus.</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">max_samples</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">How many rows each bootstrap draw pulls (as a fraction of N or an absolute count). Default 1.0 (N rows, with replacement — so ~63% unique rows per sample, see the Random Forest page's OOB section for why). Lower values increase per-model diversity (more variance reduction) but each model sees less data (can raise bias slightly).</td></tr>
+                <tr><td class="p-2.5 font-semibold">bootstrap</td><td class="p-2.5">Whether sampling is done with replacement. True = real bagging. Setting it False turns this into "pasting" — sampling without replacement — which loses the with-replacement diversity bagging depends on.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- BAGGING REGRESSORS -->
+        <section id="bagging-regressors" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Regression</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Bagging Regressors</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">For regression, there's no class to vote on, so aggregation is simply <strong class="text-[var(--on-background)]">averaging</strong> the numeric predictions produced by every bootstrapped model — identical in spirit to VotingRegressor's averaging rule from the previous page.</p>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Code — BaggingRegressor</h3>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from sklearn.ensemble import BaggingRegressor
+from sklearn.tree import DecisionTreeRegressor
+
+bag_reg = BaggingRegressor(
+    estimator=DecisionTreeRegressor(),
+    n_estimators=200,
+    max_samples=0.8,     # each tree sees 80% (with replacement) of the training rows
+    bootstrap=True,
+    n_jobs=-1,
+    random_state=1
+)
+bag_reg.fit(X_train, y_train)
+
+y_pred = bag_reg.predict(X_test)   # = average of all 200 trees' predictions
+
+from sklearn.metrics import mean_squared_error
+print("Bagged RMSE:", mean_squared_error(y_test, y_pred, squared=False))</code></pre>
+            </div>
+          </div>
+
+          <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-2">Key Takeaways</h4>
+            <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+              <li>Bagging = Bootstrap sampling + training many models + Aggregating their predictions.</li>
+              <li>Works with any base learner, but shines with <strong class="text-[var(--on-background)]">high-variance</strong> learners — unpruned Decision Trees are the textbook example.</li>
+              <li>Classification aggregates by majority vote; Regression aggregates by averaging.</li>
+              <li>Primarily targets <strong class="text-[var(--on-background)]">variance</strong> reduction, not bias reduction — it won't fix an underfitting model.</li>
+              <li>Training is fully parallel — every bootstrapped model is independent, unlike boosting (next-but-one page).</li>
+              <li>Bagging applied specifically to Decision Trees, plus one more trick (random feature subsampling), is exactly what Random Forest is — covered next.</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on Bagging. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-section-31">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. What specifically makes bootstrap sampling "with replacement" important for bagging's effectiveness?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. It guarantees every row appears in every bootstrap sample exactly once</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. It lets each bootstrap sample differ from the others (different rows repeated/omitted), which is what makes the resulting trained models diverse rather than identical</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. It reduces the total training time compared to sampling without replacement</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It ensures every model sees a completely disjoint subset of the data</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Sampling with replacement is what makes each bootstrap draw a genuinely different mix of rows (some repeated, some missing) even though all draws come from the same original dataset — that diversity across samples is what makes the resulting models different enough from each other for aggregation to help. Without replacement, and with max_samples=1.0, every "sample" would just be the original dataset itself.</div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. Why does the text recommend high-variance, low-bias base learners (like unpruned Decision Trees) for bagging, rather than a high-bias learner like a heavily-regularized Linear Regression?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. High-bias models train faster, which matters more for large ensembles</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Bagging cannot be applied to linear models at all</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Bagging mainly reduces variance, not bias — a high-variance learner has a lot of variance to remove, while a high-bias learner's error largely survives averaging</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. High-variance learners always have lower bias, which is the actual goal of bagging</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Averaging/voting cancels out the noisy, sample-dependent part of a model's error (variance) but does nothing to correct a systematically wrong assumption (bias) — if every bootstrapped model shares the same underlying bias, averaging them still leaves that bias. So bagging pays off most when the base learner has plenty of variance to shed and little inherent bias, which describes unpruned trees well.</div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. In BaggingClassifier, what does setting bootstrap=False actually change about the algorithm?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Samples are now drawn without replacement — this is "pasting," not classic bagging</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. The ensemble switches from majority voting to soft voting</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. It disables parallel training across n_jobs</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It forces every base model to be identical</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> bootstrap=True is literally what makes bagging "bagging" — sampling rows with replacement. Turning it off switches to sampling without replacement (a technique sometimes called pasting), which changes the diversity characteristics of the ensemble; it doesn't touch the voting rule or parallelism settings.</div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. You train a BaggingRegressor with n_estimators=10 and get validation RMSE of 4.2. You retrain with n_estimators=500 (everything else identical) and get RMSE 3.9, then n_estimators=5000 gives RMSE 3.88. What does this pattern illustrate?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Bagging is overfitting as n_estimators grows, like it would with boosting</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. The base learner's bias is decreasing as more trees are added</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Something is misconfigured — more estimators should keep improving RMSE linearly</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Diminishing returns — more estimators reduce variance but the improvement plateaus once averaging has removed most of the removable variance</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Because bagged models are trained independently, adding more of them does not cause overfitting the way adding more boosting rounds can — but the variance reduction from averaging follows diminishing returns (the correlated portion of the variance never goes away, no matter how many models you add), which is exactly the plateau shown by RMSE 4.2 → 3.9 → 3.88.</div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. Which best describes the relationship between Bagging and Random Forest (the next page)?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. They are unrelated algorithms that happen to both use Decision Trees</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Random Forest is bagging of Decision Trees plus an added layer of random feature (column) subsampling at each split</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Bagging is a special case of Random Forest that only applies to regression</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Random Forest trains its trees sequentially, unlike bagging</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Random Forest = BaggingClassifier/Regressor with Decision Trees as the base learner, plus one extra source of randomness: at each split, only a random subset of features is considered. Both remain fully parallel/independent in how their trees are trained — sequential training is boosting's defining trait, not Random Forest's.</div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--primary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="section-32.html" class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">Next: Random Forest</a>
+        </div>

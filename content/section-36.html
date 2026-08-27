@@ -1,0 +1,219 @@
+        <div>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">36. XGBoost (Extreme Gradient Boosting)</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Regularized objective · optimized split-finding · missing-value handling · why it dominated tabular ML</p>
+        </div>
+
+        <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm text-sm text-[var(--on-surface-variant)]">
+          <strong class="text-[var(--on-background)]">Extended notes</strong> — this topic isn't covered in the CampusX playlist notes this site is based on. Written from scratch to continue the curriculum, in the same style as the rest of the site.
+        </div>
+
+        <!-- INTRO -->
+        <section id="xgboost-intro" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Concept</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Intro to XGBoost — What Makes It "Extreme"?</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">XGBoost is still Gradient Boosting at its core — same "fit each new tree to correct the current ensemble's errors" idea from the previous page. What earns it the "Extreme" in its name is a set of engineering and mathematical upgrades layered on top, all aimed at making gradient boosting faster, more accurate, and much harder to overfit by accident. For years it was the single most common winning ingredient in tabular-data Kaggle competitions, and it remains a default go-to for structured/tabular ML problems.</p>
+
+          <div class="grid gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">1. Regularization built into the objective</h4>
+              <p class="text-sm text-[var(--on-surface)]">Plain sklearn Gradient Boosting only minimizes the loss (e.g. squared error, log-loss). XGBoost's objective adds an explicit penalty term \(\Omega\) on the complexity of every new tree, directly into what's being optimized at each split:</p>
+              <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center my-2">
+                $$ \text{Obj} = \sum_i \text{loss}(y_i, \hat{y}_i) \;+\; \sum_t \Omega(f_t), \qquad \Omega(f) = \gamma T + \tfrac{1}{2}\lambda \sum_{j=1}^{T} w_j^2 + \alpha \sum_{j=1}^{T} |w_j| $$
+              </div>
+              <p class="text-sm text-[var(--on-surface)]">Here \(T\) is the number of leaves in a tree and \(w_j\) are the leaf weights (the values a tree outputs). \(\lambda\) (L2, <code class="text-[var(--primary)]">reg_lambda</code>) shrinks leaf weights toward zero; \(\alpha\) (L1, <code class="text-[var(--primary)]">reg_alpha</code>) can push some leaf weights to exactly zero; \(\gamma\) penalizes simply having more leaves at all. Because this penalty is baked directly into the gain formula used to decide every split, XGBoost trees are naturally more conservative than an un-regularized gradient boosting tree — this is the single biggest reason XGBoost tends to overfit less "out of the box."</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">2. Second-order (Newton) optimization</h4>
+              <p class="text-sm text-[var(--on-surface)]">Plain Gradient Boosting only uses the first derivative (gradient) of the loss to know which direction to correct. XGBoost also uses the second derivative (the Hessian), giving it a more accurate, Newton's-method-style estimate of exactly how much each split should adjust its prediction — generally faster convergence and better-calibrated leaf values per round.</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">3. A more efficient split-finding algorithm</h4>
+              <p class="text-sm text-[var(--on-surface)]">Instead of scanning every possible threshold on every feature (expensive on huge datasets), XGBoost uses a weighted quantile sketch to propose a small number of high-quality candidate split points, plus a sparsity-aware algorithm that skips missing/zero entries efficiently — dramatically cutting the cost of finding good splits at scale.</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">4. Built-in missing-value handling</h4>
+              <p class="text-sm text-[var(--on-surface)]">You don't need to impute missing values before training. At every split, XGBoost learns a <strong class="text-[var(--on-background)]">default direction</strong> (left or right) for samples with a missing value on that feature — whichever direction minimizes loss on the training data — and applies that learned rule at prediction time too.</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">5. Parallelized, cache-aware tree construction</h4>
+              <p class="text-sm text-[var(--on-surface)]">Boosting rounds are still sequential (tree t+1 needs tree t's output) — that part can't be parallelized. But <em>within</em> building a single tree, XGBoost pre-sorts and blocks feature columns so that evaluating candidate splits across many features happens in parallel across CPU cores, with cache-friendly memory access patterns. The net effect is dramatically faster wall-clock training than a naive sequential implementation, even though the algorithm is still fundamentally round-by-round.</p>
+            </div>
+          </div>
+
+          <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-md rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--tertiary)] mb-2">Why it dominated tabular-data competitions</h4>
+            <p class="text-sm text-[var(--on-surface)]">Strong accuracy essentially out of the box, native handling of missing values and mixed feature scales, built-in regularization that resists overfitting without heavy manual tuning, genuine training speed at scale, and a flexible API supporting custom objectives/eval metrics — all wrapped in a library with bindings across Python, R, and more. For years, "throw XGBoost at the tabular dataset" was close to a universal first move; more recent libraries like LightGBM and CatBoost now compete closely in the same niche with their own optimizations (histogram-based splitting, native categorical support), but XGBoost's design established the template.</p>
+          </div>
+        </section>
+
+        <!-- REGRESSION -->
+        <section id="xgboost-regression" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Regression</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">XGBoost for Regression — XGBRegressor</h2>
+          </div>
+
+          <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+            <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+            <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from xgboost import XGBRegressor
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
+
+xgb_reg = XGBRegressor(
+    n_estimators=500,
+    max_depth=5,
+    learning_rate=0.05,
+    subsample=0.8,          # row subsampling per tree, like stochastic GB
+    colsample_bytree=0.8,   # column (feature) subsampling per tree, like Random Forest
+    reg_alpha=0.1,          # L1 penalty on leaf weights
+    reg_lambda=1.0,         # L2 penalty on leaf weights
+    random_state=1,
+    n_jobs=-1
+)
+xgb_reg.fit(X_train, y_train)
+print("Test R^2:", xgb_reg.score(X_test, y_test))</code></pre>
+          </div>
+
+          <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Hyperparameter</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">What it controls</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Practical guidance</th></tr></thead>
+              <tbody>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">n_estimators</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Number of boosting rounds</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Pair a larger value with a smaller learning_rate; use early_stopping_rounds (below) to avoid manually guessing the right number.</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">max_depth</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Maximum depth of each individual tree</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Kept shallow by design (typically 3–8) — unlike Random Forest, boosting trees are meant to stay weak-ish individually; deeper trees increase overfitting risk fast.</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">learning_rate</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Shrinks each tree's contribution to the running prediction</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Same tradeoff as plain Gradient Boosting: smaller values (0.01–0.1) with more estimators usually generalizes best.</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">subsample</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Fraction of rows randomly sampled per tree</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Values around 0.7–0.9 add helpful stochasticity, reducing overfitting and speeding up training, at the cost of each tree seeing slightly less data.</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">colsample_bytree</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Fraction of features randomly sampled per tree</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Borrowed straight from Random Forest's decorrelation idea — 0.6–0.9 is common, especially useful with many correlated features.</td></tr>
+                <tr><td class="p-2.5 font-semibold">reg_alpha / reg_lambda</td><td class="p-2.5">L1 / L2 penalties on leaf weights</td><td class="p-2.5">Raise these when the model overfits despite reasonable depth/learning_rate — reg_lambda (L2) is on by default (1.0); reg_alpha (L1, default 0) is worth trying when you suspect many features/leaves contribute little.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- CLASSIFICATION -->
+        <section id="xgboost-classification" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Classification</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">XGBoost for Classification — XGBClassifier</h2>
+          </div>
+
+          <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+            <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+            <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from xgboost import XGBClassifier
+
+X_tr, X_val, y_tr, y_val = train_test_split(X_train, y_train, test_size=0.15, random_state=1)
+
+xgb_clf = XGBClassifier(
+    n_estimators=1000,          # set high — early stopping will cut it short
+    max_depth=5,
+    learning_rate=0.05,
+    subsample=0.8,
+    colsample_bytree=0.8,
+    reg_lambda=1.0,
+    eval_metric='logloss',      # metric tracked during training / early stopping
+    early_stopping_rounds=30,   # stop if eval metric hasn't improved in 30 rounds
+    random_state=1,
+    n_jobs=-1
+)
+xgb_clf.fit(
+    X_tr, y_tr,
+    eval_set=[(X_val, y_val)],
+    verbose=False
+)
+
+print("Best iteration:", xgb_clf.best_iteration)
+print("Test accuracy:", xgb_clf.score(X_test, y_test))
+print("Predicted probabilities:", xgb_clf.predict_proba(X_test)[:5])</code></pre>
+          </div>
+
+          <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-md rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--tertiary)] mb-2">eval_metric and early_stopping_rounds — practical training tools</h4>
+            <p class="text-sm text-[var(--on-surface)]"><code class="text-[var(--primary)]">eval_metric</code> picks which metric is tracked against a held-out validation set during training — common choices are <code class="text-[var(--primary)]">logloss</code>, <code class="text-[var(--primary)]">auc</code>, or <code class="text-[var(--primary)]">error</code> for classification. <code class="text-[var(--primary)]">early_stopping_rounds</code> uses that tracked metric to automatically halt training once it stops improving for that many consecutive rounds — instead of guessing a fixed <code class="text-[var(--primary)]">n_estimators</code> upfront, you set it deliberately high and let the model find its own stopping point. This is the standard, practical way to pick the right number of boosting rounds without a separate grid search over n_estimators, and it directly guards against the overfitting risk that comes with running boosting for too long.</p>
+          </div>
+
+          <p class="text-sm text-[var(--on-surface-variant)]">Both XGBRegressor and XGBClassifier follow the exact same regularized, second-order gradient boosting mechanism described in the intro — only the loss function and its gradients/Hessians differ under the hood, exactly mirroring the regression-vs-classification split you already saw in plain Gradient Boosting.</p>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on XGBoost. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-section-36">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. What is the single biggest structural reason XGBoost tends to overfit less "out of the box" than plain sklearn GradientBoostingClassifier?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. It uses fewer trees by default</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. It's written in C++ instead of Python</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Its objective function includes an explicit L1/L2 penalty on leaf weights (and a per-leaf complexity cost), applied directly inside the split-gain calculation at every node</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It never uses more than 100 trees</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> XGBoost's objective Obj = loss + Ω(f) bakes L1 (reg_alpha), L2 (reg_lambda), and a per-leaf cost (gamma) directly into how every split's gain is computed — regularizing tree growth from the inside, not as an afterthought. Plain sklearn GradientBoosting has no equivalent term in its objective.</div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. Your dataset has a feature with 20% missing values. What does XGBoost do about it by default?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. It refuses to train until you impute the missing values</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. At each split on that feature, it learns a default direction (left or right) for missing values — whichever minimizes training loss — and reuses that learned direction at prediction time</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. It silently drops that feature from the model</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It replaces missing values with the feature's mean automatically</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> XGBoost's sparsity-aware split finding learns, per split, which side (left/right) missing values should default to — chosen to minimize loss — and applies that same learned rule during inference. No manual imputation step is required.</div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. Which statement about XGBoost's parallelization is accurate?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Boosting rounds themselves are fully parallelized across cores</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. XGBoost cannot use multiple cores at all</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Parallelization makes tree t no longer depend on tree t-1's output</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Rounds remain strictly sequential (tree t+1 needs tree t's residuals/gradients), but the work of finding the best split across many features within a single tree is parallelized across cores</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> The sequential, error-correcting nature of boosting can't be removed by parallelization — that's fundamental to the algorithm. What XGBoost parallelizes is the per-tree split search across features/columns, which is where most of the per-round compute goes.</div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. You set n_estimators=1000, eval_metric='logloss', and early_stopping_rounds=30 with a validation set. Training stops at iteration 210 because validation logloss hasn't improved in 30 rounds. What's the practical benefit of this setup over just fixing n_estimators=210 upfront?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. You didn't need to guess the right number of rounds ahead of time — the model found a good stopping point automatically based on validation performance, guarding against both underfitting (stopping too early) and overfitting (training too long)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. There is no benefit — the two are exactly equivalent</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Early stopping changes the loss function being optimized</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Early stopping only affects regression models, not classifiers</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> The value of early stopping is discovering the right n_estimators empirically from validation performance, rather than guessing it via a separate search — it directly targets the point where further boosting would start overfitting.</div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. What does colsample_bytree do, and which earlier algorithm's idea does it most directly borrow?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. It subsamples rows per tree; borrows from AdaBoost's reweighting</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. It penalizes leaf weights; borrows from Ridge Regression</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. It randomly restricts which features are available when building each tree; this is the same decorrelation idea as Random Forest's max_features</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It controls the learning rate schedule over boosting rounds</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> colsample_bytree randomly samples a fraction of features to consider when building each tree — directly analogous to Random Forest's max_features, borrowed here for the same reason: decorrelating trees to reduce overfitting, even inside a boosting context.</div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--primary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="section-37.html" class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">Next: Stacking &amp; Blending</a>
+        </div>

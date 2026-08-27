@@ -1,0 +1,215 @@
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-3 py-1 mb-3">Source: CampusX — 100 Days of Machine Learning</span>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">12. Binning & Binarization</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Discretization Strategies · KBinsDiscretizer · Binarizer</p>
+        </div>
+
+        <!-- DAY 32 -->
+        <section id="day-32" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 32</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Binning and Binarization</h2>
+          </div>
+          <p class="text-[var(--on-surface)] leading-relaxed">Binning converts numerical values into categories. It is also called discretization.</p>
+
+          <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">Why Convert Numbers into Categories</h4>
+            <p class="text-sm text-[var(--on-surface)]">Numbers are precise. Categories add structure. You bin to:</p>
+            <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside mt-1">
+              <li>Reduce noise</li>
+              <li>Handle outliers</li>
+              <li>Improve model stability</li>
+              <li>Make patterns easier to learn</li>
+              <li>Improve interpretability</li>
+            </ul>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm text-sm text-[var(--on-surface)]">
+            <strong class="text-[var(--on-background)]">Example — Downloads:</strong> 23 → Low, 3,000 → Medium, 3,000,000 → High. Instead of raw values, you use categories.
+          </div>
+
+          <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--tertiary)] mb-1">Why Binning Helps with Outliers</h4>
+            <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Example — Salaries:</strong> 20k, 25k, 30k, 1,000,000. The last value skews the scale. Binning groups it into "High income" and reduces impact.</p>
+          </div>
+
+          <div class="space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--on-background)]">Types of Binning</h3>
+
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+              <h4 class="font-h3 text-base text-[var(--secondary)]">1. Unsupervised Binning <span class="text-xs font-normal text-[var(--on-surface-variant)]">(no target variable involved)</span></h4>
+
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">a) Equal Width Binning (Uniform)</strong> — divide range into equal-sized intervals.
+                <p class="mt-1 text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Example:</strong> Values: 0 to 100, Bins: 5, Bin width = 20.</p>
+                <ul class="list-disc list-inside mt-1">
+                  <li>0–20</li><li>21–40</li><li>41–60</li><li>61–80</li><li>81–100</li>
+                </ul>
+              </div>
+
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">b) Equal Frequency Binning (Quantile)</strong> — each bin has the same number of samples.
+                <p class="mt-1 text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Example:</strong> Scores: [10, 20, 30, 40, 50, 60, 70, 80], Bins: 4. Each bin has 2 values:</p>
+                <ul class="list-disc list-inside mt-1">
+                  <li>[10, 20]</li><li>[30, 40]</li><li>[50, 60]</li><li>[70, 80]</li>
+                </ul>
+              </div>
+
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">c) K-Means Binning</strong> — uses clustering to group similar values; centers define bins.
+                <p class="mt-1 text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Example:</strong> Ages: [18, 19, 20, 35, 36, 37, 60, 61, 62], K=3 clusters:</p>
+                <ul class="list-disc list-inside mt-1">
+                  <li>Young: 18–20</li><li>Middle: 35–37</li><li>Senior: 60–62</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+              <h4 class="font-h3 text-base text-[var(--tertiary)]">2. Supervised Binning <span class="text-xs font-normal text-[var(--on-surface-variant)]">(uses target variable)</span></h4>
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">a) Decision Tree Binning</strong> — tree finds splits that best separate target classes; each leaf becomes a bin.
+                <p class="mt-1 text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Example:</strong> Loan amount predicts default. Tree splits:</p>
+                <ul class="list-disc list-inside mt-1">
+                  <li>≤ 50k → Low risk</li><li>50k–200k → Medium risk</li><li>&gt; 200k → High risk</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+              <h4 class="font-h3 text-base text-[var(--on-background)]">3. Custom Binning</h4>
+              <p class="text-sm text-[var(--on-surface)]">You define bins using domain knowledge.</p>
+              <p class="text-sm text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Example — Age groups:</strong></p>
+              <ul class="text-sm list-disc list-inside text-[var(--on-surface)]">
+                <li>0–12 → Child</li>
+                <li>13–19 → Teen</li>
+                <li>20–35 → Young adult</li>
+                <li>36–60 → Adult</li>
+                <li>60+ → Senior</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm text-[var(--on-surface)]">
+            <strong class="text-[var(--on-background)]">Encoding Discretized Variables</strong> — after binning, you encode categories. Common encodings: Ordinal encoding (Low=0, Medium=1, High=2), One-hot encoding (Low=[1,0,0], Medium=[0,1,0], High=[0,0,1]).
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Sklearn: KBinsDiscretizer</h3>
+            <p class="text-sm text-[var(--on-surface)] mb-2">You provide:</p>
+            <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead>
+                  <tr class="bg-[var(--surface-container-high)]">
+                    <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Parameter</th>
+                    <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Meaning</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">n_bins</td><td class="p-3 border-b border-[var(--outline-variant)]/50">number of bins</td></tr>
+                  <tr><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">strategy</td><td class="p-3 border-b border-[var(--outline-variant)]/50">"uniform", "quantile", or "kmeans"</td></tr>
+                  <tr><td class="p-3 font-semibold">encode</td><td class="p-3">"ordinal" or "onehot"</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-sm text-[var(--on-surface-variant)] mt-2"><strong class="text-[var(--on-background)]">Example concept:</strong> convert income into 3 bins using quantile strategy and ordinal encoding.</p>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-lg text-[var(--on-background)]">Binarization</h3>
+            <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">What is binarization:</strong> convert values into 0 or 1 based on a threshold.</p>
+            <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Why use it:</strong> for presence or absence, for yes or no decisions, for rule-based features.</p>
+            <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ y = \begin{cases} 1 & x \geq \text{threshold} \\ 0 & x < \text{threshold} \end{cases} $$
+            </div>
+            <p class="text-sm text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Example:</strong> Score ≥ 50 → 1, Score &lt; 50 → 0.</p>
+            <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Sklearn:</strong> use the <code>Binarizer</code> class. You set a threshold. Values above threshold → 1. Values below or equal → 0.</p>
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on Day 32. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-section-12">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. Scores [5, 10, 15, 20, 85, 90, 95, 100] are split into 4 bins using Equal Frequency (Quantile) binning. How many values land in each bin?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. A different number in each bin, based on value ranges</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Exactly 2 values in every bin</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. All 8 values in one bin</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Bins of equal width, not equal count</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> "Equal frequency binning (Quantile) — each bin has same number of samples." Per the source example with 8 scores and 4 bins, each bin gets 2 values, regardless of how the raw value ranges compare (unlike equal-width binning, which keeps interval width equal instead).
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. A bank wants bins for "loan amount" that are chosen specifically to best separate defaulters from non-defaulters using the default label. Which binning type is this?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Equal width binning</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. K-means binning</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Decision tree binning (supervised)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Custom binning</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Decision tree binning is the supervised technique that "uses target variable" — "Tree finds splits that best separate target classes. Each leaf becomes a bin," exactly matching the loan-default example given in the notes (≤50k → Low risk, 50k–200k → Medium, &gt;200k → High).
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. Why does binning a salary column like [20k, 25k, 30k, 1,000,000] into income categories reduce the impact of the extreme 1,000,000 value?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. The extreme value becomes just one category label ("High income") instead of a numerically huge outlier that skews scale-sensitive calculations</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Binning deletes outlier rows automatically</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Binning converts the value to its logarithm</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Binning replaces it with the column mean</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Per the notes: "The last value skews the scale. Binning groups it into 'High income' and reduces impact." Binning trades raw magnitude for a category label, so the extreme numeric value no longer dominates distance- or scale-based calculations.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. You configure <code>KBinsDiscretizer(n_bins=3, strategy="kmeans", encode="onehot")</code>. What does the final output look like for each row?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. A single integer 0, 1, or 2</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. The raw, unbinned value</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. A quantile-width interval label</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. A 3-column binary vector, with clusters (not equal-width or equal-frequency ranges) defining the 3 bins</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> <code>strategy="kmeans"</code> uses clustering to define bins ("uses clustering to group similar values. Centers define bins"), and <code>encode="onehot"</code> produces one-hot columns (like "One-hot encoding: Low=[1,0,0]..."), not a single ordinal integer.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. Using sklearn's <code>Binarizer</code> with threshold=50 on a score column, a row has score exactly equal to 50. What does it become?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. 1, because values above threshold → 1</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. 0, because values below or equal to threshold → 0</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. It raises an error since it's exactly on the boundary</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It stays as 50, unbinarized</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Per the sklearn Binarizer rule stated: "Values above threshold → 1. Values below or equal → 0." A value exactly equal to the threshold (50) falls in the "below or equal" case, so it becomes 0 — note this is stricter than the earlier general example "Score ≥ 50 → 1" which used ≥, so pay attention to which boundary rule is in force.
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--primary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="section-13.html" class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">
+            Next: Mixed / Date-Time Data →
+          </a>
+        </div>

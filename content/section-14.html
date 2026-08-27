@@ -1,0 +1,400 @@
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-3 py-1 mb-3">Source: CampusX — 100 Days of Machine Learning</span>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">14. Missing Values</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Removing Values · Numerical & Categorical Imputing · Random Sample / Missing Indicator · KNN Imputer · Iterative Imputer (MICE)</p>
+        </div>
+
+        <!-- DAY 35 -->
+        <section id="day-35" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 35</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Handling Missing Value — Removing Values</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">There are two broad families of approaches to missing data: <strong class="text-[var(--on-background)]">Removing</strong> (covered today) and <strong class="text-[var(--on-background)]">Imputing</strong> (filling in). Imputing splits further into univariate (fill using only that column — mean/median, random, end-of-distribution, via <code>SimpleImputer</code>) and multivariate (use other columns too — KNN imputer, iterative imputer).</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--primary)]">Complete Case Analysis (CCA)</h3>
+            <p class="text-sm text-[var(--on-surface)]">You remove rows where <em>any</em> column has missing values.</p>
+            <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Example:</strong> 1000 rows, 50 rows have missing Age → you delete those 50 rows → you train on the remaining 950 rows.</p>
+            <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">Assumption</h4>
+              <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">MCAR — Missing Completely At Random.</strong> Missing values are random, not linked to any feature or target.</p>
+            </div>
+            <div class="grid sm:grid-cols-2 gap-3">
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">When to use CCA</strong>
+                <ul class="list-disc list-inside space-y-1 mt-1 text-[var(--on-surface)]">
+                  <li>Missing data less than 5 percent</li>
+                  <li>Data is MCAR</li>
+                  <li>Dataset is large</li>
+                  <li>Removing rows does not reduce statistical power</li>
+                </ul>
+              </div>
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">Problems</strong>
+                <ul class="list-disc list-inside space-y-1 mt-1 text-[var(--on-surface)]">
+                  <li>Lose data</li>
+                  <li>If not MCAR, you introduce bias</li>
+                  <li>Mean only uses rows where all values exist</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--tertiary)] mb-1">Rule of thumb</h4>
+            <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Numerical data:</strong> less than 5 percent missing → CCA, mean, or median. <strong class="text-[var(--on-background)]">Categorical data:</strong> replace with mode.</p>
+          </div>
+        </section>
+
+        <!-- DAY 36 -->
+        <section id="day-36" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 36</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Handling Numerical Missing Value (Imputing)</h2>
+          </div>
+          <p class="text-[var(--on-surface)] leading-relaxed"><strong class="text-[var(--on-background)]">Univariate imputing</strong> means you use only that column to fill its own missing values. There are 4 techniques.</p>
+
+          <div class="grid gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">1. Mean Imputation</h4>
+              <p class="text-sm text-[var(--on-surface)]">Use when data is normally distributed.</p>
+              <p class="text-sm text-[var(--on-surface-variant)] mt-1"><strong class="text-[var(--on-background)]">Effect:</strong> distribution becomes tighter; variance decreases; weakens relationship with other features; may introduce artificial central clustering.</p>
+              <p class="text-sm text-[var(--on-surface-variant)] mt-1"><strong class="text-[var(--on-background)]">Example:</strong> Age mean = 30 → all missing replaced with 30. Check variance before and after — variance shrinks after mean imputation.</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">2. Median Imputation</h4>
+              <p class="text-sm text-[var(--on-surface)]">Use when data is skewed. More robust to outliers.</p>
+              <p class="text-sm text-[var(--on-surface-variant)] mt-1"><strong class="text-[var(--on-background)]">Example:</strong> Income data is right skewed → use median instead of mean.</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">3. Arbitrary Value Imputation</h4>
+              <p class="text-sm text-[var(--on-surface)]">Replace missing with a fixed value. Used mostly for categorical or special flagging.</p>
+              <p class="text-sm text-[var(--on-surface-variant)] mt-1"><strong class="text-[var(--on-background)]">Example:</strong> Age missing → fill with 999.</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">4. End of Distribution Imputation</h4>
+              <p class="text-sm text-[var(--on-surface)]">Used when missing may indicate extreme values. You push missing values to the extreme range.</p>
+              <ul class="text-sm text-[var(--on-surface-variant)] list-disc list-inside space-y-1 mt-1">
+                <li>If normal distribution: replace with mean + 3 × std, or mean − 3 × std</li>
+                <li>If skewed distribution: use the IQR rule — IQR = Q3 − Q1; upper bound = Q3 + 1.5 × IQR; lower bound = Q1 − 1.5 × IQR</li>
+              </ul>
+              <p class="text-sm text-[var(--on-surface-variant)] mt-1"><strong class="text-[var(--on-background)]">Use when:</strong> missing values may represent abnormal cases, and you want the model to detect missing as extreme behavior.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- DAY 37 -->
+        <section id="day-37" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 37</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Handling Categorical Missing Value</h2>
+          </div>
+          <p class="text-[var(--on-surface)] leading-relaxed">Two techniques.</p>
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">1. Most Frequent Replacement</h4>
+              <p class="text-sm text-[var(--on-surface)]">Replace missing with the mode.</p>
+              <p class="text-sm text-[var(--on-surface-variant)] mt-1"><strong class="text-[var(--on-background)]">Example:</strong> City column — most common value is Lahore → fill missing with Lahore.</p>
+              <p class="text-sm text-[var(--on-surface-variant)] mt-1"><strong class="text-[var(--on-background)]">Use when:</strong> missing is random and a small percentage is missing.</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+              <h4 class="font-semibold text-[var(--on-background)] mb-1">2. New Category Method</h4>
+              <p class="text-sm text-[var(--on-surface)]">Create a new label.</p>
+              <p class="text-sm text-[var(--on-surface-variant)] mt-1"><strong class="text-[var(--on-background)]">Example:</strong> Gender → Male, Female, Missing.</p>
+              <p class="text-sm text-[var(--on-surface-variant)] mt-1"><strong class="text-[var(--on-background)]">Use when:</strong> missing has meaning, MNAR is possible, or the missing percentage is high. Often improves tree models.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- DAY 38 -->
+        <section id="day-38" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 38</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Handling Missing Value — Random Sample / Missing Indicator</h2>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-lg text-[var(--primary)]">Random Sample Imputation</h3>
+            <p class="text-sm text-[var(--on-surface)]">You randomly pick a value from existing non-missing values. Works for both numerical and categorical data.</p>
+            <p class="text-sm text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Example:</strong> Age values 20, 25, 30, 40 → a missing row randomly gets one of these.</p>
+            <div class="grid sm:grid-cols-2 gap-3 mt-2">
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">Advantages</strong>
+                <ul class="list-disc list-inside space-y-1 mt-1 text-[var(--on-surface)]">
+                  <li>Preserves distribution</li>
+                  <li>Preserves variance</li>
+                  <li>Good for linear models</li>
+                </ul>
+              </div>
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">Disadvantages</strong>
+                <ul class="list-disc list-inside space-y-1 mt-1 text-[var(--on-surface)]">
+                  <li>Need stored distribution during deployment</li>
+                  <li>More memory usage</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-lg text-[var(--secondary)]">Missing Indicator</h3>
+            <p class="text-sm text-[var(--on-surface)]">You add a new binary column.</p>
+            <p class="text-sm text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Example:</strong> <code>Age_missing</code> — 1 if Age was missing, 0 if not.</p>
+            <p class="text-sm text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Useful when:</strong> missing itself carries information — often improves accuracy. <code>SimpleImputer(add_indicator=True)</code> adds this automatically.</p>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-lg text-[var(--tertiary)]">Automatic Selection of Parameter</h3>
+            <p class="text-sm text-[var(--on-surface)]">Grid Search CV for Best Imputation — you treat imputation strategy as a hyperparameter.</p>
+            <p class="text-sm text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Example:</strong> test Mean, Median, Most frequent, KNN — the model chooses the strategy with the best cross-validation score.</p>
+          </div>
+        </section>
+
+        <!-- DAY 39 -->
+        <section id="day-39" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 39</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Handling Missing Value (Multivariate) — KNN Imputer</h2>
+          </div>
+          <p class="text-[var(--on-surface)] leading-relaxed">Univariate imputing ignores other columns. <strong class="text-[var(--on-background)]">Multivariate</strong> imputing uses other features to estimate missing values. Two techniques exist: KNN Imputer (today) and Iterative Imputer (Day 40).</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--primary)]">KNN Imputer</h3>
+            <p class="text-sm text-[var(--on-surface)]">Uses K Nearest Neighbors. Example dataset:</p>
+            <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Age</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Salary</th></tr></thead>
+                <tbody>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50">25</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">50k</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50">30</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">60k</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50">35</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">80k</td></tr>
+                  <tr><td class="p-2.5 font-semibold">NaN</td><td class="p-2.5">55k</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">To fill missing Age:</strong></p>
+            <ol class="text-sm text-[var(--on-surface)] list-decimal list-inside space-y-1">
+              <li>Compute distance between the missing row and other rows using Salary</li>
+              <li>Find K nearest rows based on Euclidean distance</li>
+              <li>Take average Age of the nearest neighbors</li>
+            </ol>
+            <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm text-[var(--on-surface)]">
+              <strong class="text-[var(--on-background)]">Worked example, K = 2:</strong> closest Salary rows are 50k and 60k → their Ages are 25 and 30 → imputed Age = 27.5.
+            </div>
+            <div class="grid sm:grid-cols-2 gap-3">
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">Advantages</strong>
+                <ul class="list-disc list-inside space-y-1 mt-1 text-[var(--on-surface)]">
+                  <li>More accurate</li>
+                  <li>Uses structure in data</li>
+                </ul>
+              </div>
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">Disadvantages</strong>
+                <ul class="list-disc list-inside space-y-1 mt-1 text-[var(--on-surface)]">
+                  <li>Slow, heavy computation</li>
+                  <li>Needs full dataset at prediction time — memory expensive</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- DAY 40 -->
+        <section id="day-40" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 40</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Handling Missing Value (Multivariate) — Iterative Imputer (MICE)</h2>
+          </div>
+          <p class="text-[var(--on-surface)] leading-relaxed"><strong class="text-[var(--on-background)]">MICE</strong> means Multivariate Imputation by Chained Equations. Idea: each column with missing values is predicted using other columns as predictors.</p>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Missing Types</h3>
+            <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Type</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Meaning</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Example</th></tr></thead>
+                <tbody>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">MCAR</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Missing completely at random. No pattern.</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">—</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">MAR</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Missing depends on other observed variables.</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Salary missing depends on Education level</td></tr>
+                  <tr><td class="p-2.5 font-semibold">MNAR</td><td class="p-2.5">Missing depends on an unobserved variable or the value itself.</td><td class="p-2.5">High earners hide their salary</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-lg text-[var(--primary)]">How Iterative Imputer Works</h3>
+            <p class="text-sm text-[var(--on-surface)]">Example columns: Age, Salary, Experience.</p>
+            <ol class="text-sm text-[var(--on-surface)] list-decimal list-inside space-y-1">
+              <li>Initialize missing values with a simple method like mean</li>
+              <li>Pick one column with missing values — suppose Age</li>
+              <li>Use other columns, Salary and Experience, to train a regression model predicting Age</li>
+              <li>Predict the missing Age values</li>
+              <li>Move to the next column with missing values, repeat the same process</li>
+              <li>Repeat the full cycle multiple times until values stabilize</li>
+            </ol>
+            <p class="text-sm text-[var(--on-surface-variant)]">This repeated cycle of predicting each column from the others is what creates "chained equations."</p>
+            <div class="grid sm:grid-cols-2 gap-3">
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">Advantages</strong>
+                <ul class="list-disc list-inside space-y-1 mt-1 text-[var(--on-surface)]">
+                  <li>More accurate</li>
+                  <li>Uses relationships between features</li>
+                </ul>
+              </div>
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">Disadvantages</strong>
+                <ul class="list-disc list-inside space-y-1 mt-1 text-[var(--on-surface)]">
+                  <li>Slow</li>
+                  <li>High memory usage</li>
+                  <li>Complex</li>
+                  <li>Risk of overfitting</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <details class="deepdive bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl px-md">
+            <summary class="py-3 font-semibold text-sm text-[var(--on-background)]">EXTRA — How to choose the best imputation method</summary>
+            <div class="pb-4 text-sm text-[var(--on-surface-variant)] leading-relaxed space-y-3">
+              <div>
+                <strong class="text-[var(--on-background)]">Step 1: Check missing percentage</strong>
+                <ul class="list-disc list-inside space-y-1 mt-1">
+                  <li>Less than 5 percent → CCA or simple imputation</li>
+                  <li>5 to 20 percent → median, mode, or random sample</li>
+                  <li>More than 30 percent → consider dropping the feature</li>
+                </ul>
+              </div>
+              <div>
+                <strong class="text-[var(--on-background)]">Step 2: Check missing mechanism</strong>
+                <ul class="list-disc list-inside space-y-1 mt-1">
+                  <li>MCAR → CCA or simple works</li>
+                  <li>MAR → multivariate works better</li>
+                  <li>MNAR → add missing indicator or new category</li>
+                </ul>
+              </div>
+              <div>
+                <strong class="text-[var(--on-background)]">Step 3: Check distribution</strong>
+                <ul class="list-disc list-inside space-y-1 mt-1">
+                  <li>Normal → mean</li>
+                  <li>Skewed → median</li>
+                  <li>Extreme meaning → end of distribution</li>
+                </ul>
+              </div>
+              <div>
+                <strong class="text-[var(--on-background)]">Step 4: Check model type</strong>
+                <ul class="list-disc list-inside space-y-1 mt-1">
+                  <li>Linear models — sensitive to variance, prefer random sample or multivariate</li>
+                  <li>Tree models — handle missing better, new category works well</li>
+                </ul>
+              </div>
+              <div>
+                <strong class="text-[var(--on-background)]">Step 5: Check computational limits</strong>
+                <ul class="list-disc list-inside space-y-1 mt-1">
+                  <li>Low memory → mean or median</li>
+                  <li>High memory allowed → KNN or Iterative</li>
+                </ul>
+              </div>
+              <div>
+                <strong class="text-[var(--on-background)]">Step 6: Validate with cross validation</strong>
+                <p>Use GridSearchCV, compare model score. Always measure accuracy, variance change, and feature correlation change.</p>
+              </div>
+              <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+                <strong class="text-[var(--on-background)]">Core Principle:</strong> never choose a method blindly. Understand why the data is missing, how much is missing, what model you are using, and what resources you have.
+              </div>
+              <div>
+                <strong class="text-[var(--on-background)]">Model type matters:</strong> Linear/Logistic Regression are sensitive to variance shrinkage — prefer random sample or multivariate imputation. Tree models like Random Forest handle imputation noise better — median works fine.
+              </div>
+            </div>
+          </details>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on Day 35–40. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-section-14">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. A dataset has 2 percent missing values in a numerical column, and you have confirmed the missingness is MCAR. Which approach is most appropriate?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Iterative Imputer (MICE)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. New Category Method</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Complete Case Analysis (CCA)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Missing Indicator only, no imputation</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> CCA's stated conditions are: missing data less than 5 percent, data is MCAR, and dataset is large. Both conditions here are satisfied, so CCA is appropriate — it avoids the bias risk that would appear if the mechanism weren't MCAR.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. After applying mean imputation to a numerical column, you compare variance before and after. What should you observe, and why does this matter?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Variance increases, because new values are added</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Variance shrinks, because all missing rows collapse to the same central value</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Variance stays exactly the same</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Variance becomes undefined</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Mean imputation replaces every missing entry with the same single mean value, creating artificial central clustering. This tightens the distribution and shrinks variance, which also weakens the column's relationship with other features — a documented side effect in the notes.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. Given Age=25→Salary=50k, Age=30→Salary=60k, Age=35→Salary=80k, and a row with Salary=55k and missing Age, what does KNN Imputer with K=2 predict for Age?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. 27.5</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. 30</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. 32.5</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. 35</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> With K=2, the two Salary values closest to 55k are 50k and 60k (not 80k). Their corresponding Ages are 25 and 30, averaging to 27.5 — exactly the worked example in the notes.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. In an Iterative Imputer (MICE) run with columns Age, Salary, and Experience, how is a missing Age value predicted?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. By taking the mean of all known Age values only</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. By finding the K nearest neighbors using Euclidean distance</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. By training a regression model that predicts Age from Salary and Experience, repeated over multiple cycles</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. By replacing Age with a fixed arbitrary value like 999</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> MICE initializes with a simple method, then for each column with missing values, trains a regression model using the other columns as predictors, predicts the missing values, and repeats the full cycle until values stabilize — this is what "chained equations" means. Option B describes KNN Imputer, a different technique.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. A categorical column is 40 percent missing, and you suspect the missingness itself is meaningful (MNAR) — e.g., people with a certain trait chose not to answer. Which is the best-fit technique per the "how to choose" framework?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Complete Case Analysis</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Mean Imputation</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Most Frequent Replacement (mode)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. New Category Method (add a "Missing" label)</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> New Category Method is explicitly recommended when missing has meaning, MNAR is possible, and the missing percentage is high — all three conditions apply here. Mode replacement is meant for random, small-percentage missingness, which is the opposite situation.
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--primary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="section-15.html" class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">
+            Next: Outliers →
+          </a>
+        </div>

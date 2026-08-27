@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>15. LSTM & GRU — Sifat Notes</title>
+
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..800&family=Inter:ital,opsz,wght@0,14..32,400..700;1,14..32,400..700&family=JetBrains+Mono:wght@400..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script src="../assets/tailwind-config.js"></script>
+<link rel="stylesheet" href="../assets/theme.css">
+</head>
+<body class="antialiased min-h-screen font-body-md">
+
+<header class="bg-[var(--surface)] border-b border-[var(--outline-variant)] sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-4 md:px-lg py-2.5 md:py-sm max-w-[1200px] mx-auto">
+<a href="../index.html" class="flex items-center gap-2.5 md:gap-3 group min-w-0" title="Back to home">
+<div class="w-9 h-9 shrink-0 rounded-md bg-[var(--primary)] text-[var(--on-primary)] flex items-center justify-center font-h3 font-bold text-sm group-hover:opacity-85 transition-opacity">SN</div>
+<div class="min-w-0">
+<div class="font-h3 text-base md:text-lg font-semibold text-[var(--on-background)] leading-none truncate">Sifat Notes</div>
+<div class="hidden sm:block text-[11px] text-[var(--on-surface-variant)] mt-0.5 truncate">from CampusX's playlists</div>
+</div>
+</a>
+<nav class="hidden md:flex items-center gap-6 text-sm shrink-0">
+<a class="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors" href="../index.html">Home</a>
+<a class="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors" href="../index.html#courses">Courses</a>
+</nav>
+<div class="flex items-center gap-2 md:gap-3 shrink-0">
+<button id="mobileMenuBtn" class="md:hidden border border-[var(--outline-variant)] rounded-md p-1.5 text-[var(--on-background)] flex items-center justify-center" onclick="toggleSidebar()" aria-label="Toggle navigation">
+<span class="material-symbols-outlined text-[20px]">menu</span>
+</button>
+<button class="flex items-center gap-1.5 bg-[var(--surface-container)] border border-[var(--outline-variant)] text-[var(--on-background)] px-2.5 md:px-3 py-1.5 rounded-full text-xs font-label-caps hover:border-[var(--primary)] transition-colors" onclick="toggleTheme()" data-theme-btn>
+<span class="material-symbols-outlined text-[16px]" data-theme-icon>light_mode</span>
+<span data-theme-label class="hidden sm:inline">Light</span>
+</button>
+</div>
+</div>
+</header>
+
+
+<div class="flex flex-1">
+<div id="sidebarBackdrop" class="hidden fixed inset-0 bg-black/50 z-50 md:hidden" onclick="toggleSidebar()"></div>
+<aside id="sidebarSlot" class="flex flex-col bg-[var(--surface-container-low)] border-r border-[var(--outline-variant)] fixed left-0 top-[65px] h-[calc(100vh-65px)] w-[280px] py-md overflow-y-auto">
+<div class="px-lg mb-md">
+<input id="searchBox" placeholder="Search topics…" class="w-full bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-md px-3 py-2 text-sm text-[var(--on-background)] placeholder:text-[var(--on-surface-variant)] focus:outline-none focus:border-[var(--secondary)]">
+</div>
+
+<nav class="toc flex-1 px-2 space-y-1 text-sm" id="tocNav">
+
+<div class="px-3 pt-3 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Foundations</div>
+
+<details open>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--secondary)] font-semibold bg-[var(--surface-container-high)]/50">1. Introduction to Deep Learning <span class="chev text-[10px]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-01.html#dl-vs-ml" class="flex px-3 py-1.5 rounded-md text-[var(--secondary)] font-semibold bg-[var(--surface-container-high)]/40">Deep Learning vs ML</a>
+<a href="dl-01.html#types-of-neural-networks" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Types of Neural Networks</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">2. The Perceptron <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-02.html#perceptron" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Perceptron</a>
+<a href="dl-02.html#perceptron-trick" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Perceptron Trick</a>
+<a href="dl-02.html#perceptron-loss" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Perceptron Loss Function</a>
+<a href="dl-02.html#problem-with-perceptron" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Problem with Perceptron</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">3. Multi-Layer Perceptron <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-03.html#mlp-notation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">MLP Notation</a>
+<a href="dl-03.html#mlp-intuition" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">MLP Intuition</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">4. Forward Propagation <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-04.html#forward-propagation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Forward Propagation — Worked Example</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">5. Loss Functions <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-05.html#loss-functions-intro" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Loss vs Cost Function</a>
+<a href="dl-05.html#mse" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Mean Squared Error (MSE)</a>
+<a href="dl-05.html#mae" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Mean Absolute Error (MAE)</a>
+<a href="dl-05.html#huber-loss" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Huber Loss</a>
+<a href="dl-05.html#binary-cross-entropy" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Binary Cross-Entropy</a>
+<a href="dl-05.html#categorical-cross-entropy" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Categorical Cross-Entropy</a>
+<a href="dl-05.html#sparse-categorical-cross-entropy" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Sparse Categorical Cross-Entropy</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Training Deep Networks</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">6. Backpropagation <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-06.html#backprop-what" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Backpropagation — What</a>
+<a href="dl-06.html#backprop-how" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Backpropagation — How</a>
+<a href="dl-06.html#backprop-worked-example" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Worked Numeric Example</a>
+<a href="dl-06.html#derivative-vs-gradient" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Derivative vs Gradient</a>
+<a href="dl-06.html#epoch-vs-iteration" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Epoch vs Iteration</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">7. Vanishing &amp; Exploding Gradients <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-07.html#vanishing-gradient-problem" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Vanishing Gradient Problem</a>
+<a href="dl-07.html#detecting-vgp" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Detecting It</a>
+<a href="dl-07.html#solutions-to-vgp" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Solutions</a>
+<a href="dl-07.html#exploding-gradient-problem" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Exploding Gradient Problem</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">8. Training Toolkit <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-08.html#mlp-memoization" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">MLP Memoization</a>
+<a href="dl-08.html#gradient-descent-in-nn" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Gradient Descent in NNs</a>
+<a href="dl-08.html#improving-nn-performance" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Improving NN Performance</a>
+<a href="dl-08.html#early-stopping" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Early Stopping</a>
+<a href="dl-08.html#data-scaling-nn" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Data Scaling</a>
+<a href="dl-08.html#dropout-layer" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Dropout Layer</a>
+<a href="dl-08.html#regularization-dl" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Regularization</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">9. Activation Functions <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-09.html#why-activation-functions" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why Activation Functions</a>
+<a href="dl-09.html#ideal-activation-properties" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Ideal Properties</a>
+<a href="dl-09.html#sigmoid-activation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Sigmoid</a>
+<a href="dl-09.html#tanh-activation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Tanh</a>
+<a href="dl-09.html#relu-activation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">ReLU</a>
+<a href="dl-09.html#relu-variants" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">ReLU Variants</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">10. Optimizers <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-10.html#momentum" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Momentum</a>
+<a href="dl-10.html#nesterov-accelerated-gradient" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Nesterov (NAG)</a>
+<a href="dl-10.html#adagrad" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">AdaGrad</a>
+<a href="dl-10.html#rmsprop" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">RMSProp</a>
+<a href="dl-10.html#adam-optimizer" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Adam</a>
+<a href="dl-10.html#weight-initialization" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Weight Initialization</a>
+<a href="dl-10.html#batch-normalization" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Batch Normalization</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Convolutional Networks</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">11. CNN Fundamentals <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-11.html#cnn-intuition" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">CNN Intuition</a>
+<a href="dl-11.html#why-not-ann" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why Not Plain ANN</a>
+<a href="dl-11.html#convolution-operation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Convolution Operation</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">12. Padding, Strides &amp; Pooling <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-12.html#padding" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Padding</a>
+<a href="dl-12.html#strides" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Strides</a>
+<a href="dl-12.html#pooling" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Pooling</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">13. Architectures &amp; Transfer Learning <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-13.html#classic-cnn-architectures" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Classic CNN Architectures</a>
+<a href="dl-13.html#transfer-learning" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Transfer Learning</a>
+<a href="dl-13.html#feature-extraction" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Feature Extraction</a>
+<a href="dl-13.html#fine-tuning" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Fine-Tuning</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Sequence Models &amp; Attention</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">14. Recurrent Neural Networks <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-14.html#why-feedforward-fails" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why Feedforward Fails</a>
+<a href="dl-14.html#rnn-hidden-state" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Hidden State</a>
+<a href="dl-14.html#rnn-unrolled" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Unrolled Through Time</a>
+<a href="dl-14.html#bptt" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Backpropagation Through Time</a>
+<a href="dl-14.html#rnn-limitations" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">RNN Limitations</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">15. LSTM &amp; GRU <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-15.html#lstm-motivation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why LSTM</a>
+<a href="dl-15.html#lstm-gates" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Three Gates</a>
+<a href="dl-15.html#gru" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">GRU</a>
+<a href="dl-15.html#lstm-vs-gru" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">LSTM vs GRU</a>
+<a href="dl-15.html#bidirectional-rnn" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Bidirectional RNN</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">16. Seq2Seq &amp; Encoder-Decoder <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-16.html#what-is-seq2seq" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">What Is Seq2Seq</a>
+<a href="dl-16.html#encoder-decoder" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Encoder-Decoder Architecture</a>
+<a href="dl-16.html#teacher-forcing" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Teacher Forcing</a>
+<a href="dl-16.html#bottleneck-problem" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Bottleneck Problem</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">17. Attention Mechanism <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-17.html#attention-bottleneck-recap" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Solving the Bottleneck</a>
+<a href="dl-17.html#how-attention-works" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">How Attention Works</a>
+<a href="dl-17.html#calculating-attention-weights" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Calculating Attention Weights</a>
+<a href="dl-17.html#self-attention-vs-cross-attention-preview" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Self vs Cross Attention</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">18. The Transformer Architecture <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-18.html#why-transformers" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why Transformers</a>
+<a href="dl-18.html#self-attention" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Self-Attention</a>
+<a href="dl-18.html#multi-head-attention" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Multi-Head Attention</a>
+<a href="dl-18.html#positional-encoding" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Positional Encoding</a>
+<a href="dl-18.html#transformer-architecture" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Full Architecture</a>
+<a href="dl-18.html#bert" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">BERT</a>
+<a href="dl-18.html#gpt" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">GPT</a>
+<a href="dl-18.html#terminology-hierarchy" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Transformer vs LLM vs GPT</a>
+</div>
+</details>
+
+</nav>
+</aside>
+
+
+  <main class="flex-1 md:ml-[280px] px-4 py-6 md:p-lg max-w-[1200px] mx-auto w-full min-w-0">
+    <nav aria-label="Breadcrumb" class="flex flex-wrap text-sm text-[var(--on-surface-variant)] mb-4"><a href="../index.html" class="hover:text-[var(--secondary)]">Home</a><span class="mx-2">/</span><a href="../index.html#courses" class="hover:text-[var(--secondary)]">DL Track</a><span class="mx-2">/</span><span class="text-[var(--on-background)]">15. LSTM & GRU</span></nav>
+
+    <div class="space-y-xl">
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-3 py-1 mb-3">Source: 100 Days of Deep Learning</span>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">15. LSTM & GRU</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Giving RNNs a long-term memory · the forget/input/output gates · the LSTM cell · GRU, the simpler cousin</p>
+        </div>
+
+        <!-- LSTM MOTIVATION -->
+        <section id="lstm-motivation" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">LSTM</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Why LSTM — Giving the Network a Second, Longer Memory</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">The previous page ended on RNN's core weakness: it only has <strong class="text-[var(--on-background)]">short-term memory (STM)</strong> — everything gets squeezed through one hidden state that's overwritten a little more at every timestep, so old information fades out. <strong class="text-[var(--on-background)]">Long Short-Term Memory (LSTM)</strong> networks were built specifically to fix this. (For a deeper visual walkthrough than these notes, Christopher Olah's classic post <a href="https://colah.github.io/posts/2015-08-Understanding-LSTMs/" target="_blank" rel="noopener" class="text-[var(--secondary)] underline">Understanding LSTM Networks</a> is the canonical reference this material draws from.)</p>
+
+          <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-md rounded-r-lg">
+            <p class="text-sm text-[var(--on-surface)]">The core idea, in one line: <strong class="text-[var(--on-background)]">RNN has just STM, while LSTM adds a genuine LTM (long-term memory) cell alongside it.</strong> LSTM keeps two separate running values instead of one — a <strong class="text-[var(--on-background)]">cell state</strong> \(C_t\) (the long-term memory) and a <strong class="text-[var(--on-background)]">hidden state</strong> \(h_t\) (the short-term memory, same role as a plain RNN's \(h_t\)) — and it adds machinery whose entire job is to manage communication <em>between</em> those two memories: what long-term information to keep, what to add, and what to actually expose as output right now.</p>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Think of the cell state as a <strong class="text-[var(--on-background)]">conveyor belt</strong> running along the top of the whole sequence: information can ride on it from the very first timestep to the very last, largely untouched, unless something deliberately decides to remove or add to it. That's a fundamentally different design from a plain RNN, where every timestep fully recomputes the memory from scratch — here, the default behavior is to <em>preserve</em>, and change only happens through explicit, learned gates.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm text-sm text-[var(--on-surface)]">
+            <strong class="text-[var(--on-background)]">Inputs and outputs of one LSTM cell, at timestep t.</strong> Inputs: the previous cell state \(C_{t-1}\) (long-term memory), the previous hidden state \(h_{t-1}\) (short-term memory), and the current input \(x_t\). Outputs: an updated cell state \(C_t\) and an updated hidden state \(h_t\). Both \(C_t\) and \(h_t\) are vectors of the <em>same</em> dimension — a rule that holds throughout the cell — while \(x_t\) can be a different dimension entirely.
+          </div>
+        </section>
+
+        <!-- THE THREE GATES -->
+        <section id="lstm-gates" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">LSTM</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">The Three Gates</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Every gate in an LSTM is, mechanically, nothing exotic — it's just a small neural network layer (a set of nodes, weights, and a bias) with a <strong class="text-[var(--on-background)]">sigmoid</strong> activation. Sigmoid squashes every value to somewhere between 0 and 1, and that output is used as a "how much to let through" dial: <strong class="text-[var(--on-background)]">0 means block everything, 1 means let everything through</strong>, and anything in between lets through that fraction. The three gates only differ in <em>what</em> they read and <em>where</em> their 0–1 output gets applied.</p>
+
+          <div class="grid gap-3">
+            <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-md rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">Forget Gate — "should I keep remembering this old information?"</h4>
+              <p class="text-sm text-[var(--on-surface)]">Looks at the current input \(x_t\) and the previous hidden state \(h_{t-1}\), and decides what to <em>throw away</em> from the long-term cell state. It outputs a vector \(f_t\) (same shape as \(C_{t-1}\)), and the actual "forgetting" happens by pointwise-multiplying: \(C_{t-1} \odot f_t\). Wherever \(f_t\) is close to 0, that piece of the old cell state gets wiped out; wherever it's close to 1, that piece survives untouched.</p>
+            </div>
+            <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-md rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">Input Gate — "how much of this new information is worth remembering?"</h4>
+              <p class="text-sm text-[var(--on-surface)]">Works in two stages. First, a <code class="text-[var(--secondary)]">tanh</code> layer looks at \(x_t\) and \(h_{t-1}\) and proposes a <strong class="text-[var(--on-background)]">candidate cell state</strong> \(\tilde C_t\) — potentially important new information that <em>could</em> be added to the long-term memory. Second, a sigmoid layer computes the input gate value \(i_t\), which decides how much of that candidate is actually worth keeping. The filtered result, \(i_t \odot \tilde C_t\), is added onto the already-forgotten cell state to produce the new cell state.</p>
+            </div>
+            <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-md rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">Output Gate — "what part of the memory should I expose right now?"</h4>
+              <p class="text-sm text-[var(--on-surface)]">Computes an output value \(o_t\) from \(x_t\) and \(h_{t-1}\), same as the other two gates. This is combined with the <em>freshly updated</em> cell state \(C_t\), which is first squashed through <code class="text-[var(--secondary)]">tanh</code> (to bound it between −1 and 1), then filtered pointwise by \(o_t\). The result is the new hidden state \(h_t\) — the short-term memory / output that gets passed to the next timestep, and optionally used as this timestep's prediction.</p>
+            </div>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+            $$ f_t = \sigma(W_f[h_{t-1}, x_t] + b_f) \qquad C_t = f_t \odot C_{t-1} + i_t \odot \tilde C_t $$
+            $$ i_t = \sigma(W_i[h_{t-1}, x_t] + b_i), \quad \tilde C_t = \tanh(W_C[h_{t-1}, x_t] + b_C) $$
+            $$ o_t = \sigma(W_o[h_{t-1}, x_t] + b_o) \qquad h_t = o_t \odot \tanh(C_t) $$
+          </div>
+          <p class="text-xs text-[var(--on-surface-variant)]">\([h_{t-1}, x_t]\) means the two vectors concatenated together and fed into that gate's own fully-connected layer; \(\odot\) is the pointwise (element-by-element) product — two vectors of identical shape multiplied position-by-position, producing another vector of that same shape. \(\sigma\) is sigmoid.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm text-sm text-[var(--on-surface)]">
+            <strong class="text-[var(--on-background)]">A concrete size example.</strong> Suppose the hidden/cell state is 3-dimensional and the input \(x_t\) is 4-dimensional. Each gate first concatenates \([h_{t-1}, x_t]\) into a 7-dimensional vector, then runs it through a fully-connected layer with 3 nodes (one output value per cell-state dimension) — that's \(7 \times 3 = 21\) weights, plus 3 biases (one per node), producing the 3-dimensional gate vector (\(f_t\), \(i_t\), or \(o_t\)). Every gate — and the candidate \(\tilde C_t\) — is sized this same way, always matching the cell/hidden state's dimensionality.</p>
+          </div>
+        </section>
+
+        <!-- DIAGRAM -->
+        <section id="lstm-diagram" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">LSTM</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Anatomy of One LSTM Cell</h2>
+          </div>
+
+          <div class="border-l-4 border-[var(--outline)] bg-[var(--surface-container-high)]/40 p-sm rounded-r-lg text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Illustrative aid</strong> — generated for this site to visualize the architecture.</div>
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md flex justify-center overflow-x-auto">
+            <svg viewBox="0 0 720 400" class="w-full max-w-[720px] min-w-[560px]" role="img" aria-label="LSTM cell diagram showing the cell state conveyor belt across the top, hidden state along the bottom, and the forget, input, and output gates connecting them">
+              <defs>
+                <marker id="lstmArrowSec" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                  <path d="M0,0 L10,5 L0,10 z" fill="var(--secondary)"/>
+                </marker>
+                <marker id="lstmArrowTer" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                  <path d="M0,0 L10,5 L0,10 z" fill="var(--tertiary)"/>
+                </marker>
+                <marker id="lstmArrowPri" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                  <path d="M0,0 L10,5 L0,10 z" fill="var(--primary)"/>
+                </marker>
+              </defs>
+
+              <!-- outer cell boundary -->
+              <rect x="30" y="20" width="660" height="330" rx="18" fill="var(--surface-container-high)" fill-opacity="0.25" stroke="var(--outline-variant)" stroke-width="1.5" stroke-dasharray="6 4"/>
+              <text x="52" y="45" font-size="12" fill="var(--on-surface-variant)" class="font-label-caps">LSTM CELL (one timestep)</text>
+
+              <!-- cell state conveyor belt (top) -->
+              <line x1="20" y1="80" x2="700" y2="80" stroke="var(--tertiary)" stroke-width="3" marker-end="url(#lstmArrowTer)"/>
+              <text x="60" y="68" font-size="13" fill="var(--tertiary)">Cₜ₋₁ (long-term memory)</text>
+              <text x="600" y="68" font-size="13" fill="var(--tertiary)" text-anchor="end">Cₜ →</text>
+
+              <!-- forget multiply op -->
+              <circle cx="230" cy="80" r="16" fill="var(--tertiary-container)" stroke="var(--tertiary)" stroke-width="2"/>
+              <text x="230" y="86" text-anchor="middle" font-size="16" fill="var(--on-background)">×</text>
+              <!-- input add op -->
+              <circle cx="470" cy="80" r="16" fill="var(--tertiary-container)" stroke="var(--tertiary)" stroke-width="2"/>
+              <text x="470" y="86" text-anchor="middle" font-size="16" fill="var(--on-background)">+</text>
+              <line x1="246" y1="80" x2="454" y2="80" stroke="var(--tertiary)" stroke-width="3"/>
+
+              <!-- tap down to tanh before output gate -->
+              <line x1="470" y1="96" x2="470" y2="140" stroke="var(--tertiary)" stroke-width="2" stroke-dasharray="3 3"/>
+              <rect x="440" y="140" width="60" height="30" rx="8" fill="var(--surface-container-high)" stroke="var(--tertiary)" stroke-width="1.5"/>
+              <text x="470" y="160" text-anchor="middle" font-size="13" fill="var(--on-background)">tanh</text>
+
+              <!-- Forget gate box -->
+              <rect x="170" y="200" width="120" height="60" rx="10" fill="var(--secondary-container)" fill-opacity="0.22" stroke="var(--secondary)" stroke-width="2"/>
+              <text x="230" y="224" text-anchor="middle" font-size="12" font-weight="600" fill="var(--on-background)">Forget Gate</text>
+              <text x="230" y="242" text-anchor="middle" font-size="13" fill="var(--secondary)">σ → fₜ</text>
+              <line x1="230" y1="200" x2="230" y2="96" stroke="var(--secondary)" stroke-width="2" marker-end="url(#lstmArrowSec)"/>
+
+              <!-- Input gate box (candidate + it) -->
+              <rect x="350" y="200" width="150" height="60" rx="10" fill="var(--secondary-container)" fill-opacity="0.22" stroke="var(--secondary)" stroke-width="2"/>
+              <text x="425" y="221" text-anchor="middle" font-size="12" font-weight="600" fill="var(--on-background)">Input Gate</text>
+              <text x="425" y="238" text-anchor="middle" font-size="12" fill="var(--secondary)">σ → iₜ &amp; tanh → C̃ₜ</text>
+              <text x="425" y="252" text-anchor="middle" font-size="11" fill="var(--on-surface-variant)">iₜ ⊙ C̃ₜ</text>
+              <line x1="425" y1="200" x2="470" y2="96" stroke="var(--secondary)" stroke-width="2" marker-end="url(#lstmArrowSec)"/>
+
+              <!-- Output gate box -->
+              <rect x="540" y="200" width="120" height="60" rx="10" fill="var(--secondary-container)" fill-opacity="0.22" stroke="var(--secondary)" stroke-width="2"/>
+              <text x="600" y="224" text-anchor="middle" font-size="12" font-weight="600" fill="var(--on-background)">Output Gate</text>
+              <text x="600" y="242" text-anchor="middle" font-size="13" fill="var(--secondary)">σ → oₜ</text>
+
+              <!-- output op: ot * tanh(Ct) -->
+              <circle cx="540" cy="160" r="15" fill="var(--primary-container)" stroke="var(--primary)" stroke-width="2"/>
+              <text x="540" y="166" text-anchor="middle" font-size="15" fill="var(--on-background)">×</text>
+              <line x1="600" y1="200" x2="552" y2="170" stroke="var(--secondary)" stroke-width="2"/>
+              <line x1="500" y1="155" x2="524" y2="158" stroke="var(--tertiary)" stroke-width="2" marker-end="url(#lstmArrowTer)"/>
+
+              <!-- hidden state line (bottom) -->
+              <line x1="20" y1="330" x2="700" y2="330" stroke="var(--primary)" stroke-width="3" marker-end="url(#lstmArrowPri)"/>
+              <text x="60" y="352" font-size="13" fill="var(--primary)">hₜ₋₁ (short-term memory)</text>
+              <text x="640" y="352" font-size="13" fill="var(--primary)" text-anchor="end">hₜ →</text>
+              <line x1="540" y1="330" x2="540" y2="175" stroke="var(--primary)" stroke-width="2" marker-end="url(#lstmArrowPri)"/>
+
+              <!-- ht-1 feeding into each gate -->
+              <line x1="120" y1="330" x2="180" y2="260" stroke="var(--primary)" stroke-width="1.5" marker-end="url(#lstmArrowPri)"/>
+              <line x1="300" y1="330" x2="380" y2="260" stroke="var(--primary)" stroke-width="1.5" marker-end="url(#lstmArrowPri)"/>
+              <line x1="470" y1="330" x2="570" y2="260" stroke="var(--primary)" stroke-width="1.5" marker-end="url(#lstmArrowPri)"/>
+
+              <!-- xt feeding in from below -->
+              <line x1="230" y1="380" x2="230" y2="262" stroke="var(--outline)" stroke-width="2" marker-end="url(#lstmArrowSec)"/>
+              <line x1="425" y1="380" x2="425" y2="262" stroke="var(--outline)" stroke-width="2" marker-end="url(#lstmArrowSec)"/>
+              <line x1="600" y1="380" x2="600" y2="262" stroke="var(--outline)" stroke-width="2" marker-end="url(#lstmArrowSec)"/>
+              <text x="415" y="396" text-anchor="middle" font-size="13" fill="var(--on-surface-variant)">xₜ (current input, fed into all three gates)</text>
+            </svg>
+          </div>
+          <p class="text-sm text-[var(--on-surface)]">Read the top horizontal line as the long-term memory conveyor belt: \(C_{t-1}\) enters on the left, gets partly erased by the <strong class="text-[var(--on-background)]">forget gate's</strong> multiply, gets new information added by the <strong class="text-[var(--on-background)]">input gate's</strong> addition, and leaves as \(C_t\) on the right. The bottom line is the short-term hidden state, flowing the same way. All three gates sit below, each reading the incoming \(h_{t-1}\) and \(x_t\) to decide how much they should influence the cell state or the final output — the <strong class="text-[var(--on-background)]">output gate</strong> is what taps the freshly-updated \(C_t\) (through a tanh squash) to actually produce \(h_t\).</p>
+        </section>
+
+        <!-- TRAINING TIME -->
+        <section id="lstm-training-time" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">LSTM</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">The Cost of All This — Training Time</h2>
+          </div>
+          <p class="text-[var(--on-surface)] leading-relaxed">All of this extra machinery — three gates, each its own small neural network layer, plus the candidate cell state computation — is what solves the long-range dependency problem. But it isn't free: the LSTM's architecture is considerably more complex than a plain RNN cell, meaning more parameters to learn and more computation per timestep. In practice, this means LSTM's <strong class="text-[var(--on-background)]">training time is a lot longer</strong> than a comparably-sized plain RNN. That extra cost is exactly the gap GRU was designed to close.</p>
+        </section>
+
+        <!-- GRU -->
+        <section id="gru" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">GRU</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">GRU — LSTM's Simpler Cousin</h2>
+          </div>
+          <p class="text-[var(--on-surface)] leading-relaxed">If LSTM already solves the vanishing-gradient / long-range-dependency problem, why invent yet another architecture? Because LSTM's complexity has a real cost — slow training — and the <strong class="text-[var(--on-background)]">Gated Recurrent Unit (GRU)</strong> was designed to keep most of LSTM's benefit while trimming the architecture down to something simpler and faster to train.</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">GRU makes two structural simplifications. First, instead of three gates, it has only <strong class="text-[var(--on-background)]">two</strong>: a <strong class="text-[var(--on-background)]">Reset Gate</strong> and an <strong class="text-[var(--on-background)]">Update Gate</strong> — conceptually merging LSTM's separate forget-gate and input-gate jobs into one combined update-gate decision. Second, GRU drops the separate cell state entirely: there is <strong class="text-[var(--on-background)]">no distinct long-term-memory channel</strong> — long-term and short-term context are both carried in a single hidden state \(h_t\). Fewer gates and one fewer memory channel together mean meaningfully fewer parameters, which is exactly why GRU trains faster.</p>
+
+          <div class="grid gap-3">
+            <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-md rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">Reset Gate rₜ</h4>
+              <p class="text-sm text-[var(--on-surface)]">Looks at the current input and the previous hidden state, and decides how much of the past hidden state to "reset" (forget) when forming this timestep's candidate — i.e. how relevant the old memory still is for what's being computed right now.</p>
+            </div>
+            <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-md rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">Update Gate zₜ</h4>
+              <p class="text-sm text-[var(--on-surface)]">Decides the final blend: how much of the new candidate hidden state to mix in versus how much of the old hidden state to simply carry forward unchanged. This single gate is doing the combined job LSTM splits across its forget and input gates.</p>
+            </div>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+            $$ r_t = \sigma(W_r[h_{t-1}, x_t]) \qquad \tilde h_t = \tanh(W_h[r_t \odot h_{t-1},\, x_t]) $$
+            $$ z_t = \sigma(W_z[h_{t-1}, x_t]) \qquad h_t = (1-z_t)\odot h_{t-1} + z_t \odot \tilde h_t $$
+          </div>
+          <p class="text-sm text-[var(--on-surface)]">Read the last line carefully — it's the heart of GRU: the new hidden state is a weighted mix between the <em>old</em> hidden state \(h_{t-1}\) and the <em>candidate</em> hidden state \(\tilde h_t\), with the update gate \(z_t\) controlling the mix. When \(z_t \to 0\), the cell essentially ignores the new candidate and just keeps carrying the old memory forward — a direct, low-effort route for long-term information to survive, similar in spirit to LSTM's conveyor belt, but achieved with one gate and one state instead of three gates and two states.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm text-sm text-[var(--on-surface)]">
+            Because of its lighter weight and faster training, GRU is commonly reached for in tasks like <strong class="text-[var(--on-background)]">text generation</strong>, where training speed and a smaller parameter count are especially valuable.
+          </div>
+        </section>
+
+        <!-- LSTM VS GRU TABLE -->
+        <section id="lstm-vs-gru" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">LSTM · GRU</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">LSTM vs. GRU</h2>
+          </div>
+          <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead>
+                <tr class="bg-[var(--surface-container-high)]">
+                  <th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Dimension</th>
+                  <th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">LSTM</th>
+                  <th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">GRU</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Gates</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">3 — forget, input, output</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">2 — reset, update</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Memory unit(s)</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Two — separate cell state (LTM) and hidden state (STM)</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">One — a single hidden state carries both roles</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Parameter count</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">More</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Fewer</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Computational complexity</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Higher</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Lower — simpler architecture</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Training speed</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Slower</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Faster</td></tr>
+                <tr><td class="p-2.5 font-semibold">Empirical performance</td><td class="p-2.5">Often better, especially on larger/more complex datasets</td><td class="p-2.5">Often comparable, especially on smaller datasets — good speed/quality trade-off</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- BIDIRECTIONAL RNN (bonus, brief) -->
+        <section id="bidirectional-rnn" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Bi-RNN</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">A Quick Aside — Bidirectional RNN</h2>
+          </div>
+          <p class="text-[var(--on-surface)] leading-relaxed">Everything so far reads a sequence strictly left to right — each output depends only on <em>past</em> input. But sometimes a word's meaning depends on words that come <em>after</em> it. Take Named Entity Recognition on the sentence "I love Amazon": at the point of reading "Amazon," a purely left-to-right model can't tell whether this refers to the river or the company — that only becomes clear from a later phrase like "...it's a great website," which reveals the future context needed to correctly label the past word.</p>
+          <p class="text-[var(--on-surface)] leading-relaxed">A <strong class="text-[var(--on-background)]">Bidirectional RNN</strong> fixes this by running two separate RNNs over the same sequence — one reading forward (left to right), one reading backward (right to left) — and concatenating their outputs at each position. The same idea applies equally to LSTM and GRU cells, giving <strong class="text-[var(--on-background)]">BiLSTM</strong> and bidirectional GRU; BiLSTM is the one used most often in practice.</p>
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Applications:</strong> Named Entity Recognition, POS tagging, machine translation, sentiment analysis, and time-series forecasting (e.g. stock price prediction), wherever full-sequence context genuinely helps.
+            </div>
+            <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Drawbacks:</strong> extra architectural complexity (two RNNs instead of one), and it fundamentally requires the <em>entire</em> sequence up front — it cannot be used in real-time/streaming settings where future input isn't available yet.
+            </div>
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on LSTM &amp; GRU. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-dl-15">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. What is the fundamental structural addition LSTM makes over a plain RNN?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. More hidden layers stacked vertically</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. A separate long-term memory channel (the cell state) alongside the regular hidden state, plus gates to control what enters/leaves it</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Replacing sigmoid with ReLU everywhere</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Removing the hidden state entirely</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> RNN has only short-term memory (the hidden state). LSTM adds a cell state — the long-term memory "conveyor belt" — and three gates that manage what gets removed, added, and exposed from it.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. A gate's sigmoid output is close to 0 for a particular vector position. What does that mean?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. That value is amplified</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. That value is passed through unchanged</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. That value is almost entirely blocked / removed</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It has no effect on the pointwise multiplication</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Sigmoid gate outputs act as a 0–1 "how much to let through" dial. Close to 0 blocks that value (multiplying by ~0 zeroes it out); close to 1 lets it through essentially unchanged.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. In the LSTM equations, which gate's output is used to filter the candidate cell state before it's added into the cell state?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Input gate (iₜ)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Forget gate (fₜ)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Output gate (oₜ)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. None — the candidate is added unfiltered</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Cₜ = fₜ ⊙ Cₜ₋₁ + iₜ ⊙ C̃ₜ. The forget gate filters what survives from the old cell state; the input gate filters how much of the new candidate actually gets added.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. What are GRU's two structural simplifications relative to LSTM?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. More gates, but a smaller hidden state</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Removes gates entirely and relies only on tanh layers</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Keeps 3 gates but removes the hidden state</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Only 2 gates (reset, update) instead of 3, and a single hidden state instead of separate cell + hidden states</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> GRU merges LSTM's forget+input gates into a single update gate (plus a reset gate), and merges the cell state and hidden state into one — fewer parameters, faster training.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. Why does a Bidirectional RNN help with "I love Amazon... it's a great website" but a plain left-to-right RNN struggles?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. It uses a bigger vocabulary</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Correctly labeling "Amazon" depends on later words ("website") — a left-to-right-only model can't see those yet, but a backward-reading RNN can supply that future context</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Bidirectional RNNs use attention internally</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It has no advantage; the example is misleading</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> The disambiguating context ("website") comes after "Amazon." A unidirectional RNN has no access to future tokens at the point it processes "Amazon"; the backward-reading RNN in a BiRNN does, and its output is concatenated with the forward pass.
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--secondary)] text-[var(--on-secondary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--secondary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="dl-16.html" class="bg-[var(--secondary)] text-[var(--on-secondary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">Next: Sequence-to-Sequence & Encoder-Decoder</a>
+        </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="../assets/app.js"></script>
+
+</body>
+</html>

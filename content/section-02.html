@@ -1,0 +1,367 @@
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-3 py-1 mb-3">Source: CampusX — 100 Days of Machine Learning</span>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">2. Learning Styles</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Batch vs Online Learning · Instance-Based vs Model-Based Learning</p>
+        </div>
+
+        <!-- DAY 4 -->
+        <section id="day-4" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 4</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Batch Learning vs Online Learning (Machine Learning Training Styles)</h2>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--primary)]">A. Batch Learning</h3>
+            <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Definition:</strong> Batch (or offline) learning is a conventional way of training a machine learning model where the entire dataset is used at once to train the model.</p>
+            <div>
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--on-surface-variant)] mb-1">How it works</h4>
+              <ol class="text-sm text-[var(--on-surface)] list-decimal list-inside space-y-1">
+                <li>You collect a full dataset.</li>
+                <li>Train the model once using all data (offline).</li>
+                <li>Deploy the trained model to production (server).</li>
+                <li>The model stays static unless retrained manually with new data.</li>
+              </ol>
+            </div>
+            <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Example:</strong> Training a movie recommendation model using last year's user data, then deploying it. The model won't adapt automatically if user preferences change.
+            </div>
+            <p class="text-sm text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Flow:</strong> Development → Train on full data → Save trained model → Deploy to production → Use for predictions.</p>
+            <div class="grid sm:grid-cols-2 gap-3">
+              <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg">
+                <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--tertiary)] mb-1">Advantages</h4>
+                <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+                  <li>Simple and stable</li>
+                  <li>Works well when data is static or changes slowly</li>
+                  <li>Easier to implement and monitor</li>
+                </ul>
+              </div>
+              <div class="border-l-4 border-[var(--error)] bg-[var(--error-container)]/10 p-sm rounded-r-lg">
+                <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--on-error-container)] mb-1">Disadvantages</h4>
+                <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+                  <li>Model becomes outdated if new data trends appear</li>
+                  <li>Retraining large models is time-consuming and costly</li>
+                  <li>Not suitable for real-time adaptive systems</li>
+                </ul>
+              </div>
+            </div>
+            <p class="text-sm text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Applications:</strong> Fraud detection systems updated monthly; image recognition systems with stable data (like identifying handwritten digits).</p>
+          </div>
+        </section>
+
+        <!-- DAY 5 -->
+        <section id="day-5" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 5</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Batch Learning vs Online Learning</h2>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--secondary)]">B. Online Learning</h3>
+            <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Definition:</strong> Online (or incremental) learning is a training approach where the model learns continuously or in small batches, updating itself whenever new data arrives.</p>
+            <div>
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--on-surface-variant)] mb-1">How it works</h4>
+              <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+                <li>Data arrives one by one or in mini-batches</li>
+                <li>Model updates weights incrementally after each new observation</li>
+                <li>Learning and prediction happen together in real time</li>
+              </ul>
+            </div>
+            <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Example:</strong> YouTube's recommendation system continuously learns from user watch history. Stock price prediction models update as new prices come in. Chatbots improve as they interact with more users.
+            </div>
+
+            <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">Key Term — Concept Drift</h4>
+              <p class="text-sm text-[var(--on-surface)]">When the relationship between input and output changes over time (e.g. user behavior, market trends), the model needs to adapt continuously. Online learning helps handle this drift.</p>
+            </div>
+
+            <div class="grid sm:grid-cols-2 gap-3">
+              <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg">
+                <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--tertiary)] mb-1">Advantages</h4>
+                <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+                  <li>Adapts to new data automatically</li>
+                  <li>Ideal for dynamic environments</li>
+                  <li>Reduces need for periodic retraining</li>
+                </ul>
+              </div>
+              <div class="border-l-4 border-[var(--error)] bg-[var(--error-container)]/10 p-sm rounded-r-lg">
+                <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--on-error-container)] mb-1">Disadvantages</h4>
+                <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+                  <li>Harder to implement and monitor</li>
+                  <li>Risk of learning wrong patterns if data quality drops</li>
+                  <li>Requires careful control of learning rate to balance new vs old data</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Learning Rate</strong> — defines how fast the model updates when new data arrives.
+              <ul class="mt-1 space-y-1 list-disc list-inside">
+                <li>High learning rate = model forgets old data quickly</li>
+                <li>Low learning rate = model adapts slowly</li>
+              </ul>
+              <p class="text-[var(--on-surface-variant)] mt-1">Good online models maintain a balance between memory and adaptation.</p>
+            </div>
+
+            <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Out-of-Core Learning</strong> — technique for training on datasets too large to fit in memory.
+              <ul class="mt-1 space-y-1 list-disc list-inside">
+                <li>Data is divided into smaller chunks</li>
+                <li>Model learns incrementally using these chunks</li>
+              </ul>
+              <p class="text-[var(--on-surface-variant)] mt-1">Example: training on a 100GB dataset by loading 1GB at a time.</p>
+            </div>
+
+            <p class="text-sm text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Tools:</strong> Batch Learning — scikit-learn, TensorFlow, PyTorch. Online Learning — River, Vowpal Wabbit, <code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">SGDRegressor</code> or <code class="bg-[var(--surface-container-lowest)] px-1.5 py-0.5 rounded text-xs">SGDClassifier</code> in scikit-learn.</p>
+            <p class="text-sm text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Applications:</strong> Online ads click prediction, real-time stock forecasting, streaming data analysis, dynamic content recommendations.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">C. Batch vs Online Learning Comparison</h3>
+            <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container)]/50">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead>
+                  <tr class="bg-[var(--surface-container-high)]">
+                    <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Feature</th>
+                    <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Batch Learning</th>
+                    <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Online Learning</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">Data usage</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Uses full dataset at once</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Uses new data incrementally</td></tr>
+                  <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">Adaptability</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Static</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Dynamic</td></tr>
+                  <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">Training time</td><td class="p-3 border-b border-[var(--outline-variant)]/50">High (offline)</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Continuous (low per update)</td></tr>
+                  <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">Complexity</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Simple</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Complex</td></tr>
+                  <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">Real-time updates</td><td class="p-3 border-b border-[var(--outline-variant)]/50">No</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Yes</td></tr>
+                  <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">Use cases</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Stable data, periodic updates</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Streaming, fast-changing data</td></tr>
+                  <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 font-semibold">Tools</td><td class="p-3">scikit-learn, TensorFlow</td><td class="p-3">River, Vowpal Wabbit, scikit SGD models</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">Which one to pick?</h4>
+            <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+              <li>If your data changes slowly → Batch Learning</li>
+              <li>If your data changes frequently or streams in → Online Learning</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- DAY 6 -->
+        <section id="day-6" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 6</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Instance-Based Learning vs Model-Based Learning</h2>
+          </div>
+          <p class="text-[var(--on-surface)] leading-relaxed">These are two types of learning approaches based on how the model learns from data.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--primary)]">A. Instance-Based Learning (Lazy Learning)</h3>
+            <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Definition:</strong> Models that memorize the training data and make predictions by comparing new data with stored examples.</p>
+            <div>
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--on-surface-variant)] mb-1">How it works</h4>
+              <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+                <li>No generalization or pattern finding during training</li>
+                <li>During prediction, it measures similarity between input and stored data</li>
+                <li>Prediction is made based on "closest" stored instances</li>
+              </ul>
+            </div>
+            <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Example — K-Nearest Neighbors (KNN):</strong>
+              <ul class="mt-1 space-y-1 list-disc list-inside">
+                <li>Stores all data points</li>
+                <li>When predicting, finds the 'k' most similar points</li>
+                <li>Predicts based on majority vote (classification) or average (regression)</li>
+              </ul>
+              <p class="text-[var(--on-surface-variant)] mt-1">Other examples: Radial Basis Function (RBF) networks, Kernel regression.</p>
+            </div>
+            <div class="grid sm:grid-cols-2 gap-3">
+              <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg">
+                <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--tertiary)] mb-1">Advantages</h4>
+                <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+                  <li>Simple to implement</li>
+                  <li>Works well with small datasets</li>
+                  <li>No training time (only prediction time)</li>
+                </ul>
+              </div>
+              <div class="border-l-4 border-[var(--error)] bg-[var(--error-container)]/10 p-sm rounded-r-lg">
+                <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--on-error-container)] mb-1">Disadvantages</h4>
+                <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+                  <li>Prediction is slow for large datasets (compares with all stored points)</li>
+                  <li>High memory usage (stores entire data)</li>
+                  <li>Sensitive to noise and irrelevant features</li>
+                </ul>
+              </div>
+            </div>
+            <p class="text-sm text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Applications:</strong> Pattern matching, recommendation systems (similar user search), anomaly detection with small data.</p>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--secondary)]">B. Model-Based Learning</h3>
+            <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Definition:</strong> Models that learn general patterns from data and build a mathematical relationship between inputs and outputs.</p>
+            <div>
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--on-surface-variant)] mb-1">How it works</h4>
+              <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+                <li>Finds relationships (boundaries, weights, functions) during training</li>
+                <li>After learning, model parameters are stored (not the data)</li>
+                <li>Predictions are fast and don't need the full dataset again</li>
+              </ul>
+            </div>
+            <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Example — Linear Regression:</strong> learns the line (y = mx + b) that best fits the data. Once trained, only coefficients (m, b) are saved, not the entire dataset.
+              <p class="text-[var(--on-surface-variant)] mt-1">Other examples: Logistic Regression, Decision Trees, Support Vector Machines, Neural Networks.</p>
+            </div>
+            <div class="grid sm:grid-cols-2 gap-3">
+              <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg">
+                <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--tertiary)] mb-1">Advantages</h4>
+                <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+                  <li>Efficient and fast for prediction</li>
+                  <li>Requires less memory</li>
+                  <li>Works well for large datasets</li>
+                </ul>
+              </div>
+              <div class="border-l-4 border-[var(--error)] bg-[var(--error-container)]/10 p-sm rounded-r-lg">
+                <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--on-error-container)] mb-1">Disadvantages</h4>
+                <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+                  <li>Requires time to train</li>
+                  <li>Model might underfit or overfit</li>
+                  <li>Less flexible if data pattern changes (unless retrained)</li>
+                </ul>
+              </div>
+            </div>
+            <p class="text-sm text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Applications:</strong> Credit scoring, disease prediction, image classification, speech recognition.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">C. Instance vs Model-Based Comparison</h3>
+            <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container)]/50">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead>
+                  <tr class="bg-[var(--surface-container-high)]">
+                    <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Feature</th>
+                    <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Instance-Based</th>
+                    <th class="p-3 border-b border-[var(--outline-variant)] font-label-caps text-xs">Model-Based</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">Learning style</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Memorizes data</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Learns general patterns</td></tr>
+                  <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">Training time</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Almost none</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Requires training</td></tr>
+                  <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">Prediction time</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Slow</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Fast</td></tr>
+                  <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">Memory use</td><td class="p-3 border-b border-[var(--outline-variant)]/50">High</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Low</td></tr>
+                  <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">Adaptability</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Easy to add new data</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Needs retraining</td></tr>
+                  <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 border-b border-[var(--outline-variant)]/50 font-semibold">Examples</td><td class="p-3 border-b border-[var(--outline-variant)]/50">KNN, RBF</td><td class="p-3 border-b border-[var(--outline-variant)]/50">Linear Regression, SVM, Neural Nets</td></tr>
+                  <tr class="hover:bg-[var(--surface-container-high)]/50 transition-colors"><td class="p-3 font-semibold">Real-world use</td><td class="p-3">Small/simple datasets</td><td class="p-3">Most real-world applications</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">Which one has more use?</h4>
+            <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+              <li>Model-based learning dominates in real-world systems</li>
+              <li>Instance-based learning is limited to smaller tasks or as part of hybrid systems</li>
+            </ul>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm text-sm text-[var(--on-surface)]">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--on-surface-variant)] mb-2">Summary Points</h4>
+            <ul class="space-y-1 list-disc list-inside">
+              <li><strong class="text-[var(--on-background)]">Batch Learning:</strong> Train once, static, easy, used when data is stable.</li>
+              <li><strong class="text-[var(--on-background)]">Online Learning:</strong> Train continuously, adaptive, complex, used in dynamic systems.</li>
+              <li><strong class="text-[var(--on-background)]">Instance-Based Learning:</strong> Memorize data, lazy, used for similarity-based predictions.</li>
+              <li><strong class="text-[var(--on-background)]">Model-Based Learning:</strong> Learn patterns, generalize, used for most ML tasks today.</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on Day 4–6. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-section-02">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. A team trains a fraud model once a month on the full transaction history and pushes it to production, where it stays fixed until the next monthly run. Which combination of concepts best describes this setup?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Online learning with a low learning rate</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Instance-based learning with lazy prediction</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Batch learning — stable, static until manual retraining</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Out-of-core learning</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Training once on the full dataset and deploying a static model until manual retraining is the textbook definition of batch (offline) learning. Out-of-core learning is about chunked training on data too big for memory, not about update cadence.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. An online model set with a very high learning rate starts producing wildly different predictions after each new noisy observation, essentially discarding what it learned earlier. What is happening?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. High learning rate is making the model forget old data quickly</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. This is normal batch learning behavior</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. The model has switched to instance-based learning</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Concept drift has stopped occurring</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Per the notes, a high learning rate means the model forgets old data quickly — over-reacting to each new (possibly noisy) observation. A well-tuned online model balances memory and adaptation instead.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. You need to train on a 200GB dataset but only have 8GB of RAM available. Which technique directly addresses this, and is it tied to a specific learning style?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Instance-based learning, since it needs no training time</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Model-based learning, since only coefficients are stored</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Concept drift correction</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Out-of-core learning — load and learn from chunks incrementally</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Out-of-core learning is defined exactly for this scenario — datasets too large for memory are divided into chunks (e.g. loading 1GB at a time from a 100GB dataset) and the model learns incrementally, which is why it's closely associated with online learning tools.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. A KNN model is deployed on a dataset with 50 million rows and must serve predictions in real time. What problem does the source notes' comparison table predict here?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. No problem — KNN prediction time is fast regardless of data size</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Slow prediction and high memory use, since KNN is instance-based and must compare against all stored points</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. KNN has no training time issues since it's model-based</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. KNN would need concept-drift handling instead</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> KNN is instance-based (lazy) learning — it stores the entire dataset and, at prediction time, compares the new point against all stored instances. With 50M rows, this means slow prediction and high memory use, exactly the disadvantages listed for instance-based learning.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. Two engineers debate: Engineer A says "batch vs online" and "instance-based vs model-based" describe the same underlying distinction. Engineer B disagrees. Who is correct, per the notes?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Engineer A — both distinctions are about real-time updates</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">A. Engineer A — both distinctions are about memory usage</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">B. Engineer B — batch/online is about *when* training happens (all at once vs incrementally); instance/model-based is about *how* the model generalizes (memorize vs learn patterns)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Neither — the notes never distinguish the two axes</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> These are two independent axes. Batch vs online is about training cadence (offline on full data vs continuous incremental updates). Instance-based vs model-based is about generalization strategy (memorizing raw examples like KNN vs learning general parameters like Linear Regression) — a model can, in principle, be model-based and still be retrained in a batch or online cadence.
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--primary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="section-03.html" class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">
+            Next: ML Landscape →
+          </a>
+        </div>

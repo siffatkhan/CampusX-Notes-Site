@@ -1,0 +1,419 @@
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--tertiary)] bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/30 rounded-full px-3 py-1 mb-3">Source: 100 Days of Deep Learning — NLP Notes</span>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">3. Text Representation</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">One-Hot Encoding · Bag of Words · N-grams · TF-IDF · Using pretrained embedding models</p>
+        </div>
+
+        <!-- BASICS -->
+        <section id="text-representation-basics" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--tertiary)] bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/30 rounded-full px-2.5 py-0.5">NLP</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Why Converting Text to Numbers Is Hard</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Machine learning models only understand numbers — everything (text, images, audio) must eventually become numeric.</p>
+
+          <div class="grid sm:grid-cols-3 gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Images → Easy.</strong> Each pixel is already a number (brightness/intensity). An image is literally already a matrix of numbers.</div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Audio → Easy.</strong> Audio is a wave — a microphone records amplitude values over time: 0.12, 0.45, -0.30, 0.18, … Already a sequence of numbers.</div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Text → Hard.</strong> "I love pizza" → a computer sees 'I' 'love' 'pizza' — letters/symbols, not numbers, with no obvious numeric meaning.</div>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Why specifically text is hard: words carry meaning, context, synonyms, spelling variations, and grammar. "Car," "automobile," and "vehicle" mean nearly the same thing — but as raw characters, a computer has no way to know that. This is why NLP relies on <strong class="text-[var(--on-background)]">feature extraction</strong> techniques — instead of assigning arbitrary numbers to words, we use techniques that try to preserve meaning or importance: One-Hot Encoding, Bag of Words, N-grams, TF-IDF, and — covered in chapter 4 — Word2Vec, GloVe, FastText, and BERT embeddings.</p>
+
+          <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Analogy:</strong> an image is like a paint-by-numbers grid — the numbers were already there. Text is like handing someone a poem in a language they've never seen — you have to build an entire translation system from scratch to give the symbols numeric meaning.</div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Key Terminology</h3>
+            <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Term</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Meaning</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Example</th></tr></thead>
+                <tbody>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Corpus</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">The entire collection of all text/documents in the dataset (repeated words allowed).</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">All reviews combined: "I love pizza. Pizza is delicious. I love burgers."</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Document</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">One individual unit of text (one review, tweet, email, sentence, etc.).</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Document 1: "I love pizza"</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Word / Token</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">One individual word inside a document.</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">"I", "love", "pizza"</td></tr>
+                  <tr><td class="p-2.5 font-semibold">Vocabulary</td><td class="p-2.5">The set of all unique words across the whole corpus.</td><td class="p-2.5">{I, love, pizza, is, delicious, burgers}</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-xs text-[var(--on-surface-variant)] mt-2">📚 Corpus = the entire book (all pages combined). 📄 Document = one page. 🔤 Word/Token = one word on a page. 📖 Vocabulary = the unique dictionary of all words used, no duplicates. <strong class="text-[var(--on-background)]">Important:</strong> corpus counts every occurrence (with repeats); vocabulary counts each unique word once — most text representation techniques build a vector whose length equals the vocabulary size, not the corpus size.</p>
+          </div>
+        </section>
+
+        <!-- ONE HOT -->
+        <section id="one-hot-encoding" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--tertiary)] bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/30 rounded-full px-2.5 py-0.5">NLP</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">1. One-Hot Encoding</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Every word is converted into a vector of length <em>V</em> (V = vocabulary size). The vector is all zeros, except a single 1 at the position corresponding to that word.</p>
+
+          <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-sm font-mono">
+Vocabulary: [I, love, pizza, is, delicious, burgers] → V = 6
+
+I         → [1, 0, 0, 0, 0, 0]
+love      → [0, 1, 0, 0, 0, 0]
+pizza     → [0, 0, 1, 0, 0, 0]
+delicious → [0, 0, 0, 0, 1, 0]
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--tertiary)] mb-1">Pros</h4>
+              <p class="text-sm text-[var(--on-surface)]">Very intuitive, extremely easy to implement.</p>
+            </div>
+            <div class="border-l-4 border-[var(--error)] bg-[var(--error-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--error)] mb-1">Cons</h4>
+              <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+                <li><strong class="text-[var(--on-background)]">Sparsity</strong> — vectors are mostly zeros, wasteful in memory and computation.</li>
+                <li><strong class="text-[var(--on-background)]">No fixed input size</strong> — every sentence becomes a different number of vectors, causing problems for models expecting fixed-size input.</li>
+                <li><strong class="text-[var(--on-background)]">Out-of-Vocabulary (OOV)</strong> — a new word never seen during training has no valid representation.</li>
+                <li><strong class="text-[var(--on-background)]">No semantic meaning</strong> — "happy" and "joy" are just as "different" mathematically as "happy" and "table." Not used in practice anymore.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- BOW -->
+        <section id="bag-of-words" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--tertiary)] bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/30 rounded-full px-2.5 py-0.5">NLP</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">2. Bag of Words (BoW)</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Core idea: ignore grammar and word order entirely. What matters is which words appear and how often (frequency) they appear in a document. Each document becomes one vector of length V, where each position holds the count of that vocabulary word in the document.</p>
+
+          <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-sm font-mono">
+Doc1: "I love pizza"     Doc2: "I love burgers"
+Vocabulary: [I, love, pizza, burgers]
+
+Doc1 → [1, 1, 1, 0]
+Doc2 → [1, 1, 0, 1]
+          </div>
+
+          <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+            <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+            <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from sklearn.feature_extraction.text import CountVectorizer
+
+cv = CountVectorizer()
+X = cv.fit_transform(df['text'])</code></pre>
+          </div>
+
+          <p class="text-sm text-[var(--on-surface-variant)]">This solves the OOV problem <em>partially</em> — unseen words are simply ignored (not counted) rather than crashing the model; the vector stays valid, just doesn't reflect the unseen word.</p>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--tertiary)] mb-1">Pros</h4>
+              <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+                <li>Simple, intuitive</li>
+                <li>Fixed-size input — every document → a vector of length V regardless of sentence length</li>
+                <li>Documents with similar word usage end up with somewhat close vector directions → captures a small amount of semantic similarity</li>
+              </ul>
+            </div>
+            <div class="border-l-4 border-[var(--error)] bg-[var(--error-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--error)] mb-1">Cons</h4>
+              <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+                <li>Still sparse for large vocabularies</li>
+                <li>OOV words are dropped (information loss)</li>
+                <li>Word order discarded — "food was good, not bad" and "food was bad, not good" can produce nearly identical BoW vectors despite opposite meaning</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- N-GRAMS -->
+        <section id="n-grams" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--tertiary)] bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/30 rounded-full px-2.5 py-0.5">NLP</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">3. N-grams</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Instead of treating single words (unigrams) as vocabulary items, group N consecutive words together as one "unit," to partially recover the word-order/context information that BoW throws away.</p>
+
+          <div class="grid sm:grid-cols-3 gap-3 text-sm">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3"><strong class="text-[var(--on-background)]">N=1 (unigram, regular BoW)</strong><br>I, love, pizza</div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3"><strong class="text-[var(--on-background)]">N=2 (bigram)</strong><br>I love, love pizza</div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3"><strong class="text-[var(--on-background)]">N=3 (trigram)</strong><br>I love pizza</div>
+          </div>
+
+          <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+            <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+            <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>cv = CountVectorizer(ngram_range=(2, 2))   # bigrams only
+X = cv.fit_transform(df['text'])</code></pre>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]"><code class="text-[var(--tertiary)]">ngram_range=(2,2)</code> shifts CountVectorizer from unigram-based BoW to bigram-based BoW.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-base text-[var(--tertiary)]">Why this helps</h3>
+            <p class="text-sm text-[var(--on-surface)]">"food was good not bad" → bigrams: [food was, was good, good not, not bad]. "food was bad not good" → bigrams: [food was, was bad, bad not, not good]. Now the two vectors look noticeably different (most bigram values differ), whereas plain unigram BoW would have made them look nearly identical — this is the key advantage of N-grams.</p>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--tertiary)] mb-1">Pros</h4>
+              <p class="text-sm text-[var(--on-surface)]">Makes semantically different sentences produce clearly different vectors; captures some word-order/context information BoW misses entirely.</p>
+            </div>
+            <div class="border-l-4 border-[var(--error)] bg-[var(--error-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--error)] mb-1">Cons</h4>
+              <p class="text-sm text-[var(--on-surface)]">Dimensionality increases rapidly as N grows (many more possible word-combinations than single words) → more sparsity, more memory/compute. Still no solution for unseen n-grams.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- TF-IDF -->
+        <section id="tfidf" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--tertiary)] bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/30 rounded-full px-2.5 py-0.5">NLP</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">4. TF-IDF (Term Frequency – Inverse Document Frequency)</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Not all words are equally important. TF-IDF assigns a higher weight to a word that appears frequently in one specific document but rarely across the rest of the corpus — because such a word is likely more distinctive/informative about that document's content. Common words that appear everywhere ("the," "is") get low weight, since they don't help distinguish documents.</p>
+
+          <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Analogy:</strong> reading restaurant reviews, the word "food" appears in almost every review — it tells you nothing special. But "undercooked" appearing in only one review out of a thousand is a strong, distinctive signal about that specific review. TF-IDF mathematically rewards rare-but-locally-frequent words like "undercooked," and downweights generic words like "food."</div>
+
+          <div class="grid sm:grid-cols-1 gap-3">
+            <div>
+              <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Term Frequency (TF)</h3>
+              <p class="text-sm text-[var(--on-surface)] mb-2">How frequently a term appears within one document. Always between 0 and 1; higher TF → word is prominent within that specific document.</p>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+                $$ TF(t, d) = \frac{\text{number of times term } t \text{ appears in document } d}{\text{total number of terms in document } d} $$
+              </div>
+            </div>
+            <div>
+              <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Inverse Document Frequency (IDF)</h3>
+              <p class="text-sm text-[var(--on-surface)] mb-2">How rare or common a term is across the whole corpus. If a term appears in almost every document → IDF is low (close to 0). If it appears in very few documents → IDF is high.</p>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+                $$ IDF(t) = \log\left(\frac{\text{total number of documents in corpus}}{\text{number of documents containing term } t}\right) $$
+              </div>
+            </div>
+            <div>
+              <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">TF-IDF Score</h3>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+                $$ TF\text{-}IDF(t, d) = TF(t, d) \times IDF(t) $$
+              </div>
+              <p class="text-sm text-[var(--on-surface-variant)] mt-2">Computed for every word in every document — the final vector for a document holds the TF-IDF score of each vocabulary word.</p>
+            </div>
+          </div>
+
+          <details class="deepdive">
+            <summary class="font-h3 text-lg text-[var(--on-background)]">Worked Example — "pizza" vs "delicious"</summary>
+            <div class="mt-3 space-y-2 text-sm text-[var(--on-surface)]">
+              <p>Corpus (3 documents): Doc1 "I love pizza" · Doc2 "Pizza is delicious" · Doc3 "I love burgers"</p>
+              <p><strong class="text-[var(--on-background)]">"pizza"</strong> — appears in Doc1 and Doc2 (2 of 3 docs). TF in Doc1 = 1/3. IDF("pizza") = log(3/2) ≈ 0.176 (moderate, somewhat common). TF-IDF(pizza, Doc1) = (1/3) × 0.176 ≈ <strong class="text-[var(--tertiary)]">0.059</strong>.</p>
+              <p><strong class="text-[var(--on-background)]">"delicious"</strong> — appears only in Doc2 (1 of 3 docs, rarer → more distinctive). TF in Doc2 = 1/3. IDF("delicious") = log(3/1) ≈ 0.477 (much higher, rare). TF-IDF(delicious, Doc2) = (1/3) × 0.477 ≈ <strong class="text-[var(--tertiary)]">0.159</strong>.</p>
+              <p>Even though "pizza" and "delicious" both appear once in their respective document, "delicious" gets a higher score because it's rarer across the corpus — making it more distinctive/informative.</p>
+            </div>
+          </details>
+
+          <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+            <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+            <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from sklearn.feature_extraction.text import TfidfVectorizer
+
+tfidf = TfidfVectorizer()
+X = tfidf.fit_transform(df['text'])</code></pre>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--tertiary)] mb-1">Pros</h4>
+              <p class="text-sm text-[var(--on-surface)]">Gives meaningful weight to distinctive/informative words instead of treating all words equally (unlike plain BoW); automatically downweights very common, low-information words.</p>
+            </div>
+            <div class="border-l-4 border-[var(--error)] bg-[var(--error-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--error)] mb-1">Cons</h4>
+              <p class="text-sm text-[var(--on-surface)]">Still sparse, still no OOV support, dimensionality still tied to vocabulary size — and still no true semantic meaning: like BoW/N-grams, TF-IDF has no notion that "happy" and "joy" mean similar things; it only reflects statistical frequency/rarity.</p>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Summary Comparison</h3>
+            <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Technique</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Order Matters?</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Solves OOV?</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Captures Semantics?</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Main Weakness</th></tr></thead>
+                <tbody>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">One-Hot</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">❌</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">❌</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">❌</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Sparse, no fixed size, no meaning</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Bag of Words</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">❌</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Partial (ignores unseen)</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Very little</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">No word order</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">N-grams</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Partial (local order within N)</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">❌</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Little more than BoW</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Dimensionality explodes</td></tr>
+                  <tr><td class="p-2.5 font-semibold">TF-IDF</td><td class="p-2.5">❌</td><td class="p-2.5">❌</td><td class="p-2.5">❌</td><td class="p-2.5">Still no true meaning, just weighted frequency</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-sm text-[var(--on-surface-variant)] mt-2">The common thread: none of these frequency-based methods truly understand meaning — they're all fundamentally counting/weighting mechanisms. This is exactly the gap Word2Vec, GloVe, FastText, and BERT (prediction-based / contextual methods, chapter 4) are designed to close.</p>
+          </div>
+        </section>
+
+        <!-- PRETRAINED EMBEDDINGS -->
+        <section id="pretrained-embeddings" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--tertiary)] bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/30 rounded-full px-2.5 py-0.5">NLP</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Using a Pretrained Embedding Model</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Word2Vec/GloVe/FastText's training process (covered in full in chapter 4) works like this: take a massive corpus (e.g. all of Google News, ~100 billion words), run the training algorithm on it, and once training finishes you have a giant lookup table — every word that appeared in that corpus now has a fixed-length vector (e.g. 300 numbers) assigned to it. That lookup table — literally millions of <code class="text-[var(--tertiary)]">word → vector</code> pairs — is what gets saved to a file and released publicly as a "pretrained model."</p>
+
+          <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Analogy:</strong> think of it like a massive, pre-built bilingual dictionary. Someone spent years compiling it (that's the "training"). You don't need to relearn Spanish yourself — you just open the dictionary and look up the word. Using a pretrained embedding model is exactly this: you look up a word, and it hands you back its vector.</div>
+
+          <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+            <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+            <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>import gensim.downloader as api
+
+# downloads and loads Google's pretrained Word2Vec (trained on Google News)
+model = api.load('word2vec-google-news-300')
+
+# just LOOK UP the vector — no training, instant retrieval
+vector = model['king']
+print(vector.shape)   # (300,) → 300 numbers representing "king"
+
+# use cosine similarity to find related words
+print(model.most_similar('king'))
+# [('queen', 0.65), ('monarch', 0.61), ('prince', 0.59), ...]
+
+# famous analogy example: king - man + woman ≈ queen
+print(model.most_similar(positive=['king', 'woman'], negative=['man']))</code></pre>
+          </div>
+
+          <p class="text-sm text-[var(--on-surface)]">This is the most common way people "use" Word2Vec/GloVe — you never train anything yourself; you borrow vectors already computed on a corpus far bigger than what you could ever train on your own. <strong class="text-[var(--on-background)]">Practical benefit:</strong> if a sentiment classifier's test set contains "fantastic" but the training data never had that word, a pretrained embedding for "fantastic" (close to "amazing"/"great") still lets the model make a sensible decision.</p>
+
+          <details class="deepdive">
+            <summary class="font-h3 text-lg text-[var(--on-background)]">Applying This to Each Famous Model</summary>
+            <div class="mt-3 space-y-3 text-sm text-[var(--on-surface)]">
+              <p><strong class="text-[var(--on-background)]">GloVe (Stanford)</strong> — downloaded as plain text files (e.g. glove.6B.300d.txt); each line is a word followed by 300 numbers.</p>
+              <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+                <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+                <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>embeddings_index = {}
+with open('glove.6B.300d.txt', encoding='utf8') as f:
+    for line in f:
+        values = line.split()
+        word = values[0]
+        vector = np.asarray(values[1:], dtype='float32')
+        embeddings_index[word] = vector
+
+print(embeddings_index['pizza'])   # → 300-dim vector</code></pre>
+              </div>
+              <p><strong class="text-[var(--on-background)]">FastText (Facebook)</strong> — same lookup idea, but if a word is missing (OOV), FastText constructs a vector on the fly using character n-grams instead of failing.</p>
+              <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+                <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+                <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>import fasttext.util
+fasttext.util.download_model('en', if_exists='ignore')
+ft = fasttext.load_model('cc.en.300.bin')
+
+print(ft.get_word_vector('dragonfruit'))  # works even if "dragonfruit"
+                                           # wasn't in training data!</code></pre>
+              </div>
+              <p><strong class="text-[var(--on-background)]">BERT embeddings (Google)</strong> — key difference: this breaks the "simple lookup table" idea. BERT is not a static dictionary; it's a full neural network you run text through every time, because the vector for a word depends on the surrounding sentence (contextual).</p>
+              <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+                <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+                <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from transformers import BertTokenizer, BertModel
+import torch
+
+tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+model = BertModel.from_pretrained('bert-base-uncased')
+
+text = "I deposited money in the bank"
+inputs = tokenizer(text, return_tensors='pt')
+outputs = model(**inputs)   # actual forward pass through the network — not a lookup!
+
+# vector for "bank" here will differ from "bank" in "river bank"
+word_vectors = outputs.last_hidden_state</code></pre>
+              </div>
+              <p><strong class="text-[var(--on-background)]">ELMo</strong> — same idea as BERT: a trained bidirectional LSTM you run text through to get contextual vectors, rather than a static lookup table.</p>
+            </div>
+          </details>
+
+          <p class="text-sm text-[var(--on-surface)]">A pretrained model's vectors can also be loaded directly as the starting weights of your own network's embedding layer — a form of transfer learning, exactly like reusing a pretrained CNN's convolutional base for images (covered in the chapter 4 CBOW/skip-gram deep dive).</p>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">The One Sentence to Remember</h3>
+            <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md">
+              <li>Word2Vec / GloVe / FastText = pretrained lookup tables — static, one fixed vector per word, computed once, reused forever.</li>
+              <li>BERT / ELMo = pretrained networks — dynamic, a fresh, context-aware vector computed on each run.</li>
+            </ul>
+            <p class="text-sm text-[var(--on-surface-variant)] mt-2">In both cases, "using a pretrained model" means reusing knowledge someone else already extracted from massive data, so you don't need your own huge dataset or compute power — exactly the transfer-learning philosophy from computer vision.</p>
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on Text Representation. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-nlp-03">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. Two reviews — "food was good, not bad" and "food was bad, not good" — end up with nearly identical Bag-of-Words vectors despite opposite meaning. What's the underlying cause, and what technique partially fixes it?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Sparsity; fixed by TF-IDF</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Out-of-vocabulary words; fixed by One-Hot Encoding</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. BoW discards word order; N-grams (bigrams) partially recover local order</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. High dimensionality; fixed by removing stop words</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> BoW ignores order entirely, so these sentences (same words, different order) look nearly identical. Bigrams like "was good" vs "was bad" and "not bad" vs "not good" make the two vectors noticeably different — this is the core motivation for N-grams.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. In a 3-document corpus, "delicious" appears in only 1 document while "pizza" appears in 2. Both appear once in their respective document (same TF). Which gets the higher TF-IDF score, and why?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. "pizza" — more common words always score higher</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. "delicious" — its IDF is higher because it's rarer across the corpus, making it more distinctive</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. They score identically since TF is the same</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Neither — TF-IDF cannot be computed with only 3 documents</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Per the worked example, IDF("delicious") = log(3/1) ≈ 0.477 vs IDF("pizza") = log(3/2) ≈ 0.176. With equal TF, "delicious" ends up with the higher TF-IDF score (≈0.159 vs ≈0.059) because rarity across the corpus makes it more distinctive.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. Which statement is true of One-Hot Encoding, Bag of Words, N-grams, and TF-IDF as a group?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. All four fully solve the out-of-vocabulary problem</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. All four capture rich semantic similarity between words</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. All four produce dense, low-dimensional vectors</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. All four are fundamentally counting/weighting mechanisms with no true understanding of meaning</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> The summary table's "common thread": none of these frequency-based methods truly understand meaning — they're all counting/weighting mechanisms. This is exactly the gap prediction-based methods like Word2Vec are designed to close.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. What is the key structural difference between using a pretrained Word2Vec/GloVe model and using pretrained BERT embeddings?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Word2Vec/GloVe is a static lookup table (one fixed vector per word); BERT is a network you run text through, producing context-dependent vectors</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. BERT is a static lookup table; Word2Vec requires a full forward pass every time</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. There is no meaningful difference — both are static lookup tables</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Word2Vec requires GPUs to look up a vector; BERT does not</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Word2Vec/GloVe/FastText are static lookup tables — "bank" always gets the same vector. BERT computes a fresh vector from an actual forward pass every time, so "bank" in "river bank" differs from "bank" in "bank account."
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. Why does One-Hot Encoding fail to represent a sentence as fixed-size input, while Bag of Words solves this?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. One-Hot doesn't use vocabulary size at all</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. One-Hot produces one V-length vector per word (so a sentence becomes a variable number of vectors); BoW produces a single V-length vector per whole document regardless of length</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. BoW ignores vocabulary size entirely</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Both fail to solve fixed-size input; only Word2Vec solves it</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> One-Hot gives each individual word its own V-length vector, so a longer sentence produces more vectors — no fixed size. BoW instead produces one V-length count-vector per document, which is the same length no matter how long the document is.
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--tertiary)] text-[var(--on-tertiary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--tertiary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="nlp-04.html" class="bg-[var(--tertiary)] text-[var(--on-tertiary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">Next: Word2Vec &amp; Text Classification</a>
+        </div>

@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>5. Part-of-Speech (POS) Tagging — Sifat Notes</title>
+
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..800&family=Inter:ital,opsz,wght@0,14..32,400..700;1,14..32,400..700&family=JetBrains+Mono:wght@400..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script src="../assets/tailwind-config.js"></script>
+<link rel="stylesheet" href="../assets/theme.css">
+</head>
+<body class="antialiased min-h-screen font-body-md">
+
+<header class="bg-[var(--surface)] border-b border-[var(--outline-variant)] sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-4 md:px-lg py-2.5 md:py-sm max-w-[1200px] mx-auto">
+<a href="../index.html" class="flex items-center gap-2.5 md:gap-3 group min-w-0" title="Back to home">
+<div class="w-9 h-9 shrink-0 rounded-md bg-[var(--primary)] text-[var(--on-primary)] flex items-center justify-center font-h3 font-bold text-sm group-hover:opacity-85 transition-opacity">SN</div>
+<div class="min-w-0">
+<div class="font-h3 text-base md:text-lg font-semibold text-[var(--on-background)] leading-none truncate">Sifat Notes</div>
+<div class="hidden sm:block text-[11px] text-[var(--on-surface-variant)] mt-0.5 truncate">from CampusX's playlists</div>
+</div>
+</a>
+<nav class="hidden md:flex items-center gap-6 text-sm shrink-0">
+<a class="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors" href="../index.html">Home</a>
+<a class="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors" href="../index.html#courses">Courses</a>
+</nav>
+<div class="flex items-center gap-2 md:gap-3 shrink-0">
+<button id="mobileMenuBtn" class="md:hidden border border-[var(--outline-variant)] rounded-md p-1.5 text-[var(--on-background)] flex items-center justify-center" onclick="toggleSidebar()" aria-label="Toggle navigation">
+<span class="material-symbols-outlined text-[20px]">menu</span>
+</button>
+<button class="flex items-center gap-1.5 bg-[var(--surface-container)] border border-[var(--outline-variant)] text-[var(--on-background)] px-2.5 md:px-3 py-1.5 rounded-full text-xs font-label-caps hover:border-[var(--primary)] transition-colors" onclick="toggleTheme()" data-theme-btn>
+<span class="material-symbols-outlined text-[16px]" data-theme-icon>light_mode</span>
+<span data-theme-label class="hidden sm:inline">Light</span>
+</button>
+</div>
+</div>
+</header>
+
+
+<div class="flex flex-1">
+<div id="sidebarBackdrop" class="hidden fixed inset-0 bg-black/50 z-50 md:hidden" onclick="toggleSidebar()"></div>
+<aside id="sidebarSlot" class="flex flex-col bg-[var(--surface-container-low)] border-r border-[var(--outline-variant)] fixed left-0 top-[65px] h-[calc(100vh-65px)] w-[280px] py-md overflow-y-auto">
+<div class="px-lg mb-md">
+<input id="searchBox" placeholder="Search topics…" class="w-full bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-md px-3 py-2 text-sm text-[var(--on-background)] placeholder:text-[var(--on-surface-variant)] focus:outline-none focus:border-[var(--tertiary)]">
+</div>
+
+<nav class="toc flex-1 px-2 space-y-1 text-sm" id="tocNav">
+
+<div class="px-3 pt-3 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">NLP Fundamentals</div>
+
+<details open>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--tertiary)] font-semibold bg-[var(--surface-container-high)]/50">1. Introduction to NLP <span class="chev text-[10px]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="nlp-01.html#what-is-nlp" class="flex px-3 py-1.5 rounded-md text-[var(--tertiary)] font-semibold bg-[var(--surface-container-high)]/40">What Is NLP</a>
+<a href="nlp-01.html#common-nlp-tasks" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Common NLP Tasks</a>
+<a href="nlp-01.html#nlp-approaches" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Approaches to NLP</a>
+<a href="nlp-01.html#nlp-challenges" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Challenges in NLP</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">2. Pipeline &amp; Preprocessing <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="nlp-02.html#nlp-pipeline" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The NLP Pipeline</a>
+<a href="nlp-02.html#text-cleanup" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Text Cleanup</a>
+<a href="nlp-02.html#tokenization" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Tokenization</a>
+<a href="nlp-02.html#stopwords" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Stop-Word Removal</a>
+<a href="nlp-02.html#stemming-lemmatization" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Stemming vs Lemmatization</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Representing Text</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">3. Text Representation <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="nlp-03.html#one-hot-encoding" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">One-Hot Encoding</a>
+<a href="nlp-03.html#bag-of-words" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Bag of Words</a>
+<a href="nlp-03.html#n-grams" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">N-Grams</a>
+<a href="nlp-03.html#tfidf" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">TF-IDF</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">4. Word2Vec &amp; Classification <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="nlp-04.html#word2vec-intuition" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Word2Vec Intuition</a>
+<a href="nlp-04.html#cbow-skipgram" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">CBOW vs Skip-gram</a>
+<a href="nlp-04.html#text-classification" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Text Classification</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Extraction Tasks</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">5. POS Tagging <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="nlp-05.html#pos-tagging-basics" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">What Is POS Tagging</a>
+<a href="nlp-05.html#pos-tagging-spacy" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Tagging with spaCy</a>
+<a href="nlp-05.html#hmm-pos-tagging" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">HMM-Based Tagging</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">6. Named Entity Recognition <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="nlp-06.html#ner-basics" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">What Is NER</a>
+<a href="nlp-06.html#ner-spacy" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">NER with spaCy</a>
+<a href="nlp-06.html#ner-approaches" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Approaches to NER</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">7. Topic Modeling <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="nlp-07.html#what-is-topic-modeling" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">What Is Topic Modeling</a>
+<a href="nlp-07.html#lda" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Latent Dirichlet Allocation</a>
+</div>
+</details>
+
+</nav>
+</aside>
+
+
+  <main class="flex-1 md:ml-[280px] px-4 py-6 md:p-lg max-w-[1200px] mx-auto w-full min-w-0">
+    <nav aria-label="Breadcrumb" class="flex flex-wrap text-sm text-[var(--on-surface-variant)] mb-4"><a href="../index.html" class="hover:text-[var(--tertiary)]">Home</a><span class="mx-2">/</span><a href="../index.html#courses" class="hover:text-[var(--tertiary)]">NLP Track</a><span class="mx-2">/</span><span class="text-[var(--on-background)]">5. POS Tagging</span></nav>
+
+    <div class="space-y-xl">
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--tertiary)] bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/30 rounded-full px-3 py-1 mb-3">Source: 100 Days of Deep Learning — NLP Notes</span>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">5. Part-of-Speech (POS) Tagging</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Assigning grammatical roles to words · spaCy tagging · Hidden Markov Models · The Viterbi algorithm</p>
+        </div>
+
+        <!-- BASICS -->
+        <section id="pos-tagging-basics" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--tertiary)] bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/30 rounded-full px-2.5 py-0.5">NLP</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">What Is POS Tagging?</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed"><strong class="text-[var(--on-background)]">Definition:</strong> POS tagging means assigning the correct grammatical category (noun, verb, adjective, pronoun, etc.) to every word in a sentence — based on both the word itself <em>and</em> the context it's used in, since the same word can be a different part of speech depending on its role in the sentence (e.g. "book" as a noun — "I am reading a <em>book</em>" — versus "book" as a verb — "I will <em>book</em> a flight").</p>
+
+          <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-sm font-mono text-center">
+Sentence: "I am Saifat"<br>
+Tags:     PRON  VERB  PROPN
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">POS tagging is a <strong class="text-[var(--on-background)]">preprocessing step</strong> — not usually the final goal by itself, but a foundation that other, more complex NLP applications depend on.</p>
+
+          <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Analogy:</strong> like labeling every piece of furniture in a house as "chair," "table," "lamp," before you can give instructions like "move the chair near the table." You need to know what category each word belongs to before you can reason about how they relate to each other in a sentence.</div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Why Do We Need POS Tagging? (Applications)</h3>
+            <div class="grid gap-3">
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+                <h4 class="font-semibold text-[var(--on-background)] mb-1">Named Entity Recognition (NER)</h4>
+                <p class="text-sm text-[var(--on-surface)]">Identifying names of people, organizations, locations relies heavily on knowing which words are proper nouns (PROPN) vs regular words — e.g. "Apple" (ORG) vs "apple" (fruit, common noun). Full coverage in chapter 6.</p>
+              </div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+                <h4 class="font-semibold text-[var(--on-background)] mb-1">Question Answering Systems</h4>
+                <p class="text-sm text-[var(--on-surface)]">To answer "Who wrote this book?" the system needs to identify nouns/proper nouns as candidate answers, and verbs to understand the action being asked about.</p>
+              </div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+                <h4 class="font-semibold text-[var(--on-background)] mb-1">Word Sense Disambiguation</h4>
+                <p class="text-sm text-[var(--on-surface)]">The same word used in different grammatical roles conveys different meanings — POS tagging is often the first clue used to resolve this ambiguity.</p>
+              </div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+                <h4 class="font-semibold text-[var(--on-background)] mb-1">Chatbots</h4>
+                <p class="text-sm text-[var(--on-surface)]">Understanding sentence structure (who's doing what to whom) requires knowing each word's grammatical role, helping the bot correctly parse user intent.</p>
+              </div>
+            </div>
+            <div class="border-l-4 border-[var(--outline)] bg-[var(--surface-container-high)]/40 p-sm rounded-r-lg text-sm text-[var(--on-surface-variant)] mt-3"><strong class="text-[var(--on-background)]">Analogy:</strong> without POS tags, a sentence is just a bag of words to a machine. With POS tags, the machine starts to see structure — like the difference between reading random letters versus words organized into a sentence.</div>
+          </div>
+        </section>
+
+        <!-- SPACY -->
+        <section id="pos-tagging-spacy" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--tertiary)] bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/30 rounded-full px-2.5 py-0.5">NLP</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Using spaCy for POS Tagging</h2>
+          </div>
+
+          <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+            <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+            <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>import spacy
+nlp = spacy.load("en_core_web_sm")
+
+doc = nlp("I am Saifat")
+
+for token in doc:
+    print(token.text, token.pos_, token.tag_)</code></pre>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">spaCy gives two levels of granularity:</p>
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">token.pos_</strong> — coarse-grained POS: the broad category (NOUN, VERB, PRON, ADJ, PROPN, etc.).</div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">token.tag_</strong> — fine-grained POS: much more detailed grammatical information, e.g. distinguishing VBP (verb, non-3rd person singular present) vs VBD (verb, past tense) vs VBG (verb, gerund/present participle). "am" might be coarse = AUX/VERB, fine = VBP.</div>
+          </div>
+
+          <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Analogy:</strong> coarse-grained tag = saying "it's a vehicle." Fine-grained tag = saying "it's a 2-door manual sedan." Both are true, but the fine-grained tag gives much more precise, useful detail.</div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Visualizing with displaCy</h3>
+            <p class="text-sm text-[var(--on-surface)] mb-2">spaCy's companion library <strong class="text-[var(--on-background)]">displaCy</strong> lets you visually render POS tags and dependency structure as a diagram instead of reading raw text output.</p>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from spacy import displacy
+displacy.render(doc, style="dep")</code></pre>
+            </div>
+          </div>
+        </section>
+
+        <!-- HMM -->
+        <section id="hmm-pos-tagging" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--tertiary)] bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/30 rounded-full px-2.5 py-0.5">NLP</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">How POS Tagging Actually Works: Hidden Markov Models</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Given a sentence, we want to find the most likely sequence of POS tags for those words. This is fundamentally a <strong class="text-[var(--on-background)]">sequence labeling problem</strong> — the tag for a word doesn't just depend on the word itself, it also depends on what tags came before it (grammar has structure — a determiner like "the" is very likely followed by a noun or adjective, not another determiner).</p>
+
+          <div class="border-l-4 border-[var(--outline)] bg-[var(--surface-container-high)]/40 p-sm rounded-r-lg text-sm text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Analogy:</strong> predicting tomorrow's weather. You don't just look at "what usually happens on this date" (the word alone) — you also consider "what was the weather yesterday" (the previous tag), since weather tends to follow patterns. HMM applies this same "previous state affects next state" logic to grammar.</div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">An HMM is built from a training corpus (a large set of sentences already tagged by humans). From it we calculate two types of probabilities:</p>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+              <h3 class="font-h3 text-base text-[var(--secondary)]">Transition Probability</h3>
+              <p class="text-sm text-[var(--on-surface)]">Given the current POS tag, how likely is the next word to have a certain POS tag? Captures grammar patterns — e.g. how likely a NOUN is to be followed by a VERB. Special <code class="text-[var(--tertiary)]">&lt;START&gt;</code>/<code class="text-[var(--tertiary)]">&lt;END&gt;</code> markers are added to every sentence to model which tag typically starts/ends one.</p>
+              <p class="text-xs text-[var(--on-surface-variant)]">Calculated by dividing by the <strong class="text-[var(--on-background)]">row sum</strong> — count how many times tag A is followed by tag B, divided by the total times tag A is followed by anything.</p>
+              <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-3 overflow-x-auto text-center text-sm">$$ P(\text{tag}_i \mid \text{tag}_{i-1}) = \frac{\text{count(tag}_{i-1} \text{ followed by tag}_i)}{\text{count(tag}_{i-1}\text{ followed by anything)}} $$</div>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+              <h3 class="font-h3 text-base text-[var(--tertiary)]">Emission Probability</h3>
+              <p class="text-sm text-[var(--on-surface)]">Given a POS tag, how likely is a specific word to be generated from that tag? Captures word-tag association — e.g. how likely "dog" is to appear when the tag is NOUN.</p>
+              <p class="text-xs text-[var(--on-surface-variant)]">Calculated by dividing by the <strong class="text-[var(--on-background)]">column sum</strong> — count how many times a word appears with a specific tag, divided by the total times that tag appeared at all.</p>
+              <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-3 overflow-x-auto text-center text-sm">$$ P(\text{word}_i \mid \text{tag}_i) = \frac{\text{count(word}_i \text{ tagged as tag}_i)}{\text{count(tag}_i \text{ appearing at all)}} $$</div>
+            </div>
+          </div>
+
+          <p class="text-sm text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Together:</strong> transition probability = "grammar sense" (what usually comes next grammatically); emission probability = "vocabulary sense" (what word usually shows up for this tag).</p>
+
+          <details class="deepdive">
+            <summary class="font-h3 text-lg text-[var(--on-background)]">Full Worked Example</summary>
+            <div class="mt-3 space-y-3 text-sm text-[var(--on-surface)]">
+              <p>Tiny tagged training corpus:</p>
+              <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-3 font-mono text-xs">
+&lt;START&gt; The/DET dog/NOUN barks/VERB &lt;END&gt;<br>
+&lt;START&gt; The/DET cat/NOUN runs/VERB &lt;END&gt;<br>
+&lt;START&gt; A/DET dog/NOUN sleeps/VERB &lt;END&gt;
+              </div>
+              <p><strong class="text-[var(--on-background)]">Step 1 — Transition probabilities</strong> (divide each row by its row sum): P(DET|START) = 3/3 = 1.0, P(NOUN|DET) = 3/3 = 1.0, P(VERB|NOUN) = 3/3 = 1.0, P(END|VERB) = 3/3 = 1.0. (A real, larger corpus would spread these across multiple tags instead of a clean 1.0 — this toy example is simplified.)</p>
+              <p><strong class="text-[var(--on-background)]">Step 2 — Emission probabilities</strong> (divide each column by its column sum): P(The|DET) = 2/3 ≈ 0.67, P(A|DET) = 1/3 ≈ 0.33, P(dog|NOUN) = 2/3 ≈ 0.67, P(cat|NOUN) = 1/3 ≈ 0.33, P(barks|VERB) = 1/3 ≈ 0.33.</p>
+              <p><strong class="text-[var(--on-background)]">Step 3 — Tag a new sentence: "The dog runs"</strong>, sequence DET → NOUN → VERB:</p>
+              <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+                $$ P(\text{DET}\!\to\!\text{NOUN}\!\to\!\text{VERB}) = P(\text{DET}|\text{START}) \times P(\text{The}|\text{DET}) \times P(\text{NOUN}|\text{DET}) \times P(\text{dog}|\text{NOUN}) \times P(\text{VERB}|\text{NOUN}) \times P(\text{runs}|\text{VERB}) $$
+                $$ = 1.0 \times 0.67 \times 1.0 \times 0.67 \times 1.0 \times 0.33 \approx 0.148 $$
+              </div>
+              <p>This is the probability of one specific tag sequence through the sentence. In a real sentence, each word could take multiple possible tags, creating many possible paths — and we need to efficiently find the single best one.</p>
+            </div>
+          </details>
+        </section>
+
+        <!-- VITERBI -->
+        <section id="viterbi-algorithm" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--tertiary)] bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/30 rounded-full px-2.5 py-0.5">NLP</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">The Viterbi Algorithm</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">For a sentence with <em>n</em> words and a tagset with <em>T</em> possible tags, there are <em>T<sup>n</sup></em> possible tag sequences to consider — trying every combination is computationally explosive. For a 10-word sentence with 20 possible tags, that's 20¹⁰ ≈ 10 trillion combinations, completely infeasible to brute-force. This is exactly what "optimization" means here: find the single most probable tag sequence <strong class="text-[var(--on-background)]">without</strong> computing the probability of every possible sequence one by one.</p>
+
+          <div class="border-l-4 border-[var(--outline)] bg-[var(--surface-container-high)]/40 p-sm rounded-r-lg text-sm text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Analogy:</strong> finding the shortest driving route from City A to City Z through intermediate cities with multiple connecting roads. Checking every full route combination is enormously wasteful. Instead, at each intermediate city, only keep track of the best way to reach that city so far — discard all worse paths reaching that same city. This is exactly the idea behind Viterbi.</div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">The <strong class="text-[var(--on-background)]">Viterbi algorithm</strong> is a <strong class="text-[var(--on-background)]">dynamic programming</strong> algorithm: instead of recomputing probabilities for every full path from scratch, it builds up the solution word by word, and at each step, for each possible tag, keeps only the single best (highest-probability) path leading to that tag at that position.</p>
+
+          <ol class="text-sm text-[var(--on-surface)] space-y-2 list-decimal list-inside bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md">
+            <li><strong class="text-[var(--on-background)]">Initialization</strong> — for the first word, compute the probability of each possible tag using P(tag | START) × P(word | tag).</li>
+            <li><strong class="text-[var(--on-background)]">Recursion (core step)</strong> — for each subsequent word and each possible tag, compute the best score to reach that tag from any previous tag, keeping only the maximum:
+              <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-3 overflow-x-auto text-center mt-1">$$ \text{best\_score}(tag_i) = \max_{prev\_tag} \left[ \text{best\_score}(prev\_tag) \times P(tag_i \mid prev\_tag) \right] \times P(word_i \mid tag_i) $$</div>
+            </li>
+            <li><strong class="text-[var(--on-background)]">Store backpointers</strong> — remember which previous tag gave the best score, so the full best path can be reconstructed at the end.</li>
+            <li><strong class="text-[var(--on-background)]">Termination</strong> — at the last word, pick the tag with the highest overall score, then backtrack through the stored backpointers to recover the entire best tag sequence.</li>
+          </ol>
+
+          <p class="text-sm text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Why this is efficient:</strong> instead of <em>T<sup>n</sup></em> total paths, Viterbi only ever needs to track <em>T</em> possible "best scores" at each of the <em>n</em> word positions — reducing complexity from exponential (<em>T<sup>n</sup></em>) down to roughly polynomial (<em>n × T²</em>). This is what makes POS tagging on real sentences computationally practical.</p>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Putting It All Together</h3>
+            <div class="space-y-0 max-w-lg mx-auto">
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2.5 text-sm text-center">Training Corpus (tagged sentences)</div>
+              <div class="text-center text-[var(--outline)]">↓</div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2.5 text-sm text-center">Transition Probabilities (grammar) + Emission Probabilities (vocabulary)</div>
+              <div class="text-center text-[var(--outline)]">↓</div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2.5 text-sm text-center">New Sentence to Tag</div>
+              <div class="text-center text-[var(--outline)]">↓</div>
+              <div class="bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/40 rounded-lg px-4 py-2.5 text-sm text-center">Viterbi Algorithm (dynamic programming)</div>
+              <div class="text-center text-[var(--outline)]">↓</div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2.5 text-sm text-center font-semibold">Most Likely POS Tag Sequence</div>
+            </div>
+            <p class="text-sm text-[var(--on-surface-variant)] mt-3 text-center"><strong class="text-[var(--on-background)]">One-line intuition:</strong> HMM defines how likely any given tag sequence is (via transition + emission probabilities); Viterbi is the efficient search strategy that finds the best sequence without checking every possibility.</p>
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on POS Tagging. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-nlp-05">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. "I will book a flight" vs "I am reading a book" — why does POS tagging need context, not just the word itself, to tag "book" correctly?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. The same word can be a different part of speech depending on its grammatical role in the sentence</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. "Book" is always a noun regardless of context</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. POS tagging only works on nouns</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Context only matters for named entities, not POS tags</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> This is the source's own example — "book" as verb (to reserve) vs "book" as noun (an object). POS tagging assigns tags based on both the word and its role/context, which is exactly why the same word can get different tags in different sentences.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. Which is the correct distinction between transition probability and emission probability in an HMM POS tagger?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Both measure word-tag associations, computed identically</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Transition = column-sum normalized word-tag counts; Emission = row-sum normalized tag-tag counts</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Transition = row-sum normalized tag→tag counts ("grammar sense"); Emission = column-sum normalized tag→word counts ("vocabulary sense")</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Transition probability requires labeled data; emission probability does not</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Transition probability (row sum) captures "what tag usually follows this tag" — grammar. Emission probability (column sum) captures "what word usually appears for this tag" — vocabulary. Both are calculated from the same labeled training corpus.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. Why is brute-force tag-sequence search infeasible for a 10-word sentence with 20 possible tags?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Because HMMs cannot be trained on more than 10 words</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Because the number of possible sequences is 20^10 ≈ 10 trillion — exponential in sentence length</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Because emission probabilities can't be computed for long sentences</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Because spaCy doesn't support sentences over 10 words</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> With T possible tags and n words, there are T^n possible sequences — for T=20, n=10, that's roughly 10 trillion combinations, exactly the exponential blow-up the notes describe as "completely infeasible to brute-force."
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. What is the core trick that lets Viterbi avoid the exponential blow-up of brute-force search?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. At each word position, keep only the single best-scoring path into each tag and discard all worse paths, reusing that via dynamic programming</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. It randomly samples a subset of possible tag sequences</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. It ignores emission probabilities entirely</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It only considers the first and last words of the sentence</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Viterbi's dynamic-programming insight: for each tag at each word position, only the single best (highest-probability) path reaching it is kept — all worse alternatives are discarded immediately — reducing complexity from T^n down to roughly n×T².
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. What is the difference between spaCy's <code>token.pos_</code> and <code>token.tag_</code>?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. They are identical, just different names for the same output</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. pos_ requires a GPU; tag_ does not</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. pos_ only works on verbs; tag_ works on all words</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. pos_ is coarse-grained (broad category like VERB); tag_ is fine-grained (e.g. VBP vs VBD vs VBG)</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> pos_ gives the coarse-grained category (NOUN, VERB, PRON, …); tag_ gives fine-grained detail like tense/form (VBP, VBD, VBG) — the "vehicle" vs "2-door manual sedan" analogy from the notes.
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--tertiary)] text-[var(--on-tertiary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--tertiary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="nlp-06.html" class="bg-[var(--tertiary)] text-[var(--on-tertiary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">Next: Named Entity Recognition</a>
+        </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="../assets/app.js"></script>
+
+</body>
+</html>

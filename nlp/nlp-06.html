@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>6. Named Entity Recognition (NER) — Sifat Notes</title>
+
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..800&family=Inter:ital,opsz,wght@0,14..32,400..700;1,14..32,400..700&family=JetBrains+Mono:wght@400..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script src="../assets/tailwind-config.js"></script>
+<link rel="stylesheet" href="../assets/theme.css">
+</head>
+<body class="antialiased min-h-screen font-body-md">
+
+<header class="bg-[var(--surface)] border-b border-[var(--outline-variant)] sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-4 md:px-lg py-2.5 md:py-sm max-w-[1200px] mx-auto">
+<a href="../index.html" class="flex items-center gap-2.5 md:gap-3 group min-w-0" title="Back to home">
+<div class="w-9 h-9 shrink-0 rounded-md bg-[var(--primary)] text-[var(--on-primary)] flex items-center justify-center font-h3 font-bold text-sm group-hover:opacity-85 transition-opacity">SN</div>
+<div class="min-w-0">
+<div class="font-h3 text-base md:text-lg font-semibold text-[var(--on-background)] leading-none truncate">Sifat Notes</div>
+<div class="hidden sm:block text-[11px] text-[var(--on-surface-variant)] mt-0.5 truncate">from CampusX's playlists</div>
+</div>
+</a>
+<nav class="hidden md:flex items-center gap-6 text-sm shrink-0">
+<a class="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors" href="../index.html">Home</a>
+<a class="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors" href="../index.html#courses">Courses</a>
+</nav>
+<div class="flex items-center gap-2 md:gap-3 shrink-0">
+<button id="mobileMenuBtn" class="md:hidden border border-[var(--outline-variant)] rounded-md p-1.5 text-[var(--on-background)] flex items-center justify-center" onclick="toggleSidebar()" aria-label="Toggle navigation">
+<span class="material-symbols-outlined text-[20px]">menu</span>
+</button>
+<button class="flex items-center gap-1.5 bg-[var(--surface-container)] border border-[var(--outline-variant)] text-[var(--on-background)] px-2.5 md:px-3 py-1.5 rounded-full text-xs font-label-caps hover:border-[var(--primary)] transition-colors" onclick="toggleTheme()" data-theme-btn>
+<span class="material-symbols-outlined text-[16px]" data-theme-icon>light_mode</span>
+<span data-theme-label class="hidden sm:inline">Light</span>
+</button>
+</div>
+</div>
+</header>
+
+
+<div class="flex flex-1">
+<div id="sidebarBackdrop" class="hidden fixed inset-0 bg-black/50 z-50 md:hidden" onclick="toggleSidebar()"></div>
+<aside id="sidebarSlot" class="flex flex-col bg-[var(--surface-container-low)] border-r border-[var(--outline-variant)] fixed left-0 top-[65px] h-[calc(100vh-65px)] w-[280px] py-md overflow-y-auto">
+<div class="px-lg mb-md">
+<input id="searchBox" placeholder="Search topics…" class="w-full bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-md px-3 py-2 text-sm text-[var(--on-background)] placeholder:text-[var(--on-surface-variant)] focus:outline-none focus:border-[var(--tertiary)]">
+</div>
+
+<nav class="toc flex-1 px-2 space-y-1 text-sm" id="tocNav">
+
+<div class="px-3 pt-3 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">NLP Fundamentals</div>
+
+<details open>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--tertiary)] font-semibold bg-[var(--surface-container-high)]/50">1. Introduction to NLP <span class="chev text-[10px]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="nlp-01.html#what-is-nlp" class="flex px-3 py-1.5 rounded-md text-[var(--tertiary)] font-semibold bg-[var(--surface-container-high)]/40">What Is NLP</a>
+<a href="nlp-01.html#common-nlp-tasks" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Common NLP Tasks</a>
+<a href="nlp-01.html#nlp-approaches" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Approaches to NLP</a>
+<a href="nlp-01.html#nlp-challenges" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Challenges in NLP</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">2. Pipeline &amp; Preprocessing <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="nlp-02.html#nlp-pipeline" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The NLP Pipeline</a>
+<a href="nlp-02.html#text-cleanup" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Text Cleanup</a>
+<a href="nlp-02.html#tokenization" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Tokenization</a>
+<a href="nlp-02.html#stopwords" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Stop-Word Removal</a>
+<a href="nlp-02.html#stemming-lemmatization" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Stemming vs Lemmatization</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Representing Text</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">3. Text Representation <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="nlp-03.html#one-hot-encoding" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">One-Hot Encoding</a>
+<a href="nlp-03.html#bag-of-words" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Bag of Words</a>
+<a href="nlp-03.html#n-grams" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">N-Grams</a>
+<a href="nlp-03.html#tfidf" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">TF-IDF</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">4. Word2Vec &amp; Classification <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="nlp-04.html#word2vec-intuition" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Word2Vec Intuition</a>
+<a href="nlp-04.html#cbow-skipgram" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">CBOW vs Skip-gram</a>
+<a href="nlp-04.html#text-classification" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Text Classification</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Extraction Tasks</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">5. POS Tagging <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="nlp-05.html#pos-tagging-basics" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">What Is POS Tagging</a>
+<a href="nlp-05.html#pos-tagging-spacy" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Tagging with spaCy</a>
+<a href="nlp-05.html#hmm-pos-tagging" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">HMM-Based Tagging</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">6. Named Entity Recognition <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="nlp-06.html#ner-basics" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">What Is NER</a>
+<a href="nlp-06.html#ner-spacy" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">NER with spaCy</a>
+<a href="nlp-06.html#ner-approaches" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Approaches to NER</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">7. Topic Modeling <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="nlp-07.html#what-is-topic-modeling" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">What Is Topic Modeling</a>
+<a href="nlp-07.html#lda" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Latent Dirichlet Allocation</a>
+</div>
+</details>
+
+</nav>
+</aside>
+
+
+  <main class="flex-1 md:ml-[280px] px-4 py-6 md:p-lg max-w-[1200px] mx-auto w-full min-w-0">
+    <nav aria-label="Breadcrumb" class="flex flex-wrap text-sm text-[var(--on-surface-variant)] mb-4"><a href="../index.html" class="hover:text-[var(--tertiary)]">Home</a><span class="mx-2">/</span><a href="../index.html#courses" class="hover:text-[var(--tertiary)]">NLP Track</a><span class="mx-2">/</span><span class="text-[var(--on-background)]">6. NER</span></nav>
+
+    <div class="space-y-xl">
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--tertiary)] bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/30 rounded-full px-3 py-1 mb-3">Source: 100 Days of Deep Learning — NLP Notes</span>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">6. Named Entity Recognition (NER)</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Finding &amp; classifying real-world entities in text · spaCy's <code>doc.ents</code> · Lookup vs rule-based vs ML-based approaches</p>
+        </div>
+
+        <!-- BASICS -->
+        <section id="ner-basics" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--tertiary)] bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/30 rounded-full px-2.5 py-0.5">NLP</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">What Is NER?</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed"><strong class="text-[var(--on-background)]">Named Entity Recognition</strong> is the task of finding and classifying "named entities" in text — real-world objects like people, organizations, locations, dates, money amounts, products, etc. — and labeling what type of entity each one is.</p>
+
+          <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-sm font-mono">
+Sentence: "Elon Musk founded SpaceX in California in 2002."
+
+Elon Musk  → PERSON
+SpaceX     → ORG (organization)
+California → GPE (geo-political entity / location)
+2002       → DATE
+          </div>
+
+          <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Analogy:</strong> reading a sentence normally, you see just a stream of words. NER is like using a highlighter with different colors — one for people's names, another for places, another for dates — so you can instantly scan and pull out exactly the "who, where, when" facts from a wall of text.</div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">NER builds directly on POS tagging (chapter 5) — POS tagging tells you a word is a noun/proper noun, but NER goes a step further and tells you what kind of real-world thing that noun refers to.</p>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Why NER Matters — Use Cases</h3>
+            <div class="grid gap-3">
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+                <h4 class="font-semibold text-[var(--on-background)] mb-1">Search Engines / News Search</h4>
+                <p class="text-sm text-[var(--on-surface)]">Searching "Elon Musk news" needs the engine to recognize "Elon Musk" as a specific person entity, not just three separate common words, so it retrieves articles specifically about him.</p>
+              </div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+                <h4 class="font-semibold text-[var(--on-background)] mb-1">Recommendations</h4>
+                <p class="text-sm text-[var(--on-surface)]">Reading several articles mentioning "Tesla" and "SpaceX" (ORG entities) lets a recommendation system detect the pattern and suggest more content involving those organizations — beyond just keyword matching.</p>
+              </div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+                <h4 class="font-semibold text-[var(--on-background)] mb-1">Customer Care / Support Chatbots</h4>
+                <p class="text-sm text-[var(--on-surface)]">"My order #48213 from Amazon hasn't arrived since March 5th" — NER can automatically pull out the order number, organization, and date, letting the system route or auto-fill a support ticket without manual re-typing.</p>
+              </div>
+            </div>
+            <div class="border-l-4 border-[var(--outline)] bg-[var(--surface-container-high)]/40 p-sm rounded-r-lg text-sm text-[var(--on-surface-variant)] mt-3"><strong class="text-[var(--on-background)]">Analogy:</strong> NER is an assistant that reads a huge pile of documents for you and pulls out sticky notes labeled "Person," "Company," "Date," "Money" — so you never have to read the whole document to find the key facts.</div>
+          </div>
+        </section>
+
+        <!-- SPACY -->
+        <section id="ner-spacy" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--tertiary)] bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/30 rounded-full px-2.5 py-0.5">NLP</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Using spaCy for NER</h2>
+          </div>
+
+          <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+            <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+            <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>import spacy
+nlp = spacy.load("en_core_web_sm")
+
+doc = nlp("Elon Musk founded SpaceX in California in 2002.")
+
+for ent in doc.ents:
+    print(ent.text, ent.label_)
+
+# Output:
+# Elon Musk   PERSON
+# SpaceX      ORG
+# California  GPE
+# 2002        DATE</code></pre>
+          </div>
+
+          <p class="text-sm text-[var(--on-surface)]"><code class="text-[var(--tertiary)]">doc.ents</code> holds the entities spaCy found in the text; <code class="text-[var(--tertiary)]">ent.text</code> is the entity's text span and <code class="text-[var(--tertiary)]">ent.label_</code> is its predicted entity type.</p>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Visualizing with displaCy</h3>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from spacy import displacy
+displacy.render(doc, style="ent")</code></pre>
+            </div>
+            <p class="text-sm text-[var(--on-surface-variant)] mt-2">This highlights entities directly in colored boxes over the text — much easier to scan visually than reading raw label output.</p>
+          </div>
+        </section>
+
+        <!-- APPROACHES -->
+        <section id="ner-approaches" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--tertiary)] bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/30 rounded-full px-2.5 py-0.5">NLP</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Approaches to Building NER Systems</h2>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-base text-[var(--secondary)]">1. Simple Lookup (Dictionary-Based)</h3>
+            <p class="text-sm text-[var(--on-surface)]">Maintain a predefined list ("gazetteer") of known entities — e.g. all country names, all known company names — and check if a word/phrase matches something in that list. If the list contains ["USA", "India", "Germany"], any exact match gets tagged as a location.</p>
+            <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Pros:</strong> extremely simple, fast, no training needed. <strong class="text-[var(--on-background)]">Cons:</strong> can't handle new/unseen entities not in the list, and can't use context — it will incorrectly tag "Turkey" as a country even in "I'm cooking turkey for dinner."</p>
+            <p class="text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Analogy:</strong> a fixed phonebook — if a name isn't already written in the book, you have no way of recognizing it, no matter how obviously it looks like a name.</p>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-base text-[var(--tertiary)]">2. Rule-Based NER (Regex, Pattern Matching)</h3>
+            <p class="text-sm text-[var(--on-surface)]">Define explicit patterns/rules to catch entities that follow a predictable structure. Dates: <code class="text-[var(--tertiary)]">\d{1,2}/\d{1,2}/\d{4}</code> catches "05/03/2024". Money: <code class="text-[var(--tertiary)]">\$\d+(\.\d{2})?</code> catches "$45.99". Capitalized word sequences right after "Mr./Dr./Mrs." → likely a PERSON name.</p>
+            <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Pros:</strong> works very well for structured entities with predictable formats (dates, phone numbers, money, emails) — no training data needed. <strong class="text-[var(--on-background)]">Cons:</strong> breaks easily on messy real-world text; can't detect entities without a clear structural pattern (e.g. "Zephyra Technologies" as a company name has no fixed regex to catch it).</p>
+            <p class="text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Analogy:</strong> teaching someone "any word right after 'Mr.' is a person's name" — great for consistent formats, but falls apart the moment text doesn't follow the expected pattern.</p>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-base text-[var(--primary)]">3. Machine Learning-Based NER (CRF, BERT)</h3>
+            <p class="text-sm text-[var(--on-surface)]">The modern, most accurate approach — a model learns from labeled examples what entities typically look like in context, instead of relying on hardcoded rules.</p>
+            <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">CRF (Conditional Random Fields)</strong> — a statistical sequence-labeling model, similar in spirit to HMM (chapter 5) but more flexible: it can incorporate many features at once (the word itself, its POS tag, surrounding words, capitalization, prefixes/suffixes) rather than just "previous tag → next tag." Learns from a labeled corpus which feature combinations mark entity boundaries and types — good for structured prediction where sequence matters (e.g. "New" + "York" together = one LOCATION entity, not two).</p>
+            <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">BERT-based NER</strong> — uses a pretrained transformer fine-tuned for entity recognition. Because BERT produces contextual embeddings (chapter 4), it can much better distinguish "Apple" the company vs. "apple" the fruit, or "Amazon" the company vs. "Amazon" the river, based on the surrounding sentence. Currently the state-of-the-art approach — significantly outperforms rule-based and CRF on messy, real-world text, because it generalizes to unseen entities via context/semantics rather than memorized patterns.</p>
+            <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Pros:</strong> handles unseen entities well, understands context, robust to messy real-world text. <strong class="text-[var(--on-background)]">Cons:</strong> requires labeled training data, more computationally expensive, less transparent/interpretable than simple rules.</p>
+            <p class="text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Analogy:</strong> a lookup table is like memorizing a fixed list of celebrity names. Rule-based is like knowing "capitalized words after 'Mr.' are names." ML-based (BERT) is like a well-read, experienced person who can correctly identify that "Kai" is a person's name in one sentence and a brand name in another, purely by understanding sentence context.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Quick Comparison</h3>
+            <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Approach</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">How It Works</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Handles New Entities?</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Understands Context?</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Effort to Build</th></tr></thead>
+                <tbody>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Simple Lookup</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Match against a fixed list</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">❌ No</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">❌ No</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Very low</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Rule-Based (Regex)</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Predefined patterns</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">❌ No</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">❌ No</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Low</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">CRF</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Learns from labeled sequence features</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">✅ Somewhat</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">✅ Somewhat</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Medium</td></tr>
+                  <tr><td class="p-2.5 font-semibold">BERT-based</td><td class="p-2.5">Fine-tuned contextual transformer</td><td class="p-2.5">✅ Yes</td><td class="p-2.5">✅ Yes (deeply)</td><td class="p-2.5">High (pretrained models ease this)</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on Named Entity Recognition. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-nlp-06">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. A dictionary-based NER system tags "Turkey" as a LOCATION in the sentence "I'm cooking turkey for dinner." What's the root cause?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. The gazetteer list is too small</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Simple lookup can't use context — it matches text against a fixed list regardless of surrounding meaning</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. NER cannot process food-related sentences</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. This is a POS tagging error, not an NER error</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> This is the source's own example of simple lookup's key weakness: it matches text against a fixed list with no notion of context, so it can't distinguish "Turkey" the country from "turkey" the food regardless of list size.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. Which approach can correctly distinguish "Apple" the company from "apple" the fruit purely by understanding the surrounding sentence, without ever having memorized that specific case?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Simple lookup</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Rule-based regex</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. BERT-based NER</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. None — no approach can make this distinction</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> BERT-based NER uses contextual embeddings, so the same word gets a different vector depending on sentence context — exactly what's needed to tell "Apple" (ORG) apart from "apple" (fruit) without memorizing the specific case, unlike lookup or rule-based approaches.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. What is the key advantage CRF has over a plain HMM-style approach for sequence labeling tasks like NER?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. CRF can incorporate many features at once (word, POS tag, surrounding words, capitalization, prefixes/suffixes), not just previous-tag-to-next-tag transitions</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. CRF requires no training data at all</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. CRF is a rule-based, non-statistical method</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. CRF cannot handle sequences at all, only single words</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> CRF is similar in spirit to HMM (also a statistical sequence-labeling model) but more flexible — it isn't limited to "previous tag → next tag" transitions and can use many features simultaneously, which HMM's structure doesn't directly support.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. In spaCy, which code correctly extracts each recognized entity's text and label from a processed document?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. for token in doc: print(token.pos_)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. doc.tag_</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. nlp.pipe(doc.ents)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. for ent in doc.ents: print(ent.text, ent.label_)</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> <code>doc.ents</code> is spaCy's collection of recognized entities; each has <code>.text</code> (the entity span) and <code>.label_</code> (its type, e.g. PERSON/ORG/GPE/DATE). <code>token.pos_</code> is for POS tags, not entities.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. Why does the notes' comparison table rate rule-based (regex) NER as unable to handle new/unseen entities, even though it needs no training data?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Regex is too slow to run on new entities</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. It only catches entities with a predictable structural pattern (dates, money); an entity like "Zephyra Technologies" has no fixed pattern to match</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Regex requires labeled data to function at all</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Rule-based NER only works on numeric entities</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Rule-based NER works great for structured formats (dates, money) but has no fixed pattern to catch an arbitrary company name like "Zephyra Technologies" — it breaks on messy or unpredictable real-world text precisely because it depends on explicit structural patterns.
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--tertiary)] text-[var(--on-tertiary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--tertiary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="nlp-07.html" class="bg-[var(--tertiary)] text-[var(--on-tertiary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">Next: Topic Modeling</a>
+        </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="../assets/app.js"></script>
+
+</body>
+</html>

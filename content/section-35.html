@@ -1,0 +1,233 @@
+        <div>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">35. Gradient Boosting</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Fitting residuals instead of reweighting samples · gradient descent in function space · regression &amp; classification</p>
+        </div>
+
+        <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm text-sm text-[var(--on-surface-variant)]">
+          <strong class="text-[var(--on-background)]">Extended notes</strong> — this topic isn't covered in the CampusX playlist notes this site is based on. Written from scratch to continue the curriculum, in the same style as the rest of the site.
+        </div>
+
+        <!-- EXPLAINED -->
+        <section id="gb-explained" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Concept</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Explained — Fitting the Residuals</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Gradient Boosting is boosting's other big idea. AdaBoost corrects mistakes by <strong class="text-[var(--on-background)]">reweighting samples</strong> — misclassified points get louder. Gradient Boosting corrects mistakes a different way: instead of changing sample weights, each new model is trained to directly predict the <strong class="text-[var(--on-background)]">residual errors</strong> — the leftover gap between what the current ensemble predicts and the true answer. Add that prediction (shrunk by a learning rate) onto the running total, and the ensemble gets a little bit closer to the truth. Repeat.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-lg text-[var(--primary)]">The key insight — gradient descent in function space</h3>
+            <p class="text-sm text-[var(--on-surface)]">In ordinary gradient descent (Linear/Logistic Regression), you take a loss function, compute its gradient with respect to the model's <em>parameters</em>, and step the parameters a little in the direction that reduces loss. Gradient Boosting does the exact same thing, except the thing being adjusted isn't a parameter vector — it's the <strong class="text-[var(--on-background)]">function</strong> \(F(x)\) that the ensemble represents. At each round, the "gradient" is a vector of per-sample values telling you how the loss would change if the prediction on each sample moved a little — and it turns out that for plain squared-error loss, that gradient is <em>exactly</em> the residual, \(y_i - F(x_i)\). Fitting a small tree to those residuals and adding it in (scaled by a learning rate) is, quite literally, one step of gradient descent — except each "step direction" is itself a full decision tree rather than a fixed-size vector.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">The general algorithm</h3>
+            <ol class="text-sm text-[var(--on-surface)] space-y-1.5 list-decimal list-inside">
+              <li>Start with a naive initial prediction \(F_0(x)\) — for squared-error regression, that's just the mean of \(y\) for every sample.</li>
+              <li>Compute the residuals: \(r_i = y_i - F_{m-1}(x_i)\) for every sample (the negative gradient of the loss).</li>
+              <li>Fit a new small tree \(h_m(x)\) to predict those residuals, not the original targets.</li>
+              <li>Update the ensemble: \(F_m(x) = F_{m-1}(x) + \eta \cdot h_m(x)\), where \(\eta\) (learning_rate) shrinks the new tree's contribution.</li>
+              <li>Repeat steps 2–4 for <code class="text-[var(--primary)]">n_estimators</code> rounds. Each round's residuals should get a little smaller as the ensemble improves.</li>
+            </ol>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">A tiny numeric taste — one point, three rounds</h3>
+            <p class="text-sm text-[var(--on-surface)] mb-2">Say the true value is \(y = 40\), the initial prediction is the dataset mean \(F_0 = 23.75\), and learning_rate \(\eta = 0.1\). To isolate exactly what the learning rate does, assume (unrealistically, but usefully) that each round's small tree manages to predict that round's residual perfectly:</p>
+            <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Round</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">F (prediction so far)</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Residual = y − F</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">η × tree prediction</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">New F</th></tr></thead>
+                <tbody>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">0 (init)</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">23.75</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">16.25</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">—</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">23.75</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">1</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">23.75</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">16.25</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">0.1 × 16.25 = 1.625</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">25.375</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">2</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">25.375</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">14.625</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">0.1 × 14.625 = 1.4625</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">26.8375</td></tr>
+                  <tr><td class="p-2.5 font-semibold">3</td><td class="p-2.5">26.8375</td><td class="p-2.5">13.1625</td><td class="p-2.5">0.1 × 13.1625 = 1.31625</td><td class="p-2.5">28.15375</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-sm text-[var(--on-surface)] mt-2">Notice the residual shrinks by a factor of exactly \((1-\eta) = 0.9\) every round (16.25 → 14.625 → 13.1625 — each is 90% of the last) under this perfect-fit simplification. That's the mechanism laid bare: <strong class="text-[var(--on-background)]">a smaller learning rate means slower, more cautious closing of the gap, requiring more rounds — but each round contributes a smaller, gentler correction</strong>, which tends to generalize better than a few large, aggressive corrections. In reality a shallow tree won't perfectly capture the residual pattern in one shot, so real convergence is noisier than this clean geometric decay — but the shrinking-error trend is exactly what actually happens.</p>
+          </div>
+        </section>
+
+        <!-- REGRESSION -->
+        <section id="gb-regression" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Regression</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Gradient Boosting for Regression</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">For regression under squared-error loss, the algorithm from above is used exactly as written, with nothing hidden:</p>
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <ul class="text-sm text-[var(--on-surface)] space-y-1.5 list-disc list-inside">
+              <li><strong class="text-[var(--on-background)]">Initial prediction:</strong> \(F_0(x) = \text{mean}(y)\) for every sample — the simplest possible model.</li>
+              <li><strong class="text-[var(--on-background)]">Residual:</strong> \(r_i = y_i - F_{m-1}(x_i)\) — literally "actual minus predicted," recomputed fresh every round.</li>
+              <li><strong class="text-[var(--on-background)]">Fit a tree</strong> \(h_m\) to predict \(r_i\) from the features \(x_i\) — a small regression tree, usually only 3–8 leaves deep.</li>
+              <li><strong class="text-[var(--on-background)]">Update:</strong> \(F_m(x) = F_{m-1}(x) + \eta \cdot h_m(x)\).</li>
+              <li><strong class="text-[var(--on-background)]">Repeat</strong> for <code class="text-[var(--primary)]">n_estimators</code> rounds; final prediction is \(F_M(x)\).</li>
+            </ul>
+          </div>
+
+          <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-md rounded-r-lg">
+            <div class="canvas-wrap" style="max-width:600px;margin:0 auto;">
+              <canvas id="gbResidualChart" height="260"></canvas>
+            </div>
+            <div class="flex items-center gap-3 mt-3 max-w-md mx-auto">
+              <label for="gbLrSlider" class="text-xs text-[var(--on-surface-variant)] whitespace-nowrap">learning_rate η =</label>
+              <input type="range" id="gbLrSlider" min="0.05" max="1" step="0.05" value="0.1" oninput="updateGBResidual()" class="w-full accent-[var(--primary)]">
+              <span id="gbLrVal" class="text-xs font-semibold text-[var(--primary)] w-10 text-right">0.10</span>
+            </div>
+            <p class="text-xs text-[var(--on-surface-variant)] text-center mt-2">Illustrative decay of the starting residual (16.25) over 30 boosting rounds, under the simplified "tree fits residual perfectly" assumption above — remaining residual after round t ≈ \(r_0 (1-\eta)^t\). A small η needs far more rounds to close the same gap; a large η closes it fast but with bigger, more aggressive per-round jumps that risk overshooting on real (imperfectly-fit) data.</p>
+          </div>
+          <div class="border-l-4 border-[var(--outline)] bg-[var(--surface-container-high)]/40 p-sm rounded-r-lg text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Illustrative aid</strong> — generated for this site.</div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Code — GradientBoostingRegressor</h3>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
+
+gbr = GradientBoostingRegressor(
+    n_estimators=300,
+    learning_rate=0.05,   # small steps, many rounds — usually generalizes best
+    max_depth=3,          # each tree stays shallow
+    subsample=0.8,        # stochastic GB: train each tree on an 80% row subsample
+    random_state=1
+)
+gbr.fit(X_train, y_train)
+print("Test R^2:", gbr.score(X_test, y_test))
+
+# staged_predict lets you see the ensemble's prediction after each round
+import numpy as np
+test_mse_per_round = [
+    np.mean((y_test - pred) ** 2) for pred in gbr.staged_predict(X_test)
+]</code></pre>
+            </div>
+          </div>
+        </section>
+
+        <!-- CLASSIFICATION -->
+        <section id="gb-classification" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Classification</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Gradient Boosting for Classification</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Class labels like "0" and "1" aren't things you can meaningfully subtract to get a residual the way you can with a continuous number. Gradient Boosting solves this by working in a different space entirely: instead of predicting the class directly, the ensemble builds up a running <strong class="text-[var(--on-background)]">log-odds score</strong> \(F(x)\), exactly like Logistic Regression's linear score before the sigmoid is applied.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+            <h3 class="font-h3 text-lg text-[var(--primary)]">The intuitive bridge — pseudo-residuals from log-loss</h3>
+            <p class="text-sm text-[var(--on-surface)]">At any point, the ensemble's predicted probability is \(p = \sigma(F(x))\) (the sigmoid of the current log-odds score). The loss being minimized is log-loss (cross-entropy). If you take the negative gradient of log-loss with respect to \(F(x)\) — the "how should this score move to reduce loss" signal — it works out to a wonderfully simple quantity:</p>
+            <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ \text{pseudo-residual} = y_i - p_i $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)]">That's "actual class (0 or 1) minus predicted probability" — a quantity that looks and behaves just like the regression residual, even though we're really tracking a gradient in log-odds space, not a subtractable target value. A small regression tree is fit to these pseudo-residuals (predicting a continuous adjustment to the log-odds score), that tree's output is added to \(F(x)\) scaled by the learning rate, and the whole cycle repeats — same shape as regression, different space and a different definition of "residual."</p>
+            <p class="text-sm text-[var(--on-surface)]">Once training finishes, the final probability is \(\hat{p}(x) = \sigma(F_M(x))\), thresholded (commonly at 0.5) to get the predicted class. Multi-class problems generalize this by keeping one log-odds function per class and using a softmax instead of a sigmoid.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Code — GradientBoostingClassifier</h3>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from sklearn.ensemble import GradientBoostingClassifier
+
+gbc = GradientBoostingClassifier(
+    n_estimators=300,
+    learning_rate=0.05,
+    max_depth=3,
+    subsample=0.8,
+    random_state=1
+)
+gbc.fit(X_train, y_train)
+
+print("Test accuracy:", gbc.score(X_test, y_test))
+print("Predicted probabilities:", gbc.predict_proba(X_test)[:5])   # sigma(F_M(x)) per class</code></pre>
+            </div>
+          </div>
+
+          <p class="text-sm text-[var(--on-surface-variant)]">Both variants share the same two knobs you saw with AdaBoost — <code class="text-[var(--primary)]">n_estimators</code> and <code class="text-[var(--primary)]">learning_rate</code> — with the exact same tradeoff: more rounds at a lower learning rate is slower to train but usually generalizes better than fewer rounds at a high learning rate. The next page, XGBoost, takes this same gradient-fitting idea and re-engineers it from the ground up for speed, regularization, and robustness.</p>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on Gradient Boosting. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-section-35">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. What does each new tree in Gradient Boosting for regression get trained to predict?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. The original target y directly, same as every previous tree</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Sample weights, like AdaBoost</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. The current residual — the gap between the true value and the ensemble's prediction so far</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. A bootstrap resample of the original data, like bagging</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Each round computes r_i = y_i - F_(m-1)(x_i) and fits the new tree to predict that residual, not the original y — that's the defining mechanic that separates Gradient Boosting from AdaBoost's reweighting approach.</div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. Why is fitting a tree to residuals, then adding a shrunken version of its output to the running prediction, described as "gradient descent in function space"?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Because trees internally use gradient descent to choose splits</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Because for squared-error loss, the residual y-F(x) is exactly the negative gradient of the loss with respect to the prediction F(x), and adding a scaled tree that approximates it is exactly one gradient-descent step, just taken on the function F rather than on a parameter vector</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Because it's unrelated to gradient descent — the name is purely historical</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Because learning_rate is identical to a neural network's learning rate</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> The residual literally equals the negative gradient of squared-error loss w.r.t. the prediction. Fitting a tree to approximate that gradient, then stepping F in that direction by a shrunk amount, is a direct functional analogue of parameter-space gradient descent.</div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. Using the illustrative decay model r_t ≈ r_0·(1-η)^t, roughly how many rounds does it take for the residual to be cut in half, if η = 0.05?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. About 14 rounds — since 0.95^14 ≈ 0.49, close to half</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Exactly 2 rounds, regardless of η</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. 1 round — a single tree always halves the residual</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It never converges for η &lt; 0.1</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Solve 0.95^t = 0.5 → t = ln(0.5)/ln(0.95) ≈ 13.5, so about 14 rounds. This is exactly why a smaller learning_rate demands a correspondingly larger n_estimators to reach the same level of fit.</div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. For GradientBoostingClassifier, what exactly is the "pseudo-residual" that each new tree is fit to, and why can't it just be y - F(x) directly the way regression does it?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. It is y - F(x) directly, exactly as in regression, with no changes needed</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. It is the sample weight from the previous round</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. It is the class label itself, unmodified</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It is y - p, where p = sigma(F(x)) is the current predicted probability — since F(x) is a log-odds score, not a directly-comparable value like a regression target, the negative gradient of log-loss works out to this "actual minus predicted-probability" form instead of a raw subtraction of labels</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Class labels aren't directly subtractable from a log-odds score. The negative gradient of log-loss w.r.t. F(x) works out to y-p (actual class minus predicted probability) — the classification analogue of a regression residual, hence "pseudo-residual."</div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. Compared to AdaBoost, which statement about Gradient Boosting's mechanism is most accurate?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. They are identical algorithms with different names</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Gradient Boosting reweights samples; AdaBoost fits residuals</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. AdaBoost corrects mistakes by adjusting how much each sample counts toward the next model's error metric; Gradient Boosting corrects mistakes by training the next model to directly predict the current error itself</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Only Gradient Boosting trains models sequentially; AdaBoost trains in parallel</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Both are sequential boosting methods (ruling out D), but they differ in mechanism: AdaBoost reweights the importance of samples for the next weak learner's training objective, while Gradient Boosting has the next learner directly target the residual/pseudo-residual error itself.</div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--primary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="section-36.html" class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">Next: XGBoost</a>
+        </div>

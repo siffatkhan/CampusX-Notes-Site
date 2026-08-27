@@ -1,0 +1,357 @@
+        <div>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">29. Decision Trees</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Entropy, Gini &amp; Information Gain · overfitting via depth · Regression Trees · visualizing trees with dtreeviz</p>
+        </div>
+
+        <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm text-sm text-[var(--on-surface-variant)]">
+          <strong class="text-[var(--on-background)]">Extended notes</strong> — this topic isn't covered in the CampusX playlist notes this site is based on. Written from scratch to continue the curriculum, in the same style as the rest of the site.
+        </div>
+
+        <p class="text-[var(--on-surface)] leading-relaxed">A decision tree makes predictions the way a person plays "20 questions": ask a yes/no (or threshold) question about a feature, follow the answer down a branch, ask another question, and repeat until you land on an answer. It's arguably the most human-readable model on this site — you can literally trace the exact chain of if/else reasoning behind any single prediction — and it forms the foundation for the ensemble methods (Random Forest, Bagging) covered in Sections 31–32.</p>
+
+        <!-- GEOMETRIC INTUITION -->
+        <section id="tree-geometric-intuition" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Classification & Regression</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Geometric Intuition</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Where logistic regression and SVM draw a single boundary line (possibly curved, with polynomial features or kernels) across the whole feature space, a decision tree carves the space into <strong class="text-[var(--on-background)]">axis-aligned rectangular regions</strong>, one split at a time. Every internal node asks a single-feature question like "is age &lt; 30?" — geometrically, a vertical or horizontal cut through the feature space. Stack enough of these cuts and you can approximate almost any boundary shape, blocky and rectangular rather than smooth, but arbitrarily fine-grained.</p>
+
+          <div class="border-l-4 border-[var(--outline)] bg-[var(--surface-container-high)]/40 p-sm rounded-r-lg text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Illustrative aid</strong> — generated for this site.</div>
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md flex justify-center">
+            <svg viewBox="0 0 560 300" class="w-full max-w-[560px]" role="img" aria-label="Box and branch diagram of a small decision tree with three splits">
+              <!-- root -->
+              <rect x="220" y="10" width="120" height="46" rx="8" fill="var(--surface-container-high)" stroke="var(--primary)" stroke-width="2"/>
+              <text x="280" y="30" text-anchor="middle" font-size="11" fill="var(--on-background)">income &lt; 50k?</text>
+              <text x="280" y="45" text-anchor="middle" font-size="9" fill="var(--on-surface-variant)">gini = 0.48, n = 400</text>
+
+              <!-- edges from root -->
+              <line x1="250" y1="56" x2="120" y2="100" stroke="var(--outline)" stroke-width="1.5"/>
+              <text x="168" y="80" font-size="10" fill="var(--on-surface-variant)">Yes</text>
+              <line x1="310" y1="56" x2="440" y2="100" stroke="var(--outline)" stroke-width="1.5"/>
+              <text x="392" y="80" font-size="10" fill="var(--on-surface-variant)">No</text>
+
+              <!-- left internal node -->
+              <rect x="60" y="100" width="120" height="46" rx="8" fill="var(--surface-container-high)" stroke="var(--secondary)" stroke-width="2"/>
+              <text x="120" y="120" text-anchor="middle" font-size="11" fill="var(--on-background)">age &lt; 25?</text>
+              <text x="120" y="135" text-anchor="middle" font-size="9" fill="var(--on-surface-variant)">gini = 0.41, n = 240</text>
+
+              <!-- right leaf (approve) -->
+              <rect x="380" y="100" width="120" height="46" rx="8" fill="var(--tertiary-container)" fill-opacity="0.25" stroke="var(--tertiary)" stroke-width="2"/>
+              <text x="440" y="120" text-anchor="middle" font-size="11" fill="var(--on-background)">Leaf: Approve</text>
+              <text x="440" y="135" text-anchor="middle" font-size="9" fill="var(--on-surface-variant)">gini = 0.09, n = 160</text>
+
+              <!-- edges from left internal node -->
+              <line x1="95" y1="146" x2="60" y2="190" stroke="var(--outline)" stroke-width="1.5"/>
+              <text x="60" y="170" font-size="10" fill="var(--on-surface-variant)">Yes</text>
+              <line x1="150" y1="146" x2="200" y2="190" stroke="var(--outline)" stroke-width="1.5"/>
+              <text x="185" y="170" font-size="10" fill="var(--on-surface-variant)">No</text>
+
+              <!-- leaf: deny -->
+              <rect x="0" y="190" width="120" height="46" rx="8" fill="var(--error-container)" fill-opacity="0.25" stroke="var(--error)" stroke-width="2"/>
+              <text x="60" y="210" text-anchor="middle" font-size="11" fill="var(--on-background)">Leaf: Deny</text>
+              <text x="60" y="225" text-anchor="middle" font-size="9" fill="var(--on-surface-variant)">gini = 0.12, n = 130</text>
+
+              <!-- leaf: review -->
+              <rect x="140" y="190" width="120" height="46" rx="8" fill="var(--secondary-container)" fill-opacity="0.25" stroke="var(--secondary)" stroke-width="2"/>
+              <text x="200" y="210" text-anchor="middle" font-size="11" fill="var(--on-background)">Leaf: Review</text>
+              <text x="200" y="225" text-anchor="middle" font-size="9" fill="var(--on-surface-variant)">gini = 0.49, n = 110</text>
+            </svg>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Each box is a <strong class="text-[var(--on-background)]">node</strong>; the boxes with no children are <strong class="text-[var(--on-background)]">leaves</strong>, and each leaf holds the final prediction — a class label (classification) or a numeric value (regression). Building a tree means repeatedly asking: <em>of every possible question I could ask about every feature, which one best separates the classes (or reduces the variance) at this node?</em> That "which question is best" decision is what entropy, Gini impurity, and information gain formalize.</p>
+        </section>
+
+        <!-- ENTROPY GINI -->
+        <section id="entropy-gini" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Classification</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Entropy, Gini Impurity &amp; Information Gain</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">A tree needs some numeric way to score "how good is this candidate split?" Every criterion below measures the same underlying idea — <strong class="text-[var(--on-background)]">impurity</strong>, or how mixed-up the classes are within a group of samples — just with different formulas.</p>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Entropy — disorder, borrowed from information theory</h3>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ H = -\sum_{k=1}^{K} p_k \log_2(p_k) $$
+            </div>
+            <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">Coin-flip analogy</h4>
+              <p class="text-sm text-[var(--on-surface)]">Think of entropy as "how surprised are you, on average, by the outcome?" A coin that always lands heads (p=1.0) surprises you never — entropy = 0, zero uncertainty. A perfectly fair coin (p=0.5 heads, p=0.5 tails) is maximally unpredictable — entropy is at its peak, 1 bit. A group of samples works the same way: a leaf that's 100% one class has entropy 0 (totally "pure," no surprise about what class a random sample from it would be); a leaf split 50/50 between two classes has maximum entropy (a coin flip — you genuinely can't guess).</p>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Gini Impurity — the faster, more common default</h3>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ G = 1 - \sum_{k=1}^{K} p_k^2 $$
+            </div>
+            <p class="text-[var(--on-surface)] leading-relaxed">Gini measures roughly the same thing as entropy — how likely you'd be to randomly mislabel a sample if you assigned it a label by randomly guessing according to the class proportions in that node — but avoids the logarithm, making it noticeably cheaper to compute across thousands of candidate splits during training. In practice, entropy and Gini almost always pick the same or near-identical splits; Gini is scikit-learn's default (<code class="text-[var(--primary)]">criterion='gini'</code>) purely for speed.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Information Gain — the split-selection rule</h3>
+            <p class="text-[var(--on-surface)] leading-relaxed">Neither entropy nor Gini alone tells you which feature/threshold to split on — you need to compare a node's impurity <em>before</em> a split against the (weighted average) impurity of the children <em>after</em> the split. That reduction is the <strong class="text-[var(--on-background)]">information gain</strong>:</p>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ \text{Gain} = H(\text{parent}) - \sum_{\text{children } c} \frac{n_c}{n_{\text{parent}}} H(c) $$
+            </div>
+            <p class="text-[var(--on-surface)] leading-relaxed">At every node, a decision tree tries every possible feature and every possible threshold, computes the information gain each candidate split would produce, and greedily picks the single split with the <strong class="text-[var(--on-background)]">highest gain</strong> — the one that does the most to separate the classes. This repeats recursively at every new child node.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Worked example — one small split, by hand</h3>
+            <p class="text-[var(--on-surface)] leading-relaxed">Suppose a node has 10 samples: 6 labeled "Yes" (will buy) and 4 labeled "No." A candidate split on "income &lt; 50k" divides them into a left child of 5 samples (4 Yes, 1 No) and a right child of 5 samples (2 Yes, 3 No).</p>
+
+            <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Group</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Composition</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Entropy</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Gini</th></tr></thead>
+                <tbody>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Parent</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">6 Yes, 4 No (p=0.6/0.4)</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">\(-0.6\log_2 0.6 - 0.4\log_2 0.4 \approx 0.971\)</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">\(1-(0.6^2+0.4^2) = 0.48\)</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Left child</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">4 Yes, 1 No (p=0.8/0.2)</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">\(-0.8\log_2 0.8-0.2\log_2 0.2 \approx 0.722\)</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">\(1-(0.8^2+0.2^2)=0.32\)</td></tr>
+                  <tr><td class="p-2.5 font-semibold">Right child</td><td class="p-2.5">2 Yes, 3 No (p=0.4/0.6)</td><td class="p-2.5">\(-0.4\log_2 0.4-0.6\log_2 0.6 \approx 0.971\)</td><td class="p-2.5">\(1-(0.4^2+0.6^2)=0.48\)</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <p class="text-[var(--on-surface)] leading-relaxed mt-2">Weighted child entropy: \( \frac{5}{10}(0.722) + \frac{5}{10}(0.971) = 0.847 \). Information gain = \(0.971 - 0.847 = 0.124\) bits. The tree would compare this gain against every other candidate split (other thresholds on income, splits on other features entirely) and keep whichever produces the largest gain. Note the right child ended up with the exact same 0.971 entropy as the parent — this particular split did very little to purify that branch, which is exactly what a low information gain is telling you.</p>
+          </div>
+        </section>
+
+        <!-- HYPERPARAMETERS OVERFITTING -->
+        <section id="tree-hyperparameters" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Classification & Regression</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Hyperparameters &amp; Overfitting/Underfitting in Decision Trees</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Left completely unconstrained, a decision tree will keep splitting until every single leaf is 100% pure — often meaning leaves with just one training sample in them. This achieves <strong class="text-[var(--on-background)]">perfect training accuracy</strong> and is one of the purest, most textbook examples of overfitting on this whole site: the tree has essentially memorized the training set's noise, sample by sample, rather than learning a generalizable pattern. This is Section 21's bias-variance tradeoff at its most extreme — a fully grown tree is close to zero bias, maximal variance.</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">The fix is to constrain how much the tree is allowed to grow, via hyperparameters:</p>
+
+          <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Hyperparameter</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">What it limits</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Effect of a smaller value</th></tr></thead>
+              <tbody>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">max_depth</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">How many splits deep the tree can go, root to leaf</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Simpler, shallower tree — higher bias, lower variance</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">min_samples_split</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Minimum samples a node must have before it's allowed to split further</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Larger values prevent splitting on tiny, noise-driven subgroups</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">min_samples_leaf</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Minimum samples allowed to remain in any leaf</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Larger values forbid ultra-specific single-sample leaves</td></tr>
+                <tr><td class="p-2.5 font-semibold">max_features</td><td class="p-2.5">How many features are considered at each split</td><td class="p-2.5">Fewer features per split adds randomness/diversity — mainly a lever for Random Forests (Section 31), less commonly tuned on a single standalone tree</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="border-l-4 border-[var(--error)] bg-[var(--error-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--error)] mb-1">Too unconstrained → overfitting</h4>
+              <p class="text-sm text-[var(--on-surface)]">max_depth=None, min_samples_leaf=1: the tree chases every quirk in the training data. Great training score, poor test score.</p>
+            </div>
+            <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg">
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">Too constrained → underfitting</h4>
+              <p class="text-sm text-[var(--on-surface)]">max_depth=1 (a "decision stump"): the tree can barely separate anything more than the single most obvious split. Both training and test scores suffer.</p>
+            </div>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">As always, the right values are found empirically — sweep <code class="text-[var(--primary)]">max_depth</code> over a range with cross-validation and watch for the same U-shaped validation-error curve seen with KNN's K and polynomial degree.</p>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Code — constraining tree growth</h3>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from sklearn.tree import DecisionTreeClassifier
+
+# unconstrained -- will overfit on anything but trivial data
+overfit_tree = DecisionTreeClassifier(random_state=42)
+overfit_tree.fit(X_train, y_train)
+print("train:", overfit_tree.score(X_train, y_train))   # often 1.0
+print("test:", overfit_tree.score(X_test, y_test))       # noticeably lower
+
+# constrained -- generalizes better
+tuned_tree = DecisionTreeClassifier(
+    criterion='gini',
+    max_depth=5,
+    min_samples_split=10,
+    min_samples_leaf=5,
+    random_state=42
+)
+tuned_tree.fit(X_train, y_train)
+print("train:", tuned_tree.score(X_train, y_train))
+print("test:", tuned_tree.score(X_test, y_test))          # smaller train/test gap</code></pre>
+            </div>
+          </div>
+        </section>
+
+        <!-- REGRESSION TREES -->
+        <section id="regression-trees" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Regression</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Regression Trees</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Everything about tree structure carries over unchanged for predicting numbers instead of categories — same recursive splitting, same idea of carving the feature space into regions. Only two things change.</p>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Split criterion: variance reduction, not entropy/Gini.</strong> Entropy and Gini only make sense for categorical class proportions. For a numeric target, the tree instead picks the split that most reduces the <em>variance</em> of the target values within each resulting child — equivalently, minimizes the (weighted) mean squared error of predicting each child's mean for its own members.
+            </div>
+            <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Leaf prediction: the mean, not the majority class.</strong> A classification leaf predicts whichever class is most common among its samples. A regression leaf predicts the <strong class="text-[var(--on-background)]">average</strong> target value of the samples that landed in it — every point falling into the same leaf gets the exact same predicted number, which is why regression tree predictions look like a "staircase" of flat, constant segments rather than a smooth curve.
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Code — DecisionTreeRegressor</h3>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from sklearn.tree import DecisionTreeRegressor
+
+reg_tree = DecisionTreeRegressor(
+    criterion='squared_error',   # variance-reduction split criterion
+    max_depth=4,
+    min_samples_leaf=10,
+    random_state=42
+)
+reg_tree.fit(X_train, y_train)
+y_pred = reg_tree.predict(X_test)
+
+# every sample landing in the same leaf gets an IDENTICAL prediction —
+# plotting predictions vs. a single input feature shows a blocky "staircase",
+# unlike linear regression's single smooth sloped line</code></pre>
+            </div>
+          </div>
+        </section>
+
+        <!-- DTREEVIZ -->
+        <section id="dtreeviz-visualization" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Practical</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Decision Tree Visualization with <code class="text-[var(--on-background)]">dtreeviz</code></h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Scikit-learn's built-in <code class="text-[var(--primary)]">plot_tree</code> draws the same kind of box-and-branch diagram shown earlier on this page — useful, but every node is just a plain box of text (the split rule, the impurity score, the class counts). It doesn't show you <em>how</em> the data is actually distributed at each split, just summary numbers.</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed"><code class="text-[var(--primary)]">dtreeviz</code> is a third-party library that renders each node as an actual <strong class="text-[var(--on-background)]">colored distribution plot</strong> — at a classification split, you see overlapping histograms of each class's feature values with the chosen threshold drawn as a vertical line directly through them, so you can visually see <em>why</em> that particular threshold was chosen (it sits right where the two classes' distributions start to separate). Leaf nodes are rendered as pie charts or bars showing the exact class mix, instead of a plain "class = X" label. For regression trees, it shows scatter plots of the target values at each node with the split threshold overlaid.</p>
+
+          <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">Why this matters</h4>
+            <p class="text-sm text-[var(--on-surface)]">plot_tree tells you <em>what</em> the tree decided. dtreeviz tells you <em>why</em> — you can see the actual shape of the data that led to each cut, which is invaluable for explaining a model's decisions to a non-technical stakeholder, or for sanity-checking whether a split looks like real signal versus a threshold squeezed between two nearly-identical noisy clusters.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Code — plain plot_tree vs dtreeviz</h3>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code># --- sklearn's built-in visualization: plain boxes ---
+from sklearn.tree import plot_tree
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(12, 8))
+plot_tree(tuned_tree, feature_names=X_train.columns,
+          class_names=['No', 'Yes'], filled=True)
+plt.show()
+# shows: split rule, gini, sample counts, class counts -- as plain text in a box
+
+# --- dtreeviz: colored distributions at every split ---
+# pip install dtreeviz
+from dtreeviz.trees import dtreeviz
+
+viz = dtreeviz(
+    tuned_tree, X_train, y_train,
+    target_name='approved',
+    feature_names=list(X_train.columns),
+    class_names=['No', 'Yes']
+)
+viz.save('tree_visualization.svg')
+# shows: overlapping histograms of each class's feature distribution
+# at every split, with the exact threshold drawn through them --
+# you can literally see the two class distributions being cut apart</code></pre>
+            </div>
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on Decision Trees. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-section-29">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. A leaf node contains 40 samples, all of the same class. What is its entropy and Gini impurity?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Entropy = 1, Gini = 1 (maximum impurity)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Entropy = 0, Gini = 0 (perfectly pure)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Entropy = 0.5, Gini = 0.5</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Undefined, since there's only one class present</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> With p=1 for the single present class, entropy = -1*log2(1) = 0, and Gini = 1 - 1^2 = 0. A node with only one class is "pure" — zero uncertainty about a randomly drawn sample's class, zero impurity by either measure.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. Why does scikit-learn use Gini impurity as its default splitting criterion instead of entropy?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Gini always produces more accurate trees than entropy</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Entropy only works for binary classification</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Gini avoids computing a logarithm, making it faster to evaluate across the many candidate splits tried during training, while usually selecting nearly identical splits to entropy</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Gini is required for regression trees</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Both entropy and Gini measure impurity and generally agree on which split is best. Gini's formula (1 - sum of squared probabilities) has no logarithm, making it cheaper to compute across the huge number of candidate splits a tree evaluates — pure computational efficiency, not an accuracy advantage.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. A decision tree is trained with max_depth=None and min_samples_leaf=1, achieving 100% training accuracy but poor test accuracy. What is the fix most directly targeting this problem?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Constrain the tree's growth — lower max_depth, raise min_samples_leaf/min_samples_split — to reduce variance</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Switch the criterion from gini to entropy</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Increase max_depth further to capture more patterns</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Remove feature scaling</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> 100% train accuracy with much worse test accuracy is the classic overfitting signature of an unconstrained tree. Constraining depth and leaf/split sample minimums directly limits the tree's capacity to memorize noise, trading a bit of bias for a large reduction in variance.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. How does a regression tree decide what value to predict at a given leaf, and what split criterion produced that leaf?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. The majority class in the leaf; splits chosen by Gini impurity</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. The median of the leaf's samples; splits chosen by entropy</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. A randomly selected sample from the leaf; splits chosen by information gain</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. The mean of the target values in the leaf; splits chosen by variance reduction (minimizing weighted MSE of the children)</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Regression trees swap entropy/Gini (which need categorical class proportions) for variance reduction as the split criterion, and predict the mean of each leaf's target values rather than a majority class — since there's no "class" to vote on, only numbers to average.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. What does dtreeviz show at each split that sklearn's plain plot_tree does not?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. A different, more accurate tree structure entirely</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. The actual colored distributions of each class's feature values at that node, with the chosen split threshold drawn directly through them</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. The exact source code used to train the tree</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Nothing — dtreeviz and plot_tree render identical information</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> plot_tree only shows summary text (rule, impurity, counts) in a plain box. dtreeviz renders the actual per-class distribution of the splitting feature at each node with the threshold overlaid, letting you visually verify why that cut point was chosen — information plot_tree's boxes simply don't contain.
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--primary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="section-30.html" class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">Next: Ensemble Learning — Voting</a>
+        </div>

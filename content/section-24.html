@@ -1,0 +1,277 @@
+        <div>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">24. Classification Metrics</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Confusion matrix · Precision, Recall &amp; F1 · ROC curve &amp; AUC</p>
+        </div>
+
+        <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm text-sm text-[var(--on-surface-variant)]">
+          <strong class="text-[var(--on-background)]">Extended notes</strong> — this topic isn't covered in the CampusX playlist notes this site is based on. Written from scratch to continue the curriculum, in the same style as the rest of the site.
+        </div>
+
+        <p class="text-[var(--on-surface)] leading-relaxed">Logistic Regression (sections 22–23) gives you a classifier — but "does it work?" needs its own vocabulary. Unlike regression, where MAE/RMSE/R² all roughly agree on what "good" means, classification has several genuinely different notions of "correct," and picking the wrong one to optimize for can quietly build a useless model.</p>
+
+        <!-- CONFUSION MATRIX -->
+        <section id="confusion-matrix" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Evaluation</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Confusion Matrix, Accuracy &amp; Type I / Type II Errors</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">A binary classifier can be wrong in two distinct ways, and right in two distinct ways. The confusion matrix just lays out all four possibilities in a grid, comparing what the model predicted against what actually happened:</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md">
+            <div class="grid grid-cols-[auto_1fr_1fr] gap-1 max-w-lg mx-auto text-sm">
+              <div></div>
+              <div class="text-center font-label-caps text-xs text-[var(--on-surface-variant)] py-2">Predicted Positive</div>
+              <div class="text-center font-label-caps text-xs text-[var(--on-surface-variant)] py-2">Predicted Negative</div>
+
+              <div class="flex items-center justify-center font-label-caps text-xs text-[var(--on-surface-variant)] px-2 [writing-mode:vertical-rl] rotate-180">Actual Positive</div>
+              <div class="bg-[var(--tertiary-container)]/20 border border-[var(--tertiary)]/40 rounded-lg p-3 text-center">
+                <div class="font-semibold text-[var(--on-background)]">True Positive (TP)</div>
+                <div class="text-xs text-[var(--on-surface-variant)] mt-1">Correctly caught it</div>
+              </div>
+              <div class="bg-[var(--error-container)]/20 border border-[var(--error)]/40 rounded-lg p-3 text-center">
+                <div class="font-semibold text-[var(--on-background)]">False Negative (FN)</div>
+                <div class="text-xs text-[var(--on-surface-variant)] mt-1">Missed it — Type II error</div>
+              </div>
+
+              <div class="flex items-center justify-center font-label-caps text-xs text-[var(--on-surface-variant)] px-2 [writing-mode:vertical-rl] rotate-180">Actual Negative</div>
+              <div class="bg-[var(--error-container)]/20 border border-[var(--error)]/40 rounded-lg p-3 text-center">
+                <div class="font-semibold text-[var(--on-background)]">False Positive (FP)</div>
+                <div class="text-xs text-[var(--on-surface-variant)] mt-1">False alarm — Type I error</div>
+              </div>
+              <div class="bg-[var(--tertiary-container)]/20 border border-[var(--tertiary)]/40 rounded-lg p-3 text-center">
+                <div class="font-semibold text-[var(--on-background)]">True Negative (TN)</div>
+                <div class="text-xs text-[var(--on-surface-variant)] mt-1">Correctly cleared it</div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Accuracy — and why it lies to you</h3>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ \text{Accuracy} = \frac{TP + TN}{TP + TN + FP + FN} $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)] mt-2">Accuracy answers "what fraction did I get right overall?" — fine when classes are roughly balanced, dangerously misleading when they aren't.</p>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm text-sm text-[var(--on-surface)] mt-2">
+              <strong class="text-[var(--on-background)]">Concrete example — fraud detection.</strong> Suppose 95% of transactions are legitimate and 5% are fraud. A "model" that outputs <code class="text-[var(--primary)]">not fraud</code> for every single transaction, without looking at the data at all, scores <strong class="text-[var(--on-background)]">95% accuracy</strong> — while catching literally zero fraud cases. High accuracy here reflects the class imbalance in the data, not any skill the model has. This is exactly why classification tasks with rare positive classes (fraud, disease, defects) need precision/recall instead — see the next section.
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Type I vs Type II Errors</h3>
+            <div class="grid sm:grid-cols-2 gap-3">
+              <div class="border-l-4 border-[var(--error)] bg-[var(--error-container)]/10 p-sm rounded-r-lg">
+                <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--error)] mb-1">Type I Error — False Positive</h4>
+                <p class="text-sm text-[var(--on-surface)]">You raised an alarm that shouldn't have gone off. <strong class="text-[var(--on-background)]">Analogy:</strong> a fire alarm blaring because someone made toast — nothing is actually on fire, but everyone evacuates for nothing.</p>
+                <p class="text-xs text-[var(--on-surface-variant)] mt-1">Spam filter version: a real, important email gets shoved into the spam folder.</p>
+              </div>
+              <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg">
+                <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">Type II Error — False Negative</h4>
+                <p class="text-sm text-[var(--on-surface)]">You stayed silent when you shouldn't have. <strong class="text-[var(--on-background)]">Analogy:</strong> a smoke detector with a dead battery during an actual fire — the danger is real, and nothing warns anyone.</p>
+                <p class="text-xs text-[var(--on-surface-variant)] mt-1">Medical version: a cancer screening test says "healthy" for a patient who actually has cancer — arguably the costlier mistake of the two in this domain.</p>
+              </div>
+            </div>
+            <p class="text-sm text-[var(--on-surface-variant)] mt-2">Which error type is worse always depends on the domain — that's the entire reason precision and recall exist as separate, sometimes-opposing metrics rather than one blended number.</p>
+          </div>
+        </section>
+
+        <!-- PRECISION RECALL F1 -->
+        <section id="precision-recall-f1" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Evaluation</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Precision, Recall &amp; F1 Score</h2>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+              <h3 class="font-h3 text-lg text-[var(--primary)]">Precision</h3>
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+                $$ \text{Precision} = \frac{TP}{TP+FP} $$
+              </div>
+              <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Plain English:</strong> "Of everything I flagged as positive, how much of it was actually positive?" It's a measure of how much you can trust a positive prediction.</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+              <h3 class="font-h3 text-lg text-[var(--secondary)]">Recall</h3>
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+                $$ \text{Recall} = \frac{TP}{TP+FN} $$
+              </div>
+              <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Plain English:</strong> "Of all the actual positives out there, how many did I actually catch?" It's a measure of how thoroughly you're finding the positives, regardless of false alarms along the way.</p>
+            </div>
+          </div>
+
+          <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm text-[var(--on-surface)]">
+            <strong class="text-[var(--on-background)]">The one-line mnemonic:</strong> precision is about your <em>positive predictions</em> ("were you right when you said yes?"); recall is about the <em>actual positives</em> ("did you find all of them?"). Precision's denominator is everything you flagged; recall's denominator is everything that was truly positive.
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">The tradeoff — and who cares about which</h3>
+            <p class="text-sm text-[var(--on-surface)]">Precision and recall pull in opposite directions. Flag <em>everything</em> as positive and recall hits 100% (you never miss a true positive) — but precision craters, since most of your "positive" flags are wrong. Flag <em>nothing</em> unless you're extremely sure, and precision goes up — but recall craters, since you're letting real positives slip through unflagged. This is the same push-pull as the classification threshold in the ROC section below.</p>
+            <div class="grid sm:grid-cols-2 gap-3 mt-2">
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">Spam detection wants precision.</strong> A false positive (real email marked spam) can mean someone misses a job offer or an important message — that's a costly, visible mistake. A false negative (spam that slips through) is just mildly annoying. Bias the model toward "only flag spam when very confident."
+              </div>
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">Cancer screening wants recall.</strong> A false negative (missed cancer) can be fatal. A false positive (unnecessary follow-up test) is inconvenient and costly, but rarely life-threatening. Bias the model toward "flag anything even remotely suspicious," and let a doctor filter the false alarms downstream.
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">F1 Score — the harmonic mean, on purpose</h3>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+              $$ F_1 = 2 \cdot \frac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}} $$
+            </div>
+            <p class="text-sm text-[var(--on-surface)] mt-2">F1 is the <strong class="text-[var(--on-background)]">harmonic</strong> mean of precision and recall, not the ordinary (arithmetic) average — and that choice is deliberate. The harmonic mean is dragged down hard by whichever of the two numbers is smaller, so a model can't hide a terrible score in one metric behind a great score in the other.</p>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm text-sm text-[var(--on-surface)] mt-2">
+              <strong class="text-[var(--on-background)]">Worked example.</strong> Model A: precision = 1.0, recall = 0.01 (it only ever flags one thing, but it's right). Arithmetic mean: (1.0 + 0.01)/2 = <strong class="text-[var(--on-background)]">0.505</strong> — looks like a decent, middling model. Harmonic mean (F1): \( 2 \times \frac{1.0 \times 0.01}{1.0+0.01} \approx \) <strong class="text-[var(--on-background)]">0.02</strong> — correctly exposes that this model is nearly useless, since it essentially never finds the positives it's supposed to find. The arithmetic mean rewards being extreme in one metric; the harmonic mean punishes it.
+            </div>
+            <p class="text-sm text-[var(--on-surface-variant)] mt-2">Use F1 when you want one balanced number and don't have a strong domain reason to favor precision or recall specifically; use precision or recall directly when the domain does give you that reason (as above).</p>
+          </div>
+        </section>
+
+        <!-- ROC AUC -->
+        <section id="roc-auc" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Evaluation</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">ROC Curve &amp; AUC</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Every metric so far assumes a fixed classification threshold — usually 0.5: "if the predicted probability \( \ge 0.5 \), call it positive." But that 0.5 cutoff is arbitrary. The ROC (Receiver Operating Characteristic) curve asks a broader question: <strong class="text-[var(--on-background)]">across every possible threshold</strong>, how good is this model at separating the two classes?</p>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">True Positive Rate (TPR)</strong> — this is just Recall again: of all actual positives, what fraction did the model catch at this threshold?
+            </div>
+            <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">False Positive Rate (FPR)</strong> — of all actual negatives, what fraction did the model wrongly flag as positive at this threshold? \( FPR = \frac{FP}{FP+TN} \)
+            </div>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Sweep the threshold from 1 down to 0. At threshold 1, nothing is ever flagged positive — TPR = 0, FPR = 0 (the origin). At threshold 0, everything is flagged positive — TPR = 1, FPR = 1 (the top-right corner). Every point traced out in between is one (FPR, TPR) pair for one threshold value — plot all of them, and you get the ROC curve.</p>
+
+          <div class="border-l-4 border-[var(--outline)] bg-[var(--surface-container-high)]/40 p-sm rounded-r-lg text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Illustrative aid</strong> — generated for this site. The curve below comes from a synthetic scored dataset (positives and negatives with overlapping score distributions), computed live in your browser — not from a real trained model.</div>
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <canvas id="rocChart" height="260"></canvas>
+            <div class="flex items-center gap-3">
+              <label for="threshSlider" class="text-sm text-[var(--on-surface)] whitespace-nowrap">Threshold</label>
+              <input id="threshSlider" type="range" min="0" max="1" step="0.02" value="0.5" oninput="updateRoc()" class="w-full accent-[var(--primary)]">
+              <span id="threshVal" class="text-sm font-semibold text-[var(--primary)] w-12 text-right">0.50</span>
+            </div>
+            <div class="grid grid-cols-3 gap-3 text-center text-sm">
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-2"><span class="block text-xs text-[var(--on-surface-variant)]">TPR at this threshold</span><span id="rocTpr" class="font-semibold text-[var(--primary)]">0.00</span></div>
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-2"><span class="block text-xs text-[var(--on-surface-variant)]">FPR at this threshold</span><span id="rocFpr" class="font-semibold text-[var(--primary)]">0.00</span></div>
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-2"><span class="block text-xs text-[var(--on-surface-variant)]">AUC (whole curve)</span><span id="rocAuc" class="font-semibold text-[var(--primary)]">0.00</span></div>
+            </div>
+            <p class="text-xs text-[var(--on-surface-variant)]">Drag the slider down: more points get flagged positive, so both TPR and FPR climb and the red dot slides up-right along the curve, toward (1,1). Drag it up: fewer positive flags, both rates drop toward (0,0). The dashed diagonal is what a coin-flip classifier with zero real signal would trace out.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Reading AUC</h3>
+            <div class="grid sm:grid-cols-3 gap-3">
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm text-center">
+                <strong class="text-[var(--on-background)] block mb-1">AUC = 0.5</strong>
+                On the diagonal — the model's ranking of scores carries no real information about the actual class. Equivalent to guessing.
+              </div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm text-center">
+                <strong class="text-[var(--on-background)] block mb-1">0.5 &lt; AUC &lt; 1.0</strong>
+                The typical real-world case — the model does better than random at ranking positives above negatives, but imperfectly.
+              </div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm text-center">
+                <strong class="text-[var(--on-background)] block mb-1">AUC = 1.0</strong>
+                Perfect separation — every positive scores higher than every negative, for some ordering of scores. No threshold ever confuses the two classes.
+              </div>
+            </div>
+            <p class="text-sm text-[var(--on-surface)] mt-2">AUC has a clean probabilistic reading too: it's the probability that a randomly chosen positive example gets a higher predicted score than a randomly chosen negative example.</p>
+          </div>
+
+          <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">Why AUC is threshold-independent (and accuracy/F1 aren't)</h4>
+            <p class="text-sm text-[var(--on-surface)]">Accuracy and F1 are each a single number computed at one fixed threshold — change the threshold and they change, sometimes drastically, even though the underlying model (its ranking of who's more likely positive) hasn't changed at all. AUC integrates over <strong class="text-[var(--on-background)]">every</strong> threshold at once, so it measures something more fundamental: how well-separated the model's score distributions are for the two classes, independent of wherever you eventually decide to draw the line. That makes it the right metric for comparing two models' raw discriminative power, and a poor metric for judging "is this specific deployed threshold good enough" — for that, go back to precision/recall/F1 at the threshold you actually plan to use.</p>
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on Classification Metrics. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-section-24">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. A dataset is 98% negative, 2% positive. A model predicts "negative" for every single input. What's the biggest problem with reporting its accuracy as the headline metric?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Accuracy can't be computed when classes are imbalanced</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. The model would actually score 0% accuracy, exposing the problem immediately</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. It would score 98% accuracy while catching zero positives — accuracy reflects the class imbalance, not any real skill</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Accuracy only works for regression, not classification</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Predicting the majority class for everything scores accuracy equal to the majority class's share of the data (98% here) while providing zero actual predictive value for the minority class — the exact trap this section's fraud example illustrates.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. A spam filter is tuned to almost never mark real email as spam, even if that means some spam gets through. This design choice prioritizes which metric, and which error type does it accept more of?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Prioritizes recall; accepts more Type I errors</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Prioritizes precision; accepts more Type II errors (false negatives — spam that gets through)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Prioritizes accuracy only; error types are irrelevant</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Prioritizes F1; balances both errors equally</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> "Almost never wrongly flag a real email" is exactly precision (TP/(TP+FP)) — minimizing false positives, i.e. Type I errors on the spam class. The tradeoff is accepting more false negatives (Type II) — spam that slips through — as described in the spam-vs-cancer comparison.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. Model A: precision = 0.9, recall = 0.9. Model B: precision = 0.99, recall = 0.3. Which has the higher F1 score, and why does F1 favor it?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Model B, because F1 weights precision more heavily</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Both are equal, since F1 is an arithmetic average</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Model B, because its precision is closer to 1.0</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Model A, because the harmonic mean punishes the large gap between Model B's precision and recall much more than the arithmetic mean would</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Model A's F1 ≈ 0.9; Model B's F1 = 2(0.99×0.3)/(0.99+0.3) ≈ 0.46. The harmonic mean is dominated by the smaller of the two values, so Model B's weak 0.3 recall drags its F1 down hard — exactly the worked example in this section, just with different numbers.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. Using the ROC widget on this page, as you drag the threshold slider from 1.0 down toward 0.0, what happens?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. The point moves from near the origin (0,0) up toward the top-right (1,1), as both TPR and FPR climb</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. The AUC value changes every time the slider moves</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. The curve itself reshapes as the threshold changes</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Nothing changes; the ROC curve is independent of the threshold entirely</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Lowering the threshold flags more points positive, which can only increase or hold steady both TPR and FPR — so the marked point slides up the fixed curve toward (1,1). The curve's shape (and AUC) is a property of the model's score distributions, not of any one threshold — only the marked point on it moves.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. Why is AUC described as "threshold-independent" while accuracy and F1 are not?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. AUC doesn't require predicted probabilities, only hard labels</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. AUC is always higher than accuracy, so it doesn't matter</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. AUC integrates performance across every possible threshold at once, while accuracy and F1 are each computed at one fixed threshold and change if you move it</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. AUC is only defined for multi-class problems</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> AUC is the area under the entire curve traced across all thresholds — a property of how well-separated the model's score distributions are. Accuracy and F1 collapse everything into one number tied to whatever threshold you pick, so they shift if that threshold shifts even when the underlying model hasn't changed.
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--primary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="section-25.html" class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">Next: Logistic Regression — Advanced</a>
+        </div>

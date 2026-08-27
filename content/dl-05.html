@@ -1,0 +1,265 @@
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-3 py-1 mb-3">Source: 100 Days of Deep Learning</span>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">5. Loss Functions in Deep Learning</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Loss vs. Cost · Survey by Task · MSE, MAE, Huber · Binary &amp; Categorical Cross-Entropy · Sparse Categorical Cross-Entropy</p>
+        </div>
+
+        <!-- DAY 11 -->
+        <section id="loss-functions-intro" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Day 11</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">What a Loss Function Is</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">A loss function is a method of evaluating how well your algorithm is modeling your dataset. A <strong class="text-[var(--on-background)]">high</strong> value of loss means the algorithm is performing poorly; a <strong class="text-[var(--on-background)]">low</strong> value means it is performing well. Loss functions matter because you cannot improve what you cannot measure — the loss function is, in a real sense, the "eye" of a machine learning algorithm: it is the only signal that tells the algorithm which direction to move its parameters in to get better.</p>
+
+          <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">Loss function vs. cost function</h4>
+            <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Loss function</strong> — the error computed for a <strong class="text-[var(--on-background)]">single</strong> training example. <strong class="text-[var(--on-background)]">Cost function</strong> — the sum (or average) of the loss over an entire batch or dataset. In other words, loss is per-sample, and cost aggregates many losses into one number that a training algorithm like gradient descent actually tries to minimize.</p>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Loss Functions by Task</h3>
+            <p class="text-sm text-[var(--on-surface)] mb-2">Different types of deep learning problems call for different loss functions, because "being wrong" means something different for a regression problem than for a GAN's generator:</p>
+            <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead>
+                  <tr class="bg-[var(--surface-container-high)]">
+                    <th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Task</th>
+                    <th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Common Loss Functions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Regression</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">MSE, MAE, Huber Loss</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Classification</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Binary Cross-Entropy, Categorical Cross-Entropy (multiclass), Hinge Loss (SVM)</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Autoencoders</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">KL Divergence</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">GANs</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Discriminator Loss, Minimax GAN Loss</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Object Detection</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Focal Loss</td></tr>
+                  <tr><td class="p-2.5 font-semibold">Embeddings</td><td class="p-2.5">Triplet Loss</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section id="mse" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Regression</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Mean Squared Error (MSE) — L2 Loss</h2>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+            $$ MSE = \frac{1}{n}\sum_{i=1}^{n}(y_i - \hat{y}_i)^2 $$
+          </div>
+
+          <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Meaning:</strong> MSE squares each error and then averages the squares. Because squaring a number always makes it positive and grows disproportionately for larger inputs, large errors become <strong class="text-[var(--on-background)]">very</strong> large under MSE. <strong class="text-[var(--on-background)]">Intuition:</strong> "punish large mistakes more."</p>
+
+          <div class="border-l-4 border-[var(--error)] bg-[var(--error-container)]/10 p-md rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--error)] mb-1">The outlier example</h4>
+            <p class="text-sm text-[var(--on-surface)]">Take errors of 2, 3, 4, and 100 across four samples. Squaring each gives 4, 9, 16, and 10000. The single outlier error of 100 contributes 10000 to the sum, while the other three combined contribute only 29 — <strong class="text-[var(--on-background)]">one outlier dominates everything</strong>. This is the central weakness to understand about MSE: it is extremely sensitive to a small number of large errors.</p>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Advantages</strong>
+              <ul class="list-disc list-inside mt-1 space-y-0.5 text-[var(--on-surface)]">
+                <li>Differentiable everywhere — works cleanly with gradient descent</li>
+                <li>Easy to optimize</li>
+                <li>Has one local minimum (for linear models), so optimization doesn't get stuck</li>
+              </ul>
+              <p class="mt-1 text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Why squaring helps:</strong> it removes the negative sign (so errors don't cancel out), makes the function smooth, and is easy to optimize using gradient descent.</p>
+            </div>
+            <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Disadvantages</strong>
+              <ul class="list-disc list-inside mt-1 space-y-0.5 text-[var(--on-surface)]">
+                <li>Its unit becomes squared (e.g. rupees² for a salary prediction), which is hard to interpret back in the original unit</li>
+                <li>Not robust to outliers — as shown above, big errors become extremely big and dominate the result</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">Rule of thumb</h4>
+            <p class="text-sm text-[var(--on-surface)]">More outliers in your data → prefer <strong class="text-[var(--on-background)]">MAE</strong>. Clean data with few/no outliers → <strong class="text-[var(--on-background)]">MSE</strong> is a good default. Also important: to apply MSE correctly, the last (output) layer's activation function must be <strong class="text-[var(--on-background)]">linear</strong> — MSE is designed to compare unbounded real-valued predictions against real-valued targets, so squashing the output through a sigmoid or softmax first would distort the comparison.</p>
+          </div>
+        </section>
+
+        <section id="mae" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Regression</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Mean Absolute Error (MAE) — L1 Loss</h2>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+            $$ MAE = \frac{1}{n}\sum_{i=1}^{n}|y_i - \hat{y}_i| $$
+          </div>
+
+          <p class="text-sm text-[var(--on-surface)]">MAE takes the absolute value of each error (ignoring its sign) rather than squaring it, then averages those magnitudes. Applying MAE to the same outlier example — errors 2, 3, 4, 100 — gives \((2+3+4+100)/4 = 27.25\). Compare this to MSE's massively outlier-skewed result: the 100 still pulls the average up, but nowhere near as violently as squaring did, because MAE grows only linearly with the size of the error rather than quadratically.</p>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Advantages</strong>
+              <ul class="list-disc list-inside mt-1 space-y-0.5 text-[var(--on-surface)]">
+                <li>Same unit as the output — directly interpretable</li>
+                <li>More robust to outliers than MSE, since it doesn't amplify large errors quadratically</li>
+              </ul>
+            </div>
+            <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Disadvantages</strong>
+              <p class="mt-1 text-[var(--on-surface)]">Not differentiable at exactly zero error — the absolute value function has a sharp corner there, which complicates gradient-based optimization at that point (though in practice this is rarely a serious obstacle).</p>
+            </div>
+          </div>
+        </section>
+
+        <section id="huber-loss" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Regression</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Huber Loss</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Huber Loss is designed as a compromise between MSE and MAE: it behaves like MSE (quadratic, smooth) for small errors, and like MAE (linear, less sensitive to outliers) for large errors, switching between the two behaviors at a threshold value \(\delta\):</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+            $$ L_\delta(y, \hat{y}) = \begin{cases} \frac{1}{2}(y-\hat{y})^2 & \text{if } |y-\hat{y}| \le \delta \\ \delta\left(|y-\hat{y}| - \frac{1}{2}\delta\right) & \text{otherwise} \end{cases} $$
+          </div>
+
+          <p class="text-sm text-[var(--on-surface)]">The practical benefit is exactly what its two-regime design suggests: Huber gives you the smooth, easily-optimized behavior of MSE for the bulk of "normal" errors, while capping the outsized influence that a handful of large outlier errors would otherwise have under pure MSE — giving you much of MAE's outlier robustness without fully losing MSE's smoothness near zero.</p>
+        </section>
+
+        <section id="binary-cross-entropy" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Classification</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Binary Cross-Entropy (Log Loss)</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Binary cross-entropy — also called log loss — is used whenever the classification problem has exactly <strong class="text-[var(--on-background)]">two classes</strong> (e.g. spam vs. not spam). It pairs naturally with a sigmoid output neuron, which produces a probability between 0 and 1 for the positive class, and the loss penalizes the model heavily when it is confidently wrong (predicts close to 0 when the true label is 1, or vice versa).</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+            $$ L = -\frac{1}{n}\sum_{i=1}^{n}\Big[y_i\log(\hat{y}_i) + (1-y_i)\log(1-\hat{y}_i)\Big] $$
+          </div>
+
+          <p class="text-sm text-[var(--on-surface)]">Binary cross-entropy is differentiable, so gradient descent can be applied to it directly. One caveat worth remembering: unlike MSE for a simple linear model, the loss surface for binary cross-entropy on a neural network is not guaranteed to have a single global minimum — it can have <strong class="text-[var(--on-background)]">multiple local minima</strong>, which is one reason training a classifier's weights can be sensitive to initialization and optimizer choice.</p>
+        </section>
+
+        <section id="categorical-cross-entropy" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Classification</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Categorical Cross-Entropy</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Categorical cross-entropy generalizes binary cross-entropy to problems with <strong class="text-[var(--on-background)]">more than two classes</strong> — for example, a target feature with categories like "yes," "no," and "maybe." It is the loss function used in <strong class="text-[var(--on-background)]">softmax regression</strong>: the output layer applies the softmax activation function, which converts the raw output scores into a proper probability distribution across all classes (all values between 0 and 1, summing to 1), and categorical cross-entropy then measures how far that predicted distribution is from the true one-hot-encoded label.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+            $$ L = -\sum_{c=1}^{C} y_c \log(\hat{y}_c) $$
+          </div>
+
+          <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">Output layer sizing rule</h4>
+            <p class="text-sm text-[var(--on-surface)]">In multiclass categorical classification, the number of neurons in the output layer must equal the number of classes. If there are three classes in the target, the output layer needs exactly three neurons — each one producing the (softmax-normalized) probability that the input belongs to that particular class.</p>
+          </div>
+        </section>
+
+        <section id="sparse-categorical-cross-entropy" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">Classification</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Sparse Categorical Cross-Entropy</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Sparse categorical cross-entropy computes mathematically the same thing as categorical cross-entropy, but it accepts the true label as a plain integer class index (e.g. \(2\) for the third class) instead of requiring you to first convert it into a one-hot encoded vector (e.g. \([0, 0, 1]\)). Because it skips the one-hot encoding step entirely, it is <strong class="text-[var(--on-background)]">faster</strong> and uses less memory — a practical convenience that matters a great deal once you're working with a large number of classes, where one-hot vectors would otherwise be mostly zeros wasting space and computation.</p>
+
+          <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Aspect</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Categorical Cross-Entropy</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Sparse Categorical Cross-Entropy</th></tr></thead>
+              <tbody>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Label format</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">One-hot encoded vector</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Plain integer class index</td></tr>
+                <tr><td class="p-2.5 font-semibold">Speed / memory</td><td class="p-2.5">Slower, more memory (esp. many classes)</td><td class="p-2.5">Faster, less memory — no one-hot step needed</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on Day 11 loss functions. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-dl-05">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. What is the precise distinction between a "loss function" and a "cost function"?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. They are exactly the same thing, just different names</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Loss is the error for a single training example; cost is the sum/average of loss over a batch or dataset</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Cost is used only in classification; loss only in regression</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Loss is computed after training; cost during training</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Loss = single training example's error. Cost = sum of all the losses across a batch/dataset.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. Given errors 2, 3, 4, and 100, why does MSE react so much more dramatically to the outlier than MAE does?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. MSE ignores small errors entirely</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. MAE cannot handle errors larger than 10</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. MSE squares errors (100 → 10000), growing quadratically, while MAE grows only linearly (100 stays 100)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. MSE and MAE react identically to outliers</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Squaring the error 100 gives 10000, dwarfing the other squared errors (4, 9, 16) — one outlier dominates. MAE just sums |100| = 100, still noticeable but far less extreme, since it grows linearly.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. To correctly apply MSE as your loss function, what must be true about the output layer's activation function?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. It must be softmax</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. It must be sigmoid</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. It must be step</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It must be linear</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> MSE (used for regression) requires the last neuron's activation to be linear, so the network can output any real-valued prediction to compare against the real-valued target.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. A dataset has 3 classes. Per the source notes' rule, how many neurons should the output layer have for categorical cross-entropy?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. 3</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. 1</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. 2</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It doesn't matter</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> In multiclass categorical classification, the number of output neurons must match the number of classes — one neuron per class, each outputting that class's softmax probability.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. What is the key practical advantage of sparse categorical cross-entropy over regular categorical cross-entropy?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. It works for regression instead of classification</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. It requires more output neurons</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. It accepts plain integer labels directly, skipping one-hot encoding, which makes it faster</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It only works for binary classification</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Sparse categorical cross-entropy takes the integer class index directly instead of a one-hot vector — mathematically equivalent to categorical cross-entropy, but faster and lighter on memory since it skips the one-hot encoding step.
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--primary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="dl-06.html" class="bg-[var(--secondary)] text-[var(--on-secondary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">Next: Backpropagation</a>
+        </div>

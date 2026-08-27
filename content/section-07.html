@@ -1,0 +1,229 @@
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-3 py-1 mb-3">Source: CampusX — 100 Days of Machine Learning</span>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">7. Feature Engineering</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Feature Transformation · Construction · Selection · Extraction</p>
+        </div>
+
+        <!-- DAY 23 -->
+        <section id="day-23" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 23</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Feature Engineering (IMP)</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Feature engineering is the process of creating, modifying, and selecting input features using domain knowledge so ML models learn patterns better and give higher accuracy.</p>
+
+          <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">Purpose</h4>
+            <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+              <li>Improve model performance</li>
+              <li>Reduce noise</li>
+              <li>Make patterns easier for algorithms to learn</li>
+              <li>Reduce overfitting and training time</li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Data Preprocessing vs Feature Engineering</h3>
+            <div class="grid sm:grid-cols-2 gap-3">
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+                <h4 class="font-semibold text-[var(--on-background)] mb-1">Data Preprocessing</h4>
+                <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+                  <li>Works on raw data</li>
+                  <li>Focuses on data quality (accuracy, completeness, consistency)</li>
+                  <li>Makes data usable</li>
+                  <li>Steps include cleaning, formatting, and fixing errors</li>
+                </ul>
+                <p class="text-xs text-[var(--on-surface-variant)] mt-2"><strong class="text-[var(--on-background)]">Examples:</strong> handling missing values, removing duplicates, fixing inconsistent data, correcting data types.</p>
+              </div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm">
+                <h4 class="font-semibold text-[var(--on-background)] mb-1">Feature Engineering</h4>
+                <ul class="text-sm text-[var(--on-surface)] space-y-1 list-disc list-inside">
+                  <li>Works after basic preprocessing</li>
+                  <li>Focuses on features, not raw data</li>
+                  <li>Shapes data for better learning</li>
+                  <li>Strongly depends on domain knowledge</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--primary)]">1. Feature Transformation</h3>
+            <p class="text-sm text-[var(--on-surface)]">Modify existing features so algorithms perform better.</p>
+            <div class="grid sm:grid-cols-2 gap-3">
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">a. Missing Value Imputation</strong>
+                <ul class="mt-1 space-y-0.5 list-disc list-inside text-[var(--on-surface-variant)]">
+                  <li>Mean, median, mode</li>
+                  <li>KNN imputation</li>
+                  <li>Model based imputation</li>
+                </ul>
+              </div>
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">b. Handling Categorical Variables</strong>
+                <ul class="mt-1 space-y-0.5 list-disc list-inside text-[var(--on-surface-variant)]">
+                  <li>Label Encoding</li>
+                  <li>One Hot Encoding</li>
+                  <li>Target Encoding</li>
+                </ul>
+              </div>
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">c. Outlier Handling</strong>
+                <ul class="mt-1 space-y-0.5 list-disc list-inside text-[var(--on-surface-variant)]">
+                  <li>Detection using IQR, Z score</li>
+                  <li>Capping</li>
+                  <li>Removal when justified</li>
+                </ul>
+              </div>
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                <strong class="text-[var(--on-background)]">d. Feature Scaling</strong>
+                <ul class="mt-1 space-y-0.5 list-disc list-inside text-[var(--on-surface-variant)]">
+                  <li>Standardization</li>
+                  <li>Normalization</li>
+                  <li>Min Max scaling</li>
+                </ul>
+              </div>
+            </div>
+            <p class="text-sm text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Used for:</strong> distance based models, gradient descent based models.</p>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--secondary)]">2. Feature Construction</h3>
+            <p class="text-sm text-[var(--on-surface)]">Create new features from existing ones.</p>
+            <div class="grid sm:grid-cols-3 gap-3 text-sm">
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Feature splitting</strong>
+                <p class="text-[var(--on-surface-variant)] mt-1">Example: Date → day, month, year</p>
+              </div>
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Feature grouping</strong>
+                <p class="text-[var(--on-surface-variant)] mt-1">Example: Age → age groups</p>
+              </div>
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Mathematical combinations</strong>
+                <p class="text-[var(--on-surface-variant)] mt-1">Example: length × width = area</p>
+              </div>
+            </div>
+            <p class="text-sm text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Goal:</strong> capture hidden patterns, add meaningful information.</p>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--tertiary)]">3. Feature Selection</h3>
+            <p class="text-sm text-[var(--on-surface)]">Select only important features for the model.</p>
+            <p class="text-sm text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Why needed:</strong> reduce overfitting, improve model speed, remove irrelevant and redundant features.</p>
+            <div class="grid sm:grid-cols-3 gap-3 text-sm">
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Filter methods</strong>
+                <p class="text-[var(--on-surface-variant)] mt-1">correlation, chi square</p>
+              </div>
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Wrapper methods</strong>
+                <p class="text-[var(--on-surface-variant)] mt-1">forward, backward selection</p>
+              </div>
+              <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Embedded methods</strong>
+                <p class="text-[var(--on-surface-variant)] mt-1">Lasso, decision trees</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
+            <h3 class="font-h3 text-lg text-[var(--on-background)]">4. Feature Extraction</h3>
+            <p class="text-sm text-[var(--on-surface)]">Automatically transform data into new features, usually reducing dimensions.</p>
+            <p class="text-sm text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Key idea:</strong> original features are replaced with new ones.</p>
+            <p class="text-sm text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Examples:</strong> PCA, LDA, t-SNE.</p>
+            <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Real world example:</strong> instead of number of rooms and washrooms, use total area in square feet.
+            </div>
+            <p class="text-sm text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Used when:</strong> data has high dimensions, visualization is needed, noise reduction is required.</p>
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on Day 23. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-section-07">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. A dataset has inconsistent date formats and duplicate rows that need to be fixed before anything else can happen. Which stage does this belong to, and what comes right after it in the pipeline described?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Feature Extraction, then Feature Selection</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Feature Construction, then Data Preprocessing</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Data Preprocessing (fixing raw data quality), then Feature Engineering</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Feature Selection, then Data Preprocessing</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Fixing inconsistent data and removing duplicates are explicitly listed as Data Preprocessing examples. The notes state Feature Engineering "works after basic preprocessing" — so preprocessing always comes first.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. You split a "full_address" column into street, city, and zip code, and you also bucket a raw "age" column into "18-25", "26-40", etc. Which single Feature Engineering category covers both actions?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Feature Selection (filter methods)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Feature Construction — feature splitting and feature grouping</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Feature Extraction (PCA)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Feature Transformation — scaling</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Splitting a column (Date → day, month, year style) is "feature splitting" and bucketing a numeric column (Age → age groups) is "feature grouping" — both are named techniques under Feature Construction, whose goal is capturing hidden patterns and adding meaningful information.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. A dataset has 500 columns and you use a Lasso regression's coefficient shrinkage to automatically zero out unhelpful features during model fitting. Which Feature Selection method category is this, and how does it differ from a filter method?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Wrapper method — it iteratively adds/removes features by testing subsets, like Lasso does</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Filter method — it uses correlation to decide which columns to drop</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Feature extraction, since it reduces the effective number of used features</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Embedded method — selection happens as part of the model's own training process, unlike a filter method which scores features independently of any model (e.g. correlation, chi square) before training</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> The notes name Lasso and decision trees explicitly as embedded methods — selection is baked into training. Filter methods (correlation, chi square) score features independently before any model runs; wrapper methods (forward/backward selection) explicitly test different feature subsets against a model in a search loop.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. A housing dataset has "num_rooms" and "num_washrooms" as separate columns. Following the notes' own real-world example, replacing both with a single "total_area_sqft" feature is best classified as which technique, and why not Feature Selection?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Feature Extraction — original features are replaced with a new one, not merely kept-or-dropped as Feature Selection would do</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Feature Selection — it removes num_rooms and num_washrooms</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Data Preprocessing — it fixes data quality</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Feature Scaling — it normalizes room counts</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> This is the notes' own worked example for Feature Extraction, whose key idea is "original features are replaced with new ones" — distinct from Feature Selection, which only chooses a subset of existing features without creating new ones from combinations of the old ones.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. A KNN model (a distance-based algorithm) is performing poorly because one feature ranges 0-1 and another ranges 0-100,000, so the larger-range feature dominates distance calculations. Which Feature Transformation sub-technique directly fixes this, and what category does it fall under?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Missing Value Imputation</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Handling Categorical Variables</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Feature Scaling (standardization / normalization / min-max scaling) — explicitly listed as used for distance-based models</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Outlier Handling</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Feature Scaling (standardization, normalization, min max scaling) is listed under Feature Transformation and the notes explicitly say it's "used for: distance based models, gradient descent based models" — KNN being the canonical distance-based model affected by unscaled feature ranges.
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--primary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="section-08.html" class="bg-[var(--primary)] text-[var(--on-primary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">
+            Next: Feature Scaling →
+          </a>
+        </div>

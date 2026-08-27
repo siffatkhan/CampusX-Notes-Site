@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>14. Recurrent Neural Networks (RNN) — Sifat Notes</title>
+
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..800&family=Inter:ital,opsz,wght@0,14..32,400..700;1,14..32,400..700&family=JetBrains+Mono:wght@400..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script src="../assets/tailwind-config.js"></script>
+<link rel="stylesheet" href="../assets/theme.css">
+</head>
+<body class="antialiased min-h-screen font-body-md">
+
+<header class="bg-[var(--surface)] border-b border-[var(--outline-variant)] sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-4 md:px-lg py-2.5 md:py-sm max-w-[1200px] mx-auto">
+<a href="../index.html" class="flex items-center gap-2.5 md:gap-3 group min-w-0" title="Back to home">
+<div class="w-9 h-9 shrink-0 rounded-md bg-[var(--primary)] text-[var(--on-primary)] flex items-center justify-center font-h3 font-bold text-sm group-hover:opacity-85 transition-opacity">SN</div>
+<div class="min-w-0">
+<div class="font-h3 text-base md:text-lg font-semibold text-[var(--on-background)] leading-none truncate">Sifat Notes</div>
+<div class="hidden sm:block text-[11px] text-[var(--on-surface-variant)] mt-0.5 truncate">from CampusX's playlists</div>
+</div>
+</a>
+<nav class="hidden md:flex items-center gap-6 text-sm shrink-0">
+<a class="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors" href="../index.html">Home</a>
+<a class="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors" href="../index.html#courses">Courses</a>
+</nav>
+<div class="flex items-center gap-2 md:gap-3 shrink-0">
+<button id="mobileMenuBtn" class="md:hidden border border-[var(--outline-variant)] rounded-md p-1.5 text-[var(--on-background)] flex items-center justify-center" onclick="toggleSidebar()" aria-label="Toggle navigation">
+<span class="material-symbols-outlined text-[20px]">menu</span>
+</button>
+<button class="flex items-center gap-1.5 bg-[var(--surface-container)] border border-[var(--outline-variant)] text-[var(--on-background)] px-2.5 md:px-3 py-1.5 rounded-full text-xs font-label-caps hover:border-[var(--primary)] transition-colors" onclick="toggleTheme()" data-theme-btn>
+<span class="material-symbols-outlined text-[16px]" data-theme-icon>light_mode</span>
+<span data-theme-label class="hidden sm:inline">Light</span>
+</button>
+</div>
+</div>
+</header>
+
+
+<div class="flex flex-1">
+<div id="sidebarBackdrop" class="hidden fixed inset-0 bg-black/50 z-50 md:hidden" onclick="toggleSidebar()"></div>
+<aside id="sidebarSlot" class="flex flex-col bg-[var(--surface-container-low)] border-r border-[var(--outline-variant)] fixed left-0 top-[65px] h-[calc(100vh-65px)] w-[280px] py-md overflow-y-auto">
+<div class="px-lg mb-md">
+<input id="searchBox" placeholder="Search topics…" class="w-full bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-md px-3 py-2 text-sm text-[var(--on-background)] placeholder:text-[var(--on-surface-variant)] focus:outline-none focus:border-[var(--secondary)]">
+</div>
+
+<nav class="toc flex-1 px-2 space-y-1 text-sm" id="tocNav">
+
+<div class="px-3 pt-3 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Foundations</div>
+
+<details open>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--secondary)] font-semibold bg-[var(--surface-container-high)]/50">1. Introduction to Deep Learning <span class="chev text-[10px]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-01.html#dl-vs-ml" class="flex px-3 py-1.5 rounded-md text-[var(--secondary)] font-semibold bg-[var(--surface-container-high)]/40">Deep Learning vs ML</a>
+<a href="dl-01.html#types-of-neural-networks" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Types of Neural Networks</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">2. The Perceptron <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-02.html#perceptron" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Perceptron</a>
+<a href="dl-02.html#perceptron-trick" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Perceptron Trick</a>
+<a href="dl-02.html#perceptron-loss" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Perceptron Loss Function</a>
+<a href="dl-02.html#problem-with-perceptron" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Problem with Perceptron</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">3. Multi-Layer Perceptron <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-03.html#mlp-notation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">MLP Notation</a>
+<a href="dl-03.html#mlp-intuition" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">MLP Intuition</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">4. Forward Propagation <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-04.html#forward-propagation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Forward Propagation — Worked Example</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">5. Loss Functions <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-05.html#loss-functions-intro" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Loss vs Cost Function</a>
+<a href="dl-05.html#mse" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Mean Squared Error (MSE)</a>
+<a href="dl-05.html#mae" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Mean Absolute Error (MAE)</a>
+<a href="dl-05.html#huber-loss" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Huber Loss</a>
+<a href="dl-05.html#binary-cross-entropy" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Binary Cross-Entropy</a>
+<a href="dl-05.html#categorical-cross-entropy" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Categorical Cross-Entropy</a>
+<a href="dl-05.html#sparse-categorical-cross-entropy" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Sparse Categorical Cross-Entropy</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Training Deep Networks</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">6. Backpropagation <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-06.html#backprop-what" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Backpropagation — What</a>
+<a href="dl-06.html#backprop-how" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Backpropagation — How</a>
+<a href="dl-06.html#backprop-worked-example" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Worked Numeric Example</a>
+<a href="dl-06.html#derivative-vs-gradient" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Derivative vs Gradient</a>
+<a href="dl-06.html#epoch-vs-iteration" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Epoch vs Iteration</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">7. Vanishing &amp; Exploding Gradients <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-07.html#vanishing-gradient-problem" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Vanishing Gradient Problem</a>
+<a href="dl-07.html#detecting-vgp" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Detecting It</a>
+<a href="dl-07.html#solutions-to-vgp" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Solutions</a>
+<a href="dl-07.html#exploding-gradient-problem" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Exploding Gradient Problem</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">8. Training Toolkit <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-08.html#mlp-memoization" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">MLP Memoization</a>
+<a href="dl-08.html#gradient-descent-in-nn" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Gradient Descent in NNs</a>
+<a href="dl-08.html#improving-nn-performance" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Improving NN Performance</a>
+<a href="dl-08.html#early-stopping" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Early Stopping</a>
+<a href="dl-08.html#data-scaling-nn" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Data Scaling</a>
+<a href="dl-08.html#dropout-layer" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Dropout Layer</a>
+<a href="dl-08.html#regularization-dl" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Regularization</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">9. Activation Functions <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-09.html#why-activation-functions" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why Activation Functions</a>
+<a href="dl-09.html#ideal-activation-properties" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Ideal Properties</a>
+<a href="dl-09.html#sigmoid-activation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Sigmoid</a>
+<a href="dl-09.html#tanh-activation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Tanh</a>
+<a href="dl-09.html#relu-activation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">ReLU</a>
+<a href="dl-09.html#relu-variants" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">ReLU Variants</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">10. Optimizers <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-10.html#momentum" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Momentum</a>
+<a href="dl-10.html#nesterov-accelerated-gradient" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Nesterov (NAG)</a>
+<a href="dl-10.html#adagrad" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">AdaGrad</a>
+<a href="dl-10.html#rmsprop" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">RMSProp</a>
+<a href="dl-10.html#adam-optimizer" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Adam</a>
+<a href="dl-10.html#weight-initialization" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Weight Initialization</a>
+<a href="dl-10.html#batch-normalization" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Batch Normalization</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Convolutional Networks</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">11. CNN Fundamentals <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-11.html#cnn-intuition" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">CNN Intuition</a>
+<a href="dl-11.html#why-not-ann" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why Not Plain ANN</a>
+<a href="dl-11.html#convolution-operation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Convolution Operation</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">12. Padding, Strides &amp; Pooling <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-12.html#padding" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Padding</a>
+<a href="dl-12.html#strides" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Strides</a>
+<a href="dl-12.html#pooling" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Pooling</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">13. Architectures &amp; Transfer Learning <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-13.html#classic-cnn-architectures" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Classic CNN Architectures</a>
+<a href="dl-13.html#transfer-learning" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Transfer Learning</a>
+<a href="dl-13.html#feature-extraction" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Feature Extraction</a>
+<a href="dl-13.html#fine-tuning" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Fine-Tuning</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Sequence Models &amp; Attention</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">14. Recurrent Neural Networks <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-14.html#why-feedforward-fails" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why Feedforward Fails</a>
+<a href="dl-14.html#rnn-hidden-state" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Hidden State</a>
+<a href="dl-14.html#rnn-unrolled" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Unrolled Through Time</a>
+<a href="dl-14.html#bptt" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Backpropagation Through Time</a>
+<a href="dl-14.html#rnn-limitations" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">RNN Limitations</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">15. LSTM &amp; GRU <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-15.html#lstm-motivation" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why LSTM</a>
+<a href="dl-15.html#lstm-gates" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Three Gates</a>
+<a href="dl-15.html#gru" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">GRU</a>
+<a href="dl-15.html#lstm-vs-gru" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">LSTM vs GRU</a>
+<a href="dl-15.html#bidirectional-rnn" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Bidirectional RNN</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">16. Seq2Seq &amp; Encoder-Decoder <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-16.html#what-is-seq2seq" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">What Is Seq2Seq</a>
+<a href="dl-16.html#encoder-decoder" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Encoder-Decoder Architecture</a>
+<a href="dl-16.html#teacher-forcing" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Teacher Forcing</a>
+<a href="dl-16.html#bottleneck-problem" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The Bottleneck Problem</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">17. Attention Mechanism <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-17.html#attention-bottleneck-recap" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Solving the Bottleneck</a>
+<a href="dl-17.html#how-attention-works" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">How Attention Works</a>
+<a href="dl-17.html#calculating-attention-weights" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Calculating Attention Weights</a>
+<a href="dl-17.html#self-attention-vs-cross-attention-preview" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Self vs Cross Attention</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">18. The Transformer Architecture <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="dl-18.html#why-transformers" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Why Transformers</a>
+<a href="dl-18.html#self-attention" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Self-Attention</a>
+<a href="dl-18.html#multi-head-attention" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Multi-Head Attention</a>
+<a href="dl-18.html#positional-encoding" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Positional Encoding</a>
+<a href="dl-18.html#transformer-architecture" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Full Architecture</a>
+<a href="dl-18.html#bert" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">BERT</a>
+<a href="dl-18.html#gpt" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">GPT</a>
+<a href="dl-18.html#terminology-hierarchy" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Transformer vs LLM vs GPT</a>
+</div>
+</details>
+
+</nav>
+</aside>
+
+
+  <main class="flex-1 md:ml-[280px] px-4 py-6 md:p-lg max-w-[1200px] mx-auto w-full min-w-0">
+    <nav aria-label="Breadcrumb" class="flex flex-wrap text-sm text-[var(--on-surface-variant)] mb-4"><a href="../index.html" class="hover:text-[var(--secondary)]">Home</a><span class="mx-2">/</span><a href="../index.html#courses" class="hover:text-[var(--secondary)]">DL Track</a><span class="mx-2">/</span><span class="text-[var(--on-background)]">14. RNN</span></nav>
+
+    <div class="space-y-xl">
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-3 py-1 mb-3">Source: 100 Days of Deep Learning</span>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">14. Recurrent Neural Networks (RNN)</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Why feedforward nets fail on sequences · the recurrent hidden state · unrolling through time · backpropagation through time · why RNNs forget</p>
+        </div>
+
+        <!-- WHY FEEDFORWARD FAILS -->
+        <section id="why-feedforward-fails" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">RNN</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Why Plain Feedforward Networks Fail on Sequences</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Every network you've seen so far in this track — the MLP, the CNN — is a <strong class="text-[var(--on-background)]">feedforward</strong> network. Information travels in one direction only: input → hidden layers → output, start to finish, in a straight line. Critically, once one prediction is made, the network throws everything away and starts completely fresh for the next input. It has <strong class="text-[var(--on-background)]">no memory</strong> of anything it processed before.</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">That's a fine assumption for tabular data or images, where each row or each image genuinely is independent of the others. But it breaks down the moment <strong class="text-[var(--on-background)]">order carries meaning</strong>. Consider feeding the words of a sentence into a plain ANN one at a time: it has no built-in way to remember that the word it just saw was "not," so it cannot connect that to the word "good" arriving right after — "not good" and "good," in isolation, look unrelated to a network with no memory. On top of that, ANNs expect a fixed-size input vector, but sentences vary in length (5 words vs. 20 words) — forcing ANNs onto text means resorting to hacks like zero-padding every sentence out to some maximum length, which wastes computation on meaningless padding, turns a sequence problem into an awkward fixed-size prediction problem, and still <em>totally disregards the sequence</em> — the same set of words shuffled into a different order would look identical to the network, even though the meaning (and therefore the "sequence" of information) is completely lost.</p>
+
+          <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-md rounded-r-lg">
+            <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">The core distinction</h4>
+            <p class="text-sm text-[var(--on-surface)]">MLP and CNN are <strong class="text-[var(--on-background)]">feed-forward networks</strong> — information moves from start to end linearly, and every prediction is computed from scratch. In an <strong class="text-[var(--on-background)]">RNN</strong>, information in the hidden layer <strong class="text-[var(--on-background)]">loops back</strong> on itself, timestep after timestep, so each new prediction is informed by everything the network has already seen in that sequence. That loop is the single architectural idea that makes RNNs fundamentally different.</p>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">This is why RNNs exist specifically for <strong class="text-[var(--on-background)]">time-series, sequential, and ordered data</strong> — anything where "what came before" changes the meaning of "what comes now": stock prices over time, sensor readings, audio, and above all, text. RNNs are a type of <strong class="text-[var(--on-background)]">sequential model</strong>, and they're mostly used in NLP because they're so well suited to textual data, where word order is the entire point.</p>
+        </section>
+
+        <!-- THE RECURRENT HIDDEN STATE -->
+        <section id="rnn-hidden-state" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">RNN</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">The Recurrent Hidden State — the Network's Memory</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">At every timestep \(t\), an RNN does something an ANN never does: it takes <strong class="text-[var(--on-background)]">two</strong> inputs — the current input \(x_t\) <em>and</em> the previous hidden state \(h_{t-1}\) — combines them, and produces a new hidden state \(h_t\). That \(h_t\) is a running summary of "everything relevant seen so far," and it gets carried forward to the next timestep as part of its input. This is exactly the "loop back" from the box above, written out mathematically:</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+            $$ h_t = \tanh\big(W_{hh}\,h_{t-1} + W_{xh}\,x_t + b\big) $$
+          </div>
+          <p class="text-sm text-[var(--on-surface)]">Optionally, at any timestep the network can also emit an output \(y_t\), computed from the current hidden state:</p>
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+            $$ y_t = f\big(W_{hy}\,h_t + b_y\big) $$
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Notice something important: \(W_{hh}\), \(W_{xh}\), and \(b\) don't change from timestep to timestep — the <strong class="text-[var(--on-background)]">same weights are reused at every single position</strong> in the sequence. This is precisely why it's called a <strong class="text-[var(--on-background)]">recurrent</strong> network: the hidden layer recurs — reoccurs — again and again, fed new input each time, but always through the identical set of weights. At the very first timestep, there is no "previous" hidden state to feed in yet, so by convention \(h_0\) is initialized to a vector of zeros, purely to keep the computation consistent across the very first step and every step after it.</p>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Worked walkthrough — processing "I am fine"</h3>
+            <p class="text-sm text-[var(--on-surface)] mb-3">Feed the sentence in one word at a time. At each step the RNN cell combines the current word with whatever it's remembered so far, and updates its memory:</p>
+            <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead>
+                  <tr class="bg-[var(--surface-container-high)]">
+                    <th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Timestep</th>
+                    <th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Input word</th>
+                    <th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">What the cell does</th>
+                    <th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Resulting memory</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">t = 1</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">"I"</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Combines "I" with the blank starting memory \(h_0 = 0\)</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Updates to \(h_1\)</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">t = 2</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">"am"</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Combines "am" with \(h_1\) (which already "contains" a trace of "I")</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Updates to \(h_2\)</td></tr>
+                  <tr><td class="p-2.5 font-semibold">t = 3</td><td class="p-2.5">"fine"</td><td class="p-2.5">Combines "fine" with \(h_2\) (which carries traces of both "I" and "am")</td><td class="p-2.5">Updates to \(h_3\)</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-sm text-[var(--on-surface-variant)] mt-2">By the time the RNN reaches "fine," \(h_3\) is a compressed summary of the whole phrase so far — not just the last word in isolation. That's the entire trick: memory accumulates one word at a time instead of being recomputed from nothing.</p>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm text-sm text-[var(--on-surface)]">
+            <strong class="text-[var(--on-background)]">How data is actually shaped for an RNN.</strong> A single sequence is fed as <code class="text-[var(--secondary)]">(timesteps, input_features)</code> — e.g. <code class="text-[var(--secondary)]">(3, 5)</code> for a 3-word sentence where each word is a 5-dimensional vector. Keras's <code class="text-[var(--secondary)]">SimpleRNN</code> layer expects a whole batch at once, shaped <code class="text-[var(--secondary)]">(batch_size, timesteps, input_features)</code> — e.g. <code class="text-[var(--secondary)]">(3, 4, 5)</code> means "3 sentences/documents, each 4 words long, each word a 5-dim vector," all processed together.</p>
+          </div>
+        </section>
+
+        <!-- UNROLLED DIAGRAM -->
+        <section id="rnn-unrolled" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">RNN</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Unrolling the RNN Through Time</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">A single RNN cell is easiest to understand if you "unroll" it — draw a fresh copy of the same cell for every timestep, connected by the hidden state passing from one to the next. Every one of these copies is the <em>same</em> cell, sharing the exact same weights; drawing it unrolled is purely a way to visualize how information flows forward through time.</p>
+
+          <div class="border-l-4 border-[var(--outline)] bg-[var(--surface-container-high)]/40 p-sm rounded-r-lg text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Illustrative aid</strong> — generated for this site to visualize the architecture.</div>
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md flex justify-center overflow-x-auto">
+            <svg viewBox="0 0 760 320" class="w-full max-w-[760px] min-w-[560px]" role="img" aria-label="RNN unrolled through three timesteps, processing the words I, am, fine, with hidden state passed from each cell to the next">
+              <defs>
+                <marker id="arrowSec" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                  <path d="M0,0 L10,5 L0,10 z" fill="var(--secondary)"/>
+                </marker>
+                <marker id="arrowPri" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                  <path d="M0,0 L10,5 L0,10 z" fill="var(--primary)"/>
+                </marker>
+                <marker id="arrowTer" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                  <path d="M0,0 L10,5 L0,10 z" fill="var(--tertiary)"/>
+                </marker>
+              </defs>
+
+              <!-- h0 seed -->
+              <rect x="15" y="150" width="60" height="40" rx="8" fill="var(--surface-container-high)" stroke="var(--outline)" stroke-width="1.5"/>
+              <text x="45" y="174" text-anchor="middle" font-size="13" fill="var(--on-surface-variant)">h₀ = 0</text>
+              <line x1="75" y1="170" x2="118" y2="170" stroke="var(--secondary)" stroke-width="2.5" marker-end="url(#arrowSec)"/>
+
+              <!-- Cell 1 -->
+              <rect x="120" y="130" width="110" height="80" rx="14" fill="var(--secondary-container)" fill-opacity="0.18" stroke="var(--secondary)" stroke-width="2"/>
+              <text x="175" y="165" text-anchor="middle" font-size="13" font-weight="600" fill="var(--on-background)">RNN cell</text>
+              <text x="175" y="184" text-anchor="middle" font-size="11" fill="var(--on-surface-variant)">t = 1</text>
+              <!-- x1 in -->
+              <line x1="175" y1="290" x2="175" y2="212" stroke="var(--primary)" stroke-width="2.5" marker-end="url(#arrowPri)"/>
+              <text x="175" y="308" text-anchor="middle" font-size="13" fill="var(--primary)">x₁ = "I"</text>
+              <!-- y1 out (optional, dashed) -->
+              <line x1="175" y1="128" x2="175" y2="65" stroke="var(--tertiary)" stroke-width="2" stroke-dasharray="4 3" marker-end="url(#arrowTer)"/>
+              <text x="175" y="50" text-anchor="middle" font-size="12" fill="var(--tertiary)">y₁ (optional)</text>
+
+              <!-- h1 arrow to cell 2 -->
+              <line x1="230" y1="170" x2="338" y2="170" stroke="var(--secondary)" stroke-width="2.5" marker-end="url(#arrowSec)"/>
+              <text x="284" y="158" text-anchor="middle" font-size="13" fill="var(--secondary)">h₁</text>
+
+              <!-- Cell 2 -->
+              <rect x="340" y="130" width="110" height="80" rx="14" fill="var(--secondary-container)" fill-opacity="0.18" stroke="var(--secondary)" stroke-width="2"/>
+              <text x="395" y="165" text-anchor="middle" font-size="13" font-weight="600" fill="var(--on-background)">RNN cell</text>
+              <text x="395" y="184" text-anchor="middle" font-size="11" fill="var(--on-surface-variant)">t = 2</text>
+              <line x1="395" y1="290" x2="395" y2="212" stroke="var(--primary)" stroke-width="2.5" marker-end="url(#arrowPri)"/>
+              <text x="395" y="308" text-anchor="middle" font-size="13" fill="var(--primary)">x₂ = "am"</text>
+              <line x1="395" y1="128" x2="395" y2="65" stroke="var(--tertiary)" stroke-width="2" stroke-dasharray="4 3" marker-end="url(#arrowTer)"/>
+              <text x="395" y="50" text-anchor="middle" font-size="12" fill="var(--tertiary)">y₂ (optional)</text>
+
+              <!-- h2 arrow to cell 3 -->
+              <line x1="450" y1="170" x2="558" y2="170" stroke="var(--secondary)" stroke-width="2.5" marker-end="url(#arrowSec)"/>
+              <text x="504" y="158" text-anchor="middle" font-size="13" fill="var(--secondary)">h₂</text>
+
+              <!-- Cell 3 -->
+              <rect x="560" y="130" width="110" height="80" rx="14" fill="var(--secondary-container)" fill-opacity="0.18" stroke="var(--secondary)" stroke-width="2"/>
+              <text x="615" y="165" text-anchor="middle" font-size="13" font-weight="600" fill="var(--on-background)">RNN cell</text>
+              <text x="615" y="184" text-anchor="middle" font-size="11" fill="var(--on-surface-variant)">t = 3</text>
+              <line x1="615" y1="290" x2="615" y2="212" stroke="var(--primary)" stroke-width="2.5" marker-end="url(#arrowPri)"/>
+              <text x="615" y="308" text-anchor="middle" font-size="13" fill="var(--primary)">x₃ = "fine"</text>
+              <line x1="615" y1="128" x2="615" y2="65" stroke="var(--tertiary)" stroke-width="2" stroke-dasharray="4 3" marker-end="url(#arrowTer)"/>
+              <text x="615" y="50" text-anchor="middle" font-size="12" fill="var(--tertiary)">y₃ (optional)</text>
+
+              <!-- h3 continues -->
+              <line x1="670" y1="170" x2="730" y2="170" stroke="var(--secondary)" stroke-width="2.5" stroke-dasharray="4 3" marker-end="url(#arrowSec)"/>
+              <text x="715" y="158" text-anchor="middle" font-size="13" fill="var(--secondary)">h₃</text>
+
+              <text x="380" y="20" text-anchor="middle" font-size="11" fill="var(--on-surface-variant)">Same cell, same weights (W), redrawn once per timestep — only the hidden state (h) and input (x) change</text>
+            </svg>
+          </div>
+          <p class="text-sm text-[var(--on-surface)]">Read this diagram left to right, exactly as time passes: each box is the identical RNN cell, taking its own word (\(x_t\), fed in from below) plus the memory handed to it from the previous cell (\(h_{t-1}\), arriving from the left). It blends the two together into a new memory (\(h_t\)) which is passed rightward to the next cell, and — depending on the task — can also produce an output (\(y_t\), shown dashed since not every RNN needs an output at every single step).</p>
+        </section>
+
+        <!-- RNN ARCHITECTURE TYPES -->
+        <section id="rnn-types" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">RNN</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Five RNN Architecture Shapes</h2>
+          </div>
+          <p class="text-[var(--on-surface)] leading-relaxed">Not every sequence task wants an output at every timestep. Whether you feed one input or many, and whether you want one output or many, defines a distinct RNN "shape":</p>
+          <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead>
+                <tr class="bg-[var(--surface-container-high)]">
+                  <th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Shape</th>
+                  <th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Pattern</th>
+                  <th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Example</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">One-to-One</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">image → class</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Not really a recurrent problem — no sequence involved at all.</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">One-to-Many</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">image → sequence</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Photo → "A dog is running." — image captioning.</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Many-to-One</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">sequence → single label</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">"I love this phone." → Positive — sentiment analysis.</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Many-to-Many (variable length)</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">sequence → sequence, different lengths</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">"I love AI" → "J'aime l'IA" — machine translation.</td></tr>
+                <tr><td class="p-2.5 font-semibold">Many-to-Many (same length)</td><td class="p-2.5">sequence → sequence, aligned position-by-position</td><td class="p-2.5">John / lives / in / Paris → Name / Verb / Prep / Location — Named Entity Recognition, POS tagging.</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="text-xs text-[var(--on-surface-variant)]">The "variable length" many-to-many case — input and output sequences of <em>different</em> lengths, like translation — is genuinely hard, and gets its own dedicated architecture two pages from now (Encoder-Decoder).</p>
+        </section>
+
+        <!-- BPTT -->
+        <section id="bptt" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">RNN</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Backpropagation Through Time (BPTT)</h2>
+          </div>
+          <p class="text-[var(--on-surface)] leading-relaxed">Training an ordinary MLP means backpropagating the error through its layers. Training an RNN means backpropagating the error through its layers <em>and</em> through <strong class="text-[var(--on-background)]">time</strong> — because the unrolled diagram above is, for the purposes of the gradient computation, just a very deep feedforward network, where "depth" is however many timesteps long the sequence is. This is called <strong class="text-[var(--on-background)]">Backpropagation Through Time</strong>.</p>
+          <p class="text-[var(--on-surface)] leading-relaxed">Concretely: the error computed at the final timestep has to flow backward through every single previous cell, all the way back to \(t=1\), because every hidden state \(h_t\) depends on \(h_{t-1}\), which depends on \(h_{t-2}\), and so on. At every one of those steps back, the gradient gets multiplied again by the same recurring weight matrix \(W_{hh}\). A 20-word sentence isn't backpropagated through 20 timesteps' worth of independent weights — it's the <em>same</em> weight matrix multiplied into the gradient chain 20 times over.</p>
+          <div class="border-l-4 border-[var(--error)] bg-[var(--error-container)]/10 p-sm rounded-r-lg">
+            <p class="text-sm text-[var(--on-surface)]">Repeatedly multiplying by the same matrix, over and over, is exactly the kind of operation that either shrinks a number toward zero or blows it up toward infinity, depending on whether that matrix's values are smaller or larger than 1. That's <em>why</em> RNNs are so much more prone to vanishing and exploding gradients than a normal feedforward network of similar size — normal backprop multiplies through a handful of distinct layers; BPTT multiplies through potentially hundreds of repeated copies of the same weights.</p>
+          </div>
+        </section>
+
+        <!-- LIMITATIONS -->
+        <section id="rnn-limitations" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--secondary)] bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/30 rounded-full px-2.5 py-0.5">RNN</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">RNN's Two Core Limitations</h2>
+          </div>
+          <p class="text-[var(--on-surface)] leading-relaxed">RNNs are conceptually the right tool for sequential data, but in practice, plain ("vanilla") RNNs are rarely used directly, because they suffer from two closely-related problems — both a direct consequence of BPTT above.</p>
+
+          <div class="grid gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+              <h3 class="font-h3 text-lg text-[var(--secondary)]">1. Vanishing / exploding gradients</h3>
+              <p class="text-sm text-[var(--on-surface)]">Because BPTT multiplies the same weight matrix into the gradient at every timestep, long sequences push that product toward one of two extremes. If the repeated multiplication shrinks the gradient toward zero, this is the <strong class="text-[var(--on-background)]">vanishing gradient</strong> problem — early timesteps barely get updated at all, since almost no error signal survives the trip backward to reach them. If it instead grows without bound, this is the <strong class="text-[var(--on-background)]">exploding gradient</strong> problem — the long-term dependency's gradient becomes so large it dominates and destabilizes the whole update, a "stagnated gradient" that swamps everything else.</p>
+              <div class="grid sm:grid-cols-2 gap-3 mt-2">
+                <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                  <strong class="text-[var(--on-background)]">Cures for vanishing gradients:</strong> ReLU-family activations instead of tanh/sigmoid, better weight initialization (e.g. initializing close to an identity matrix), skip-connection RNN variants, or simply moving to LSTM.
+                </div>
+                <div class="bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+                  <strong class="text-[var(--on-background)]">Cures for exploding gradients:</strong> gradient clipping (capping the gradient's magnitude before the update is applied), a more conservative/controlled learning rate, or again, LSTM.
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+              <h3 class="font-h3 text-lg text-[var(--secondary)]">2. Only short-term memory</h3>
+              <p class="text-sm text-[var(--on-surface)]">The practical consequence of vanishing gradients is that an RNN's hidden state is dominated by recent timesteps and effectively <strong class="text-[var(--on-background)]">forgets</strong> information from many steps back — it has only short-term memory (STM). Imagine a sentence: <em>"I grew up in France, went to school there, worked there for a decade... and I speak fluent ___."</em> The word the model needs ("French") depends on context from way back at the start of the sentence — but by the time the RNN reaches the blank, that early context has been diluted almost to nothing by dozens of intervening updates. This is exactly the <strong class="text-[var(--on-background)]">long-range dependency</strong> problem: the further back the relevant information sits, the less of it survives.</p>
+            </div>
+          </div>
+
+          <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-md rounded-r-lg">
+            <p class="text-sm text-[var(--on-surface)]">Both problems point at the same root cause: a plain RNN has no dedicated mechanism for preserving information over long stretches — everything is squeezed through the same tiny hidden state, overwritten a little more at every timestep. Fixing this properly requires a structural change to the cell itself, giving it an explicit long-term memory channel alongside its short-term one. That's exactly what <strong class="text-[var(--on-background)]">LSTM</strong> — the subject of the next page — was built to do.</p>
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on RNNs. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-dl-14">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. What is the single architectural feature that separates an RNN from an MLP/CNN?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. RNNs use more layers</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. RNNs use a different activation function</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Information in an RNN's hidden layer loops back, so each step's output also depends on a running memory of previous steps, instead of purely flowing start-to-end</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. RNNs don't use weights</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> MLPs/CNNs are strictly feed-forward — no memory of prior inputs. An RNN's hidden state loops back into itself at the next timestep, giving it memory of everything processed so far in the sequence.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. At timestep t, what two things does an RNN cell combine to produce the new hidden state h_t?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. The current input x_t and the final output y_t</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. The current input x_t and the previous hidden state h_(t-1)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Two randomly sampled past inputs</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Only the current input; hidden state is unused</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> h_t = tanh(W_hh · h_(t-1) + W_xh · x_t + b) — the current input and the previous hidden state are combined through shared weights to produce the new memory.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. In an unrolled RNN diagram, why do all the timestep "boxes" share the exact same weights?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. They're all the same physical RNN cell, just redrawn once per timestep to visualize time flowing left to right — it's one set of weights reused, not many independent ones</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Sharing weights is an optional optimization you can turn off</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. It only happens during inference, not training</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Weight sharing only applies to bias terms</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Unrolling is a visualization device. There is only one RNN cell and one set of weights; the same weights are applied again and again as the sequence progresses — that repetition is also exactly what causes BPTT's vanishing/exploding gradient issue.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. Why does Backpropagation Through Time (BPTT) make vanishing/exploding gradients worse than in a typical feedforward network?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. BPTT doesn't use the chain rule</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. RNNs have more neurons per layer than typical feedforward networks</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. BPTT uses a larger learning rate by default</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. The same weight matrix gets multiplied into the gradient once per timestep, so a long sequence repeatedly multiplies by the same matrix many times over, pushing the product toward 0 or infinity</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Because every timestep reuses the same W_hh, backpropagating through T timesteps multiplies the gradient by that same matrix T times — repeated multiplication shrinks or blows up the value far more severely than the handful of distinct layer-to-layer multiplications in a normal feedforward net.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. A vanilla RNN reads a 40-word paragraph and needs a detail mentioned in word 2 to correctly predict word 40. What typically happens, and why?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. It works perfectly — RNNs have unlimited memory by design</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. The detail is likely lost — RNNs have only short-term memory, and information fades as it's repeatedly overwritten through many timesteps (the long-range dependency problem)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. The model automatically re-reads word 2 when needed</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. This only affects CNNs, not RNNs</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> This is the RNN's defining weakness: it has only short-term memory. Over many timesteps, early information gets diluted almost to nothing — the long-range dependency problem, a direct consequence of vanishing gradients, and exactly what motivates LSTM.
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--secondary)] text-[var(--on-secondary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--secondary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="dl-15.html" class="bg-[var(--secondary)] text-[var(--on-secondary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">Next: LSTM & GRU</a>
+        </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="../assets/app.js"></script>
+
+</body>
+</html>

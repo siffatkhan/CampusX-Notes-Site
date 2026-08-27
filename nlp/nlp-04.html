@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>4. Word2Vec & Text Classification — Sifat Notes</title>
+
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..800&family=Inter:ital,opsz,wght@0,14..32,400..700;1,14..32,400..700&family=JetBrains+Mono:wght@400..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script src="../assets/tailwind-config.js"></script>
+<link rel="stylesheet" href="../assets/theme.css">
+</head>
+<body class="antialiased min-h-screen font-body-md">
+
+<header class="bg-[var(--surface)] border-b border-[var(--outline-variant)] sticky top-0 z-50">
+<div class="flex justify-between items-center w-full px-4 md:px-lg py-2.5 md:py-sm max-w-[1200px] mx-auto">
+<a href="../index.html" class="flex items-center gap-2.5 md:gap-3 group min-w-0" title="Back to home">
+<div class="w-9 h-9 shrink-0 rounded-md bg-[var(--primary)] text-[var(--on-primary)] flex items-center justify-center font-h3 font-bold text-sm group-hover:opacity-85 transition-opacity">SN</div>
+<div class="min-w-0">
+<div class="font-h3 text-base md:text-lg font-semibold text-[var(--on-background)] leading-none truncate">Sifat Notes</div>
+<div class="hidden sm:block text-[11px] text-[var(--on-surface-variant)] mt-0.5 truncate">from CampusX's playlists</div>
+</div>
+</a>
+<nav class="hidden md:flex items-center gap-6 text-sm shrink-0">
+<a class="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors" href="../index.html">Home</a>
+<a class="text-[var(--on-surface-variant)] hover:text-[var(--primary)] transition-colors" href="../index.html#courses">Courses</a>
+</nav>
+<div class="flex items-center gap-2 md:gap-3 shrink-0">
+<button id="mobileMenuBtn" class="md:hidden border border-[var(--outline-variant)] rounded-md p-1.5 text-[var(--on-background)] flex items-center justify-center" onclick="toggleSidebar()" aria-label="Toggle navigation">
+<span class="material-symbols-outlined text-[20px]">menu</span>
+</button>
+<button class="flex items-center gap-1.5 bg-[var(--surface-container)] border border-[var(--outline-variant)] text-[var(--on-background)] px-2.5 md:px-3 py-1.5 rounded-full text-xs font-label-caps hover:border-[var(--primary)] transition-colors" onclick="toggleTheme()" data-theme-btn>
+<span class="material-symbols-outlined text-[16px]" data-theme-icon>light_mode</span>
+<span data-theme-label class="hidden sm:inline">Light</span>
+</button>
+</div>
+</div>
+</header>
+
+
+<div class="flex flex-1">
+<div id="sidebarBackdrop" class="hidden fixed inset-0 bg-black/50 z-50 md:hidden" onclick="toggleSidebar()"></div>
+<aside id="sidebarSlot" class="flex flex-col bg-[var(--surface-container-low)] border-r border-[var(--outline-variant)] fixed left-0 top-[65px] h-[calc(100vh-65px)] w-[280px] py-md overflow-y-auto">
+<div class="px-lg mb-md">
+<input id="searchBox" placeholder="Search topics…" class="w-full bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-md px-3 py-2 text-sm text-[var(--on-background)] placeholder:text-[var(--on-surface-variant)] focus:outline-none focus:border-[var(--tertiary)]">
+</div>
+
+<nav class="toc flex-1 px-2 space-y-1 text-sm" id="tocNav">
+
+<div class="px-3 pt-3 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">NLP Fundamentals</div>
+
+<details open>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--tertiary)] font-semibold bg-[var(--surface-container-high)]/50">1. Introduction to NLP <span class="chev text-[10px]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="nlp-01.html#what-is-nlp" class="flex px-3 py-1.5 rounded-md text-[var(--tertiary)] font-semibold bg-[var(--surface-container-high)]/40">What Is NLP</a>
+<a href="nlp-01.html#common-nlp-tasks" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Common NLP Tasks</a>
+<a href="nlp-01.html#nlp-approaches" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Approaches to NLP</a>
+<a href="nlp-01.html#nlp-challenges" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Challenges in NLP</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">2. Pipeline &amp; Preprocessing <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="nlp-02.html#nlp-pipeline" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">The NLP Pipeline</a>
+<a href="nlp-02.html#text-cleanup" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Text Cleanup</a>
+<a href="nlp-02.html#tokenization" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Tokenization</a>
+<a href="nlp-02.html#stopwords" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Stop-Word Removal</a>
+<a href="nlp-02.html#stemming-lemmatization" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Stemming vs Lemmatization</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Representing Text</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">3. Text Representation <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="nlp-03.html#one-hot-encoding" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">One-Hot Encoding</a>
+<a href="nlp-03.html#bag-of-words" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Bag of Words</a>
+<a href="nlp-03.html#n-grams" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">N-Grams</a>
+<a href="nlp-03.html#tfidf" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">TF-IDF</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">4. Word2Vec &amp; Classification <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="nlp-04.html#word2vec-intuition" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Word2Vec Intuition</a>
+<a href="nlp-04.html#cbow-skipgram" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">CBOW vs Skip-gram</a>
+<a href="nlp-04.html#text-classification" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Text Classification</a>
+</div>
+</details>
+
+<div class="px-3 pt-4 pb-1 text-[10px] font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Extraction Tasks</div>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">5. POS Tagging <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="nlp-05.html#pos-tagging-basics" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">What Is POS Tagging</a>
+<a href="nlp-05.html#pos-tagging-spacy" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Tagging with spaCy</a>
+<a href="nlp-05.html#hmm-pos-tagging" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">HMM-Based Tagging</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">6. Named Entity Recognition <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="nlp-06.html#ner-basics" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">What Is NER</a>
+<a href="nlp-06.html#ner-spacy" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">NER with spaCy</a>
+<a href="nlp-06.html#ner-approaches" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Approaches to NER</a>
+</div>
+</details>
+
+<details>
+<summary class="flex items-center justify-between px-3 py-2 rounded-md text-[var(--on-background)] font-semibold hover:bg-[var(--surface-container-high)] transition-colors">7. Topic Modeling <span class="chev text-[10px] text-[var(--on-surface-variant)]">▶</span></summary>
+<div class="sub-links pl-3 border-l border-[var(--outline-variant)] ml-3 mt-1 mb-2 space-y-0.5">
+<a href="nlp-07.html#what-is-topic-modeling" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">What Is Topic Modeling</a>
+<a href="nlp-07.html#lda" class="flex px-3 py-1.5 rounded-md text-[var(--on-surface-variant)] hover:bg-[var(--surface-container-high)] transition-colors">Latent Dirichlet Allocation</a>
+</div>
+</details>
+
+</nav>
+</aside>
+
+
+  <main class="flex-1 md:ml-[280px] px-4 py-6 md:p-lg max-w-[1200px] mx-auto w-full min-w-0">
+    <nav aria-label="Breadcrumb" class="flex flex-wrap text-sm text-[var(--on-surface-variant)] mb-4"><a href="../index.html" class="hover:text-[var(--tertiary)]">Home</a><span class="mx-2">/</span><a href="../index.html#courses" class="hover:text-[var(--tertiary)]">NLP Track</a><span class="mx-2">/</span><span class="text-[var(--on-background)]">4. Word2Vec & Classification</span></nav>
+
+    <div class="space-y-xl">
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--tertiary)] bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/30 rounded-full px-3 py-1 mb-3">Source: 100 Days of Deep Learning — NLP Notes</span>
+          <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">4. Word2Vec &amp; Text Classification</h1>
+          <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Dense semantic embeddings · CBOW vs Skip-gram · Cosine similarity · The text classification pipeline</p>
+        </div>
+
+        <!-- WORD EMBEDDINGS -->
+        <section id="word-embeddings" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--tertiary)] bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/30 rounded-full px-2.5 py-0.5">NLP</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">What Is Word Embedding?</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed"><strong class="text-[var(--on-background)]">Word Embedding</strong> is the umbrella term for any technique that converts text into numerical vectors, so machines (which only understand numbers) can process language. All the text representation techniques from chapter 3, plus Word2Vec, fall under this umbrella — they split into two families:</p>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Frequency-based</strong> — count how often words appear: Bag of Words, TF-IDF, GloVe (based on matrix factorization of word co-occurrence counts).</div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Prediction-based</strong> — train a neural network to predict something, and use the learned weights as vectors: <strong class="text-[var(--on-background)]">Word2Vec</strong>.</div>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Old techniques like BoW/TF-IDF just count occurrences — they have no understanding of meaning. "Happy" and "joy" are treated as completely unrelated, just like "happy" and "table" would be. Word2Vec fixes three major problems at once:</p>
+
+          <div class="grid sm:grid-cols-3 gap-3">
+            <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm"><strong class="text-[var(--on-background)]">1. Captures semantic meaning</strong> — "happy" and "joy" end up close together in vector space.</div>
+            <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm"><strong class="text-[var(--on-background)]">2. Low-dimensional</strong> — compact vectors (commonly 100–300 dims) instead of a vector as long as the whole vocabulary → much faster computation.</div>
+            <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm"><strong class="text-[var(--on-background)]">3. Dense</strong> — most values are non-zero (unlike sparse BoW/TF-IDF), which generalizes better and reduces overfitting.</div>
+          </div>
+
+          <div class="border-l-4 border-[var(--outline)] bg-[var(--surface-container-high)]/40 p-sm rounded-r-lg text-sm text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Analogy:</strong> BoW/TF-IDF describes a person only by which exact words appear on their ID card — very rigid, no notion of similarity. Word2Vec describes a person using a rich profile of traits (personality, interests, habits) — so two people can be recognized as "similar" even if their ID cards look nothing alike.</div>
+        </section>
+
+        <!-- INTUITION -->
+        <section id="word2vec-intuition" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--tertiary)] bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/30 rounded-full px-2.5 py-0.5">NLP</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">The Core Intuition Behind Word2Vec</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">The single most important idea: <strong class="text-[var(--on-background)]">words that appear in similar contexts tend to have similar meanings</strong>. This is the <strong class="text-[var(--on-background)]">Distributional Hypothesis</strong> — "a word is known by the company it keeps." If "king" and "queen" often appear surrounded by similar neighboring words (royal, throne, crown, palace), the model learns they must be semantically related — without ever being told what "royal" means.</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">To build intuition, imagine manually describing words using human-understandable features — gender, wealth, power, whether it speaks:</p>
+
+          <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Word</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Gender</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Wealth</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Power</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Speaks</th></tr></thead>
+              <tbody>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">King</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">+1.0</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">0.9</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">0.9</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">1.0</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Queen</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">−1.0</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">0.9</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">0.9</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">1.0</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Man</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">+1.0</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">0.3</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">0.2</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">1.0</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Woman</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">−1.0</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">0.3</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">0.2</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">1.0</td></tr>
+                <tr><td class="p-2.5 font-semibold">Monkey</td><td class="p-2.5">0.0</td><td class="p-2.5">0.0</td><td class="p-2.5">0.1</td><td class="p-2.5">0.0</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Each word becomes a point in an n-dimensional space defined by these feature values; words with similar values sit close together geometrically. <strong class="text-[var(--on-background)]">The catch:</strong> we don't manually design these features — that's impossible to do for every nuance of language. Instead a neural network automatically discovers these features by solving a prediction task, and the numbers it lands on become each word's vector. We don't even know what each dimension "means" — the network invents its own abstract features that happen to organize words meaningfully.</p>
+        </section>
+
+        <!-- ARCHITECTURE -->
+        <section id="word2vec-architecture" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--tertiary)] bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/30 rounded-full px-2.5 py-0.5">NLP</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">How Word2Vec Actually Creates Vectors</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Word2Vec uses a <strong class="text-[var(--on-background)]">shallow neural network</strong> trained on a fake/dummy task — the real goal isn't the task itself, but the byproduct: the weight matrix learned along the way becomes the word vectors.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2 text-sm text-[var(--on-surface)]">
+            <p class="font-mono text-center">Input (one-hot word vector) → Hidden Layer (no activation, just weights) → Output Layer (softmax over vocabulary)</p>
+            <ul class="space-y-1.5 list-disc list-inside">
+              <li>Input layer size = vocabulary size <em>V</em> — each word represented as a one-hot vector.</li>
+              <li>Hidden layer size = <em>N</em> (the embedding dimension you choose, e.g. 100 or 300).</li>
+              <li>The weight matrix between input and hidden layer (size <em>V × N</em>) is exactly what becomes the word embeddings — each row corresponds to one word's vector.</li>
+            </ul>
+            <p>Once training finishes, the output layer is thrown away entirely — only the hidden weight matrix matters. That's the "byproduct" the model was really after.</p>
+          </div>
+
+          <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Analogy:</strong> like training someone to guess a person's job by only observing their daily habits (context). We don't actually care about the "job-guessing" skill — what we care about is the rich internal understanding of "types of people" that they develop while learning to guess. Word2Vec similarly doesn't care about its literal prediction task; it cares about the internal representation (weights) built while solving it.</div>
+        </section>
+
+        <!-- COSINE SIMILARITY -->
+        <section id="cosine-similarity" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--tertiary)] bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/30 rounded-full px-2.5 py-0.5">NLP</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Cosine Similarity</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Once every word is a vector: how do we check if two words are similar? We don't compare raw numbers directly — we measure the <strong class="text-[var(--on-background)]">angle</strong> between two vectors.</p>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
+            $$ \text{cosine similarity} = \cos(\theta) = \frac{A \cdot B}{\|A\| \, \|B\|} $$
+          </div>
+
+          <p class="text-sm text-[var(--on-surface)]">Range: −1 to 1. <strong class="text-[var(--on-background)]">1</strong> → same direction → highly similar words (e.g. "happy" &amp; "joy"). <strong class="text-[var(--on-background)]">0</strong> → perpendicular → unrelated. <strong class="text-[var(--on-background)]">−1</strong> → opposite directions → opposite meaning.</p>
+
+          <p class="text-[var(--on-surface)] leading-relaxed"><strong class="text-[var(--on-background)]">Why cosine and not Euclidean distance?</strong> Cosine similarity only cares about direction, not magnitude/length. Two vectors can point the exact same way but have different lengths (e.g. a word that appeared more often in training gets a "longer" vector) — cosine correctly still calls them similar, while raw distance metrics could be misled by the length difference.</p>
+
+          <div class="border-l-4 border-[var(--outline)] bg-[var(--surface-container-high)]/40 p-sm rounded-r-lg text-sm text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Analogy:</strong> two arrows on a map, both pointing exactly northeast — one short, one long. Cosine similarity says "these point the same direction, same idea," ignoring how long each arrow is. Euclidean distance would instead focus on how far apart their tips are — misleading here.</div>
+
+          <p class="text-sm text-[var(--on-surface)]">This is the standard way embeddings are compared — used for synonyms, nearest neighbors, and word analogies like <strong class="text-[var(--on-background)]">king − man + woman ≈ queen</strong>.</p>
+        </section>
+
+        <!-- CBOW SKIPGRAM -->
+        <section id="cbow-skipgram" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--tertiary)] bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/30 rounded-full px-2.5 py-0.5">NLP</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Two Architectures: CBOW vs. Skip-gram</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Both use a sliding window of context around a target word — this is the "fake problem" being solved.</p>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+              <h3 class="font-h3 text-base text-[var(--secondary)]">CBOW (Continuous Bag of Words)</h3>
+              <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Task:</strong> given surrounding context words, predict the target (center) word. Sentence "The quick brown fox jumps," target "brown": Input = context words <em>quick, fox</em> → Output = predict <em>brown</em>.</p>
+              <p class="text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Analogy:</strong> a fill-in-the-blank quiz — "The quick ___ fox jumps" — you use the surrounding words to guess the missing one.</p>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
+              <h3 class="font-h3 text-base text-[var(--tertiary)]">Skip-gram</h3>
+              <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Task:</strong> the exact reverse — given the target word, predict the context words around it. Target "brown" → Input = <em>brown</em> → Output = predict <em>quick, fox</em>.</p>
+              <p class="text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Analogy:</strong> shown "brown" and asked "what words usually surround this one?" — like guessing it might appear near "fox," "bear," "hair."</p>
+            </div>
+          </div>
+
+          <details class="deepdive">
+            <summary class="font-h3 text-lg text-[var(--on-background)]">Complete Skip-gram Example, Step by Step</summary>
+            <div class="mt-3 space-y-3 text-sm text-[var(--on-surface)]">
+              <p>Sentence: "The quick brown fox jumps over the lazy dog." Window size = 2. Target word: "fox." Context words within window: quick, brown, jumps, over.</p>
+              <p>Skip-gram creates training pairs (input = target, output = one context word each):</p>
+              <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-3 font-mono text-xs">
+(fox → quick)<br>(fox → brown)<br>(fox → jumps)<br>(fox → over)
+              </div>
+              <p>Each pair is fed to the network: Input "fox" (one-hot, size V) → Hidden Layer (size N=300, no activation — this row = fox's embedding) → Output Layer (softmax over vocab V) tries to predict quick / brown / jumps / over.</p>
+              <p>The network is trained to maximize the probability of predicting real context words correctly. Words like "fox" that repeatedly co-occur with "quick," "jumps," "animal," "wild," etc. across millions of sentences gradually get pushed toward similar hidden-layer weight patterns as other animal-related words ("dog," "cat," "wolf") — because they share similar context distributions.</p>
+              <p>After training on the full corpus, the output layer is discarded. The input→hidden weight matrix (V × N) is kept — the row for "fox" is fox's final embedding vector.</p>
+            </div>
+          </details>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">When to Use Which</h3>
+            <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+              <table class="w-full text-left border-collapse text-sm">
+                <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs"></th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">CBOW</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Skip-gram</th></tr></thead>
+                <tbody>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Predicts</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Target word from context</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Context words from target</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Best for</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Small datasets</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Large datasets</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Training speed</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Faster (fewer predictions per window)</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Slower (predicts multiple context words per target)</td></tr>
+                  <tr><td class="p-2.5 font-semibold">Quality on rare words</td><td class="p-2.5">Weaker</td><td class="p-2.5">Better — each word gets multiple training examples (one per context word)</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">Improving Word2Vec embeddings</strong>
+              <ul class="mt-1 space-y-1 list-disc list-inside text-[var(--on-surface)]">
+                <li>Increase training data — richer, more reliable context patterns</li>
+                <li>Increase vector dimensions — more nuance, but too high risks sparsity/overfitting again (sweet spot ≈ 100–300)</li>
+                <li>Increase window size — small (e.g. 2) captures syntactic/grammar-like closeness; large (e.g. 5–10) captures topical/semantic similarity</li>
+              </ul>
+            </div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm">
+              <strong class="text-[var(--on-background)]">OOV &amp; the FastText fix</strong>
+              <p class="mt-1 text-[var(--on-surface)]">Word2Vec only produces vectors for words seen during training — "dragonfruit" never appearing means <code class="text-[var(--tertiary)]">vector("dragonfruit")</code> simply fails, no fallback. FastText represents each word as character n-grams (e.g. &lt;dr, dra, rag, …, uit&gt;) so it can build a vector for an unseen word from familiar sub-word pieces — handling rare words, misspellings, and morphological variants.</p>
+            </div>
+          </div>
+
+          <p class="text-sm text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Pretrained vs self-trained:</strong> a pretrained model (e.g. trained on Google News, ~100B words) is fastest to use, but works best when your data's vocabulary overlaps at least ~80% with the pretrained vocabulary. A self-trained model (via <strong class="text-[var(--on-background)]">Gensim</strong>) is better for specialized domains (medical, legal) but needs enough of your own data. Word2Vec's key limitation to remember: it's a <strong class="text-[var(--on-background)]">static</strong> embedding — "bank" always gets the same vector regardless of sentence, so it can't handle polysemy the way BERT can.</p>
+        </section>
+
+        <!-- TEXT CLASSIFICATION -->
+        <section id="text-classification" class="space-y-4 scroll-mt-24">
+          <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
+            <span class="text-xs font-label-caps text-[var(--tertiary)] bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/30 rounded-full px-2.5 py-0.5">NLP</span>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Text Classification</h2>
+          </div>
+
+          <p class="text-[var(--on-surface)] leading-relaxed">Text classification is a <strong class="text-[var(--on-background)]">supervised</strong> task — the same general idea as classification on tabular data or images, applied to text. Example: is this email spam or not spam?</p>
+
+          <div class="grid sm:grid-cols-3 gap-3 text-sm">
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3"><strong class="text-[var(--on-background)]">Binary</strong> — 2 classes (spam / not spam).</div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3"><strong class="text-[var(--on-background)]">Multiclass</strong> — more than 2 classes (e.g. news topic: sports / politics / tech).</div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3"><strong class="text-[var(--on-background)]">Multi-label</strong> — a single input can belong to multiple classes at once (a news article can be both "sports" and "politics").</div>
+          </div>
+
+          <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm text-sm text-[var(--on-surface)]">
+            <strong class="text-[var(--on-background)]">The pipeline (per source):</strong> Data acquisition → Text preprocessing → Text vectorization (BoW, TF-IDF, Word2Vec) → Modeling (e.g. Naive Bayes) → Evaluation (accuracy, confusion matrix) → Deploy. Approaches range across the same spectrum as the rest of NLP: <strong class="text-[var(--on-background)]">Heuristics → APIs → ML → DL</strong>.
+          </div>
+
+          <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
+            <table class="w-full text-left border-collapse text-sm">
+              <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Tip</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Why</th></tr></thead>
+              <tbody>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Use ensemble techniques</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Combining multiple models often beats any single model.</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Use heuristic techniques where possible</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Simple rules can catch obvious cases cheaply before ML/DL is needed.</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Make sure data is balanced</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">An imbalanced dataset (e.g. 99% not-spam) biases the model toward the majority class.</td></tr>
+                <tr><td class="p-2.5 font-semibold">Solve as many projects as possible</td><td class="p-2.5">Practical experience surfaces edge cases no amount of theory alone reveals.</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="border-l-4 border-[var(--outline)] bg-[var(--surface-container-high)]/40 p-sm rounded-r-lg text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Extended notes</strong> — the source covers this topic only briefly; expanded here for clarity.</div>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">The Text Classification Pipeline, Visualized</h3>
+            <div class="space-y-0 max-w-lg mx-auto">
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2.5 text-sm text-center">Raw text</div>
+              <div class="text-center text-[var(--outline)]">↓</div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2.5 text-sm text-center">Preprocessing <span class="text-[var(--on-surface-variant)]">(lowercase, clean, tokenize, stopwords, stem/lemmatize — chapter 2)</span></div>
+              <div class="text-center text-[var(--outline)]">↓</div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2.5 text-sm text-center">Vectorization / features <span class="text-[var(--on-surface-variant)]">(BoW, TF-IDF, or embeddings — chapters 3–4)</span></div>
+              <div class="text-center text-[var(--outline)]">↓</div>
+              <div class="bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/40 rounded-lg px-4 py-2.5 text-sm text-center">Classifier <span class="text-[var(--on-surface-variant)]">(Naive Bayes, Logistic Regression, SVM, or a neural network)</span></div>
+              <div class="text-center text-[var(--outline)]">↓</div>
+              <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2.5 text-sm text-center font-semibold">Predicted label</div>
+            </div>
+          </div>
+
+          <p class="text-sm text-[var(--on-surface)]">Why Naive Bayes and Logistic Regression are the classic default choices: they're fast, work well on high-dimensional sparse vectors (exactly what TF-IDF/BoW produce), and are easy to interpret. SVM is a strong alternative when classes are cleanly separable in vector space. Neural network classifiers become worthwhile once you have large datasets and/or want to feed in dense Word2Vec/BERT embeddings instead of sparse counts.</p>
+
+          <div>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Worked Example — TF-IDF + Naive Bayes</h3>
+            <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
+              <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
+              <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, confusion_matrix
+
+# X = raw (preprocessed) text column, y = labels (e.g. spam/not-spam)
+X_train, X_test, y_train, y_test = train_test_split(
+    df['text'], df['label'], test_size=0.2, random_state=42
+)
+
+# 1. Vectorize — fit only on training data to avoid leakage
+tfidf = TfidfVectorizer(max_features=5000)
+X_train_vec = tfidf.fit_transform(X_train)
+X_test_vec = tfidf.transform(X_test)
+
+# 2. Train a classifier
+model = MultinomialNB()
+model.fit(X_train_vec, y_train)
+
+# 3. Evaluate
+y_pred = model.predict(X_test_vec)
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print(confusion_matrix(y_test, y_pred))
+
+# 4. Predict on new text
+new_text = ["Congratulations! You won a free prize, click now"]
+new_vec = tfidf.transform(new_text)
+print(model.predict(new_vec))   # e.g. ['spam']</code></pre>
+            </div>
+            <p class="text-sm text-[var(--on-surface-variant)] mt-2">Swap <code class="text-[var(--tertiary)]">MultinomialNB()</code> for <code class="text-[var(--tertiary)]">LogisticRegression()</code> to try a different classifier on the exact same features — the pipeline shape (vectorize → fit → predict → evaluate) stays identical, which is why classic text classification is often the fastest first baseline to build for a new NLP problem.</p>
+          </div>
+        </section>
+
+        <!-- QUIZ -->
+        <section class="space-y-5 pt-lg border-t border-[var(--outline-variant)]">
+          <div class="flex items-center gap-3">
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Test Your Understanding</h2>
+            <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-error-container)] bg-[var(--error-container)]/40 border border-[var(--error)]/40 rounded-full px-2.5 py-1">Hard</span>
+          </div>
+          <p class="text-sm text-[var(--on-surface-variant)]">5 questions on Word2Vec &amp; Text Classification. Pick an answer for each, then check.</p>
+
+          <div class="quiz-block space-y-4" data-quiz-id="quiz-nlp-04">
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. A team has a very large training corpus and cares especially about getting good embeddings for rare technical terms. Which Word2Vec architecture should they prefer, and why?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. CBOW — faster training, fewer predictions per window</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Skip-gram — each word gets multiple training examples (one per context word), which helps rare-word quality, and it suits large datasets</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Either — architecture choice has no effect on rare-word quality</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Neither — Word2Vec cannot handle rare words at all</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Per the CBOW vs Skip-gram comparison table — Skip-gram is best for large datasets and produces better quality on rare words, since each occurrence generates multiple training examples (one per context word), unlike CBOW's single prediction per window.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="2">
+              <p class="font-semibold text-[var(--on-background)] mb-3">2. After training a Word2Vec model, why is the output (softmax) layer thrown away and only the input→hidden weight matrix kept?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. The output layer is never actually trained</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. The output layer has more parameters than the hidden layer</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. The prediction task itself was only a means to an end — the real goal was the weight matrix, which becomes the word embeddings; the softmax predictions themselves aren't the deliverable</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Keeping the output layer would create an out-of-vocabulary problem</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Word2Vec's prediction task (CBOW/skip-gram) is a "fake problem" — the real value is the input→hidden weight matrix (V×N), where each row is a word's embedding. The output layer was only needed during training to produce a gradient signal.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
+              <p class="font-semibold text-[var(--on-background)] mb-3">3. Two word vectors point in exactly the same direction, but one is much longer than the other (e.g. because that word appeared more often during training). What does cosine similarity report, and why is this the right behavior?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. High similarity (≈1) — cosine similarity only cares about direction, not magnitude</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Low similarity (≈0) — length differences dominate the score</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Negative similarity (≈−1)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Cosine similarity is undefined when vector lengths differ</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Cosine similarity measures the angle between vectors, not their length — two same-direction vectors of different lengths still score close to 1, correctly reflecting that they represent similar meanings, unlike Euclidean distance which would be misled by the length gap.
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="3">
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. A single news article is tagged as belonging to both "Sports" and "Politics" simultaneously (e.g. a story about a player's political endorsement). What type of text classification is this?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Binary classification</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Regression</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Multiclass classification</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Multi-label classification</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Per the source's own example — a single news article that can belong to sports AND politics simultaneously is exactly multi-label classification, distinct from multiclass (exactly one class chosen from several) or binary (two mutually exclusive classes).
+              </div>
+            </div>
+
+            <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
+              <p class="font-semibold text-[var(--on-background)] mb-3">5. In the TF-IDF + Naive Bayes code example, why is <code>TfidfVectorizer</code> fit only on <code>X_train</code> and then just <code>.transform()</code>-ed (not re-fit) on <code>X_test</code>?</p>
+              <div class="quiz-options grid gap-2">
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Fitting twice would double the vocabulary size</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. To avoid data leakage — the test set's word statistics (IDF values, vocabulary) must not influence training, and the model must be evaluated using only the vocabulary/weights learned from training data</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. TfidfVectorizer can only be fit once per Python session</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It makes no difference; fitting on both would work identically</button>
+              </div>
+              <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
+                <strong class="text-[var(--on-background)]">Explanation:</strong> This is the standard train/test discipline (echoed from the ML track): fitting the vectorizer only on training data prevents the test set's statistics from leaking into the features the model is evaluated on, keeping the evaluation honest about generalization to truly unseen data.
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4 pt-2">
+              <button data-quiz-submit class="bg-[var(--tertiary)] text-[var(--on-tertiary)] px-6 py-2.5 rounded-lg font-semibold text-sm hover:opacity-90 transition-opacity">Check Answers</button>
+              <span data-quiz-result class="hidden font-semibold text-[var(--tertiary)]"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
+          <a href="nlp-05.html" class="bg-[var(--tertiary)] text-[var(--on-tertiary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">Next: Part-of-Speech Tagging</a>
+        </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="../assets/app.js"></script>
+
+</body>
+</html>

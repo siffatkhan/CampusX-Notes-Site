@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sifat Notes — Interactive ML/DL Notes</title>
+<title>Sifat Notes</title>
 
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect">
@@ -21,7 +21,7 @@
 <a href="index.html" class="flex items-center gap-2.5 md:gap-3 group min-w-0" title="Back to home">
 <div class="w-9 h-9 shrink-0 rounded-md bg-[var(--primary)] text-[var(--on-primary)] flex items-center justify-center font-h3 font-bold text-sm group-hover:opacity-85 transition-opacity">SN</div>
 <div class="min-w-0">
-<div class="font-h3 text-base md:text-lg font-semibold text-[var(--on-background)] leading-none truncate">Sifat Notes</div>
+<div class="font-h3 text-base md:text-lg font-semibold text-[var(--on-background)] leading-none truncate">Siffat's AI Notes</div>
 <div class="hidden sm:block text-[11px] text-[var(--on-surface-variant)] mt-0.5 truncate">from CampusX's playlists</div>
 </div>
 </a>
@@ -45,43 +45,52 @@
 <main class="flex-1 max-w-[1200px] mx-auto w-full px-4 py-10 md:px-lg md:py-xl">
 
   <!-- Hero -->
-  <section class="text-center max-w-2xl mx-auto py-lg">
-    <span class="inline-block text-xs font-label-caps uppercase tracking-wider text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-3 py-1 mb-5">Notes from CampusX's YouTube channel — 100 Days of ML, 100 Days of DL &amp; NLP playlists</span>
-    <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-4">Sifat Notes</h1>
-    <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)] mb-8">
-      Lecture notes from multiple CampusX playlists, turned into something you'd actually want to study from — diagrams for architectures you'd otherwise have to imagine, live widgets for the math that only makes sense once you can nudge a slider, and a quiz at the end of every topic so you know it stuck.
+  <section class="text-center max-w-3xl mx-auto py-lg md:py-xl">
+    <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-6">CampusX Notes</h1>
+    <p class="text-lg md:text-xl text-[var(--on-surface-variant)] mb-3">Machine Learning · Deep Learning · NLP</p>
+    <p class="font-body-md text-body-md text-[var(--on-surface)] mb-10 leading-relaxed max-w-2xl mx-auto">
+      Technical study notes organized for learning and revision. Clear explanations, diagrams, examples, code and interactive material based on CampusX playlists.
     </p>
+    <p class="text-sm text-[var(--on-surface-variant)] mb-8">40 ML topics · 30+ Deep Learning topics · NLP fundamentals</p>
+    <a href="#courses" class="inline-block bg-[var(--primary)] text-[var(--on-primary)] px-6 py-2.5 rounded-lg font-semibold hover:opacity-90 transition-opacity">Browse Courses</a>
   </section>
 
-  <!-- Why this exists -->
-  <section class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md md:p-lg mb-xl">
-    <h2 class="font-h2 text-2xl text-[var(--primary)] mb-3">Why this site exists</h2>
-    <p class="text-[var(--on-surface)] leading-relaxed mb-3">
-      The source material is dense, topic-organized notes compiled from CampusX's playlists — every definition, formula, and worked example from the videos, exactly as written. Nothing here is shortened or dropped; it's the same content, reformatted for the web with proper math rendering, syntax-highlighted code, and visuals a document can't support. Where a playlist's own notes ran out before the videos did, the remaining topics were written from scratch to keep the track complete — always disclosed on the page.
-    </p>
-    <p class="text-[var(--on-surface-variant)] text-sm leading-relaxed">
-      Every diagram, chart, and interactive widget you see is <strong class="text-[var(--on-surface)]">generated for this site</strong> as a learning aid — clearly marked, never presented as part of the original notes.
-    </p>
+  <!-- Learning path -->
+  <section class="border-t border-b border-[var(--outline-variant)] py-xl my-xl">
+    <h2 class="font-h2 text-2xl text-[var(--on-background)] mb-8">Learning path</h2>
+    <div class="space-y-6">
+      <div>
+        <p class="text-[var(--primary)] font-semibold text-sm mb-2">01  Machine Learning</p>
+        <p class="text-[var(--on-surface-variant)] text-sm">Foundations → Regression → Classification → Trees → Ensembles → Unsupervised Learning</p>
+      </div>
+      <div>
+        <p class="text-[var(--primary)] font-semibold text-sm mb-2">02  Deep Learning</p>
+        <p class="text-[var(--on-surface-variant)] text-sm">Neural Networks → CNNs → RNNs → LSTMs → Attention → Transformers</p>
+      </div>
+      <div>
+        <p class="text-[var(--primary)] font-semibold text-sm mb-2">03  NLP</p>
+        <p class="text-[var(--on-surface-variant)] text-sm">Text Processing → Representation → Word2Vec → Classification → NER</p>
+      </div>
+    </div>
   </section>
 
   <!-- Course picker -->
-  <section id="courses" class="scroll-mt-24">
-    <h2 class="font-h2 text-2xl text-[var(--on-background)] mb-1">Pick a course</h2>
-    <p class="text-[var(--on-surface-variant)] text-sm mb-6">Select a track to jump into its notes.</p>
+  <section id="courses" class="scroll-mt-24 py-xl">
+    <h2 class="font-h2 text-2xl text-[var(--on-background)] mb-8">Start learning</h2>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-md">
 
-      <a href="ml/section-01.html" class="group block bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md hover:border-[var(--primary)] transition-colors">
-        <div class="w-10 h-10 rounded-lg bg-[var(--primary-container)]/20 text-[var(--primary)] flex items-center justify-center mb-4 font-bold">ML</div>
+      <a href="ml/section-01.html" class="group block bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md md:p-lg hover:border-[var(--primary)] transition-colors">
         <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2 group-hover:text-[var(--primary)] transition-colors">Machine Learning</h3>
-        <p class="text-[var(--on-surface-variant)] text-sm mb-4">40 topics — ML fundamentals through regression, classical algorithms, ensembles, and unsupervised learning.</p>
-        <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--primary)]">Start learning</span>
+        <p class="text-[var(--on-surface-variant)] text-sm mb-4">From the basics to regression, classification, trees, ensembles and unsupervised learning.</p>
+        <p class="text-[var(--on-surface)] font-semibold text-sm mb-4">40 topics</p>
+        <span class="text-sm font-semibold text-[var(--primary)] group-hover:gap-2 transition-all">View notes →</span>
       </a>
 
       <a href="dl/dl-01.html" class="group block bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md hover:border-[var(--secondary)] transition-colors">
         <div class="w-10 h-10 rounded-lg bg-[var(--secondary-container)]/20 text-[var(--secondary)] flex items-center justify-center mb-4 font-bold">DL</div>
         <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2 group-hover:text-[var(--secondary)] transition-colors">Deep Learning</h3>
-        <p class="text-[var(--on-surface-variant)] text-sm mb-4">Perceptrons through Transformers — MLPs, CNNs, RNNs, LSTMs, attention, BERT &amp; GPT.</p>
+        <p class="text-[var(--on-surface-variant)] text-sm mb-4">Perceptrons through Transformers. MLPs, CNNs, RNNs, LSTMs, attention, BERT and GPT.</p>
         <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--secondary)]">Start learning</span>
       </a>
 
@@ -95,22 +104,51 @@
       <div class="block bg-[var(--surface-container)]/50 border border-[var(--outline-variant)] rounded-xl p-md opacity-60 cursor-not-allowed">
         <div class="w-10 h-10 rounded-lg bg-[var(--primary-container)]/20 text-[var(--primary)] flex items-center justify-center mb-4 font-bold">FW</div>
         <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Frameworks</h3>
-        <p class="text-[var(--on-surface-variant)] text-sm mb-4">TensorFlow, PyTorch, scikit-learn deep dives.</p>
+        <p class="text-[var(--on-surface-variant)] text-sm mb-4">TensorFlow, PyTorch, and scikit-learn guides.</p>
         <span class="text-xs font-label-caps uppercase tracking-wider text-[var(--on-surface-variant)]">Coming soon</span>
       </div>
 
     </div>
   </section>
 
+  <!-- What's inside -->
+  <section class="py-xl border-t border-[var(--outline-variant)]">
+    <h2 class="font-h2 text-2xl text-[var(--on-background)] mb-8">What you'll find here</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div>
+        <h3 class="font-h3 text-lg text-[var(--on-background)] mb-3">Clear explanations</h3>
+        <p class="text-[var(--on-surface-variant)]">Topics are broken down into smaller sections so you can follow the concepts without getting lost.</p>
+      </div>
+      <div>
+        <h3 class="font-h3 text-lg text-[var(--on-background)] mb-3">Visual learning</h3>
+        <p class="text-[var(--on-surface-variant)]">Diagrams and illustrations are added where they help explain architectures, workflows and concepts.</p>
+      </div>
+      <div>
+        <h3 class="font-h3 text-lg text-[var(--on-background)] mb-3">Code and examples</h3>
+        <p class="text-[var(--on-surface-variant)]">Important concepts are supported with examples and code where they make the idea easier to understand.</p>
+      </div>
+      <div>
+        <h3 class="font-h3 text-lg text-[var(--on-background)] mb-3">Quick revision</h3>
+        <p class="text-[var(--on-surface-variant)]">Each topic is organized so you can come back later and revise without going through an entire playlist again.</p>
+      </div>
+    </div>
+  </section>
+
 </main>
 
 <footer class="bg-[var(--surface-container-lowest)] border-t border-[var(--outline-variant)] mt-xl">
-<div class="flex flex-col md:flex-row justify-between items-center gap-3 px-lg py-md max-w-[1200px] mx-auto text-sm">
-<div class="text-[var(--on-surface-variant)]">
-Built by <a href="https://www.linkedin.com/in/siffat-ullah/" target="_blank" rel="noopener" class="text-[var(--primary)] font-semibold hover:underline">Siffat Ullah</a>
+<div class="flex flex-col gap-6 px-lg py-md max-w-[1200px] mx-auto text-sm">
+<div>
+<h3 class="font-semibold text-[var(--on-background)] mb-3">About these notes</h3>
+<p class="text-[var(--on-surface-variant)] leading-relaxed mb-3">
+These notes are based on educational content from <strong>CampusX's YouTube playlists</strong> and are organized here as a personal study resource. Originally compiled in Google Docs, I've converted all the notes into this interactive website for easier learning and revision.
+</p>
+<p class="text-[var(--on-surface-variant)] text-xs leading-relaxed">
+Independent study resource based on educational content by CampusX. This site is not affiliated with or endorsed by CampusX.
+</p>
 </div>
-<div class="text-[var(--on-surface-variant)] text-xs text-center md:text-right max-w-md">
-Notes adapted &amp; expanded from YouTube CampusX's playlist. Diagrams, charts and quizzes are original additions, not from the source material.
+<div class="border-t border-[var(--outline-variant)] pt-4 text-[var(--on-surface-variant)] text-xs text-center">
+Built by <a href="https://www.linkedin.com/in/siffat-ullah/" target="_blank" rel="noopener" class="text-[var(--primary)] font-semibold hover:underline">Siffat Ullah</a>
 </div>
 </div>
 </footer>

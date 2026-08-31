@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>32. Random Forest — Sifat Notes</title>
+<title>32. Random Forest — Siffat's AI Notes</title>
 
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect">
@@ -31,7 +31,7 @@
 <a href="../index.html" class="flex items-center gap-2.5 md:gap-3 group min-w-0" title="Back to home">
 <div class="w-9 h-9 shrink-0 rounded-md bg-[var(--primary)] text-[var(--on-primary)] flex items-center justify-center font-h3 font-bold text-sm group-hover:opacity-85 transition-opacity">SN</div>
 <div class="min-w-0">
-<div class="font-h3 text-base md:text-lg font-semibold text-[var(--on-background)] leading-none truncate">Sifat Notes</div>
+<div class="font-h3 text-base md:text-lg font-semibold text-[var(--on-background)] leading-none truncate">Siffat's AI Notes</div>
 <div class="hidden sm:block text-[11px] text-[var(--on-surface-variant)] mt-0.5 truncate">from CampusX's playlists</div>
 </div>
 </a>
@@ -464,7 +464,7 @@
         </div>
 
         <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-sm text-sm text-[var(--on-surface-variant)]">
-          <strong class="text-[var(--on-background)]">Extended notes</strong> — this topic isn't covered in the CampusX playlist notes this site is based on. Written from scratch to continue the curriculum, in the same style as the rest of the site.
+          <strong class="text-[var(--on-background)]">Extended notes:</strong> This topic isn't covered in the CampusX playlist notes this site is based on. It's written from scratch to continue the curriculum, in the same style as the rest of the site.
         </div>
 
         <!-- INTRO -->
@@ -474,40 +474,40 @@
             <h2 class="font-h2 text-2xl text-[var(--on-background)]">Intro &amp; Intuition</h2>
           </div>
 
-          <p class="text-[var(--on-surface)] leading-relaxed">Random Forest is the single most popular ensemble algorithm in classical ML, and for good reason: it's hard to misuse, needs almost no feature scaling or preprocessing, and is often a strong baseline straight out of the box. It's built from exactly two ideas you already know, stacked together.</p>
+          <p class="text-[var(--on-surface)] leading-relaxed">Random Forest is the most popular ensemble algorithm in classical ML. It's hard to misuse, needs almost no feature scaling or preprocessing, and it's often a strong baseline right out of the box. It's built from two ideas you already know, combined.</p>
 
           <div class="grid sm:grid-cols-2 gap-3">
             <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
-              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">Source of randomness #1 — Bootstrap rows</h4>
-              <p class="text-sm text-[var(--on-surface)]">Exactly like Bagging (previous page): each tree is trained on its own bootstrap sample — N rows drawn with replacement from the training set. Different trees see different (overlapping) subsets of the rows.</p>
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">Source of randomness #1: Bootstrap rows</h4>
+              <p class="text-sm text-[var(--on-surface)]">Like Bagging (previous page), each tree trains on its own bootstrap sample: N rows drawn with replacement from the training set. Different trees see different, overlapping subsets of the rows.</p>
             </div>
             <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg">
-              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">Source of randomness #2 — Random feature subsets</h4>
-              <p class="text-sm text-[var(--on-surface)]">New in Random Forest: at <strong class="text-[var(--on-background)]">every single split</strong> in every tree, only a random subset of the features is even considered as a candidate for splitting — not all of them. A different random subset is drawn at every split, in every tree.</p>
+              <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">Source of randomness #2: Random feature subsets</h4>
+              <p class="text-sm text-[var(--on-surface)]">New in Random Forest: at <strong class="text-[var(--on-background)]">every split</strong> in every tree, the algorithm considers only a random subset of the features as candidates for splitting, not all of them. It draws a different random subset at every split, in every tree.</p>
             </div>
           </div>
 
           <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
-            <h3 class="font-h3 text-lg text-[var(--primary)]">Why both matter — "bootstrap rows AND random subset of columns"</h3>
-            <p class="text-sm text-[var(--on-surface)]">Row-bootstrapping alone (plain bagging) already makes trees somewhat different from each other. But imagine one feature is extremely predictive — say, in a churn dataset, "days since last login" is far more informative than everything else combined. Even with different bootstrapped rows, <em>every</em> bagged tree will tend to pick that same feature for its very first (root) split, because it's simply the best split available on almost any resample. That makes the trees more similar — more <strong class="text-[var(--on-background)]">correlated</strong> — than you'd like, which (as you'll see in the next section) limits how much variance the ensemble can cancel out.</p>
-            <p class="text-sm text-[var(--on-surface)]">By also hiding a random subset of columns at each split, Random Forest sometimes forces a tree to split on the second-best or third-best feature instead — because the strongest feature simply wasn't offered as an option at that node. This deliberately <strong class="text-[var(--on-background)]">decorrelates</strong> the trees: different trees end up built around different features, discovering different patterns in the data. Individually each tree may be slightly worse (it didn't always get to use the best feature), but the ensemble as a whole becomes meaningfully better, because averaging over more-diverse, less-correlated trees removes more variance.</p>
+            <h3 class="font-h3 text-lg text-[var(--primary)]">Why both matter: bootstrap rows and random subset of columns</h3>
+            <p class="text-sm text-[var(--on-surface)]">Row-bootstrapping alone (plain bagging) already makes trees somewhat different from each other. But say one feature is extremely predictive. In a churn dataset, "days since last login" might be far more informative than everything else combined. Even with different bootstrapped rows, <em>every</em> bagged tree tends to pick that same feature for its first (root) split, because it's the best split available on almost any resample. That makes the trees more similar, more <strong class="text-[var(--on-background)]">correlated</strong> than you'd like. As you'll see in the next section, this limits how much variance the ensemble can cancel out.</p>
+            <p class="text-sm text-[var(--on-surface)]">By hiding a random subset of columns at each split too, Random Forest sometimes forces a tree to split on the second-best or third-best feature instead. The strongest feature simply wasn't offered as an option at that node. This <strong class="text-[var(--on-background)]">decorrelates</strong> the trees: different trees build around different features and find different patterns in the data. Each tree is sometimes slightly worse on its own, since it didn't always get to use the best feature, but the ensemble as a whole becomes better. Averaging over more diverse, less correlated trees removes more variance.</p>
           </div>
 
-          <p class="text-sm text-[var(--on-surface-variant)]">In one sentence: <strong class="text-[var(--on-background)]">Random Forest = Bagging of Decision Trees, with an extra dose of engineered diversity via random feature subsampling at every split.</strong></p>
+          <p class="text-sm text-[var(--on-surface-variant)]">In one sentence: <strong class="text-[var(--on-background)]">Random Forest is Bagging of Decision Trees, plus random feature subsampling at every split for extra diversity.</strong></p>
         </section>
 
         <!-- BIAS VARIANCE -->
         <section id="rf-bias-variance" class="space-y-4 scroll-mt-24">
           <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
             <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Concept</span>
-            <h2 class="font-h2 text-2xl text-[var(--on-background)]">How Random Forest Performs So Well — Bias-Variance Tradeoff in RF</h2>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">How Random Forest Performs So Well: Bias-Variance Tradeoff in RF</h2>
           </div>
 
-          <p class="text-[var(--on-surface)] leading-relaxed">This is the single most important "why does this work" moment in the whole ensemble unit, so it's worth slowing down for.</p>
+          <p class="text-[var(--on-surface)] leading-relaxed">This is the most important part of understanding why Random Forest works, so it's worth slowing down for.</p>
 
           <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
             <h3 class="font-h3 text-lg text-[var(--primary)]">Individual trees: low bias, high variance</h3>
-            <p class="text-sm text-[var(--on-surface)]">A single, fully-grown (unpruned) Decision Tree keeps splitting until its leaves are pure or tiny. That flexibility means it can fit almost any pattern in its training data — very <strong class="text-[var(--on-background)]">low bias</strong>. But that same flexibility means it fits the noise too, not just the signal — very <strong class="text-[var(--on-background)]">high variance</strong>. Train the same unpruned tree on two different bootstrap samples from the same dataset and you can get two visibly different trees, disagreeing on plenty of predictions.</p>
+            <p class="text-sm text-[var(--on-surface)]">A single, fully grown (unpruned) Decision Tree keeps splitting until its leaves are pure or tiny. That flexibility lets it fit almost any pattern in its training data, so it has <strong class="text-[var(--on-background)]">low bias</strong>. But the same flexibility lets it fit noise too, so it has <strong class="text-[var(--on-background)]">high variance</strong>. Train the same unpruned tree on two different bootstrap samples from the same dataset, and you get two visibly different trees that disagree on plenty of predictions.</p>
           </div>
 
           <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
@@ -516,8 +516,8 @@
             <div class="bg-[var(--surface-container-lowest)] border border-[var(--outline-variant)] rounded-lg p-md overflow-x-auto text-center">
               $$ \text{Var}(\text{average}) = \rho\,\sigma^2 + \frac{1-\rho}{n}\,\sigma^2 $$
             </div>
-            <p class="text-sm text-[var(--on-surface)]">Two things to notice: the second term shrinks toward 0 as \(n\) (the number of trees) grows — this is the averaging effect you already saw with bagging. But the first term, \(\rho\sigma^2\), <strong class="text-[var(--on-background)]">never</strong> goes away no matter how many trees you add — it's a floor set entirely by how correlated the trees are with each other. This is exactly why Random Forest's random feature subsampling matters so much: it directly lowers \(\rho\), which lowers the irreducible floor, which means adding more trees buys you more genuine variance reduction than it would in plain bagging (where \(\rho\) tends to be higher because every tree keeps reaching for the same dominant features).</p>
-            <p class="text-sm text-[var(--on-surface)]">Meanwhile, each individual tree is still deep and flexible, so the <strong class="text-[var(--on-background)]">bias of the average is essentially the bias of one tree</strong> — averaging predictions doesn't systematically push them in any particular wrong direction, it just cancels noise. Net effect: you keep the near-zero bias of deep trees, while pushing variance way down. That combination — low bias <em>and</em> low variance — is precisely what a lone deep tree could never give you on its own.</p>
+            <p class="text-sm text-[var(--on-surface)]">Notice two things. The second term shrinks toward 0 as \(n\) (the number of trees) grows. This is the averaging effect you already saw with bagging. But the first term, \(\rho\sigma^2\), <strong class="text-[var(--on-background)]">never</strong> goes away, no matter how many trees you add. It's a floor set entirely by how correlated the trees are with each other. This is exactly why Random Forest's random feature subsampling matters so much: it directly lowers \(\rho\), which lowers the irreducible floor. That means adding more trees buys you more real variance reduction than it would in plain bagging, where \(\rho\) tends to be higher because every tree keeps reaching for the same dominant features.</p>
+            <p class="text-sm text-[var(--on-surface)]">Each individual tree is still deep and flexible, so the <strong class="text-[var(--on-background)]">bias of the average is essentially the bias of one tree</strong>. Averaging predictions doesn't systematically push them in any particular wrong direction, it cancels noise. The net effect: you keep the near-zero bias of deep trees while pushing variance down. That combination, low bias <em>and</em> low variance, is what a single deep tree never gives you on its own.</p>
           </div>
 
           <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-md rounded-r-lg">
@@ -529,9 +529,9 @@
               <input type="range" id="rhoSlider" min="0" max="0.9" step="0.05" value="0.3" oninput="updateRFVariance()" class="w-full accent-[var(--primary)]">
               <span id="rhoVal" class="text-xs font-semibold text-[var(--primary)] w-10 text-right">0.30</span>
             </div>
-            <p class="text-xs text-[var(--on-surface-variant)] text-center mt-2">Ensemble variance vs. number of trees, for a fixed per-tree variance \(\sigma^2=1\). Bagging's higher tree-correlation (ρ≈0.5) plateaus at a higher floor than Random Forest's decorrelated trees (ρ≈0.15) — because that floor is exactly the \(\rho\sigma^2\) term above, and only decorrelation (not more trees) can lower it.</p>
+            <p class="text-xs text-[var(--on-surface-variant)] text-center mt-2">Ensemble variance vs. number of trees, for a fixed per-tree variance \(\sigma^2=1\). Bagging's higher tree correlation (ρ≈0.5) plateaus at a higher floor than Random Forest's decorrelated trees (ρ≈0.15). That floor is exactly the \(\rho\sigma^2\) term above, and only decorrelation, not more trees, lowers it.</p>
           </div>
-          <div class="border-l-4 border-[var(--outline)] bg-[var(--surface-container-high)]/40 p-sm rounded-r-lg text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Illustrative aid</strong> — generated for this site.</div>
+          <div class="border-l-4 border-[var(--outline)] bg-[var(--surface-container-high)]/40 p-sm rounded-r-lg text-xs text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">Illustrative aid:</strong> generated for this site.</div>
         </section>
 
         <!-- BAGGING VS RF -->
@@ -541,7 +541,7 @@
             <h2 class="font-h2 text-2xl text-[var(--on-background)]">Bagging vs Random Forest</h2>
           </div>
 
-          <p class="text-[var(--on-surface)] leading-relaxed">Random Forest is really "Bagging, specifically applied to Decision Trees, with one addition." The key difference: Random Forest adds <strong class="text-[var(--on-background)]">feature randomness on top of</strong> bagging's row randomness. That extra decorrelation is exactly why Random Forest usually beats plain bagged trees given the same number of trees.</p>
+          <p class="text-[var(--on-surface)] leading-relaxed">Random Forest is Bagging applied specifically to Decision Trees, with one addition. The key difference: Random Forest adds <strong class="text-[var(--on-background)]">feature randomness on top of</strong> bagging's row randomness. That extra decorrelation is why Random Forest usually beats plain bagged trees, given the same number of trees.</p>
 
           <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
             <table class="w-full text-left border-collapse text-sm">
@@ -556,7 +556,7 @@
             </table>
           </div>
 
-          <p class="text-sm text-[var(--on-surface)]">You could, in principle, reconstruct something close to Random Forest by hand using <code class="text-[var(--primary)]">BaggingClassifier(estimator=DecisionTreeClassifier(max_features='sqrt'))</code> — but sklearn's dedicated <code class="text-[var(--primary)]">RandomForestClassifier</code>/<code class="text-[var(--primary)]">RandomForestRegressor</code> implement this more efficiently and expose extra conveniences (like OOB scoring and impurity-based feature importance, both covered below) directly.</p>
+          <p class="text-sm text-[var(--on-surface)]">You could, in principle, reconstruct something close to Random Forest by hand using <code class="text-[var(--primary)]">BaggingClassifier(estimator=DecisionTreeClassifier(max_features='sqrt'))</code>. But sklearn's dedicated <code class="text-[var(--primary)]">RandomForestClassifier</code>/<code class="text-[var(--primary)]">RandomForestRegressor</code> implement this more efficiently, and they expose extra conveniences directly, like OOB scoring and impurity-based feature importance, both covered below.</p>
         </section>
 
         <!-- HYPERPARAMETERS -->
@@ -570,11 +570,11 @@
             <table class="w-full text-left border-collapse text-sm">
               <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Hyperparameter</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">What it controls</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Practical guidance</th></tr></thead>
               <tbody>
-                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">n_estimators</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Number of trees in the forest</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">More is (almost) always better for accuracy — RF doesn't overfit as you add trees, it just plateaus and costs more compute/memory. 100–500 is a common practical range; check where the validation curve flattens.</td></tr>
-                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">max_depth</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Maximum depth of each individual tree</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Default (None) grows trees fully — usually fine for RF since averaging controls variance. Limiting depth trades a little variance-fighting power for faster training/inference and can help on very noisy data.</td></tr>
-                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">max_features</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Size of the random feature subset considered at each split — the second source of randomness</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">This is the single most important RF-specific knob. Common defaults: <code class="text-[var(--primary)]">sqrt(n_features)</code> for classification, <code class="text-[var(--primary)]">n_features</code> (or 1/3) for regression. Smaller values → more decorrelation → lower ρ → potentially lower ensemble variance, but each split is weaker (slightly higher per-tree bias). Tune it — it interacts directly with the bias-variance math above.</td></tr>
-                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">min_samples_leaf</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Minimum number of samples required in a leaf node</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Acts as regularization on each tree. Raising it (e.g. from 1 to 5–20) prevents leaves from being fit to single noisy points, trading a bit of per-tree bias for less overfitting — useful on smaller or noisier datasets.</td></tr>
-                <tr><td class="p-2.5 font-semibold">max_samples</td><td class="p-2.5">Fraction/count of rows drawn per bootstrap sample (only used when bootstrap=True)</td><td class="p-2.5">Lower than 1.0 increases per-tree diversity (more decorrelation, similar spirit to max_features) at the cost of each tree seeing less data. Also directly affects the OOB fraction — see below.</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">n_estimators</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Number of trees in the forest</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">More is almost always better for accuracy. RF doesn't overfit as you add trees, it just plateaus and costs more compute and memory. 100 to 500 is a common practical range. Check where the validation curve flattens.</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">max_depth</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Maximum depth of each individual tree</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Default (None) grows trees fully. This is usually fine for RF since averaging controls variance. Limiting depth trades some variance-fighting power for faster training and inference, and it helps on noisy data.</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">max_features</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Size of the random feature subset considered at each split, the second source of randomness</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">This is the most important RF-specific setting. Common defaults: <code class="text-[var(--primary)]">sqrt(n_features)</code> for classification, <code class="text-[var(--primary)]">n_features</code> (or 1/3) for regression. Smaller values mean more decorrelation, lower ρ, and potentially lower ensemble variance, but each split is weaker, with slightly higher per-tree bias. Tune it. It interacts directly with the bias-variance math above.</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">min_samples_leaf</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Minimum number of samples required in a leaf node</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Acts as regularization on each tree. Raising it, for example from 1 to 5-20, keeps leaves from fitting to single noisy points. It trades a bit of per-tree bias for less overfitting, useful on smaller or noisier datasets.</td></tr>
+                <tr><td class="p-2.5 font-semibold">max_samples</td><td class="p-2.5">Fraction/count of rows drawn per bootstrap sample (only used when bootstrap=True)</td><td class="p-2.5">Lower than 1.0 increases per-tree diversity (more decorrelation, similar to max_features) at the cost of each tree seeing less data. It also directly affects the OOB fraction, see below.</td></tr>
               </tbody>
             </table>
           </div>
@@ -610,11 +610,11 @@ print("Test accuracy:", rf.score(X_test, y_test))</code></pre>
             <h2 class="font-h2 text-2xl text-[var(--on-background)]">Hyperparameter Tuning with GridSearchCV &amp; RandomizedSearchCV</h2>
           </div>
 
-          <p class="text-[var(--on-surface)] leading-relaxed">With 5 interacting hyperparameters (plus more you haven't even seen here, like <code class="text-[var(--primary)]">criterion</code> or <code class="text-[var(--primary)]">max_leaf_nodes</code>), guessing values by hand doesn't scale. sklearn gives you two systematic search tools.</p>
+          <p class="text-[var(--on-surface)] leading-relaxed">With 5 interacting hyperparameters (plus more you haven't seen here, like <code class="text-[var(--primary)]">criterion</code> or <code class="text-[var(--primary)]">max_leaf_nodes</code>), guessing values by hand doesn't scale. sklearn gives you two systematic search tools.</p>
 
           <div>
-            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">GridSearchCV — Exhaustive Search</h3>
-            <p class="text-sm text-[var(--on-surface)] mb-2">Tries <strong class="text-[var(--on-background)]">every combination</strong> of the hyperparameter values you list, cross-validating each one. Guaranteed to find the best combination <em>within your grid</em> — but the number of combinations (and therefore the runtime) grows multiplicatively with every extra parameter or value you add.</p>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">GridSearchCV: Exhaustive Search</h3>
+            <p class="text-sm text-[var(--on-surface)] mb-2">It tries <strong class="text-[var(--on-background)]">every combination</strong> of the hyperparameter values you list, cross-validating each one. It's guaranteed to find the best combination <em>within your grid</em>, but the number of combinations, and the runtime with it, grows multiplicatively with every extra parameter or value you add.</p>
             <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
               <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
               <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from sklearn.model_selection import GridSearchCV
@@ -645,8 +645,8 @@ best_rf = grid.best_estimator_</code></pre>
           </div>
 
           <div>
-            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">RandomizedSearchCV — Sampled Search</h3>
-            <p class="text-sm text-[var(--on-surface)] mb-2">Instead of trying every combination, it randomly samples a fixed number (<code class="text-[var(--primary)]">n_iter</code>) of combinations from the parameter space (which can even include continuous distributions, not just lists). It won't guarantee the absolute best combination, but in practice it finds a very good one far faster than an exhaustive grid.</p>
+            <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">RandomizedSearchCV: Sampled Search</h3>
+            <p class="text-sm text-[var(--on-surface)] mb-2">Instead of trying every combination, it randomly samples a fixed number (<code class="text-[var(--primary)]">n_iter</code>) of combinations from the parameter space, including continuous distributions, not only fixed lists. It doesn't guarantee the single best combination, but in practice it finds a good one far faster than an exhaustive grid.</p>
             <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
               <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
               <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from sklearn.model_selection import RandomizedSearchCV

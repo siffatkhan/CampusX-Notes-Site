@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>1. Introduction to Deep Learning — Sifat Notes</title>
+<title>1. Introduction to Deep Learning — Siffat's AI Notes</title>
 
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect">
@@ -31,7 +31,7 @@
 <a href="../index.html" class="flex items-center gap-2.5 md:gap-3 group min-w-0" title="Back to home">
 <div class="w-9 h-9 shrink-0 rounded-md bg-[var(--primary)] text-[var(--on-primary)] flex items-center justify-center font-h3 font-bold text-sm group-hover:opacity-85 transition-opacity">SN</div>
 <div class="min-w-0">
-<div class="font-h3 text-base md:text-lg font-semibold text-[var(--on-background)] leading-none truncate">Sifat Notes</div>
+<div class="font-h3 text-base md:text-lg font-semibold text-[var(--on-background)] leading-none truncate">Siffat's AI Notes</div>
 <div class="hidden sm:block text-[11px] text-[var(--on-surface-variant)] mt-0.5 truncate">from CampusX's playlists</div>
 </div>
 </a>
@@ -279,9 +279,9 @@
             <h2 class="font-h2 text-2xl text-[var(--on-background)]">Deep Learning vs. Machine Learning</h2>
           </div>
 
-          <p class="text-[var(--on-surface)] leading-relaxed">Deep Learning (DL) is a subset of Machine Learning (ML) built around <strong class="text-[var(--on-background)]">artificial neural networks</strong> — models loosely inspired by how neurons in the brain connect and pass signals to one another. The word "deep" refers to the number of layers stacked between the input and the output: a network with several hidden layers between input and output is considered "deep," as opposed to a "shallow" model with just one or two.</p>
+          <p class="text-[var(--on-surface)] leading-relaxed">Deep Learning (DL) is a subset of Machine Learning (ML) built around <strong class="text-[var(--on-background)]">artificial neural networks</strong>. These are models loosely inspired by how neurons in the brain connect and pass signals to each other. The word "deep" refers to the number of layers stacked between the input and the output. A network with several hidden layers between input and output counts as "deep." A "shallow" model has one or two layers.</p>
 
-          <p class="text-[var(--on-surface)] leading-relaxed">The practical distinction that matters most day-to-day is <strong class="text-[var(--on-background)]">who does the feature engineering</strong>. In classical ML, a human decides which input features matter — for example, hand-picking "size," "location," and "number of rooms" before feeding them to a regression model. In deep learning, the network is given comparatively raw data (pixels, audio waveforms, raw text) and learns the useful intermediate representations — edges, shapes, phonemes, word relationships — on its own, layer by layer, without a human manually designing them.</p>
+          <p class="text-[var(--on-surface)] leading-relaxed">The practical distinction that matters most day-to-day is <strong class="text-[var(--on-background)]">who does the feature engineering</strong>. In classical ML, a human decides which input features matter. For example, you hand-pick "size," "location," and "number of rooms" before feeding them to a regression model. In deep learning, you give the network comparatively raw data: pixels, audio waveforms, raw text. The network learns the useful intermediate representations itself, layer by layer: edges, shapes, phonemes, word relationships. No human designs them by hand.</p>
 
           <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
             <table class="w-full text-left border-collapse text-sm">
@@ -289,7 +289,7 @@
               <tbody>
                 <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Features</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Hand-engineered by a human</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Learned automatically from raw data</td></tr>
                 <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Data needs</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Works reasonably with small/medium data</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Needs large amounts of data to shine</td></tr>
-                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Compute</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Modest — runs fine on a CPU</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Heavy — usually needs GPUs/TPUs</td></tr>
+                <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Compute</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Modest. Runs fine on a CPU</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Heavy. Usually needs GPUs/TPUs</td></tr>
                 <tr><td class="p-2.5 font-semibold">Scaling behavior</td><td class="p-2.5">Performance plateaus after a point, even with more data</td><td class="p-2.5">Performance tends to keep improving with more data and compute</td></tr>
               </tbody>
             </table>
@@ -297,7 +297,7 @@
 
           <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg">
             <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">Key takeaway</h4>
-            <p class="text-sm text-[var(--on-surface)]">Deep learning is not a replacement for machine learning — it is machine learning done with neural networks deep enough to learn their own features. That extra depth is what lets it handle unstructured data (images, audio, text) that classical ML struggles to hand-engineer features for.</p>
+            <p class="text-sm text-[var(--on-surface)]">Deep learning does not replace machine learning. It is machine learning done with neural networks deep enough to learn their own features. That extra depth lets it handle unstructured data (images, audio, text) that classical ML struggles to hand-engineer features for.</p>
           </div>
         </section>
 
@@ -308,31 +308,31 @@
             <h2 class="font-h2 text-2xl text-[var(--on-background)]">Types of Neural Networks</h2>
           </div>
 
-          <p class="text-[var(--on-surface)] leading-relaxed">Different problems shape data differently — a photo, a sentence, a stock-price sequence, and a fraud signal are not the same kind of object — and different neural network architectures exist because each one is built around assumptions that fit a particular shape of data well. Here are the five foundational types.</p>
+          <p class="text-[var(--on-surface)] leading-relaxed">Different problems shape data differently. A photo, a sentence, a stock-price sequence, and a fraud signal are not the same kind of object. Different neural network architectures exist because each one is built around assumptions that fit a particular shape of data well. Here are the five foundational types.</p>
 
           <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
             <h3 class="font-h3 text-lg text-[var(--secondary)]">1. Multi-Layer Perceptron (MLP)</h3>
-            <p class="text-sm text-[var(--on-surface)]">An MLP is the most basic deep learning architecture: an <strong class="text-[var(--on-background)]">input layer</strong>, one or more <strong class="text-[var(--on-background)]">hidden layers</strong>, and an <strong class="text-[var(--on-background)]">output layer</strong>, with every neuron in one layer connected to every neuron in the next (a "fully connected" or "dense" network). It makes no special assumption about the structure of the input — it just treats it as a flat vector of numbers — which makes it general-purpose but less efficient than specialized architectures for images or sequences. It is used mostly in <strong class="text-[var(--on-background)]">supervised learning</strong> tasks on tabular or already-vectorized data, such as predicting a price from a handful of numeric features or classifying a fixed-size feature vector.</p>
+            <p class="text-sm text-[var(--on-surface)]">An MLP is the most basic deep learning architecture: an <strong class="text-[var(--on-background)]">input layer</strong>, one or more <strong class="text-[var(--on-background)]">hidden layers</strong>, and an <strong class="text-[var(--on-background)]">output layer</strong>. Every neuron in one layer connects to every neuron in the next (a "fully connected" or "dense" network). It makes no special assumption about the structure of the input. It treats the input as a flat vector of numbers, which makes it general-purpose but less efficient than specialized architectures for images or sequences. You use it mostly in <strong class="text-[var(--on-background)]">supervised learning</strong> tasks on tabular or already-vectorized data, such as predicting a price from a handful of numeric features or classifying a fixed-size feature vector.</p>
           </div>
 
           <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
             <h3 class="font-h3 text-lg text-[var(--secondary)]">2. Convolutional Neural Network (CNN)</h3>
-            <p class="text-sm text-[var(--on-surface)]">A CNN is built around the idea of scanning small, learnable filters ("kernels") across an input to detect local patterns — edges, textures, shapes — and then combining those local detections into increasingly abstract features in deeper layers. This weight-sharing structure makes CNNs far more efficient than an MLP at processing grid-like data, because the network doesn't need a separate weight for every pixel-to-neuron connection. CNNs are used mostly in <strong class="text-[var(--on-background)]">image and video processing</strong> — classification, object detection, segmentation — and are also applied to any data with a strong local/spatial structure.</p>
+            <p class="text-sm text-[var(--on-surface)]">A CNN scans small, learnable filters ("kernels") across an input to detect local patterns: edges, textures, shapes. It then combines those local detections into increasingly abstract features in deeper layers. This weight-sharing structure makes CNNs far more efficient than an MLP at processing grid-like data, because the network does not need a separate weight for every pixel-to-neuron connection. You use CNNs mostly in <strong class="text-[var(--on-background)]">image and video processing</strong>, for classification, object detection, and segmentation. They also work well on any data with a strong local or spatial structure.</p>
           </div>
 
           <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
             <h3 class="font-h3 text-lg text-[var(--secondary)]">3. Recurrent Neural Network (RNN)</h3>
-            <p class="text-sm text-[var(--on-surface)]">MLPs and CNNs are <strong class="text-[var(--on-background)]">feed-forward networks</strong> — information flows in one direction only, from input to output, with no memory of what came before. An RNN is different: at certain points inside the hidden layers, information is fed <strong class="text-[var(--on-background)]">back</strong> into the network as it processes the next item in a sequence, effectively giving the network a form of memory of everything it has seen so far, which it uses to improve its next prediction. Because of this looping structure, RNNs are used for <strong class="text-[var(--on-background)]">time series, sequential data, and ordered data</strong> in general — things like sentences (where word order matters), stock prices over time, or sensor readings collected over time.</p>
+            <p class="text-sm text-[var(--on-surface)]">MLPs and CNNs are <strong class="text-[var(--on-background)]">feed-forward networks</strong>. Information flows in one direction only, from input to output, with no memory of what came before. An RNN works differently. At certain points inside the hidden layers, information feeds <strong class="text-[var(--on-background)]">back</strong> into the network as it processes the next item in a sequence. This gives the network a form of memory of everything it has seen so far, which it uses to improve its next prediction. Because of this looping structure, you use RNNs for <strong class="text-[var(--on-background)]">time series, sequential data, and ordered data</strong> in general: sentences (where word order matters), stock prices over time, or sensor readings collected over time.</p>
           </div>
 
           <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
             <h3 class="font-h3 text-lg text-[var(--secondary)]">4. Autoencoders</h3>
-            <p class="text-sm text-[var(--on-surface)]">An autoencoder is trained to reconstruct its own input: it takes input data, squeezes it through a narrow "bottleneck" layer that forces the network to compress it into a smaller representation, and then tries to reconstruct the original input from that compressed representation as accurately as possible. In other words, the goal is to <strong class="text-[var(--on-background)]">compress data without losing quality</strong>, and by doing so the network is forced to learn which features of the data are actually essential to keep. This makes autoencoders useful for dimensionality reduction, denoising, anomaly detection, and as a building block inside more advanced generative models.</p>
+            <p class="text-sm text-[var(--on-surface)]">An autoencoder trains to reconstruct its own input. It takes input data, squeezes it through a narrow "bottleneck" layer that forces the network to compress it into a smaller representation, then tries to reconstruct the original input from that compressed representation as accurately as possible. The goal is to <strong class="text-[var(--on-background)]">compress data without losing quality</strong>. In doing so, the network learns which features of the data are essential to keep. This makes autoencoders useful for dimensionality reduction, denoising, anomaly detection, and as a building block inside more advanced generative models.</p>
           </div>
 
           <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
             <h3 class="font-h3 text-lg text-[var(--secondary)]">5. Generative Adversarial Networks (GANs)</h3>
-            <p class="text-sm text-[var(--on-surface)]">A GAN pits two networks against each other: a <strong class="text-[var(--on-background)]">generator</strong>, which tries to produce fake data realistic enough to pass as genuine, and a <strong class="text-[var(--on-background)]">discriminator</strong>, which tries to tell real data apart from the generator's fakes. As training proceeds, the generator gets better at fooling the discriminator, and the discriminator gets better at catching it — an adversarial back-and-forth that (ideally) pushes the generator toward producing highly realistic outputs. GANs are the architecture behind synthetic image generation, deepfakes, data augmentation, and other generative tasks.</p>
+            <p class="text-sm text-[var(--on-surface)]">A GAN pits two networks against each other: a <strong class="text-[var(--on-background)]">generator</strong>, which tries to produce fake data realistic enough to pass as genuine, and a <strong class="text-[var(--on-background)]">discriminator</strong>, which tries to tell real data apart from the generator's fakes. As training proceeds, the generator gets better at fooling the discriminator, and the discriminator gets better at catching it. This adversarial back-and-forth ideally pushes the generator toward producing highly realistic outputs. GANs are the architecture behind synthetic image generation, deepfakes, data augmentation, and other generative tasks.</p>
           </div>
 
           <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
@@ -368,7 +368,7 @@
                 <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. DL cannot be supervised</button>
               </div>
               <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
-                <strong class="text-[var(--on-background)]">Explanation:</strong> Classical ML relies on humans selecting/engineering features; deep networks learn useful intermediate representations automatically, layer by layer, which is why they scale well to raw, unstructured data.
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Classical ML relies on humans selecting or engineering features. Deep networks learn useful intermediate representations automatically, layer by layer, which is why they scale well to raw, unstructured data.
               </div>
             </div>
 
@@ -381,7 +381,7 @@
                 <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Autoencoder</button>
               </div>
               <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
-                <strong class="text-[var(--on-background)]">Explanation:</strong> MLPs and CNNs are feed-forward — info moves start to end linearly. RNNs loop info back inside the hidden layers, which is exactly what enables them to model sequential/time-series data.
+                <strong class="text-[var(--on-background)]">Explanation:</strong> MLPs and CNNs are feed-forward. Info moves start to end, linearly. RNNs loop info back inside the hidden layers, which is what lets them model sequential and time-series data.
               </div>
             </div>
 
@@ -394,7 +394,7 @@
                 <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Feedback loops carrying memory forward</button>
               </div>
               <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
-                <strong class="text-[var(--on-background)]">Explanation:</strong> Autoencoders compress input data into a smaller representation without losing important quality, then reconstruct the original from that compressed form — forcing the network to learn which features matter most.
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Autoencoders compress input data into a smaller representation without losing important quality, then reconstruct the original from that compressed form. This forces the network to learn which features matter most.
               </div>
             </div>
 
@@ -407,7 +407,7 @@
                 <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Try to tell real data apart from the generator's fake data</button>
               </div>
               <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
-                <strong class="text-[var(--on-background)]">Explanation:</strong> The generator produces fakes; the discriminator's job is to catch them. Their adversarial competition is what drives the generator to improve.
+                <strong class="text-[var(--on-background)]">Explanation:</strong> The generator produces fakes. The discriminator's job is to catch them. Their adversarial competition is what drives the generator to improve.
               </div>
             </div>
 

@@ -11,15 +11,15 @@
             <h2 class="font-h2 text-2xl text-[var(--on-background)]">The Vanishing Gradient Problem (VGP)</h2>
           </div>
 
-          <p class="text-[var(--on-surface)] leading-relaxed">The chain rule in backpropagation, as the previous chapter's worked example showed, computes a weight's gradient by <strong class="text-[var(--on-background)]">multiplying together</strong> a chain of small derivative terms — one for every layer the error signal has to pass back through. That multiplication is exactly where trouble starts.</p>
+          <p class="text-[var(--on-surface)] leading-relaxed">The chain rule in backpropagation, as the previous chapter's worked example showed, computes a weight's gradient by <strong class="text-[var(--on-background)]">multiplying together</strong> a chain of small derivative terms. You multiply one derivative for every layer the error signal passes back through. This is where the trouble starts.</p>
 
           <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg text-sm text-[var(--on-surface)]">
-            <strong class="text-[var(--on-background)]">The core intuition:</strong> multiplying several small numbers together produces an even smaller number. \( 0.1 \times 0.1 \times 0.1 = 0.001 \) — three layers already shrinks the signal a thousandfold. Stack ten or twenty layers, each contributing another small multiplicative factor, and the gradient reaching the earliest layers becomes vanishingly close to zero.
+            <strong class="text-[var(--on-background)]">The core intuition:</strong> multiply several small numbers together and you get an even smaller number. \( 0.1 \times 0.1 \times 0.1 = 0.001 \). Three layers already shrink the signal a thousandfold. Stack ten or twenty layers, each contributing another small multiplicative factor, and the gradient reaching the earliest layers gets close to zero.
           </div>
 
-          <p class="text-[var(--on-surface)] leading-relaxed">This is why the problem shows up almost exclusively in <strong class="text-[var(--on-background)]">deep</strong> networks with many hidden layers — a shallow network simply doesn't have enough multiplicative hops for the effect to matter. It is also strongly tied to which activation function is used. <strong class="text-[var(--on-background)]">Sigmoid</strong> squeezes every output into the range [0, 1], and its derivative is at most 0.25 (reached only at \( z=0 \), and rapidly approaching 0 for large positive or negative \( z \)). <strong class="text-[var(--on-background)]">Tanh</strong>'s derivative peaks at 1 but likewise collapses toward 0 away from the origin. Chain several layers of either together, and every layer multiplies in another factor that is at best a quarter (sigmoid) or a fraction close to zero once activations saturate — so the gradient reaching layer 1 in a 10-layer sigmoid network can be astronomically smaller than the gradient at layer 10.</p>
+          <p class="text-[var(--on-surface)] leading-relaxed">This is why the problem shows up almost exclusively in <strong class="text-[var(--on-background)]">deep</strong> networks with many hidden layers. A shallow network doesn't have enough multiplicative hops for the effect to matter. The activation function you use matters too. <strong class="text-[var(--on-background)]">Sigmoid</strong> squeezes every output into the range [0, 1], and its derivative is at most 0.25 (reached only at \( z=0 \), and dropping fast toward 0 for large positive or negative \( z \)). <strong class="text-[var(--on-background)]">Tanh</strong>'s derivative peaks at 1 but also collapses toward 0 away from the origin. Chain several layers of either together, and every layer multiplies in another factor that is at best a quarter (sigmoid) or close to zero once activations saturate. The gradient reaching layer 1 in a 10-layer sigmoid network ends up far smaller than the gradient at layer 10.</p>
 
-          <p class="text-[var(--on-surface)] leading-relaxed"><strong class="text-[var(--on-background)]">The practical consequence:</strong> when a weight's gradient is effectively zero, its gradient descent update \( w_{new} = w_{old} - \alpha \cdot \partial L/\partial w \) barely changes it at all. Early layers of the network — often the ones responsible for learning the most basic, foundational features — simply stop learning, even while later layers may still be updating normally.</p>
+          <p class="text-[var(--on-surface)] leading-relaxed"><strong class="text-[var(--on-background)]">The practical consequence:</strong> when a weight's gradient is effectively zero, the gradient descent update \( w_{new} = w_{old} - \alpha \cdot \partial L/\partial w \) barely changes it. Early layers of the network, often the ones that learn the most basic, foundational features, stop learning. Later layers, meanwhile, keep updating normally.</p>
         </section>
 
         <!-- DETECTING VGP -->
@@ -32,11 +32,11 @@
           <div class="grid sm:grid-cols-2 gap-3">
             <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg">
               <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">Watch the loss</h4>
-              <p class="text-sm text-[var(--on-surface)]">If the training loss stops changing — plateaus early, and stays flat for many epochs despite continued training — that flatness is one of the clearest symptoms that gradients have vanished and weights have effectively stopped updating.</p>
+              <p class="text-sm text-[var(--on-surface)]">If the training loss stops changing, plateaus early, and stays flat for many epochs despite continued training, that flatness is one of the clearest symptoms that gradients have vanished and weights have effectively stopped updating.</p>
             </div>
             <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg">
               <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--tertiary)] mb-1">Plot the weights</h4>
-              <p class="text-sm text-[var(--on-surface)]">Plotting the distribution or magnitude of weights in the earlier layers, across training steps, is the more direct diagnostic — if those weights barely move from their initial values while later-layer weights are updating normally, the gradient isn't reaching them.</p>
+              <p class="text-sm text-[var(--on-surface)]">Plotting the distribution or magnitude of weights in the earlier layers, across training steps, gives a more direct diagnostic. If those weights barely move from their initial values while later-layer weights update normally, the gradient isn't reaching them.</p>
             </div>
           </div>
         </section>
@@ -50,28 +50,28 @@
 
           <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
             <h3 class="font-h3 text-base text-[var(--secondary)]">1. Reduce model depth</h3>
-            <p class="text-sm text-[var(--on-surface)]">Using a shallow network instead of a deep one with many layers removes multiplicative hops, so gradients survive the trip back — but this is a poor trade in practice. The entire reason to reach for a deep network in the first place is to capture complex, hierarchical patterns that a shallow network structurally cannot represent. Shrinking depth to dodge VGP just trades one failure (vanishing gradients) for another (insufficient model capacity) — it "solves" the symptom by giving up the reason the network was deep to begin with.</p>
+            <p class="text-sm text-[var(--on-surface)]">A shallow network removes multiplicative hops, so gradients survive the trip back. But this is a poor trade in practice. You reach for a deep network to capture complex, hierarchical patterns that a shallow network is structurally unable to represent. Shrinking depth to dodge VGP trades one failure (vanishing gradients) for another (insufficient model capacity). It solves the symptom by giving up the reason the network was deep in the first place.</p>
           </div>
 
           <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
             <h3 class="font-h3 text-base text-[var(--secondary)]">2. Use the ReLU activation function</h3>
-            <p class="text-sm text-[var(--on-surface)]">ReLU is defined as \( \text{ReLU}(z) = \max(0, z) \): zero for any negative input, and the input itself for any positive input. Its derivative is either exactly 0 (for negative \(z\)) or exactly 1 (for positive \(z\)) — never a fraction like sigmoid's ≤0.25. Multiplying by 1 repeatedly across layers doesn't shrink anything, so gradients pass through the positive region of a ReLU network essentially undiminished, which is the main reason ReLU became the default hidden-layer activation for deep networks.</p>
-            <p class="text-sm text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">The trade-off:</strong> that same "0 for negative input" behavior creates the <strong class="text-[var(--on-background)]">dying ReLU</strong> problem — if a neuron's weighted input keeps landing in negative territory, its output and gradient are permanently zero, and gradient descent can never nudge it back to life. Chapter 9 covers this in depth, along with the ReLU variants designed to fix it.</p>
+            <p class="text-sm text-[var(--on-surface)]">ReLU is defined as \( \text{ReLU}(z) = \max(0, z) \): zero for any negative input, and the input itself for any positive input. Its derivative is either exactly 0 (for negative \(z\)) or exactly 1 (for positive \(z\)), never a fraction like sigmoid's ≤0.25. Multiplying by 1 repeatedly across layers doesn't shrink anything, so gradients pass through the positive region of a ReLU network essentially undiminished. This is the main reason ReLU became the default hidden-layer activation for deep networks.</p>
+            <p class="text-sm text-[var(--on-surface-variant)]"><strong class="text-[var(--on-background)]">The trade-off:</strong> that same zero-for-negative-input behavior creates the <strong class="text-[var(--on-background)]">dying ReLU</strong> problem. If a neuron's weighted input keeps landing in negative territory, its output and gradient stay permanently zero, and gradient descent never nudges it back to life. Chapter 9 covers this in depth, along with the ReLU variants designed to fix it.</p>
           </div>
 
           <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
             <h3 class="font-h3 text-base text-[var(--secondary)]">3. Proper weight initialization</h3>
-            <p class="text-sm text-[var(--on-surface)]">Techniques like <strong class="text-[var(--on-background)]">Xavier/Glorot</strong> and <strong class="text-[var(--on-background)]">He</strong> initialization choose the starting scale of each layer's weights based on the number of inputs and outputs of that layer, so that activations and gradients start out with roughly consistent variance as they pass through the network, instead of shrinking or exploding purely as an artifact of poor starting values. Chapter 10 works through the exact formulas.</p>
+            <p class="text-sm text-[var(--on-surface)]">Techniques like <strong class="text-[var(--on-background)]">Xavier/Glorot</strong> and <strong class="text-[var(--on-background)]">He</strong> initialization choose the starting scale of each layer's weights based on the number of inputs and outputs of that layer. This keeps activations and gradients at roughly consistent variance as they pass through the network, instead of shrinking or exploding purely because of poor starting values. Chapter 10 works through the exact formulas.</p>
           </div>
 
           <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
             <h3 class="font-h3 text-base text-[var(--secondary)]">4. Batch normalization</h3>
-            <p class="text-sm text-[var(--on-surface)]">A batch normalization layer re-centers and re-scales its inputs to have roughly zero mean and unit variance at every layer, mini-batch by mini-batch. Keeping activations in a well-behaved range throughout the network prevents them from drifting into the saturated, near-flat regions of sigmoid/tanh where derivatives collapse toward zero. Chapter 10 covers the mechanics in full.</p>
+            <p class="text-sm text-[var(--on-surface)]">A batch normalization layer re-centers and re-scales its inputs to have roughly zero mean and unit variance at every layer, mini-batch by mini-batch. Keeping activations in a well-behaved range throughout the network stops them from drifting into the saturated, near-flat regions of sigmoid/tanh where derivatives collapse toward zero. Chapter 10 covers the mechanics in full.</p>
           </div>
 
           <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
             <h3 class="font-h3 text-base text-[var(--secondary)]">5. Residual (skip) connections</h3>
-            <p class="text-sm text-[var(--on-surface)]">A residual connection lets a layer's input skip ahead and be added directly to a later layer's output, giving the gradient an alternate path back to earlier layers that doesn't have to pass through every intermediate multiplication. This building block is used in ordinary deep ANNs, but its most famous application is in CNNs — <strong class="text-[var(--on-background)]">ResNet</strong> (Residual Network) is built almost entirely out of stacked residual blocks, which is precisely what let image-classification networks scale to over a hundred layers without the earlier layers' gradients vanishing.</p>
+            <p class="text-sm text-[var(--on-surface)]">A residual connection lets a layer's input skip ahead and add directly to a later layer's output. This gives the gradient an alternate path back to earlier layers that doesn't have to pass through every intermediate multiplication. Ordinary deep ANNs use this building block, but its most famous application is in CNNs. <strong class="text-[var(--on-background)]">ResNet</strong> (Residual Network) is built almost entirely out of stacked residual blocks. This is what let image-classification networks scale to over a hundred layers without the earlier layers' gradients vanishing.</p>
           </div>
         </section>
 
@@ -82,12 +82,12 @@
             <h2 class="font-h2 text-2xl text-[var(--on-background)]">The Exploding Gradient Problem</h2>
           </div>
 
-          <p class="text-[var(--on-surface)] leading-relaxed">Exploding gradients are the mirror image of vanishing gradients, and come from the exact same chain-rule multiplication mechanism, just in the opposite direction: instead of repeatedly multiplying numbers smaller than 1 (which shrinks toward zero), the chain repeatedly multiplies numbers <strong class="text-[var(--on-background)]">larger</strong> than 1 — and a product of many large numbers grows enormous very quickly. A gradient of, say, 2 at each of 20 layers compounds to \( 2^{20} \approx \) one million times its original size by the time it reaches the earliest layer.</p>
+          <p class="text-[var(--on-surface)] leading-relaxed">Exploding gradients are the mirror image of vanishing gradients. They come from the exact same chain-rule multiplication mechanism, just in the opposite direction. Instead of repeatedly multiplying numbers smaller than 1 (which shrinks toward zero), the chain repeatedly multiplies numbers <strong class="text-[var(--on-background)]">larger</strong> than 1, and a product of many large numbers grows enormous fast. A gradient of, say, 2 at each of 20 layers compounds to \( 2^{20} \approx \) one million times its original size by the time it reaches the earliest layer.</p>
 
-          <p class="text-[var(--on-surface)] leading-relaxed">This is most commonly seen in <strong class="text-[var(--on-background)]">RNNs (Recurrent Neural Networks)</strong>, where the same weight matrix is applied repeatedly across many time steps — effectively creating an extremely deep chain of multiplications by the same values, which readily runs away in either direction depending on whether those values are, on average, less than or greater than 1. When gradients explode, weight updates become wildly large, and training visibly destabilizes — loss spikes erratically or turns into <code class="text-[var(--secondary)]">NaN</code>.</p>
+          <p class="text-[var(--on-surface)] leading-relaxed">This is most commonly seen in <strong class="text-[var(--on-background)]">RNNs (Recurrent Neural Networks)</strong>, where the same weight matrix applies repeatedly across many time steps. This effectively creates a long chain of multiplications by the same values, which runs away in either direction depending on whether those values are, on average, less than or greater than 1. When gradients explode, weight updates become wildly large, and training visibly destabilizes. Loss spikes erratically or turns into <code class="text-[var(--secondary)]">NaN</code>.</p>
 
           <div class="border-l-4 border-[var(--outline)] bg-[var(--surface-container-high)]/40 p-sm rounded-r-lg text-xs text-[var(--on-surface-variant)]">
-            <strong class="text-[var(--on-background)]">Extended note</strong> — the source notes describe the exploding gradient problem but don't name a fix for it. The standard remedy, used almost universally in RNN training, is added here: <strong class="text-[var(--on-background)]">gradient clipping</strong> — rescaling the gradient vector whenever its norm exceeds some threshold, so it points in the same direction but its magnitude is capped. This bounds how large a single weight update can ever be, without changing the direction gradient descent is trying to move in.
+            <strong class="text-[var(--on-background)]">Extended note</strong>: the source notes describe the exploding gradient problem but don't name a fix for it. The standard remedy, used almost universally in RNN training, is added here: <strong class="text-[var(--on-background)]">gradient clipping</strong>. This rescales the gradient vector whenever its norm exceeds some threshold, so it points in the same direction but its magnitude is capped. This bounds how large a single weight update ever gets, without changing the direction gradient descent moves in.
           </div>
 
           <div>
@@ -109,7 +109,7 @@ model.fit(X_train, y_train, epochs=20)</code></pre>
               <tbody>
                 <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Mechanism</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Repeated multiplication of numbers &lt; 1</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Repeated multiplication of numbers &gt; 1</td></tr>
                 <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Most common in</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Deep networks with sigmoid/tanh</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">RNNs, unrolled over many time steps</td></tr>
-                <tr><td class="p-2.5 font-semibold">Symptom</td><td class="p-2.5">Loss plateaus; early weights barely move</td><td class="p-2.5">Loss spikes / NaNs; weights swing wildly</td></tr>
+                <tr><td class="p-2.5 font-semibold">Symptom</td><td class="p-2.5">Loss plateaus. Early weights barely move</td><td class="p-2.5">Loss spikes / NaNs. Weights swing wildly</td></tr>
               </tbody>
             </table>
           </div>
@@ -130,11 +130,11 @@ model.fit(X_train, y_train, epochs=20)</code></pre>
               <div class="quiz-options grid gap-2">
                 <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Shallow networks don't use gradients at all</button>
                 <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Shallow networks don't use backpropagation</button>
-                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. The chain rule multiplies one small derivative per layer; more layers means more multiplications, compounding the shrinkage</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. The chain rule multiplies one small derivative per layer. More layers means more multiplications, compounding the shrinkage</button>
                 <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Shallow networks always use ReLU by definition</button>
               </div>
               <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
-                <strong class="text-[var(--on-background)]">Explanation:</strong> The gradient at an early layer is a product of the derivative terms from every layer between it and the output. Few layers means few multiplications and little shrinkage; many layers compounds it — just like 0.1×0.1×0.1 shrinking much faster than 0.1×0.1.
+                <strong class="text-[var(--on-background)]">Explanation:</strong> The gradient at an early layer is a product of the derivative terms from every layer between it and the output. Few layers means few multiplications and little shrinkage. Many layers compounds it, just like 0.1×0.1×0.1 shrinks much faster than 0.1×0.1.
               </div>
             </div>
 
@@ -142,25 +142,25 @@ model.fit(X_train, y_train, epochs=20)</code></pre>
               <p class="font-semibold text-[var(--on-background)] mb-3">2. Sigmoid's derivative has a maximum value of about 0.25. What does this imply for a deep sigmoid network?</p>
               <div class="quiz-options grid gap-2">
                 <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Gradients will explode, since 0.25 is a large multiplier</button>
-                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Even at best, every layer multiplies the gradient by at most a quarter, so it shrinks fast with depth — worse still when activations saturate near 0 or 1</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Even at best, every layer multiplies the gradient by at most a quarter, so it shrinks fast with depth. It's worse when activations saturate near 0 or 1</button>
                 <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Sigmoid has no effect on gradient magnitude</button>
                 <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It only affects the output layer, never hidden layers</button>
               </div>
               <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
-                <strong class="text-[var(--on-background)]">Explanation:</strong> A derivative that never exceeds 0.25 means every layer of a sigmoid-based deep network can only shrink the backward gradient — never preserve or amplify it — making vanishing gradients close to inevitable as depth grows.
+                <strong class="text-[var(--on-background)]">Explanation:</strong> A derivative that never exceeds 0.25 means every layer of a sigmoid-based deep network only shrinks the backward gradient. It never preserves or amplifies it. This makes vanishing gradients close to inevitable as depth grows.
               </div>
             </div>
 
             <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
               <p class="font-semibold text-[var(--on-background)] mb-3">3. Why is "just use a shallow network" considered a poor fix for the vanishing gradient problem?</p>
               <div class="quiz-options grid gap-2">
-                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. It sacrifices the model capacity that deep networks exist to provide, in order to dodge a symptom rather than fix the underlying cause</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. It sacrifices the model capacity that deep networks exist to provide, to dodge a symptom instead of fixing the underlying cause</button>
                 <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Shallow networks train slower than deep ones</button>
                 <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Shallow networks cannot use gradient descent</button>
                 <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It is not actually a valid fix at all</button>
               </div>
               <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
-                <strong class="text-[var(--on-background)]">Explanation:</strong> Deep networks are used specifically to capture complex, hierarchical patterns a shallow network can't represent. Reducing depth avoids vanishing gradients but reintroduces the exact capacity limitation deep learning was meant to overcome.
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Deep networks capture complex, hierarchical patterns a shallow network is unable to represent. Reducing depth avoids vanishing gradients but reintroduces the exact capacity limitation deep learning was meant to overcome.
               </div>
             </div>
 
@@ -170,10 +170,10 @@ model.fit(X_train, y_train, epochs=20)</code></pre>
                 <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. ReLU makes training slower than sigmoid</button>
                 <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. ReLU cannot be used in hidden layers at all</button>
                 <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. ReLU always causes exploding gradients instead</button>
-                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. A neuron whose input keeps landing negative outputs zero and has zero gradient forever, so it can permanently stop updating</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. A neuron whose input keeps landing negative outputs zero and has zero gradient forever, so it permanently stops updating</button>
               </div>
               <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
-                <strong class="text-[var(--on-background)]">Explanation:</strong> ReLU's derivative is 0 for any negative input. If a neuron always receives a negative weighted sum, its gradient is always 0, so gradient descent can never move its weights again — the neuron is permanently "dead."
+                <strong class="text-[var(--on-background)]">Explanation:</strong> ReLU's derivative is 0 for any negative input. If a neuron always receives a negative weighted sum, its gradient stays 0, so gradient descent never moves its weights again. The neuron stays permanently dead.
               </div>
             </div>
 
@@ -181,12 +181,12 @@ model.fit(X_train, y_train, epochs=20)</code></pre>
               <p class="font-semibold text-[var(--on-background)] mb-3">5. Why are RNNs especially prone to exploding (and vanishing) gradients?</p>
               <div class="quiz-options grid gap-2">
                 <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. RNNs never use gradient descent</button>
-                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. The same weight matrix is applied repeatedly across many time steps, effectively creating a very long chain of multiplications by similar values</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. The same weight matrix is applied repeatedly across many time steps, effectively creating a long chain of multiplications by similar values</button>
                 <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. RNNs only have one layer</button>
                 <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. RNNs don't use activation functions</button>
               </div>
               <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
-                <strong class="text-[var(--on-background)]">Explanation:</strong> Unrolled over time, an RNN reuses the same weights at every step, so backpropagation through time chains together many multiplications of essentially the same values — depending on their scale, this compounds toward zero (vanishing) or infinity (exploding) very quickly.
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Unrolled over time, an RNN reuses the same weights at every step, so backpropagation through time chains together many multiplications of essentially the same values. Depending on their scale, this compounds toward zero (vanishing) or infinity (exploding) fast.
               </div>
             </div>
 
@@ -198,5 +198,5 @@ model.fit(X_train, y_train, epochs=20)</code></pre>
         </section>
 
         <div class="pt-lg border-t border-[var(--outline-variant)] flex justify-end">
-          <a href="dl-08.html" class="bg-[var(--secondary)] text-[var(--on-secondary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">Next: Training Deep Networks — Practical Toolkit</a>
+          <a href="dl-08.html" class="bg-[var(--secondary)] text-[var(--on-secondary)] px-6 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2">Next: Training Deep Networks, Practical Toolkit</a>
         </div>

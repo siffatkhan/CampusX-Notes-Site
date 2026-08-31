@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>9. Encoding Categorical Vars — Sifat Notes</title>
+<title>9. Encoding Categorical Vars — Siffat's AI Notes</title>
 
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect">
@@ -31,7 +31,7 @@
 <a href="../index.html" class="flex items-center gap-2.5 md:gap-3 group min-w-0" title="Back to home">
 <div class="w-9 h-9 shrink-0 rounded-md bg-[var(--primary)] text-[var(--on-primary)] flex items-center justify-center font-h3 font-bold text-sm group-hover:opacity-85 transition-opacity">SN</div>
 <div class="min-w-0">
-<div class="font-h3 text-base md:text-lg font-semibold text-[var(--on-background)] leading-none truncate">Sifat Notes</div>
+<div class="font-h3 text-base md:text-lg font-semibold text-[var(--on-background)] leading-none truncate">Siffat's AI Notes</div>
 <div class="hidden sm:block text-[11px] text-[var(--on-surface-variant)] mt-0.5 truncate">from CampusX's playlists</div>
 </div>
 </a>
@@ -459,7 +459,7 @@
 
     <div class="space-y-xl">
         <div>
-          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-3 py-1 mb-3">Source: CampusX — 100 Days of Machine Learning</span>
+          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-3 py-1 mb-3">Source: CampusX, 100 Days of Machine Learning</span>
           <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">9. Encoding Categorical Vars</h1>
           <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Ordinal / Label Encoding · One Hot Encoding</p>
         </div>
@@ -468,27 +468,27 @@
         <section id="day-26" class="space-y-4 scroll-mt-24">
           <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
             <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 26</span>
-            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Encoding Categorical Variables — Ordinal / Label Encoding</h2>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Encoding Categorical Variables: Ordinal / Label Encoding</h2>
           </div>
-          <p class="text-[var(--on-surface)] leading-relaxed">Categorical data is a part of feature transformation. It contains values in string form and must be converted into numbers before feeding data to ML models. Categorical data is mainly of two types: <strong class="text-[var(--on-background)]">nominal</strong> and <strong class="text-[var(--on-background)]">ordinal</strong>. Choosing the correct encoding method depends on this distinction.</p>
+          <p class="text-[var(--on-surface)] leading-relaxed">Categorical data is part of feature transformation. It holds values as strings, and you must convert it into numbers before feeding it to an ML model. Categorical data comes in two main types: <strong class="text-[var(--on-background)]">nominal</strong> and <strong class="text-[var(--on-background)]">ordinal</strong>. The correct encoding method depends on this distinction.</p>
 
           <div class="grid sm:grid-cols-2 gap-3">
             <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg">
               <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">Nominal Categorical Data</h4>
-              <p class="text-sm text-[var(--on-surface)]">Has categories with no natural order or relationship among them. The categories are independent of each other.</p>
+              <p class="text-sm text-[var(--on-surface)]">Has categories with no natural order or relationship between them. The categories are independent of each other.</p>
               <p class="text-sm text-[var(--on-surface)] mt-1"><strong class="text-[var(--on-background)]">Examples:</strong> Color → Red, Blue, Green · City → Lahore, Karachi, Islamabad</p>
-              <p class="text-sm text-[var(--on-surface-variant)] mt-1">There is no meaning in saying one category is greater or smaller than another. For such data, ordinal or label based numbering must not be used because it introduces false relationships.</p>
+              <p class="text-sm text-[var(--on-surface-variant)] mt-1">Saying one category is greater or smaller than another has no meaning here. Do not use ordinal or label based numbering on this kind of data. It introduces false relationships.</p>
             </div>
             <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
               <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">Ordinal Categorical Data</h4>
-              <p class="text-sm text-[var(--on-surface)]">Has categories with a meaningful order or ranking. Here, the order carries information, so encoding must preserve this ranking.</p>
+              <p class="text-sm text-[var(--on-surface)]">Has categories with a meaningful order or ranking. The order carries information, so your encoding must preserve it.</p>
               <p class="text-sm text-[var(--on-surface)] mt-1"><strong class="text-[var(--on-background)]">Examples:</strong> Grades → A, B, C · Reviews → Good, Average, Bad · Education → High School, Bachelor, Master</p>
             </div>
           </div>
 
           <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
             <h3 class="font-h3 text-lg text-[var(--primary)]">Ordinal Encoding</h3>
-            <p class="text-sm text-[var(--on-surface)]">Used for ordinal categorical <strong class="text-[var(--on-background)]">input features</strong>. Each category is assigned a numerical value according to its rank or order.</p>
+            <p class="text-sm text-[var(--on-surface)]">Use this for ordinal categorical <strong class="text-[var(--on-background)]">input features</strong>. You assign each category a numerical value based on its rank or order.</p>
             <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Example:</strong> Bad → 0, Average → 1, Good → 2</p>
             <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
               <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
@@ -496,13 +496,13 @@
 oe = OrdinalEncoder(categories=[["Bad", "Average", "Good"]])</code></pre>
             </div>
             <div class="border-l-4 border-[var(--error)] bg-[var(--error-container)]/10 p-sm rounded-r-lg">
-              <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Important note:</strong> the order must be defined correctly. A wrong order misleads the model.</p>
+              <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Important:</strong> define the order correctly. A wrong order misleads the model.</p>
             </div>
           </div>
 
           <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
             <h3 class="font-h3 text-lg text-[var(--secondary)]">Label Encoding</h3>
-            <p class="text-sm text-[var(--on-surface)]">Similar to ordinal encoding but is mainly used for encoding <strong class="text-[var(--on-background)]">output labels</strong>, not input features. It converts class labels into numeric form.</p>
+            <p class="text-sm text-[var(--on-surface)]">Similar to ordinal encoding, but you mainly use it for <strong class="text-[var(--on-background)]">output labels</strong>, not input features. It converts class labels into numeric form.</p>
             <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Example:</strong> Spam → 1, Not Spam → 0</p>
             <div class="bg-[var(--surface-container-lowest)] rounded-lg border border-[var(--outline-variant)] relative group">
               <button class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-[var(--surface-variant)] hover:bg-[var(--surface-bright)] p-1.5 rounded text-xs border border-[var(--outline-variant)] z-10" onclick="copyCode(this)">Copy</button>
@@ -514,7 +514,7 @@ y_encoded = le.fit_transform(y)</code></pre>
 
           <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg">
             <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--tertiary)] mb-1">Ordinal Encoding vs Label Encoding</h4>
-            <p class="text-sm text-[var(--on-surface)]">Ordinal Encoding is used for input features with known order. Label Encoding is used for output labels or target variables. Using label encoding on nominal input features is a common mistake because it introduces false ordering.</p>
+            <p class="text-sm text-[var(--on-surface)]">Use Ordinal Encoding for input features with a known order. Use Label Encoding for output labels or target variables. Using label encoding on nominal input features is a common mistake, since it introduces false ordering.</p>
           </div>
         </section>
 
@@ -522,11 +522,11 @@ y_encoded = le.fit_transform(y)</code></pre>
         <section id="day-27" class="space-y-4 scroll-mt-24">
           <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
             <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 27</span>
-            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Encoding Categorical Variables — One Hot Encoding</h2>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Encoding Categorical Variables: One Hot Encoding</h2>
           </div>
-          <p class="text-[var(--on-surface)] leading-relaxed">One Hot Encoding is used to handle <strong class="text-[var(--on-background)]">nominal categorical data</strong> where categories have no natural order. It converts each category into a separate binary column, forming a vector representation of the original feature. This is the most commonly used encoding technique in machine learning. ML algorithms work with numerical data, not strings. OHE avoids assigning artificial order to categories, which would mislead models.</p>
+          <p class="text-[var(--on-surface)] leading-relaxed">Use One Hot Encoding to handle <strong class="text-[var(--on-background)]">nominal categorical data</strong>, where categories have no natural order. It converts each category into a separate binary column, forming a vector representation of the original feature. This is the most common encoding technique in machine learning. ML algorithms work with numerical data, not strings. OHE avoids assigning artificial order to categories, which would mislead a model.</p>
 
-          <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Example:</strong> Color column with values Red, Blue, Green becomes three columns: Color_Red, Color_Blue, Color_Green. Each row contains a 1 for the present category and 0 for others. As the number of categories increases, the number of generated columns also increases.</p>
+          <p class="text-sm text-[var(--on-surface)]"><strong class="text-[var(--on-background)]">Example:</strong> a Color column with values Red, Blue, Green becomes three columns: Color_Red, Color_Blue, Color_Green. Each row gets a 1 for its category and 0 for the others. As the number of categories grows, the number of generated columns grows too.</p>
 
           <div class="grid sm:grid-cols-2 gap-3">
             <div>
@@ -558,25 +558,25 @@ y_encoded = le.fit_transform(y)</code></pre>
               </div>
             </div>
           </div>
-          <p class="text-xs text-[var(--on-surface-variant)] italic">We changed string into kind of vector.</p>
+          <p class="text-xs text-[var(--on-surface-variant)] italic">You turned a string column into a vector.</p>
 
           <div class="border-l-4 border-[var(--error)] bg-[var(--error-container)]/10 p-sm rounded-r-lg">
             <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--on-error-container)] mb-1">High Cardinality Issue</h4>
-            <p class="text-sm text-[var(--on-surface)]">When a feature has many unique categories, OHE creates too many columns. This increases memory usage, training time, and risk of overfitting. This is known as the curse of dimensionality.</p>
-            <p class="text-sm text-[var(--on-surface-variant)] mt-1">In ML, it's general wisdom that input columns should not have any relationship among them, or be dependent on each other.</p>
+            <p class="text-sm text-[var(--on-surface)]">When a feature has many unique categories, OHE creates too many columns. This increases memory usage, training time, and the risk of overfitting. This is known as the curse of dimensionality.</p>
+            <p class="text-sm text-[var(--on-surface-variant)] mt-1">In ML, a common guideline says input columns should not relate to each other or depend on one another.</p>
           </div>
 
           <div class="border-l-4 border-[var(--error)] bg-[var(--error-container)]/10 p-sm rounded-r-lg">
             <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--on-error-container)] mb-1">Dummy Variable Trap and Multicollinearity</h4>
-            <p class="text-sm text-[var(--on-surface)]">Dummy variable trap occurs when all one hot encoded columns are used together. Since the sum of all dummy columns equals 1, one column becomes redundant and creates perfect multicollinearity.</p>
-            <p class="text-sm text-[var(--on-surface)] mt-1"><strong class="text-[var(--on-background)]">Solution:</strong> drop one dummy column. No information is lost because rows with all zeros implicitly represent the dropped category.</p>
+            <p class="text-sm text-[var(--on-surface)]">The dummy variable trap occurs when you use all one hot encoded columns together. Since the sum of all dummy columns equals 1, one column becomes redundant and creates perfect multicollinearity.</p>
+            <p class="text-sm text-[var(--on-surface)] mt-1"><strong class="text-[var(--on-background)]">Solution:</strong> drop one dummy column. You lose no information, because rows with all zeros implicitly represent the dropped category.</p>
             <p class="text-sm text-[var(--on-surface-variant)] mt-1"><strong class="text-[var(--on-background)]">Example:</strong> if Red, Blue, Green exist, drop Green. All zeros → Green.</p>
           </div>
 
           <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg">
             <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--tertiary)] mb-1">Handling Most Frequent Categories</h4>
             <p class="text-sm text-[var(--on-surface)]">When a feature has many categories, keep only the most frequent ones and group the rest into a single category called "Other". This reduces dimensionality and noise.</p>
-            <p class="text-sm text-[var(--on-surface-variant)] mt-1"><strong class="text-[var(--on-background)]">Effect on model:</strong> rare categories often carry little predictive power. Grouping them improves generalization. Some fine detail is lost, but overall model stability improves.</p>
+            <p class="text-sm text-[var(--on-surface-variant)] mt-1"><strong class="text-[var(--on-background)]">Effect on model:</strong> rare categories often carry little predictive power. Grouping them improves generalization. You lose some fine detail, but overall model stability improves.</p>
           </div>
 
           <div>
@@ -585,7 +585,7 @@ y_encoded = le.fit_transform(y)</code></pre>
               <pre class="language-python !bg-transparent !m-0 font-code-block text-code-block"><code>from sklearn.preprocessing import OneHotEncoder
 ohe = OneHotEncoder(handle_unknown="ignore", drop="first")</code></pre>
             </div>
-            <p class="text-sm text-[var(--on-surface-variant)] mt-2">Converts categories into binary vectors, drops one column to avoid multicollinearity, and ignores unseen categories during testing.</p>
+            <p class="text-sm text-[var(--on-surface-variant)] mt-2">This converts categories into binary vectors, drops one column to avoid multicollinearity, and ignores unseen categories during testing.</p>
           </div>
         </section>
 
@@ -600,15 +600,15 @@ ohe = OneHotEncoder(handle_unknown="ignore", drop="first")</code></pre>
           <div class="quiz-block space-y-4" data-quiz-id="quiz-section-09">
 
             <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
-              <p class="font-semibold text-[var(--on-background)] mb-3">1. A junior data scientist applies LabelEncoder to a nominal "City" input feature (Lahore=0, Karachi=1, Islamabad=2). What's the core problem?</p>
+              <p class="font-semibold text-[var(--on-background)] mb-3">1. A junior data scientist applies LabelEncoder to a nominal "City" input feature (Lahore=0, Karachi=1, Islamabad=2). What is the core problem?</p>
               <div class="quiz-options grid gap-2">
-                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. LabelEncoder can't handle strings</button>
-                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. It introduces a false order/ranking among cities that don't have one</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. LabelEncoder does not support strings</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. It introduces a false order or ranking among cities that have none</button>
                 <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. It creates too many new columns</button>
                 <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It causes the dummy variable trap</button>
               </div>
               <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
-                <strong class="text-[var(--on-background)]">Explanation:</strong> Per the notes, "Using label encoding on nominal input features is a common mistake because it introduces false ordering." Cities have no inherent rank, so 0 &lt; 1 &lt; 2 falsely implies Islamabad &gt; Karachi &gt; Lahore to the model.
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Using label encoding on nominal input features is a common mistake. It introduces false ordering. Cities have no inherent rank, so 0 &lt; 1 &lt; 2 falsely tells the model that Islamabad &gt; Karachi &gt; Lahore.
               </div>
             </div>
 
@@ -617,11 +617,11 @@ ohe = OneHotEncoder(handle_unknown="ignore", drop="first")</code></pre>
               <div class="quiz-options grid gap-2">
                 <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. High cardinality / curse of dimensionality</button>
                 <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. False ordinal ranking</button>
-                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Dummy variable trap — perfect multicollinearity, since the 3 columns always sum to 1</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Dummy variable trap: perfect multicollinearity, since the 3 columns always sum to 1</button>
                 <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Data leakage between train and test</button>
               </div>
               <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
-                <strong class="text-[var(--on-background)]">Explanation:</strong> "Dummy variable trap occurs when all one hot encoded columns are used together. Since the sum of all dummy columns equals 1, one column becomes redundant and creates perfect multicollinearity." Fix: drop one column (e.g. drop="first").
+                <strong class="text-[var(--on-background)]">Explanation:</strong> The dummy variable trap occurs when you use all one-hot encoded columns together. Since the sum of all dummy columns equals 1, one column becomes redundant and creates perfect multicollinearity. Fix: drop one column (e.g. drop="first").
               </div>
             </div>
 
@@ -630,24 +630,24 @@ ohe = OneHotEncoder(handle_unknown="ignore", drop="first")</code></pre>
               <div class="quiz-options grid gap-2">
                 <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Red</button>
                 <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. Blue</button>
-                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Missing / undefined — information was lost</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Missing or undefined: information was lost</button>
                 <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Green</button>
               </div>
               <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
-                <strong class="text-[var(--on-background)]">Explanation:</strong> "No information is lost because rows with all zeros implicitly represent the dropped category... If Red, Blue, Green exist, drop Green. All zeros → Green." The dropped category is fully recoverable from all-zeros.
+                <strong class="text-[var(--on-background)]">Explanation:</strong> No information is lost here. Rows with all zeros implicitly represent the dropped category. If Red, Blue, Green exist and you drop Green, all zeros means Green. You can fully recover the dropped category from an all-zero row.
               </div>
             </div>
 
             <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="0">
-              <p class="font-semibold text-[var(--on-background)] mb-3">4. A "Country" column has 180 unique values. Which consequence is specifically named in the notes as a risk of one-hot encoding it directly?</p>
+              <p class="font-semibold text-[var(--on-background)] mb-3">4. A "Country" column has 180 unique values. Which consequence does one-hot encoding it directly risk?</p>
               <div class="quiz-options grid gap-2">
-                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Increased memory usage, training time, and risk of overfitting (curse of dimensionality)</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. Increased memory use, longer training time, and a higher risk of overfitting (curse of dimensionality)</button>
                 <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. The model will refuse to train</button>
                 <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. It converts nominal data into ordinal data</button>
                 <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. It requires the target variable to be numeric</button>
               </div>
               <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
-                <strong class="text-[var(--on-background)]">Explanation:</strong> "When a feature has many unique categories, OHE creates too many columns. This increases memory usage, training time, and risk of overfitting. This is known as the curse of dimensionality." The suggested fix is grouping rare categories into "Other".
+                <strong class="text-[var(--on-background)]">Explanation:</strong> When a feature has many unique categories, OHE creates too many columns. This increases memory use, training time, and the risk of overfitting. This is the curse of dimensionality. The fix is grouping rare categories into "Other".
               </div>
             </div>
 
@@ -655,12 +655,12 @@ ohe = OneHotEncoder(handle_unknown="ignore", drop="first")</code></pre>
               <p class="font-semibold text-[var(--on-background)] mb-3">5. At test time, OneHotEncoder(handle_unknown="ignore") encounters a category it never saw during fit. What happens?</p>
               <div class="quiz-options grid gap-2">
                 <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. It throws an error and stops the pipeline</button>
-                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. It is ignored — the unseen category is encoded with all zeros across its columns</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. It is ignored: the unseen category is encoded with all zeros across its columns</button>
                 <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. A brand new column is created for it</button>
                 <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. The row is dropped from the test set</button>
               </div>
               <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
-                <strong class="text-[var(--on-background)]">Explanation:</strong> Per the notes on <code>OneHotEncoder(handle_unknown="ignore", drop="first")</code>: it "ignores unseen categories during testing" — meaning an unseen category simply produces zeros in all of that feature's dummy columns rather than raising an error.
+                <strong class="text-[var(--on-background)]">Explanation:</strong> <code>OneHotEncoder(handle_unknown="ignore", drop="first")</code> ignores unseen categories during testing. An unseen category produces zeros in all of that feature's dummy columns instead of raising an error.
               </div>
             </div>
 

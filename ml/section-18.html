@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>18. PCA — Sifat Notes</title>
+<title>18. PCA — Siffat's AI Notes</title>
 
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect">
@@ -31,7 +31,7 @@
 <a href="../index.html" class="flex items-center gap-2.5 md:gap-3 group min-w-0" title="Back to home">
 <div class="w-9 h-9 shrink-0 rounded-md bg-[var(--primary)] text-[var(--on-primary)] flex items-center justify-center font-h3 font-bold text-sm group-hover:opacity-85 transition-opacity">SN</div>
 <div class="min-w-0">
-<div class="font-h3 text-base md:text-lg font-semibold text-[var(--on-background)] leading-none truncate">Sifat Notes</div>
+<div class="font-h3 text-base md:text-lg font-semibold text-[var(--on-background)] leading-none truncate">Siffat's AI Notes</div>
 <div class="hidden sm:block text-[11px] text-[var(--on-surface-variant)] mt-0.5 truncate">from CampusX's playlists</div>
 </div>
 </a>
@@ -459,7 +459,7 @@
 
     <div class="space-y-xl">
         <div>
-          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-3 py-1 mb-3">Source: CampusX — 100 Days of Machine Learning</span>
+          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-3 py-1 mb-3">Source: CampusX, 100 Days of Machine Learning</span>
           <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">18. PCA</h1>
           <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">Geometric Intuition · Problem Formulation & Code · MNIST Worked Example</p>
         </div>
@@ -468,29 +468,29 @@
         <section id="day-47" class="space-y-4 scroll-mt-24">
           <div class="flex items-center gap-3 border-b border-[var(--surface-bright)] pb-2">
             <span class="text-xs font-label-caps text-[var(--primary)] bg-[var(--primary-container)]/10 border border-[var(--primary)]/30 rounded-full px-2.5 py-0.5">Day 47</span>
-            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Principal Component Analysis (PCA) — Geometric Intuition</h2>
+            <h2 class="font-h2 text-2xl text-[var(--on-background)]">Principal Component Analysis (PCA): Geometric Intuition</h2>
           </div>
 
-          <p class="text-[var(--on-surface)] leading-relaxed">PCA is an <strong class="text-[var(--on-background)]">unsupervised</strong> machine learning technique, having just input, no output. PCA can transform higher-dimensional data into lower-dimensional data while keeping the core essence of the data.</p>
+          <p class="text-[var(--on-surface)] leading-relaxed">PCA is an <strong class="text-[var(--on-background)]">unsupervised</strong> machine learning technique. It takes only input, no output. PCA transforms higher-dimensional data into lower-dimensional data and keeps the core essence of the data.</p>
 
           <div class="border-l-4 border-[var(--primary)] bg-[var(--primary-container)]/5 p-sm rounded-r-lg">
             <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--primary)] mb-1">PCA Benefits</h4>
             <ul class="text-sm text-[var(--on-surface)] list-disc list-inside space-y-1">
-              <li>Data size reduction, resulting in faster execution of algorithms</li>
-              <li>Visualization in the needed dimension</li>
+              <li>Reduces data size, so algorithms run faster</li>
+              <li>Visualizes data in the dimension you need</li>
             </ul>
           </div>
 
           <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
-            <h3 class="font-h3 text-lg text-[var(--on-background)]">Feature Selection vs Feature Extraction — the intuition</h3>
-            <p class="text-sm text-[var(--on-surface)]">Feature selection is keeping only those columns that are important for predicting outputs. If we don't know which column is more necessary, we should project the data onto a scatter plot and check the spread/distance: whichever projection has a lengthier spread — bigger variance — we select those columns.</p>
-            <p class="text-sm text-[var(--on-surface)]">If we come across a set of columns that has roughly equal variance, we use a <strong class="text-[var(--on-background)]">feature extraction</strong> technique instead. For example: rooms and washrooms are both important for predicting the price of a home, so we can't just remove one column — instead we make a new column, <code>house_size</code>, that predicts the price.</p>
+            <h3 class="font-h3 text-lg text-[var(--on-background)]">Feature Selection vs Feature Extraction: the intuition</h3>
+            <p class="text-sm text-[var(--on-surface)]">Feature selection keeps only the columns that matter for predicting outputs. If you don't know which column matters more, project the data onto a scatter plot and check the spread, the distance. Whichever projection has the longer spread, the bigger variance, you select those columns.</p>
+            <p class="text-sm text-[var(--on-surface)]">When you find a set of columns with roughly equal variance, use a <strong class="text-[var(--on-background)]">feature extraction</strong> technique instead. For example: rooms and washrooms are both important for predicting the price of a home, so you don't remove either column. Instead you build a new column, <code>house_size</code>, that predicts the price.</p>
             <p class="text-sm text-[var(--on-surface-variant)]">The number of principal components is always less than n, the number of original features in the data.</p>
           </div>
 
           <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg">
             <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">Why variance, not mean?</h4>
-            <p class="text-sm text-[var(--on-surface)]">Formula: \( (x - \bar{x})^2 / n \). Spread is not variance, but spread is directly proportional to variance. We must <strong class="text-[var(--on-background)]">maximize variance</strong> so as not to disturb the relationship between data points when transforming higher-dimensional data to lower dimension.</p>
+            <p class="text-sm text-[var(--on-surface)]">Formula: \( (x - \bar{x})^2 / n \). Spread is not variance, but spread is directly proportional to variance. You must <strong class="text-[var(--on-background)]">maximize variance</strong> to avoid disturbing the relationship between data points when you transform higher-dimensional data to a lower dimension.</p>
           </div>
 
           <details class="deepdive bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl px-md">
@@ -504,7 +504,7 @@
                   $$ \text{mean} = \frac{x_1 + x_2 + \dots + x_n}{n} $$
                 </div>
                 <p><strong class="text-[var(--on-background)]">Example:</strong> data [2, 4, 6] → mean = (2 + 4 + 6) / 3 = 4.</p>
-                <p><strong class="text-[var(--on-background)]">Intuition:</strong> mean is the center point of your data. Think of placing weights on a rod — mean is the balance point.</p>
+                <p><strong class="text-[var(--on-background)]">Intuition:</strong> the mean is the center point of your data. Place weights on a rod: the mean is the balance point.</p>
               </div>
 
               <div>
@@ -514,7 +514,7 @@
                   $$ \text{variance} = \text{average of } (x_i - \text{mean})^2 $$
                 </div>
                 <p><strong class="text-[var(--on-background)]">Example:</strong> data [2, 4, 6], mean = 4. Deviations: (2−4)² = 4, (4−4)² = 0, (6−4)² = 4. Variance = (4 + 0 + 4) / 3 = 2.67.</p>
-                <p><strong class="text-[var(--on-background)]">Intuition:</strong> low variance → data is tight. High variance → data is spread out.</p>
+                <p><strong class="text-[var(--on-background)]">Intuition:</strong> low variance means the data sits tight. High variance means the data spreads out.</p>
               </div>
 
               <div>
@@ -524,12 +524,12 @@
                   $$ SD = \sqrt{\text{variance}} $$
                 </div>
                 <p><strong class="text-[var(--on-background)]">Example:</strong> SD = √2.67 ≈ 1.63.</p>
-                <p><strong class="text-[var(--on-background)]">Why SD?</strong> Variance is squared, so its units become weird. SD brings it back to the original scale — it's the average distance from the mean.</p>
+                <p><strong class="text-[var(--on-background)]">Why SD?</strong> Variance is squared, so its units become strange. SD brings it back to the original scale. It is the average distance from the mean.</p>
               </div>
 
               <div>
                 <strong class="text-[var(--on-background)]">4. From 1D to 2D (important jump)</strong>
-                <p>Now data has 2 features, e.g. Height and Weight. Each point = (x, y). Now we care about spread in x, spread in y, and the relationship between x and y. This leads to covariance.</p>
+                <p>Now the data has 2 features, e.g. Height and Weight. Each point = (x, y). You now care about the spread in x, the spread in y, and the relationship between x and y. This leads to covariance.</p>
               </div>
 
               <div>

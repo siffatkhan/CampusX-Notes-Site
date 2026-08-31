@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>13. CNN Architectures & Transfer Learning — Sifat Notes</title>
+<title>13. CNN Architectures & Transfer Learning — Siffat's AI Notes</title>
 
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect">
@@ -31,7 +31,7 @@
 <a href="../index.html" class="flex items-center gap-2.5 md:gap-3 group min-w-0" title="Back to home">
 <div class="w-9 h-9 shrink-0 rounded-md bg-[var(--primary)] text-[var(--on-primary)] flex items-center justify-center font-h3 font-bold text-sm group-hover:opacity-85 transition-opacity">SN</div>
 <div class="min-w-0">
-<div class="font-h3 text-base md:text-lg font-semibold text-[var(--on-background)] leading-none truncate">Sifat Notes</div>
+<div class="font-h3 text-base md:text-lg font-semibold text-[var(--on-background)] leading-none truncate">Siffat's AI Notes</div>
 <div class="hidden sm:block text-[11px] text-[var(--on-surface-variant)] mt-0.5 truncate">from CampusX's playlists</div>
 </div>
 </a>
@@ -279,7 +279,7 @@
             <h2 class="font-h2 text-2xl text-[var(--on-background)]">The Classic CNN Pipeline</h2>
           </div>
 
-          <p class="text-[var(--on-surface)] leading-relaxed">Almost every classic CNN built for image classification follows the same overall shape, regardless of how deep or elaborate the specific architecture gets: raw pixels go in one end, a class prediction comes out the other, with a fixed sequence of transformations in between.</p>
+          <p class="text-[var(--on-surface)] leading-relaxed">Almost every classic CNN built for image classification follows the same overall shape. It doesn't matter how deep or elaborate the specific architecture gets. Raw pixels go in one end, a class prediction comes out the other, with a fixed sequence of transformations in between.</p>
 
           <div class="space-y-0 max-w-lg mx-auto">
             <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg px-4 py-2.5 text-sm text-center font-semibold">IMAGE</div>
@@ -293,7 +293,7 @@
             <div class="bg-[var(--secondary-container)]/10 border border-[var(--secondary)]/40 rounded-lg px-4 py-2.5 text-sm text-center font-semibold">OUTPUT (class probabilities)</div>
           </div>
 
-          <p class="text-sm text-[var(--on-surface)]">The convolutional stage — alternating convolution, padding/stride choices, and pooling as covered on the previous two pages — does all the feature-learning work, progressively turning raw pixels into a compact set of high-level features. Flatten then collapses that final 3D feature volume into a 1D vector, and the dense layers at the end do the same job a plain ANN would: combine those features into a decision. Every architecture below is really just a different, increasingly sophisticated way of designing the convolutional stage of this same pipeline.</p>
+          <p class="text-sm text-[var(--on-surface)]">The convolutional stage does all the feature-learning work. It alternates convolution, padding/stride choices, and pooling, as covered on the previous two pages, and progressively turns raw pixels into a compact set of high-level features. Flatten then collapses that final 3D feature volume into a 1D vector. The dense layers at the end do the same job a plain ANN would: they combine those features into a decision. Every architecture below is a different, increasingly sophisticated way to design the convolutional stage of this same pipeline.</p>
         </section>
 
         <!-- CLASSIC ARCHITECTURES -->
@@ -305,32 +305,32 @@
 
           <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
             <h3 class="font-h3 text-lg text-[var(--secondary)]">LeNet</h3>
-            <p class="text-sm text-[var(--on-surface)]">Designed by Yann LeCun — often called the "father of CNNs" — LeNet was the original architecture that demonstrated convolutional networks could reliably recognize handwritten digits. Structurally, it's exactly the classic pipeline above in its simplest form: a small number of alternating convolutional and pooling layers to extract features from the digit image, followed by a couple of dense layers that map those features to one of the 10 digit classes. It's tiny by modern standards, but it proved the core idea — learned filters beat hand-engineered features — that every architecture below builds on.</p>
+            <p class="text-sm text-[var(--on-surface)]">Yann LeCun designed LeNet, often called the father of CNNs. It was the original architecture that showed convolutional networks could reliably recognize handwritten digits. Structurally, it's the classic pipeline above in its simplest form: a small number of alternating convolutional and pooling layers extract features from the digit image, followed by a couple of dense layers that map those features to one of the 10 digit classes. It's tiny by modern standards, but it proved the core idea every architecture below builds on: learned filters beat hand-engineered features.</p>
           </div>
 
           <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
             <h3 class="font-h3 text-lg text-[var(--secondary)]">AlexNet</h3>
-            <p class="text-sm text-[var(--on-surface)]">A much deeper and wider descendant of LeNet, AlexNet was the architecture that made deep CNNs mainstream — it won the ImageNet competition by a huge margin, demonstrating that a sufficiently deep CNN, trained on enough data with enough GPU compute, dramatically outperforms classical computer-vision techniques on real-world image classification.</p>
+            <p class="text-sm text-[var(--on-surface)]">AlexNet, a much deeper and wider descendant of LeNet, made deep CNNs mainstream. It won the ImageNet competition by a huge margin. This showed that a sufficiently deep CNN, trained on enough data with enough GPU compute, outperforms classical computer-vision techniques by a wide margin on real-world image classification.</p>
           </div>
 
           <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
             <h3 class="font-h3 text-lg text-[var(--secondary)]">VGGNet</h3>
-            <p class="text-sm text-[var(--on-surface)]">VGGNet's contribution was simplicity and uniformity: instead of mixing filter sizes, it builds its entire convolutional stage out of small, stacked 3×3 filters, repeated many times, with pooling layers placed at regular intervals. Stacking several small filters back-to-back turns out to approximate the receptive field of one larger filter while using fewer parameters — a clean, easy-to-reason-about design that made VGG a popular choice as a pretrained backbone for years afterward.</p>
+            <p class="text-sm text-[var(--on-surface)]">VGGNet's contribution was simplicity and uniformity. Instead of mixing filter sizes, it builds its entire convolutional stage out of small, stacked 3×3 filters, repeated many times, with pooling layers placed at regular intervals. Stacking several small filters back-to-back approximates the receptive field of one larger filter while using fewer parameters. This clean, easy-to-reason-about design made VGG a popular choice as a pretrained backbone for years afterward.</p>
           </div>
 
           <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
             <h3 class="font-h3 text-lg text-[var(--secondary)]">GoogLeNet</h3>
-            <p class="text-sm text-[var(--on-surface)]">GoogLeNet introduced the "Inception module" (see Inception/Xception below) as its core building block, letting the network go deeper while actually using fewer parameters than VGGNet — showing that raw depth wasn't the only lever for better accuracy; smarter internal wiring mattered too.</p>
+            <p class="text-sm text-[var(--on-surface)]">GoogLeNet introduced the Inception module (see Inception/Xception below) as its core building block. It let the network go deeper while using fewer parameters than VGGNet. This showed that raw depth wasn't the only lever for better accuracy. Smarter internal wiring mattered too.</p>
           </div>
 
           <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
             <h3 class="font-h3 text-lg text-[var(--secondary)]">ResNet</h3>
-            <p class="text-sm text-[var(--on-surface)]">Simply stacking more and more convolutional layers eventually stops helping and can even make accuracy worse — very deep plain networks suffer badly from the <strong class="text-[var(--on-background)]">vanishing gradient</strong> problem, where gradients shrink to near-zero as they're backpropagated through many layers, so the earliest layers barely get updated at all. ResNet's fix is the <strong class="text-[var(--on-background)]">residual (skip) connection</strong>: instead of forcing each block of layers to learn a full transformation from scratch, a "shortcut" carries the block's input forward and adds it directly to the block's output, so the block only needs to learn the <em>difference</em> (the "residual") from the input. This gives gradients a direct path backward through the shortcut, sidestepping the vanishing-gradient bottleneck and allowing networks with dozens or even hundreds of layers to train successfully — the same underlying vanishing-gradient failure mode discussed for deep plain networks elsewhere in this track.</p>
+            <p class="text-sm text-[var(--on-surface)]">Stacking more and more convolutional layers eventually stops helping and can even make accuracy worse. Very deep plain networks suffer badly from the <strong class="text-[var(--on-background)]">vanishing gradient</strong> problem: gradients shrink to near-zero as they backpropagate through many layers, so the earliest layers barely get updated at all. ResNet's fix is the <strong class="text-[var(--on-background)]">residual (skip) connection</strong>. Instead of forcing each block of layers to learn a full transformation from scratch, a shortcut carries the block's input forward and adds it directly to the block's output. The block only needs to learn the <em>difference</em> (the residual) from the input. This gives gradients a direct path backward through the shortcut, sidesteps the vanishing-gradient bottleneck, and lets networks with dozens or even hundreds of layers train successfully. It's the same vanishing-gradient failure mode discussed for deep plain networks elsewhere in this track.</p>
           </div>
 
           <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
             <h3 class="font-h3 text-lg text-[var(--secondary)]">Inception / Xception</h3>
-            <p class="text-sm text-[var(--on-surface)]">Rather than committing to one filter size per layer, an Inception module runs several filters of <em>different</em> sizes (say 1×1, 3×3, and 5×5) in parallel on the same input, then concatenates all of their outputs together — letting the network capture features at multiple spatial scales simultaneously instead of betting on a single filter size per layer. Xception ("Extreme Inception") pushes this idea further with <strong class="text-[var(--on-background)]">depthwise separable convolutions</strong>, splitting a standard convolution into a per-channel spatial pass followed by a 1×1 pass across channels — achieving similar or better accuracy with meaningfully fewer parameters and less compute.</p>
+            <p class="text-sm text-[var(--on-surface)]">Rather than committing to one filter size per layer, an Inception module runs several filters of <em>different</em> sizes (say 1×1, 3×3, and 5×5) in parallel on the same input, then concatenates all of their outputs together. This lets the network capture features at multiple spatial scales at once, instead of betting on a single filter size per layer. Xception (Extreme Inception) pushes this idea further with <strong class="text-[var(--on-background)]">depthwise separable convolutions</strong>: it splits a standard convolution into a per-channel spatial pass followed by a 1×1 pass across channels. This achieves similar or better accuracy with fewer parameters and less compute.</p>
           </div>
         </section>
 
@@ -341,18 +341,18 @@
             <h2 class="font-h2 text-2xl text-[var(--on-background)]">Why Transfer Learning Exists</h2>
           </div>
 
-          <p class="text-[var(--on-surface)] leading-relaxed">Deep learning models are data-hungry and compute-hungry. A CNN that becomes genuinely good at image recognition — ResNet, VGG, InceptionNet — is typically trained on ImageNet, roughly 1.2 million images spread across 1,000 classes, for days or even weeks on powerful GPU clusters. Most people building a real-world image classifier don't have millions of labeled images, weeks of GPU time, or a budget for that kind of compute.</p>
+          <p class="text-[var(--on-surface)] leading-relaxed">Deep learning models are data-hungry and compute-hungry. A CNN that becomes genuinely good at image recognition, such as ResNet, VGG, or InceptionNet, is typically trained on ImageNet, roughly 1.2 million images spread across 1,000 classes, for days or even weeks on powerful GPU clusters. Most people building a real-world image classifier don't have millions of labeled images, weeks of GPU time, or a budget for that kind of compute.</p>
 
-          <p class="text-[var(--on-surface)] leading-relaxed">The insight that makes this workable: a model trained on a huge, diverse dataset doesn't just memorize its 1,000 specific classes. In the process of learning to tell a "cat" apart from a "truck," it's forced to learn general-purpose visual building blocks — edges, curves, textures, shapes, patterns of light and shadow — that turn out to be useful for almost <em>any</em> visual task, not only the one the model happened to be trained on. <strong class="text-[var(--on-background)]">Transfer learning</strong> is the practice of taking the knowledge (the learned weights) from solving Problem A and reusing it for Problem B — a different but related problem — instead of training a new model completely from scratch.</p>
+          <p class="text-[var(--on-surface)] leading-relaxed">Here's the insight that makes this workable: a model trained on a huge, diverse dataset doesn't merely memorize its 1,000 specific classes. In the process of learning to tell a cat apart from a truck, it's forced to learn general-purpose visual building blocks: edges, curves, textures, shapes, patterns of light and shadow. Those building blocks turn out to be useful for almost <em>any</em> visual task, not only the one the model happened to be trained on. <strong class="text-[var(--on-background)]">Transfer learning</strong> is the practice of taking the knowledge (the learned weights) from solving Problem A and reusing it for Problem B, a different but related problem, instead of training a new model from scratch.</p>
 
           <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg">
             <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">Why not just use the pretrained model as-is?</h4>
-            <p class="text-sm text-[var(--on-surface)]">Because its final layer was trained to output probabilities over its <em>original</em> classes (whatever ImageNet's 1,000 categories happen to be). If the actual goal is "classify cat breeds" or "detect tumors in X-rays," those target classes don't exist in the pretrained model's output layer at all — the model can't be deployed unmodified; it has to be surgically adapted.</p>
+            <p class="text-sm text-[var(--on-surface)]">Its final layer was trained to output probabilities over its <em>original</em> classes, whatever ImageNet's 1,000 categories happen to be. If the actual goal is to classify cat breeds or detect tumors in X-rays, those target classes don't exist in the pretrained model's output layer at all. You can't deploy the model unmodified. You have to adapt it directly.</p>
           </div>
 
           <div>
             <h3 class="font-h3 text-lg text-[var(--on-background)] mb-2">Anatomy of a CNN: base vs. head</h3>
-            <p class="text-[var(--on-surface)] leading-relaxed">Every CNN built for image classification splits cleanly into two conceptual parts, and this split is exactly what makes transfer learning possible:</p>
+            <p class="text-[var(--on-surface)] leading-relaxed">Every CNN built for image classification splits cleanly into two conceptual parts. This split is what makes transfer learning possible:</p>
             <div class="grid sm:grid-cols-2 gap-3 mt-2">
               <div class="border-l-4 border-[var(--secondary)] bg-[var(--secondary-container)]/10 p-sm rounded-r-lg">
                 <h4 class="font-label-caps text-xs uppercase tracking-wider text-[var(--secondary)] mb-1">Convolutional base</h4>

@@ -1,5 +1,5 @@
         <div>
-          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--tertiary)] bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/30 rounded-full px-3 py-1 mb-3">Source: 100 Days of Deep Learning — NLP Notes</span>
+          <span class="inline-flex items-center gap-1.5 text-xs font-label-caps uppercase tracking-wider text-[var(--tertiary)] bg-[var(--tertiary-container)]/10 border border-[var(--tertiary)]/30 rounded-full px-3 py-1 mb-3">Source: 100 Days of Deep Learning, NLP Notes</span>
           <h1 class="font-h1 text-h1-mobile md:text-h1 font-bold text-[var(--on-background)] mb-2">1. Introduction to NLP</h1>
           <p class="font-body-lg text-body-lg text-[var(--on-surface-variant)]">What natural language is · Why NLP matters · Common NLP tasks · Three approaches to NLP · Core challenges</p>
         </div>
@@ -11,18 +11,18 @@
             <h2 class="font-h2 text-2xl text-[var(--on-background)]">What Is Natural Language Processing?</h2>
           </div>
 
-          <p class="text-[var(--on-surface)] leading-relaxed">A <strong class="text-[var(--on-background)]">natural language</strong> is a language that evolved naturally in humans through use and repetition, without conscious planning or premeditation — English, Hindi, Mandarin, Spanish, and every other language people actually speak, as opposed to a designed/constructed language like a programming language or Esperanto. <strong class="text-[var(--on-background)]">Natural Language Processing (NLP)</strong> is the field of AI concerned with giving machines the ability to read, understand, interpret, and generate this kind of language.</p>
+          <p class="text-[var(--on-surface)] leading-relaxed">A <strong class="text-[var(--on-background)]">natural language</strong> is a language that evolved naturally in humans through use and repetition, without conscious planning. English, Hindi, Mandarin, Spanish, and every other language people actually speak fit this description. This is different from a designed or constructed language, like a programming language or Esperanto. <strong class="text-[var(--on-background)]">Natural Language Processing (NLP)</strong> is the field of AI that gives machines the ability to read, understand, interpret, and generate this kind of language.</p>
 
-          <p class="text-[var(--on-surface)] leading-relaxed">Why is this hard, and why does it matter so much? Because an enormous share of human knowledge and communication — books, conversations, emails, reviews, tickets, social media — exists as unstructured text, not neat rows and columns. Any system that wants to act intelligently in the real world eventually has to deal with language.</p>
+          <p class="text-[var(--on-surface)] leading-relaxed">This matters because most human knowledge and communication exists as unstructured text, not neat rows and columns. Books, conversations, emails, reviews, tickets, and social media posts are all text. Any system that acts intelligently in the real world has to handle language at some point.</p>
 
           <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-2">
             <h3 class="font-h3 text-lg text-[var(--tertiary)]">Real-World Applications</h3>
             <ul class="text-sm text-[var(--on-surface)] space-y-1.5 list-disc list-inside">
-              <li><strong class="text-[var(--on-background)]">Contextual / targeted advertisements</strong> — ads chosen based on the content of a page or a user's language patterns, not just demographics.</li>
-              <li><strong class="text-[var(--on-background)]">Email clients</strong> — spam filtering (classifying incoming mail as spam / not spam) and smart reply (auto-suggesting short responses).</li>
-              <li><strong class="text-[var(--on-background)]">Social media</strong> — removing adult/harmful content (content moderation) and opinion mining on platforms like Twitter (working out what people think about a topic).</li>
-              <li><strong class="text-[var(--on-background)]">Search engines</strong> — modern search (like Google) increasingly summarizes an answer directly in the results page, so the user often doesn't need to click into a website at all.</li>
-              <li><strong class="text-[var(--on-background)]">Chatbots</strong> — conversational systems that understand a user's request and respond appropriately.</li>
+              <li><strong class="text-[var(--on-background)]">Contextual / targeted advertisements.</strong> Ads chosen based on the content of a page or a user's language patterns, not only demographics.</li>
+              <li><strong class="text-[var(--on-background)]">Email clients.</strong> Spam filtering classifies incoming mail as spam or not spam. Smart reply auto-suggests short responses.</li>
+              <li><strong class="text-[var(--on-background)]">Social media.</strong> Content moderation removes adult or harmful content. Opinion mining, used on platforms like Twitter, works out what people think about a topic.</li>
+              <li><strong class="text-[var(--on-background)]">Search engines.</strong> Modern search engines, like Google, increasingly summarize an answer directly on the results page. You often don't need to click into a website at all.</li>
+              <li><strong class="text-[var(--on-background)]">Chatbots.</strong> Conversational systems that understand a user's request and respond appropriately.</li>
             </ul>
           </div>
         </section>
@@ -34,22 +34,22 @@
             <h2 class="font-h2 text-2xl text-[var(--on-background)]">Common NLP Tasks</h2>
           </div>
 
-          <p class="text-[var(--on-surface)] leading-relaxed">NLP is not one algorithm — it's an umbrella over many distinct tasks, each solved with its own techniques (some reused across tasks, some specialized). The rest of this track walks through the building blocks needed to tackle these:</p>
+          <p class="text-[var(--on-surface)] leading-relaxed">NLP is not one algorithm. It covers many distinct tasks, each solved with its own techniques. Some techniques get reused across tasks, others stay specialized. The rest of this track walks through the building blocks you need to tackle these tasks:</p>
 
           <div class="grid sm:grid-cols-2 gap-3">
-            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Text / document classification</strong> — assigning a category to a whole document (spam vs not-spam, topic tags).</div>
-            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Sentiment analysis</strong> — determining whether text expresses a positive, negative, or neutral opinion.</div>
-            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Information retrieval</strong> — finding the most relevant documents for a query (the core of search engines).</div>
-            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Part-of-speech (POS) tagging</strong> — assigning a grammatical category (noun, verb, adjective, …) to each word.</div>
-            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Language detection &amp; machine translation</strong> — identifying what language a text is written in, and converting text from one language to another.</div>
-            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Conversational agents</strong> — chatbots and voice assistants that hold a dialogue.</div>
-            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Knowledge graphs &amp; QA systems</strong> — structuring facts extracted from text and answering questions over them.</div>
-            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Text summarization</strong> — condensing a long document into a short summary.</div>
-            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Topic modeling</strong> — discovering the abstract topics running through a collection of documents, commonly using the ML model <strong class="text-[var(--on-background)]">LDA</strong> (Latent Dirichlet Allocation) — covered in full in chapter 7.</div>
-            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Text generation / autocomplete</strong> — the predictive text you see while typing on a keyboard.</div>
-            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Spell checking &amp; grammar correction</strong> — detecting and fixing typos and grammatical errors.</div>
-            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Text parsing</strong> — analyzing the grammatical structure of a sentence.</div>
-            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Speech-to-text</strong> — transcribing spoken audio into written text.</div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Text / document classification.</strong> Assigns a category to a whole document, like spam vs. not spam, or topic tags.</div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Sentiment analysis.</strong> Determines whether text expresses a positive, negative, or neutral opinion.</div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Information retrieval.</strong> Finds the most relevant documents for a query. This is the core of search engines.</div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Part-of-speech (POS) tagging.</strong> Assigns a grammatical category, like noun, verb, or adjective, to each word.</div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Language detection &amp; machine translation.</strong> Identifies what language a text is written in, and converts text from one language to another.</div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Conversational agents.</strong> Chatbots and voice assistants that hold a dialogue.</div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Knowledge graphs &amp; QA systems.</strong> Structure facts extracted from text and answer questions over them.</div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Text summarization.</strong> Condenses a long document into a short summary.</div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Topic modeling.</strong> Discovers the abstract topics running through a collection of documents, commonly using the ML model <strong class="text-[var(--on-background)]">LDA</strong> (Latent Dirichlet Allocation). Chapter 7 covers LDA in full.</div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Text generation / autocomplete.</strong> The predictive text you see while typing on a keyboard.</div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Spell checking &amp; grammar correction.</strong> Detects and fixes typos and grammatical errors.</div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Text parsing.</strong> Analyzes the grammatical structure of a sentence.</div>
+            <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-lg p-3 text-sm"><strong class="text-[var(--on-background)]">Speech-to-text.</strong> Transcribes spoken audio into written text.</div>
           </div>
         </section>
 
@@ -60,36 +60,36 @@
             <h2 class="font-h2 text-2xl text-[var(--on-background)]">Three Approaches to NLP</h2>
           </div>
 
-          <p class="text-[var(--on-surface)] leading-relaxed">Just like the rest of AI, NLP problems can be tackled at three increasing levels of sophistication — from hand-written rules, to models that learn patterns from data, to models that learn both patterns <em>and</em> features automatically.</p>
+          <p class="text-[var(--on-surface)] leading-relaxed">Like the rest of AI, you can tackle NLP problems at three increasing levels of sophistication, from hand-written rules, to models that learn patterns from data, to models that learn both patterns <em>and</em> features automatically.</p>
 
           <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
             <h3 class="font-h3 text-lg text-[var(--tertiary)]">1. Heuristic / Rule-Based Methods</h3>
-            <p class="text-sm text-[var(--on-surface)]">These are hand-crafted, hacked-together rules devised directly by a human — essentially applying whatever pragmatic trick gets the job done, rather than learning from data. Typical tools:</p>
+            <p class="text-sm text-[var(--on-surface)]">These are hand-crafted rules a human writes directly. The rule-writer applies whatever practical trick gets the job done, instead of learning from data. Typical tools:</p>
             <ul class="text-sm text-[var(--on-surface)] space-y-1.5 list-disc list-inside">
-              <li><strong class="text-[var(--on-background)]">Regular expressions (regex)</strong> — let you search, parse, modify, and validate text patterns efficiently (e.g. matching dates, emails, phone numbers).</li>
-              <li><strong class="text-[var(--on-background)]">WordNet</strong> — a lexical dictionary that gives the relationship between one word and another (e.g. "running" relates to "shoes").</li>
-              <li><strong class="text-[var(--on-background)]">"Common sense" fact databases</strong> (e.g. Open Mind Common Sense) — stores everyday facts a human would take for granted.</li>
+              <li><strong class="text-[var(--on-background)]">Regular expressions (regex).</strong> These let you search, parse, modify, and validate text patterns efficiently, for example matching dates, emails, and phone numbers.</li>
+              <li><strong class="text-[var(--on-background)]">WordNet.</strong> A lexical dictionary that gives the relationship between one word and another. For example, "running" relates to "shoes".</li>
+              <li><strong class="text-[var(--on-background)]">"Common sense" fact databases</strong>, like Open Mind Common Sense, store everyday facts a human would take for granted.</li>
             </ul>
-            <p class="text-sm text-[var(--on-surface-variant)]">These are quick to build and mostly error-free precisely <em>because</em> a human designed the rules — but they're brittle: they don't generalize to inputs the rule-writer didn't anticipate.</p>
+            <p class="text-sm text-[var(--on-surface-variant)]">These are quick to build and mostly error-free because a human designed the rules. But they're brittle. They don't generalize to inputs the rule-writer didn't anticipate.</p>
           </div>
 
           <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
             <h3 class="font-h3 text-lg text-[var(--secondary)]">2. Machine Learning Models</h3>
-            <p class="text-sm text-[var(--on-surface)]">Instead of a human writing the rules directly, an ML model looks at data and finds patterns and relationships in it — the "rules" are learned statistically rather than hand-written. Common algorithms used in classic NLP: <strong class="text-[var(--on-background)]">Naive Bayes, Logistic Regression, SVM, LDA, Hidden Markov Models (HMM)</strong>.</p>
+            <p class="text-sm text-[var(--on-surface)]">Instead of a human writing the rules directly, an ML model looks at data and finds patterns and relationships in it. The model learns the "rules" statistically, rather than by hand. Common algorithms used in classic NLP include <strong class="text-[var(--on-background)]">Naive Bayes, Logistic Regression, SVM, LDA, and Hidden Markov Models (HMM)</strong>.</p>
           </div>
 
           <div class="bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md space-y-3">
             <h3 class="font-h3 text-lg text-[var(--primary)]">3. Deep Learning Models</h3>
-            <p class="text-sm text-[var(--on-surface)]">DL's big advantage over the previous two approaches: <strong class="text-[var(--on-background)]">automatic feature generation</strong> (no manual feature engineering needed) and, critically, the ability to <strong class="text-[var(--on-background)]">retain sequential information</strong> — the order words appear in, which carries meaning that bag-of-words-style methods throw away.</p>
+            <p class="text-sm text-[var(--on-surface)]">Deep learning's big advantage over the previous two approaches is <strong class="text-[var(--on-background)]">automatic feature generation</strong>, so you don't need manual feature engineering. It also <strong class="text-[var(--on-background)]">retains sequential information</strong>, the order words appear in, which carries meaning that bag-of-words-style methods throw away.</p>
             <div class="overflow-x-auto rounded-lg border border-[var(--outline-variant)]">
               <table class="w-full text-left border-collapse text-sm">
                 <thead><tr class="bg-[var(--surface-container-high)]"><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Architecture</th><th class="p-2.5 border-b border-[var(--outline-variant)] font-label-caps text-xs">Notes</th></tr></thead>
                 <tbody>
-                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">RNN</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Good for time-series / sequential data, but cannot retain context over long sentences or inputs.</td></tr>
-                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">LSTM</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Retains context and memory much better than a plain RNN.</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">RNN</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Good for time-series and sequential data, but it doesn't retain context over long sentences or inputs.</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">LSTM</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Retains context and memory better than a plain RNN.</td></tr>
                   <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">GRU</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">Used mostly for text generation.</td></tr>
-                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Transformers</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">The big leap for the field — models like <strong class="text-[var(--on-background)]">BERT</strong> are Transformer-based.</td></tr>
-                  <tr><td class="p-2.5 font-semibold">Autoencoders</td><td class="p-2.5">Used for representation learning / dimensionality reduction over text.</td></tr>
+                  <tr><td class="p-2.5 border-b border-[var(--outline-variant)]/50 font-semibold">Transformers</td><td class="p-2.5 border-b border-[var(--outline-variant)]/50">The biggest leap for the field. Models like <strong class="text-[var(--on-background)]">BERT</strong> are Transformer-based.</td></tr>
+                  <tr><td class="p-2.5 font-semibold">Autoencoders</td><td class="p-2.5">Used for representation learning and dimensionality reduction over text.</td></tr>
                 </tbody>
               </table>
             </div>
@@ -103,17 +103,17 @@
             <h2 class="font-h2 text-2xl text-[var(--on-background)]">Challenges in NLP</h2>
           </div>
 
-          <p class="text-[var(--on-surface)] leading-relaxed">Language is hard for machines precisely because of the things that make it flexible and expressive for humans. The core recurring difficulties:</p>
+          <p class="text-[var(--on-surface)] leading-relaxed">Language is hard for machines because of the same things that make it flexible and expressive for humans. The core recurring difficulties:</p>
 
           <div class="grid sm:grid-cols-2 gap-3">
-            <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm"><strong class="text-[var(--on-background)]">Ambiguity</strong> — one sentence can have multiple valid readings. "I saw a boy with glasses" could mean the boy was wearing glasses, or that you used glasses (binoculars/spectacles) to see him.</div>
-            <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm"><strong class="text-[var(--on-background)]">Contextual word meaning</strong> — "I ran into the store because we ran out of milk" uses "ran" with two different senses in one sentence.</div>
-            <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm"><strong class="text-[var(--on-background)]">Colloquialisms &amp; slang</strong> — "piece of cake" means "easy" to a human; a machine has no built-in reason to know that.</div>
-            <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm"><strong class="text-[var(--on-background)]">Synonyms</strong> — many different words (car, automobile, vehicle) can mean nearly the same thing, and a system needs to recognize that equivalence.</div>
-            <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm"><strong class="text-[var(--on-background)]">Irony, sarcasm &amp; tone</strong> — "That's just what I needed today" can mean genuine relief or bitter frustration depending entirely on tone/context — the words alone don't disambiguate it.</div>
-            <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm"><strong class="text-[var(--on-background)]">Spelling errors</strong> — typos and misspellings create word forms a model may never have seen.</div>
-            <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm"><strong class="text-[var(--on-background)]">Creativity</strong> — poetry, wordplay, and novel phrasing don't follow predictable statistical patterns.</div>
-            <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm"><strong class="text-[var(--on-background)]">Language diversity</strong> — thousands of languages exist, each with its own grammar, script, and idioms; a technique tuned for English rarely transfers cleanly.</div>
+            <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm"><strong class="text-[var(--on-background)]">Ambiguity.</strong> One sentence has multiple valid readings. "I saw a boy with glasses" means either the boy was wearing glasses, or you used glasses, like binoculars or spectacles, to see him.</div>
+            <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm"><strong class="text-[var(--on-background)]">Contextual word meaning.</strong> "I ran into the store because we ran out of milk" uses "ran" with two different senses in one sentence.</div>
+            <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm"><strong class="text-[var(--on-background)]">Colloquialisms &amp; slang.</strong> "Piece of cake" means "easy" to a human. A machine has no built-in reason to know that.</div>
+            <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm"><strong class="text-[var(--on-background)]">Synonyms.</strong> Many different words, like car, automobile, and vehicle, mean nearly the same thing. A system needs to recognize that equivalence.</div>
+            <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm"><strong class="text-[var(--on-background)]">Irony, sarcasm &amp; tone.</strong> "That's exactly what I needed today" means genuine relief or bitter frustration, depending entirely on tone and context. The words alone don't disambiguate it.</div>
+            <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm"><strong class="text-[var(--on-background)]">Spelling errors.</strong> Typos and misspellings create word forms a model has never seen before.</div>
+            <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm"><strong class="text-[var(--on-background)]">Creativity.</strong> Poetry, wordplay, and novel phrasing don't follow predictable statistical patterns.</div>
+            <div class="border-l-4 border-[var(--tertiary)] bg-[var(--tertiary-container)]/10 p-sm rounded-r-lg text-sm"><strong class="text-[var(--on-background)]">Language diversity.</strong> Thousands of languages exist, each with its own grammar, script, and idioms. A technique tuned for English rarely transfers cleanly.</div>
           </div>
         </section>
 
@@ -136,7 +136,7 @@
                 <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Reinforcement learning</button>
               </div>
               <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
-                <strong class="text-[var(--on-background)]">Explanation:</strong> Rules designed directly by a human, with no data-driven learning, is exactly the heuristic/rule-based approach — fast to build and mostly error-free since a human designed it, but brittle against inputs the rule-writer didn't foresee.
+                <strong class="text-[var(--on-background)]">Explanation:</strong> Rules designed directly by a human, with no data-driven learning, is exactly the heuristic/rule-based approach. It's fast to build and mostly error-free since a human designed it, but brittle against inputs the rule-writer didn't foresee.
               </div>
             </div>
 
@@ -149,7 +149,7 @@
                 <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. WordNet</button>
               </div>
               <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
-                <strong class="text-[var(--on-background)]">Explanation:</strong> Per the notes, RNNs suit general sequential data but struggle with long context, LSTMs retain context/memory better, and GRUs are called out as used mostly for text generation. WordNet is a heuristic lexical dictionary, not a DL architecture.
+                <strong class="text-[var(--on-background)]">Explanation:</strong> The notes explain that RNNs suit general sequential data but struggle with long context, LSTMs retain context and memory better, and GRUs are called out as used mostly for text generation. WordNet is a heuristic lexical dictionary, not a DL architecture.
               </div>
             </div>
 
@@ -162,7 +162,7 @@
                 <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Creativity</button>
               </div>
               <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
-                <strong class="text-[var(--on-background)]">Explanation:</strong> This is the source's own example of ambiguity — a single sentence supporting more than one valid grammatical/semantic reading, distinct from slang (colloquialism), tone (irony/sarcasm), or diversity across languages.
+                <strong class="text-[var(--on-background)]">Explanation:</strong> This is the source's own example of ambiguity. It's a single sentence supporting more than one valid grammatical or semantic reading, distinct from slang (colloquialism), tone (irony or sarcasm), or diversity across languages.
               </div>
             </div>
 
@@ -175,20 +175,20 @@
                 <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. Search engine summarization</button>
               </div>
               <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
-                <strong class="text-[var(--on-background)]">Explanation:</strong> This matches the source's real-world application: "search engines like Google summarize what we ask, so we don't have to go inside the website" — a distinct application from ad targeting, spam filtering, or moderation.
+                <strong class="text-[var(--on-background)]">Explanation:</strong> This matches the source's real-world application: "search engines like Google summarize what we ask, so we don't have to go inside the website." This is a distinct application from ad targeting, spam filtering, or moderation.
               </div>
             </div>
 
             <div class="quiz-q bg-[var(--surface-container)] border border-[var(--outline-variant)] rounded-xl p-md" data-correct="1">
               <p class="font-semibold text-[var(--on-background)] mb-3">5. Which statement correctly distinguishes ML models from DL models in NLP, per the source notes?</p>
               <div class="quiz-options grid gap-2">
-                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. ML models automatically generate features; DL models require manual feature engineering</button>
-                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. DL models automatically generate features and can retain sequential information; ML models learn rules/patterns from data but don't share DL's edge on sequence</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="0">A. ML models automatically generate features. DL models require manual feature engineering</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="1">B. DL models automatically generate features and retain sequential information. ML models learn rules and patterns from data but don't share that edge on sequence</button>
                 <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="2">C. Both approaches are identical in practice</button>
-                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. ML models require GPUs; DL models don't</button>
+                <button class="quiz-option text-left px-4 py-2.5 rounded-lg border border-[var(--outline-variant)] bg-[var(--surface-container-high)]/40 hover:bg-[var(--surface-container-high)] text-sm text-[var(--on-surface)]" data-index="3">D. ML models require GPUs. DL models don't</button>
               </div>
               <div class="quiz-explanation hidden mt-3 text-sm text-[var(--on-surface-variant)] bg-[var(--surface)] border border-[var(--outline-variant)] rounded-lg p-3">
-                <strong class="text-[var(--on-background)]">Explanation:</strong> The notes are explicit: DL's big advantages are automatic feature generation and retaining sequential information; ML models (Naive Bayes, Logistic Regression, SVM, LDA, HMM) learn rules from data but don't have those two specific DL advantages.
+                <strong class="text-[var(--on-background)]">Explanation:</strong> The notes are explicit: DL's big advantages are automatic feature generation and retaining sequential information. ML models (Naive Bayes, Logistic Regression, SVM, LDA, HMM) learn rules from data but don't have those two specific DL advantages.
               </div>
             </div>
 
